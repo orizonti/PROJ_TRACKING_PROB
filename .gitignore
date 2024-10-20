@@ -1,0 +1,16 @@
+*.bin
+*.idx
+*.json
+*.bak*
+Makefile
+.ninja*
+*.ninja
+CMakeCache.txt
+
+.vs/
+cmake-build-debug/
+cmake-build-release/
+build/
+build_debug/
+CMakeFiles/
+

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindowClass</class>
+ <widget class="QMainWindow" name="MainWindowClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>2300</width>
+    <height>2000</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1024</width>
+    <height>768</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>2300</width>
+    <height>2300</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Управление-Стажер</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget
+{
+border: 2px solid line black;
+	background-color: rgb(148, 134, 115);
+	font: 14pt &quot;Sans Serif&quot;;
+}
+
+QMainWindow
+{
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+}</string>
+  </property>
+  <property name="locale">
+   <locale language="Russian" country="Russia"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QWidget
+{
+background-color: rgb(94, 94, 94);
+}</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="styleSheet">
+       <string notr="true">QGraphicsView
+{
+border: 2px solid line black;
+}</string>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="CrossPattern">
+        <color alpha="255">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>2300</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="locale">
+    <locale language="Russian" country="Russia"/>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="locale">
+     <locale language="Russian" country="Russia"/>
+    </property>
+    <property name="title">
+     <string>Окно</string>
+    </property>
+    <addaction name="actionGuiSizeSmall"/>
+    <addaction name="actionGuiSizeBig"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="locale">
+     <locale language="Russian" country="Russia"/>
+    </property>
+    <property name="title">
+     <string>Интерфейс</string>
+    </property>
+    <addaction name="actionGuiWork"/>
+    <addaction name="actionGuiDebug"/>
+    <addaction name="actionSaveGuiScheme"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+  </widget>
+  <action name="actionGuiSizeBig">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Большой размер</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
+  </action>
+  <action name="actionGuiSizeSmall">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Малый размер</string>
+   </property>
+  </action>
+  <action name="actionGuiWork">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Работа</string>
+   </property>
+  </action>
+  <action name="action_5">
+   <property name="text">
+    <string>Сохранить...</string>
+   </property>
+  </action>
+  <action name="action_6">
+   <property name="text">
+    <string>Закрыть</string>
+   </property>
+  </action>
+  <action name="action_7">
+   <property name="text">
+    <string>Переслать</string>
+   </property>
+  </action>
+  <action name="action_8">
+   <property name="text">
+    <string>Печать</string>
+   </property>
+  </action>
+  <action name="action_11">
+   <property name="text">
+    <string>Выход</string>
+   </property>
+  </action>
+  <action name="action_12">
+   <property name="text">
+    <string>Отмена</string>
+   </property>
+  </action>
+  <action name="action_13">
+   <property name="text">
+    <string>Копировать</string>
+   </property>
+  </action>
+  <action name="action_14">
+   <property name="text">
+    <string>Вырезать</string>
+   </property>
+  </action>
+  <action name="action_15">
+   <property name="text">
+    <string>Вставить</string>
+   </property>
+  </action>
+  <action name="action_16">
+   <property name="text">
+    <string>Включение ТМ-КЮ</string>
+   </property>
+  </action>
+  <action name="action_17">
+   <property name="text">
+    <string>Включение УМИ</string>
+   </property>
+  </action>
+  <action name="action_18">
+   <property name="text">
+    <string>Включение УПП</string>
+   </property>
+  </action>
+  <action name="action_21">
+   <property name="text">
+    <string>Включить все</string>
+   </property>
+  </action>
+  <action name="action_22">
+   <property name="text">
+    <string>Включение лазеров</string>
+   </property>
+  </action>
+  <action name="action_23">
+   <property name="text">
+    <string>Включение излучения пилотных лазеров</string>
+   </property>
+  </action>
+  <action name="action_LaserNet">
+   <property name="text">
+    <string>Вызов LaserNet</string>
+   </property>
+  </action>
+  <action name="action_24">
+   <property name="text">
+    <string>Выключение ТМ-КЮ</string>
+   </property>
+  </action>
+  <action name="action_25">
+   <property name="text">
+    <string>Выключение УМИ</string>
+   </property>
+  </action>
+  <action name="action_26">
+   <property name="text">
+    <string>Выключение УПП</string>
+   </property>
+  </action>
+  <action name="action_27">
+   <property name="text">
+    <string>Выключение Лазеров ЛС-5</string>
+   </property>
+  </action>
+  <action name="action_29">
+   <property name="text">
+    <string>Выключить все</string>
+   </property>
+  </action>
+  <action name="action_30">
+   <property name="text">
+    <string>Руководство Оператора</string>
+   </property>
+  </action>
+  <action name="action_31">
+   <property name="text">
+    <string>О программе</string>
+   </property>
+  </action>
+  <action name="actionGuiDebug">
+   <property name="text">
+    <string>Отладка</string>
+   </property>
+  </action>
+  <action name="actionSaveGuiScheme">
+   <property name="text">
+    <string>Сохранить схему</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

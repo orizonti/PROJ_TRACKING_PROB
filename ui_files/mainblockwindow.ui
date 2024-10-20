@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainBlockWindow</class>
+ <widget class="QWidget" name="MainBlockWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>241</width>
+    <height>371</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Sans Serif</family>
+    <pointsize>14</pointsize>
+    <weight>50</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>MainBlockWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget
+{
+border: 2px solid line black;
+	background-color: rgb(148, 134, 115);
+	font: 14pt &quot;Sans Serif&quot;;
+}
+QLineEdit
+{
+border: 2px solid line black;
+	
+	background-color: rgb(227, 227, 227);
+}
+
+QLabel
+{
+border: 0px solid line black;
+	
+	background-color: rgb(148, 134, 115);
+
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
+   <property name="spacing">
+    <number>4</number>
+   </property>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="labelState">
+     <property name="styleSheet">
+      <string notr="true">QLabel
+{
+border: 2px solid line black;
+	
+	background-color: rgb(180, 185, 153);
+	
+	color: rgb(38, 33, 29);
+}</string>
+     </property>
+     <property name="text">
+      <string>Готов к запуску</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="DigitalClock" name="currentDateTimeLCD">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget
+{
+border: 2px solid line black;
+
+	background-color: rgb(94, 94, 94);
+}</string>
+     </property>
+     <property name="digitCount">
+      <number>19</number>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QPushButton" name="butRotateCalibration">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Процедура привязки</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QPushButton" name="butResetAll">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Сброс</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <family>Sans Serif</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel
+{
+border: 2px solid line black;
+	
+	background-color: rgb(255, 170, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>Контроллер процессов</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QPushButton" name="butStartMoveCircle">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Круг</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <widget class="QPushButton" name="ButSetPowerSupplyCommutator">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: rgb(170, 0, 0);
+}
+
+QPushButton:checked
+{
+
+ 
+	background-color: rgb(85, 170, 0);
+
+}
+
+QPushButton:pressed
+{
+
+ 
+	
+	background-color: qlineargradient(spread:pad, x1:0.025, y1:0.00568182, x2:1, y2:1, stop:0 rgba(0, 170, 18, 255), stop:1 rgba(255, 255, 255, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Питание каналов</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QPushButton" name="ButTurnToWorkMode">
+     <property name="font">
+      <font>
+       <family>Sans Serif</family>
+       <pointsize>14</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: rgb(170, 0, 0);
+}
+
+QPushButton:checked
+{
+
+ 
+	background-color: rgb(85, 170, 0);
+
+}
+
+QPushButton:pressed
+{
+
+ 
+	
+	background-color: qlineargradient(spread:pad, x1:0.025, y1:0.00568182, x2:1, y2:1, stop:0 rgba(0, 170, 18, 255), stop:1 rgba(255, 255, 255, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Пуск</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
+    <widget class="QPushButton" name="butMoveEnginesToStart">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Привода в начало</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QPushButton" name="butShutDownProgram">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Завершение работы</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QPushButton" name="butSetAimingPointsNull">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Сброс наведения</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QPushButton" name="butResetROI">
+     <property name="styleSheet">
+      <string notr="true">QPushButton
+{
+background-color: qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(116, 116, 116, 255), stop:1 rgba(255, 255, 255, 255))
+}
+
+QPushButton:pressed
+{
+	background-color: qlineargradient(spread:pad, x1:0.452726, y1:1, x2:0.408677, y2:0.102, stop:0 rgba(93, 93, 93, 251), stop:1 rgba(63, 63, 63, 255));
+
+}</string>
+     </property>
+     <property name="text">
+      <string>Сброс стробов</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>DigitalClock</class>
+   <extends>QLCDNumber</extends>
+   <header location="global">DigitalClock.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
