@@ -1,6 +1,6 @@
 #ifndef LABELIMAGE_H
 #define LABELIMAGE_H
-#include "AdjustableWidget.h"
+#include "widget_adjustable.h"
 
 
 class LabelImage : public AdjustableLabel
@@ -12,6 +12,7 @@ public:
 	~LabelImage();
 	int X_Pressed = 0;
 	int Y_Pressed = 0;
+	std::pair<int,int> SizeImage;
 
 protected:
 	void mousePressEvent(QMouseEvent * ev);

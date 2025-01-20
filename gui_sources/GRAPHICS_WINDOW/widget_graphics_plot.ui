@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GraphicsWindow</class>
+ <widget class="QWidget" name="GraphicsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>517</width>
+    <height>277</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>320</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>GraphicsWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget
+{
+border: 0px solid line black;
+	background-color: rgb(148, 134, 115);
+	font: 14pt &quot;Sans Serif&quot;;
+}
+
+QDoubleSpinBox
+{
+	background-color: rgb(202, 200, 163);
+	font: 12pt &quot;Sans Serif&quot;;
+}</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_7">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
+    <number>1</number>
+   </property>
+   <property name="spacing">
+    <number>1</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QCustomPlot" name="graphWidget1" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>44</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QWidget
+{
+	border: 1px solid rgb(110, 5, 136);
+	background-color: rgb(199, 199, 199);
+}</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header location="global">qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

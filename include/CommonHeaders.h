@@ -5,10 +5,10 @@
 #include <QSettings>
 
 //#include "qcustomplot.h"
-//#include <eigen3/Eigen/Eigen>
-//#include <eigen3/Eigen/Dense>
-//#include <eigen3/Eigen/src/Core/Matrix.h>
-//#include <eigen3/Eigen/src/Core/Matrix.h>
+//#include <Eigen3/Eigen/Eigen>
+//#include <Eigen3/Eigen/Dense>
+//#include <Eigen3/Eigen/src/Core/Matrix.h>
+//#include <Eigen3/Eigen/src/Core/Matrix.h>
 
 #include <QObject>
 #include <QWidget>
@@ -58,7 +58,7 @@
 
 #include <QQueue>
 #include <QtConcurrent/qtconcurrentrun.h>
-#include "DebugOutputFilter.h"
+#include "debug_output_filter.h"
 
 QString print_thread_id();
 

@@ -4,7 +4,7 @@ project(TorchProcessingModule LANGUAGES CXX)
 
 message("[ PYTORCH PROCESSING LIBRARY ADD ]")
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRenT_DIR ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -34,12 +34,12 @@ message("PYTORCH LIBRARY NOT FOUND IN: ${LIBRARY_DIR}/NN_LIBRARY")
 endif()
 #===========================================================
 
-cmake_path(GET PROJECT_SOURCE_DIR PARENT_PATH SOURCE_DIR)
+cmake_path(GET PROJECT_SOURCE_DIR PARenT_PATH SOURCE_DIR)
 message("MAIN PROJECT SOURCE: "${SOURCE_DIR})
 
 
 set(CMAKE_PREFIX_PATH ${QT_LIB_DIR})
-find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONenTS Core REQUIRED)
 
 set(CMAKE_PREFIX_PATH ${PYTORCH_DIR})
 find_package(Torch REQUIRED)
@@ -72,4 +72,4 @@ target_link_libraries(TorchProcessingModule Qt6::Core)
 target_compile_definitions(TorchProcessingModule PRIVATE TORCH_PROCESSING_MODULE_LIBRARY)
 
 
-#set(CMAKE_PROJECT_INCLUDE_BEFORE "D:/DEVELOPMENT/PROJECTS/CONTROL_PROJECTS/DC_MOTOR_CONTROL_VSCODE/.qtc/package-manager/auto-setup.cmake")
+#set(CMAKE_PROJECT_INCLUDE_BEFORE "D:/DEVELOPMenT/PROJECTS/CONTROL_PROJECTS/DC_MOTOR_CONTROL_VSCODE/.qtc/package-manager/auto-setup.cmake")

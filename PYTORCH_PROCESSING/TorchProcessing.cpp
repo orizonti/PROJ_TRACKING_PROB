@@ -117,7 +117,7 @@ ImageProcessingTorch::ImageProcessingTorch()
 //	torch::Tensor input_matrix = torch::ones({3,measure_count});
 //	torch::Tensor output_matrix = torch::ones({3,measure_count});
 //
-//	//qDebug() << "START - " << pos_max_norm1 << " END - " << pos_max_norm2 << "COUNT - " << measure_count;
+//	//qDebug() << "START - " << pos_max_norm1 << " enD - " << pos_max_norm2 << "COUNT - " << measure_count;
 //
 //	              for(int n = 0; n < measure_count; n++)
 //	              {
@@ -287,7 +287,7 @@ ImageProcessingTorch::ImageProcessingTorch()
 //	std::cout  << RotationToString() << Qt::endl;
 //	std::cout  << MatrixToString() << Qt::endl;
 //	
-//	SaveMeasureDataToFile(QString("E:/TrainerData/RotateMatrixOutput.txt"));
+//	SaveMeasureDataToFile(QString("E:/TrackingProject/RotateMatrixOutput.txt"));
 //	qDebug()  << "=================================================================================" << Qt::endl;
 //
 //	RotationValid = true;
@@ -355,10 +355,10 @@ ImageProcessingTorch::ImageProcessingTorch()
 //}
 
 
-//void RotateOperationContainer::SaveMeasureDataToFile(QString FileName)
+//void RotateOperationContainer::SaveMeasureDataToFile(QString Filename)
 //{
-//    qDebug() << "Save data to file - " << FileName ;
-//    QFile data(FileName);
+//    qDebug() << "Save data to file - " << Filename ;
+//    QFile data(Filename);
 //    data.open(QFile::WriteOnly); data.flush();
 //
 //
@@ -391,11 +391,11 @@ ImageProcessingTorch::ImageProcessingTorch()
 //}
 
 
-//void RotateOperationContainer::LoadRotationFromFile(QString FileName)
+//void RotateOperationContainer::LoadRotationFromFile(QString Filename)
 //{
 //
 //	 QDebugStream cout(std::cout);
-//     QFile data(FileName);
+//     QFile data(Filename);
 //	 data.open(QFile::ReadOnly); 
 //
 //	 if(!data.isOpen())
@@ -438,7 +438,7 @@ ImageProcessingTorch::ImageProcessingTorch()
 //	 }
 //
 //	 qDebug() << "===================================================";
-//	 qDebug() << "                  LOAD ROTATION FROM FILE - " << FileName << Qt::endl;
+//	 qDebug() << "                  LOAD ROTATION FROM FILE - " << Filename << Qt::endl;
 //
 //	 CommonMatrix = torch::from_blob(rotate_matrix,{3,3}); 
 //	 CommonMatrixInverse = torch::inverse(CommonMatrix);

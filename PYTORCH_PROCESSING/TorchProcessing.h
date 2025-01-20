@@ -22,8 +22,8 @@ public:
 //	void Reset();
 //	void CopyRotation(const RotateOperationContainer& CopyContainer);
 //  void SetRotateMatrix(torch::Tensor RotateMatrix);
-//	void SetCoord(QPair<double,double> Coord) override;
-//	QPair<double,double> GetCoord() override;
+//	void SetInput(const QPair<double,double>& Coord) override;
+//	const QPair<double,double>& GetOutput() override;
 //	void Inverse();
 //	double CalcVirtualZComponent(QPair<double,double> InputCoord);
 //	void AppendOperation(pair<RotateAxis,double> Operation);
@@ -40,8 +40,8 @@ public:
 //	bool RotationValid = true;
 //	float system_transform_scale = 1;
 //	bool isValid();
-//	void SaveMeasureDataToFile(QString FileName);
-//	void LoadRotationFromFile(QString FileName);
+//	void SaveMeasureDataToFile(QString Filename);
+//	void LoadRotationFromFile(QString Filename);
 //	string RotationToString();
 //	string RotationToString(vector<pair<RotateAxis,double>> Sequence);
 //	string MatrixToString();

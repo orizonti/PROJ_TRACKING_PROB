@@ -7,13 +7,14 @@
 
 #include <QPainter>
 #include <QDialog>
+#include <QGraphicsSceneMouseEvent>
 
 
 int LinkLine::LinkCount = 0;
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
-LinkLine::LinkLine(GraphicWidgetNode* sourcePortNode, GraphicWidgetNode* destPortNode, int PortOutput, int PortIntput)
+LinkLine::LinkLine(WidgetScenenodeInterface* sourcePortNode, WidgetScenenodeInterface* destPortNode, int PortOutput, int PortIntput)
     : arrowSize(10)
 {
     setAcceptedMouseButtons(Qt::RightButton);
@@ -33,8 +34,8 @@ LinkLine::LinkLine(GraphicWidgetNode* sourcePortNode, GraphicWidgetNode* destPor
 Node* LinkLine::sourcePortNode() const { return sourcePort; }
 Node* LinkLine::destPortNode() const { return destPort; }
 
-GraphicWidgetNode* LinkLine::sourceNode() const { return source; }
-GraphicWidgetNode* LinkLine::destNode() const  {return dest; }
+WidgetScenenodeInterface* LinkLine::sourcenode() const { return source; }
+WidgetScenenodeInterface* LinkLine::destNode() const  {return dest; }
 
 void LinkLine::adjust()
 {
@@ -115,7 +116,7 @@ void LinkLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
 void LinkLine::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
-  //QGraphicsItem::mouseDoubleClickEvent(event);
+  QGraphicsItem::mouseDoubleClickEvent(event);
   this->hide();
   this->setEnabled(false);
 
@@ -135,6 +136,7 @@ void LinkLine::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
   //qDebug( ) << "RESULT : " << dialog.result();
 
 }
+
 
 std::tuple<int,int,int,int> LinkLine::GetLinkScheme()
 {

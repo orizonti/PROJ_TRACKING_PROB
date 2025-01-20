@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_AUTOUIC_SEARCH_PATHS ./ui_files)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ./gui_files)
 #===========================================================
 
 set(LIBRARY_DIR "D:/LIBRARY")
@@ -24,12 +24,19 @@ set(COMPILER "gcc_64")
 set(TORCH_VERSION "libtorch")
 endif()
 
-if(EXISTS "${LIBRARY_DIR}/IMAGE_PROCESSING/OPENCV/opencv451")
-set(CV_VERSION "opencv451")
+if(EXISTS "/home/broms/LIBRARY")
+set(LIBRARY_DIR "/home/broms/LIBRARY")
+set(COMPILER "gcc_64")
+set(TORCH_VERSION "libtorch")
 endif()
+
 
 if(EXISTS "${LIBRARY_DIR}/IMAGE_PROCESSING/OPENCV/opencv410")
 set(CV_VERSION "opencv410")
+endif()
+
+if(EXISTS "${LIBRARY_DIR}/IMAGE_PROCESSING/OPENCV/opencv451")
+set(CV_VERSION "opencv451")
 endif()
 
 set(OPENCV_LIB_DIR "${LIBRARY_DIR}/IMAGE_PROCESSING/OPENCV/${CV_VERSION}/")
@@ -84,19 +91,31 @@ list(APPEND CMAKE_PREFIX_PATH ${PYTORCH_DIR})
 
 find_package(Qt6 COMPONENTS Widgets Network Core SerialPort PrintSupport REQUIRED)
 find_package(OpenCV REQUIRED )
-#find_package(Torch REQUIRED)
+find_package(Torch REQUIRED)
 
 message("OPENCV LIBS "${OpenCV_LIBS})
 #=============================================================
 
 #=========================INCLUDES============================
-#include_directories("${PYTORCH_DIR}/include")
-#include_directories("${PYTORCH_DIR}/include/torch/csrc/api/include")
+include_directories("${PYTORCH_DIR}/include")
+include_directories("${PYTORCH_DIR}/include/torch/csrc/api/include")
 include_directories("./gui_sources")
+include_directories("./gui_sources/GRAPHICS_WINDOW")
 #include_directories("${PROJECT_SOURCE_DIR}/PYTORCH_PROCESSING") #SUBPROJECT PYTORCH_PROCESSING
-include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING") #SUBPROJECT PYTORCH_PROCESSING
-include_directories("${PROJECT_SOURCE_DIR}/CV_AIM_IMITATION") #SUBPROJECT PYTORCH_PROCESSING
-include_directories("${PROJECT_SOURCE_DIR}/UTILITES") #SUBPROJECT PYTORCH_PROCESSING
+include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING") 
+include_directories("${PROJECT_SOURCE_DIR}/CV_AIM_IMITATION")
+include_directories("${PROJECT_SOURCE_DIR}/UTILITES") 
+include_directories("${PROJECT_SOURCE_DIR}/COMMON") 
+include_directories("${PROJECT_SOURCE_DIR}/AIMING_MODULES") 
+include_directories("${PROJECT_SOURCE_DIR}/DEVICES") 
+include_directories("${PROJECT_SOURCE_DIR}/DEVICES/LaserPointerControlLib") 
+include_directories("${PROJECT_SOURCE_DIR}/DEVICES/MotorImitatorLib") 
+include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/DATA_STRUCTURES") 
+include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/EMBEDED_RING_BUFFER") 
+include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/GENERIC_MESSAGES") 
+include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/TRANSMISSION_MODULES") 
+include_directories("/home/broms/LIBRARY/MATH_LIBRARY") 
+
 
 include_directories("${LIBRARY_DIR}/IMAGE_PROCESSING/opencv470/build/include")
 include_directories("C:/HEADERS_STD")
@@ -115,38 +134,79 @@ include_directories("/usr/include/glib-2.0")
 include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
 
 #=========================SUBPROJECTS============================
-#add_subdirectory(rotate_optimization)
-#include_directories("${PROJECT_SOURCE_DIR}/rotate_optimization")
+
+add_subdirectory("ROTATE_OPTIMIZATION/RotationContainerLib")
+include_directories("${PROJECT_SOURCE_DIR}/ROTATE_OPTIMIZATION/RotationContainerLib")
+include_directories("${PROJECT_SOURCE_DIR}/ROTATE_OPTIMIZATION")
 #==============================================================
 
 #======================LINK PROJECT===========================
 add_executable (ImageProcProject
         "main.cpp"
-        "./AIM_IMAGE_IMITATION/AimImageImitatorClass.cpp"
-        "./AIM_IMAGE_IMITATION/AimImageImitatorClass.h"
-        "./CV_IMAGE_PROCESSING/CVImageProcessing.cpp"
-        "./CV_IMAGE_PROCESSING/CVImageProcessing.h"
-        "./CAMERA_INTERFACE/CameraInterfaceClass.cpp"
-        "./CAMERA_INTERFACE/CameraInterfaceClass.h"
+        "controller_process_class.cpp"
+        "./AIM_IMAGE_IMITATION/imitator_image_aim.cpp"
+        "./AIM_IMAGE_IMITATION/imitator_image_aim.h"
 
-        "./UTILITES/DebugOutputFilter.cpp"
-        "./UTILITES/SettingsEngine.cpp"
+        "./AIM_IMAGE_IMITATION/sinus_generator_class.cpp"
+        "./AIM_IMAGE_IMITATION/widget_sinus_source.cpp"
+        "./AIM_IMAGE_IMITATION/widget_sinus_source.ui"
 
-        "./gui_sources/DisplayWidget.cpp"
-        "./gui_sources/AdjustableWidget.cpp"
-        "./gui_sources/graphicwidgetnode.cpp"
+        "./CV_IMAGE_PROCESSING/cv_image_processing.cpp"
+        "./CV_IMAGE_PROCESSING/cv_image_processing.h"
+        "./CAMERA_INTERFACE/camera_interface_class.cpp"
+        "./CAMERA_INTERFACE/camera_interface_class.h"
+
+        "./UTILITES/debug_output_filter.cpp"
+        "./UTILITES/register_settings.cpp"
+        "./UTILITES/engine_statistics.cpp"
+        "./UTILITES/transform_coord_class.cpp"
+        "./ROTATE_OPTIMIZATION/rotation_find_executor.cpp"
+
+        "./DEVICES/scanator_control_class.cpp"
+
+        "./AIMING_MODULES/aiming_class.cpp"
+        "./AIMING_MODULES/pid_class.cpp"
+        "./AIMING_MODULES/rotate_vector_class.cpp"
+
+        "./COMMON/interface_pass_coord.cpp"
+        "./COMMON/interface_image_source.cpp"
+
+        "./TRANSMISSION/DATA_STRUCTURES/message_command_structures.cpp"
+
+        "./TRANSMISSION/DATA_STRUCTURES/engine_type_register.cpp"
+        "./TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp"
+
+        "./gui_sources/widget_process_controller.cpp"
+        "./gui_sources/widget_processing_image_generic.cpp"
+        "./gui_sources/widget_imitator_control.cpp"
+        "./gui_sources/widget_processing_image_control.cpp"
+        "./gui_sources/widget_camera_control.cpp"
+        "./gui_sources/widget_adjustable.cpp"
+        "./gui_sources/widget_scene_node_interface.cpp"
         "./gui_sources/labelimage.cpp"
         "./gui_sources/link_line.cpp"
         "./gui_sources/node.cpp"
-        "./gui_sources/mainwindowclass.cpp"
-        "./gui_sources/OutputImageDisplayClass.cpp"
-        "./gui_sources/OutputTextDisplayClass.cpp"
+        "./gui_sources/widget_main_window.cpp"
+        "./gui_sources/widget_output_image_display.cpp"
+        "./gui_sources/widget_output_text_display.cpp"
+        "./gui_sources/qcustomplot.cpp"
+        "./gui_sources/widget_scanator_control.cpp"
+        "./gui_sources/widget_aiming_control.cpp"
 
-        "./ui_files/DisplayWidget.ui"
-        "./ui_files/mainwindowclass.ui"
-        "./ui_files/mainblockwindow.ui"
-        "./ui_files/OutputImageDisplay.ui"
-        "./ui_files/OutputTextDisplay.ui"
+        "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp"
+        "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.ui"
+
+        "./gui_files/widget_processing_image_control.ui"
+        "./gui_files/widget_processing_image_generic.ui"
+        "./gui_files/widget_processing_image_control.ui"
+        "./gui_files/widget_camera_control.ui"
+        "./gui_files/widget_imitator_control.ui"
+        "./gui_files/widget_main_window.ui"
+        "./gui_files/widget_output_image_display.ui"
+        "./gui_files/widget_output_text_display.ui"
+        "./gui_files/widget_scanator_control.ui"
+        "./gui_files/widget_aiming_control.ui"
+        "./gui_files/pictures.qrc"
         )
 target_link_libraries(ImageProcProject ${OpenCV_LIBS})
 target_link_libraries(ImageProcProject Qt6::Widgets)
@@ -157,24 +217,26 @@ target_link_libraries(ImageProcProject Qt6::PrintSupport)
 target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libglib-2.0.so)
 target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libgobject-2.0.so)
 target_link_libraries(ImageProcProject /usr/local/lib/x86_64-linux-gnu/libaravis-0.8.so)
+target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/DEVICES/LaserPointerControlLib/libLaserControlLib.so")
+#target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/DEVICES/MotorImitatorLib/libMotorControlLib.so")
 
 
 #target_link_libraries(ImageProcProject ${TORCH_PROCESS_MODULE})
-#if (WIN32)
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch_cpu.lib")
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch.lib")
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/c10.lib")
-#endif (WIN32)
-#
-#if (UNIX)
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libtorch_cpu.so")
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libtorch.so")
-#target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libc10.so")
-#endif (UNIX)
+if (WIN32)
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch_cpu.lib")
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch.lib")
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/c10.lib")
+endif (WIN32)
+
+if (UNIX)
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libtorch_cpu.so")
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libtorch.so")
+target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/libc10.so")
+endif (UNIX)
 
 
 #target_link_libraries(ImageProcProject onnxruntime.so)
-#target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/build/rotate_optimization/libRotateOptimization.a")
+target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/build/ROTATE_OPTIMIZATION/RotationContainerLib/libRotateOptimization.so")
 
 #link_directories("${LIBRARY_DIR}/NN_LIBRARY/libtorch/lib")
 #target_link_libraries(ImageProcProject "/home/broms/PROGRAM_LIBRARY/NN_LIBRARY/libtorch/lib/libtorch_cpu.so")

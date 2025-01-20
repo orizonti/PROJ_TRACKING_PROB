@@ -2,7 +2,7 @@
 #define LINKLINE_H
 #include <QGraphicsObject>
 #include <QDebug>
-#include "graphicwidgetnode.h"
+#include "widget_scene_node_interface.h"
 
 
 class Node;
@@ -11,15 +11,15 @@ class LinkLine : public QGraphicsObject
 {
 Q_OBJECT
 public:
-    LinkLine(GraphicWidgetNode *sourcePortNode, GraphicWidgetNode *destPortNode, int PortOutput, int PortInput);
+    LinkLine(WidgetScenenodeInterface *sourcePortNode, WidgetScenenodeInterface *destPortNode, int PortOutput, int PortInput);
 	void SetColor(QColor Color) { LinkLineColor = Color; };
     int NumberLink = 0;
     static int LinkCount;
 
     Node *sourcePortNode() const;
     Node *destPortNode() const;
-    GraphicWidgetNode* sourceNode() const;
-    GraphicWidgetNode* destNode() const;
+    WidgetScenenodeInterface* sourcenode() const;
+    WidgetScenenodeInterface* destNode() const;
 	QColor LinkLineColor = QColor(Qt::black);
     std::tuple<int,int,int,int> GetLinkScheme();
     QString PrintLinkLineScheme();
@@ -37,11 +37,11 @@ public:
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
-    GraphicWidgetNode* source;
-    GraphicWidgetNode* dest;
+    WidgetScenenodeInterface* source;
+    WidgetScenenodeInterface* dest;
     Node* sourcePort;
     Node* destPort;
 
