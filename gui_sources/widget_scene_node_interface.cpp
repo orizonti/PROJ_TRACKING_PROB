@@ -4,16 +4,31 @@
 #include "widget_scene_node_interface.h"
 
 #define TAG "[ WIDGTES     ]" 
-int WidgetScenenodeInterface::CounterWidget = 0;
+int WidgetSceneNodeInterface::CounterWidget = 0;
 
-WidgetScenenodeInterface::WidgetScenenodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS,QWidget* Widget)
+WidgetSceneNodeInterface::WidgetSceneNodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS,QWidget* Widget)
 {
-WindowNode = Widget; NumberWidget = CounterWidget; CounterWidget++;
-
-//qDebug() << "NEW WIDGET POS: " << X_POS << Y_POS;
+Init(Widget);
 
 Scene->addItem(this);
+Scene->addItem(PortNodes[0]); Scene->addItem(PortNodes[1]); Scene->addItem(PortNodes[2]); Scene->addItem(PortNodes[3]);
+this->SetScenePosition(X_POS, Y_POS); this->UpdateWidget();
+}
 
+WidgetSceneNodeInterface::WidgetSceneNodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS, WidgetAdjustable *Widget)
+{
+Init(Widget);
+
+Scene->addItem(this);
+Scene->addItem(PortNodes[0]); Scene->addItem(PortNodes[1]); Scene->addItem(PortNodes[2]); Scene->addItem(PortNodes[3]);
+this->SetScenePosition(X_POS, Y_POS); this->UpdateWidget();
+connect(Widget, &WidgetAdjustable::SignalHideWidget, this, &WidgetSceneNodeInterface::SlotHideWidget);
+}
+
+void WidgetSceneNodeInterface::Init(QWidget* widget)
+{
+WindowNode = widget; 
+NumberWidget = CounterWidget; CounterWidget++;
 this->setWidget(WindowNode); 
 this->setFlag(QGraphicsItem::ItemIsMovable, true);
 this->setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -24,15 +39,20 @@ PortNodes.push_back(new Node(1));
 PortNodes.push_back(new Node(2));
 PortNodes.push_back(new Node(3));
 PortNodes.push_back(new Node(4));
-
-Scene->addItem(PortNodes[0]); Scene->addItem(PortNodes[1]); Scene->addItem(PortNodes[2]); Scene->addItem(PortNodes[3]);
-
-
 this->setEnabled(true);
-this->SetScenePosition(X_POS, Y_POS); this->UpdateWidget();
 }
 
-WidgetScenenodeInterface::~WidgetScenenodeInterface()
+
+void WidgetSceneNodeInterface::HideNodes() { for(auto Node: PortNodes) Node->hide(); }
+void WidgetSceneNodeInterface::HideLinks() { for(auto Line: LinkLineList) Line->hide(); }
+
+void WidgetSceneNodeInterface::SlotHideWidget()
+{
+   qDebug() << "WIDGET NODE HIDE: " << NumberWidget;
+   HideNodes(); HideLinks(); this->hide();
+}
+
+WidgetSceneNodeInterface::~WidgetSceneNodeInterface()
 {
    delete PortNodes[0];
    delete PortNodes[1];
@@ -40,32 +60,32 @@ WidgetScenenodeInterface::~WidgetScenenodeInterface()
    delete PortNodes[3];
 }
 
-void WidgetScenenodeInterface::setWidget(QWidget *widget)
+void WidgetSceneNodeInterface::setWidget(QWidget *widget)
 {
     QGraphicsProxyWidget::setWidget(widget);
 }
 
 
-void WidgetScenenodeInterface::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void WidgetSceneNodeInterface::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
    //qDebug() << TAG << "MOUSE DOUBLE: " << NumberWidget << " BUTTON: " << event->button();      
    emit SignalWidgetPressed(NumberWidget);
    QGraphicsProxyWidget::mouseDoubleClickEvent(event);
 }
 
-void WidgetScenenodeInterface::focusInEvent(QFocusEvent *event)
+void WidgetSceneNodeInterface::focusInEvent(QFocusEvent *event)
 {
 	this->setWindowFlags(Qt::Window);
    return QGraphicsProxyWidget::focusInEvent(event);
 }
- void WidgetScenenodeInterface::focusOutEvent(QFocusEvent *event)
+ void WidgetSceneNodeInterface::focusOutEvent(QFocusEvent *event)
 {
 
 	this->scene()->update(this->scene()->sceneRect());
 	this->setWindowFlags(Qt::Widget);
    return QGraphicsProxyWidget::focusOutEvent(event);
 }
-QVariant WidgetScenenodeInterface::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+QVariant WidgetSceneNodeInterface::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
    //UpdateWidget();
    switch (change) { case ItemPositionHasChanged: UpdateWidget(); break; 
@@ -73,7 +93,7 @@ QVariant WidgetScenenodeInterface::itemChange(QGraphicsItem::GraphicsItemChange 
    return QGraphicsProxyWidget::itemChange(change,value);
 }
 
-LinkLine* WidgetScenenodeInterface::ConnectNode(int sourcePortNode ,WidgetScenenodeInterface* Node, int destPortNode)
+LinkLine* WidgetSceneNodeInterface::ConnectNode(int sourcePortNode ,WidgetSceneNodeInterface* Node, int destPortNode)
 {
     LinkLineList.append(new LinkLine(this, Node,sourcePortNode,destPortNode)); 
     Node->LinkLineList.append(LinkLineList.last());
@@ -89,7 +109,7 @@ LinkLine* WidgetScenenodeInterface::ConnectNode(int sourcePortNode ,WidgetScenen
 }
 
 
-void WidgetScenenodeInterface::UpdateWidget()
+void WidgetSceneNodeInterface::UpdateWidget()
 {
 int offset_x = 4;
 int offset_y = -4;
@@ -115,13 +135,13 @@ foreach (LinkLine *link, LinkLineList) link->adjust(); // graph->itemMoved();
 }
 }
 
-void WidgetScenenodeInterface::SetScenePosition(int PosX, int PosY) 
+void WidgetSceneNodeInterface::SetScenePosition(int PosX, int PosY) 
 {
    this->setPos(PosX,PosY); NodePositionX = PosX; NodePositionY = PosY; 
    //qDebug() << "WIDGET SET POS: " << PosX << PosY;
 }
 
-void WidgetScenenodeInterface::SetWidgetActive(bool active)
+void WidgetSceneNodeInterface::SetWidgetActive(bool active)
 {
     qDebug() << "[ MAIN WIND ] SET WIDGET NUMBER: " << NumberWidget << " ACTIVE: " << active; 
     if(active) this->show(); else hide();

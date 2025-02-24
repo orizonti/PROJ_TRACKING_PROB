@@ -8,7 +8,7 @@ class LabelImage : public AdjustableLabel
 	Q_OBJECT
 
 public:
-	LabelImage(QWidget *parent);
+	LabelImage(QWidget *parent = 0);
 	~LabelImage();
 	int X_Pressed = 0;
 	int Y_Pressed = 0;

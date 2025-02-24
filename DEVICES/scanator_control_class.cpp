@@ -3,12 +3,13 @@
 using namespace std;
 #define TAG "[ ENGINE CTRL ]" 
 
-static OutputFilter OutputFilter2;
 
 ScanatorControlClass::~ScanatorControlClass() { qDebug() << TAG << "DELETE"; }
 
 ScanatorControlClass::ScanatorControlClass(QObject* parrent) : QObject(parrent)
 {
+  StateBlock = StateBlockAtWork;
+
   EnginePort = new UDPEngineInterface("192.168.0.178",2323); 
   EnginePort->BindTo(QHostAddress::Any,2323);
 
@@ -71,6 +72,10 @@ void ScanatorControlClass::SlotMoveToPos(const QPair<double, double>& Pos)
     CommandChannel1->Position = ScanatorPos.first  * AngleToDAC.Scale + AngleToDAC.Offset;
     CommandChannel2->Position = ScanatorPos.second * AngleToDAC.Scale + AngleToDAC.Offset;
 
+    qDebug() << TAG_NAME << " SET POS: " << CommandScanator.DATA.StateChannel1.Position 
+                                         << CommandScanator.DATA.StateChannel2.Position;
+
+
     if(EnginePort != 0)
        EnginePort->SlotSendCommand(CommandScanator.toByteArray()); 
 
@@ -87,6 +92,10 @@ void ScanatorControlClass::SlotMoveOnStep(const QPair<double, double>& StepVecto
 
   CommandChannel1->Position = ScanatorPos.first  * AngleToDAC.Scale + AngleToDAC.Offset;
   CommandChannel2->Position = ScanatorPos.second * AngleToDAC.Scale + AngleToDAC.Offset;
+
+
+  qDebug() << TAG_NAME << " SET POS: " << CommandChannel1->Position 
+                                       << CommandChannel2->Position;
 
   if(EnginePort != 0)
      EnginePort->SlotSendCommand(CommandScanator.toByteArray()); 
@@ -121,5 +130,3 @@ void ScanatorControlClass::LoadSettings()
 
   this->RotEngineToCamera.LoadRotationFromFile(RotateParamEngCam);
 }
-
-int ScanatorControlClass::GetID() {return SettingsRegister::GetValue("BLOCK_ID_SCANATOR"); }; 

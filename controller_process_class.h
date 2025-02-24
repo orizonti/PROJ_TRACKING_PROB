@@ -30,8 +30,10 @@ static std::shared_ptr<LaserControlClass>          DeviceLaser;
 //static std::shared_ptr<MotorInterface>             DeviceImitatorMotor;
 
 static std::shared_ptr<CVImageProcessing>          ModuleImageProc;
+static std::shared_ptr<CVImageProcessing>          ModuleImageProc2;
+static std::shared_ptr<AimingClass>                ModuleAimingLoop;
+
 static std::shared_ptr<AimImageImitatorClass>      ModuleImitatorImage;
-static std::shared_ptr<AimingClass>                ModuleAiming;
 static std::shared_ptr<SinusGeneratorClass>        ModuleSinusGenerator;
 
 static std::shared_ptr<RotationFindProcessClass>  ProcessFindRotation;

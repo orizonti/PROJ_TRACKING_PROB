@@ -20,6 +20,7 @@
 #include "AIM_IMAGE_IMITATION/widget_sinus_source.h"
 #include "widget_process_controller.h"
 #include "widget_aiming_control.h"
+#include "widget_container_group.h"
 
 
 
@@ -39,6 +40,12 @@ int main(int argc, char* argv[])
   WidgetImageImitator      WindowImageImitator; 
   WidgetSinusSource        WindowSinusSource;
   WidgetProcessingImageControl    WindowImageProcessingControl; 
+  WidgetProcessingImageControl    WindowImageProcessingControl2; 
+
+  WidgetContainerGroup WidgetGroup;
+  WidgetGroup.AddWidget(WindowImageProcessingControl);
+  WidgetGroup.AddWidget(WindowImageProcessingControl2);
+  WidgetGroup.setMaximumHeight(150);
 
   WidgetCameraControl      WindowCameraControl; 
   WidgetScanatorControl    WindowScanatorInterface; 
@@ -48,22 +55,25 @@ int main(int argc, char* argv[])
   WidgetProcessingImage WindowImitatorDisplay("ИМИТАТОР");
   WidgetProcessingImage WindowImageProcessingDisplay("ОБРАБОТКА");
 
-  WindowCameraControl.LinkToDevice(ProcessControllerClass::DeviceCamera);
-  WindowCameraDisplay.LinkToModule(ProcessControllerClass::DeviceCamera);
+           WindowCameraControl.LinkToDevice(ProcessControllerClass::DeviceCamera);
+           WindowCameraDisplay.LinkToModule(ProcessControllerClass::DeviceCamera);
 
-  WindowImageImitator.LinkToModule(ProcessControllerClass::ModuleImitatorImage);
-  WindowImitatorDisplay.LinkToModule(ProcessControllerClass::ModuleImitatorImage);
+           WindowImageImitator.LinkToModule(ProcessControllerClass::ModuleImitatorImage);
+         WindowImitatorDisplay.LinkToModule(ProcessControllerClass::ModuleImitatorImage);
 
   WindowImageProcessingControl.LinkToModule(ProcessControllerClass::ModuleImageProc);
+ WindowImageProcessingControl2.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+
   WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc);
+  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc2);
 
-  WindowScanatorInterface.LinkToDevice(ProcessControllerClass::DeviceScanator);
-  WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAiming);
+      WindowScanatorInterface.LinkToDevice(ProcessControllerClass::DeviceScanator);
+          WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAimingLoop);
 
-  WindowSinusSource.LinkToModule(ProcessControllerClass::ModuleSinusGenerator);
+            WindowSinusSource.LinkToModule(ProcessControllerClass::ModuleSinusGenerator);
 
-  auto AimingPort = &ProcessController->ModuleAiming->PortSignalSetAiming; 
-  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<double,double>)), AimingPort,SLOT(SlotSetCoord(QPair<double,double>))) ;
+  //auto AimingPort = &ProcessController->ModuleAimingLoop->PortSignalSetAiming; 
+  //QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<double,double>)), AimingPort,SLOT(SlotSetCoord(QPair<double,double>))) ;
 
   //=================================================
   WidgetMainWindow MainWindow;
@@ -72,7 +82,7 @@ int main(int argc, char* argv[])
                   MainWindow.AddWidgetToDisplay(&WindowImageProcessingDisplay);
                   
                   MainWindow.AddWidgetToDisplay(&WindowImageImitator);
-                  MainWindow.AddWidgetToDisplay(&WindowImageProcessingControl);
+                  MainWindow.AddWidgetToDisplay(&WidgetGroup);
                   MainWindow.AddWidgetToDisplay(&WindowCameraControl);
                   MainWindow.AddWidgetToDisplay(&WindowScanatorInterface);
                   MainWindow.AddWidgetToDisplay(&WindowSinusSource);
@@ -82,8 +92,14 @@ int main(int argc, char* argv[])
                   //MainWindow.AddWidgetToDisplay(ProcessControllerClass::DeviceImitatorMotor->WindowControl);
                   MainWindow.AddWidgetToDisplay(&WindowProcessController);
 
+                  MainWindow.AddWidgetToDisplay(WindowImageProcessingDisplay.LinkedWidget); 
+
                   MainWindow.LoadWidgetsLinks();
+
+                  //MainWindow.GetLastWidget()->SlotHideWidget();
                   MainWindow.show();
+
+  QObject::connect(&WidgetGroup, SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(SlotSetActiveChannel(int)));
 
   app.exec();
 }

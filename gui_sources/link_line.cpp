@@ -14,7 +14,7 @@ int LinkLine::LinkCount = 0;
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
-LinkLine::LinkLine(WidgetScenenodeInterface* sourcePortNode, WidgetScenenodeInterface* destPortNode, int PortOutput, int PortIntput)
+LinkLine::LinkLine(WidgetSceneNodeInterface* sourcePortNode, WidgetSceneNodeInterface* destPortNode, int PortOutput, int PortIntput)
     : arrowSize(10)
 {
     setAcceptedMouseButtons(Qt::RightButton);
@@ -34,8 +34,8 @@ LinkLine::LinkLine(WidgetScenenodeInterface* sourcePortNode, WidgetScenenodeInte
 Node* LinkLine::sourcePortNode() const { return sourcePort; }
 Node* LinkLine::destPortNode() const { return destPort; }
 
-WidgetScenenodeInterface* LinkLine::sourcenode() const { return source; }
-WidgetScenenodeInterface* LinkLine::destNode() const  {return dest; }
+WidgetSceneNodeInterface* LinkLine::sourcenode() const { return source; }
+WidgetSceneNodeInterface* LinkLine::destNode() const  {return dest; }
 
 void LinkLine::adjust()
 {
@@ -74,8 +74,8 @@ void LinkLine::adjust()
     if(boundingRect().isEmpty()) return;
     if(this->scene() == nullptr) return;
 
-    //this->scene()->update(boundingRect());
-    //this->scene()->update(this->sceneBoundingRect());
+    //this->Scene()->update(boundingRect());
+    //this->Scene()->update(this->SceneBoundingRect());
 }
 
 QRectF LinkLine::boundingRect() const
@@ -126,10 +126,10 @@ void LinkLine::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
   qDebug() << "DELET LINK: "<< this->NumberLink << "COUNT: " << LinkLine::LinkCount; 
   this->scene()->removeItem(this);
   //QPen pen; pen.setWidth(3); pen.setColor(Qt::red);
-  //this->scene()->addRect(this->boundingRect(),pen);
+  //this->Scene()->addRect(this->boundingRect(),pen);
 
   //QMessageBox dialog;
-  //auto widget = this->scene()->addWidget(&dialog);
+  //auto widget = this->Scene()->addWidget(&dialog);
   //     widget->setPos(400,400);
   //dialog.exec();
   //dialog.show();

@@ -1,11 +1,9 @@
 #include "interface_pass_coord.h"
-#include <QDebug>
 
 
 PassTwoCoordClass& operator >>(PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever) 
 { 
-    Reciever.SetInput(Sender.GetOutput()); if(Reciever.isLinked()) Reciever.PassCoord(); 
-    return Reciever; 
+    Reciever.SetInput(Sender.GetOutput()); if(Reciever.isLinked()) Reciever.PassCoord(); return Reciever; 
 }
 
 PassTwoCoordClass& operator >>(const QPair<double, double>& Coord, PassTwoCoordClass& Reciever) 
@@ -19,16 +17,18 @@ PassTwoCoordClass& operator >>(PassTwoCoordClass& Sender, QPair<double,double>& 
 
 void PassTwoCoordClass::SetLink(PassTwoCoordClass* NewLink) { Link = NewLink; }
 PassTwoCoordClass& operator | (PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever) 
-                                { 
-                                    qDebug() << "LINK: " << Sender.GetID()<< " TO " << Reciever.GetID() << "PTR";
-                                    Sender.SetLink(&Reciever); return Reciever; 
-                                }
+                                { Sender.SetLink(&Reciever); return Reciever; }
 
  std::shared_ptr<PassTwoCoordClass> operator | (std::shared_ptr<PassTwoCoordClass> Sender, 
                                std::shared_ptr<PassTwoCoordClass> Reciever)
                                {
-                                qDebug() << "LINK: " << Sender->GetID()<< " TO " << Reciever->GetID();
                                 Sender->SetLink(Reciever.get()); return Reciever; 
+                               }
+
+                PassTwoCoordClass& operator | (std::shared_ptr<PassTwoCoordClass> Sender, 
+                               PassTwoCoordClass& Reciever)
+                               {
+                                Sender->SetLink(&Reciever); return Reciever; 
                                }
 
 QPair<double, double> operator*(QPair<double, double>& x,const QPair<double, double>& y) { return QPair<double,double>(x.first * y.first, x.second * y.second); }

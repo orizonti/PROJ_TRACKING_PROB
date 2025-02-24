@@ -21,9 +21,9 @@ WidgetAimingControl::~WidgetAimingControl()
 
 void WidgetAimingControl::SlotDisplayState()
 {
-    auto& BlockState      = ModuleAiming->StateBlock;
-    auto& BlockAimingType = ModuleAiming->AimingState;
-    auto& PIDParam        = ModuleAiming->ModulePID.PIDParam;
+    auto& BlockState      = ModuleAimingLoop->StateBlock;
+    auto& BlockAimingType = ModuleAimingLoop->AimingState;
+    auto& PIDParam        = ModuleAimingLoop->ModulePID.PIDParam;
 
 	ui.checkWorkBlock->blockSignals(true);
 	if (BlockState == StateBlockDisabled) ui.checkWorkBlock->setChecked(false);
@@ -47,7 +47,7 @@ void WidgetAimingControl::SlotDisplayState()
 
 void WidgetAimingControl::LinkToModule(std::shared_ptr<AimingClass> Module)
 {
-    ModuleAiming = Module;
+    ModuleAimingLoop = Module;
 
 			connect(ui.checkWorkBlock, &QPushButton::toggled,
 				[=](bool checked)

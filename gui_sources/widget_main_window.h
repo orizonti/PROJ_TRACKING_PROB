@@ -50,6 +50,8 @@ public:
 	void setenableWidget(int Number, bool enable);
 	void setenableWidgets(QVector<int> Numbers, bool enable);
 
+	WidgetSceneNodeInterface* GetLastWidget() { return ModuleWidgets.last();};
+
 private:
     void SetWidgetsPosition(int group_number);
 	void SetGuiFontSize(int FontSize);
@@ -57,7 +59,7 @@ private:
 	//MainBlockWindow* MainBlockDisplay;
 	//engineControlWindow* engineControlDisplay1;
 
-	WidgetScenenodeInterface* MainBlock1;
+	WidgetSceneNodeInterface* MainBlock1;
 	WidgetOutputTextDisplay* CriticalMessageOutput;
 	WidgetOutputImageDisplay* ImageDisplay;
 
@@ -67,13 +69,13 @@ protected:
 private:
 
 	QVector<QVector<QPair<int,int>>> WidgetsPositionList;
-	QList<WidgetScenenodeInterface*> ModuleWidgets;
+	QList<WidgetSceneNodeInterface*> ModuleWidgets;
 	QList<LinkLine*> LinkLineList;
 
 	int LastWidgetPressedNumber = 0;
 
 private slots:
-    void SlotUpdateScene(); // repaint scene when widget size has changed
+    void SlotUpdateScene(); // repaint Scene when widget size has changed
 
 public slots:
   void SlotWindowDisplayThreadClosed();

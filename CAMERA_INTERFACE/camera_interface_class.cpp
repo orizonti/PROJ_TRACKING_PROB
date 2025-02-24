@@ -194,5 +194,3 @@ const std::vector<QRect>& CameraInterfaceClassAravis::GetRects()
 	return CameraRects;
 }
 const QString& CameraInterfaceClassAravis::GetInfo()  { return CAMERA_INFO; }
-
-int CameraInterfaceClassAravis::GetID() {return SettingsRegister::GetValue("BLOCK_ID_CAMERA"); }; 

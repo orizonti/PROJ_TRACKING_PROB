@@ -87,8 +87,6 @@ public:
 
 QTime ThinningTimePeriod;
 
-int GetID(); 
-
 QImage& GetImageToDisplay();
 cv::Mat& GetImageToProcess();
 

@@ -11,7 +11,7 @@ class  TransformCoordClass : public PassTwoCoordClass
 {
 public:
     TransformCoordClass();
-    TransformCoordClass(double ScaleParam, double OffsetParam = 0, double Saturation1 = 20000, double Saturation2 = 20000);
+    TransformCoordClass(double ScaleParam, double OffsetParam = 0);
     TransformCoordClass(const TransformCoordClass& CopyTransform);
 	std::function<void(QPair<double,double>)> TransformCoord;
 
@@ -21,7 +21,5 @@ public:
 
 	double Scale = 1;
 	double Offset = 1;
-	double SaturationFirst = 20000;
-	double SaturationSecond = 20000;
 };
 #endif //TRANSFORMCOORDCLASS_H

@@ -15,7 +15,7 @@
 class TimeIntegratorClass : public PassTwoCoordClass
 {
 	public:
-	QPair<double,double> CoordIntegral{0.0,0.0};
+	QPair<double,double> CoordIntegral;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> LastTimePoint;
 	double StepPeriod = 0;
@@ -27,13 +27,11 @@ class TimeIntegratorClass : public PassTwoCoordClass
 
 	LastTimePoint = TimePoint; if(StepPeriod*1000 > 20) return;
 
-    CoordIntegral.first  += Coord.first *StepPeriod;
-    CoordIntegral.second += Coord.second*StepPeriod;
+    CoordIntegral = Coord*StepPeriod;
 	}
 	const QPair<double,double>& GetOutput() { return CoordIntegral;};
 
 };
-
 
 template <class T>
 class PortAdapter : public PassTwoCoordClass
@@ -101,8 +99,9 @@ public:
 	AimingClass();
 	~AimingClass();
 
-	QString TAG_NAME{"[ AIMING ]"};
+	std::string TAG_NAME{"[ AIMING ]"};
 
+	int NumberChannel;
 	TypeEnumBlock  TypeBlock   = TypeEnumBlock::AimingBlock;
 	StateEnumBlock StateBlock  = StateEnumBlock::StateBlockDisabled;
 	TypeEnumAiming AimingState = AimingSlow;
@@ -125,12 +124,11 @@ public:
   const QPair<double, double>& GetAimingError(); //BEAM POSITION IS SET FROM CAMERA 
 
   void SetBlockEnabled(bool OnOff); 
-	int GetID() { return SettingsRegister::GetValue("BLOCK_ID_AIMING");}
 
 	void SetInput           (const QPair<double,double>& Coord);
-	void SetAimingPosition  (QPair<double, double> Coord);
-  void SetAimingCorrection(QPair<double, double> Coord);
-  void MoveAimingPosition (QPair<double, double> Coord);
+	void SetAimingPosition  (const QPair<double, double>& Coord);
+  void SetAimingCorrection(const QPair<double, double>& Coord);
+  void MoveAimingCorrection (const QPair<double, double>& Velocity);
 
   void LoadPIDParam(QString SettingsFile);
   void LoadSettings();
@@ -143,12 +141,13 @@ public:
 	PortAdapter<AimingClass> PortSetAiming;
 	PortAdapter<AimingClass> PortMoveAiming;
 	PortAdapter<AimingClass> PortCalibration;
+  TimeIntegratorClass IntegratorInputSignal;
+
   SignalPortAdapter PortSignalSetAiming{(PassTwoCoordClass*)&PortSetAiming};
 
 	PIDParamStruct AimingSlowParam;
 	PIDParamStruct AimingWorkSlowParam;
 	PIDParamStruct AimingFastParam;
-  TimeIntegratorClass Integrator;
 
 	PIDClass ModulePID;
 	//KalmanFilterClass Filter;
@@ -175,7 +174,6 @@ public:
 
 	TransformCoordClass PixToRadian;
 	TransformCoordClass RadianToPix;
-	TransformCoordClass Saturation{1,0,400,400};
 };
 
 #endif //AIMINGCLASS_H

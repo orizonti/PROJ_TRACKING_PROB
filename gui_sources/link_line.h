@@ -11,15 +11,15 @@ class LinkLine : public QGraphicsObject
 {
 Q_OBJECT
 public:
-    LinkLine(WidgetScenenodeInterface *sourcePortNode, WidgetScenenodeInterface *destPortNode, int PortOutput, int PortInput);
+    LinkLine(WidgetSceneNodeInterface *sourcePortNode, WidgetSceneNodeInterface *destPortNode, int PortOutput, int PortInput);
 	void SetColor(QColor Color) { LinkLineColor = Color; };
     int NumberLink = 0;
     static int LinkCount;
 
     Node *sourcePortNode() const;
     Node *destPortNode() const;
-    WidgetScenenodeInterface* sourcenode() const;
-    WidgetScenenodeInterface* destNode() const;
+    WidgetSceneNodeInterface* sourcenode() const;
+    WidgetSceneNodeInterface* destNode() const;
 	QColor LinkLineColor = QColor(Qt::black);
     std::tuple<int,int,int,int> GetLinkScheme();
     QString PrintLinkLineScheme();
@@ -40,8 +40,8 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
-    WidgetScenenodeInterface* source;
-    WidgetScenenodeInterface* dest;
+    WidgetSceneNodeInterface* source;
+    WidgetSceneNodeInterface* dest;
     Node* sourcePort;
     Node* destPort;
 

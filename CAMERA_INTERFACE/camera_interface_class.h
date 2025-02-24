@@ -64,7 +64,6 @@ class CameraInterfaceClassAravis: public ImageSourceInterface, public CameraCont
     int  StartCameraStream();
     int  StopCameraStream();
     void SlotSetCameraRegion(int x, int y, int width, int height );
-	int GetID(); 
 
     int  InitCamera();
     void DeinitCamera();

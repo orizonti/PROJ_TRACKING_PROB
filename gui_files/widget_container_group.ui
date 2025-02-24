@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WidgetCameraControl</class>
- <widget class="QWidget" name="WidgetCameraControl">
+ <class>WidgetContainerGroup</class>
+ <widget class="QWidget" name="WidgetContainerGroup">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
-    <height>142</height>
+    <width>275</width>
+    <height>223</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,7 +60,7 @@ QWidget {
 	/*background-color: #19232D;*/
 	
 	background-color: rgb(46, 65, 83);
-	font: 500 12pt &quot;Ubuntu&quot;;
+
   border: 0px solid #455364;
   padding: 0px;
   color: #E0E1E3;
@@ -240,6 +240,8 @@ QGroupBox {
   padding: 2px;
   margin-top: 6px;
   margin-bottom: 4px;
+
+ background-color: rgba(61, 56, 70,110);
 }
 
 
@@ -1017,17 +1019,16 @@ QProgressBar::chunk:disabled {
 https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qpushbutton
 
 --------------------------------------------------------------------------- */
+
+
 QPushButton {
- 
-	
-	
-	background-color: rgba(192, 28, 40,190);
+	background-color: rgba(220, 59, 23,110);
   color: #E0E1E3;
   border-radius: 4px;
   padding: 2px;
   outline: none;
   border: none;
-
+	font: 600 14pt &quot;Ubuntu&quot;;
 }
 
 QPushButton:disabled {
@@ -1035,15 +1036,14 @@ QPushButton:disabled {
   color: #9DA9B5;
   border-radius: 4px;
   padding: 2px;
-	background-color: rgb(59, 95, 5);
 }
 
 QPushButton:checked {
-	
-	background-color: rgba(59, 95, 5,120);
+	background-color: rgba(35, 102, 12,160);
   border-radius: 4px;
   padding: 2px;
   outline: none;
+font: 600 14pt &quot;Ubuntu Sans&quot;;
 }
 
 QPushButton:checked:disabled {
@@ -1076,12 +1076,14 @@ QPushButton::menu-indicator {
   subcontrol-origin: padding;
   subcontrol-position: bottom right;
   bottom: 4px;
+	background-color: rgb(210, 204, 182);
 }
 
 QDialogButtonBox QPushButton {
   /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
   min-width: 80px;
 }
+
 /* QToolButton ------------------------------------------------------------
 
 https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-qtoolbutton
@@ -1320,153 +1322,51 @@ QComboBox::item:alternate {
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="0" column="1">
+    <widget class="QStackedWidget" name="stackedWidget">
      <property name="styleSheet">
-      <string notr="true">QLabel
+      <string notr="true">QStackedWidget
 {
-border: 1px solid line black;
-	background-color: rgba(45, 62, 10,100);
-	font: 700 12pt &quot;Ubuntu&quot;;
-	color: rgb(210, 204, 182);
-   border-radius: 4px;
+border: 0px solid line black;
 }</string>
      </property>
-     <property name="text">
-      <string>Камера</string>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
+     <widget class="QWidget" name="page"/>
+     <widget class="QWidget" name="page_2"/>
     </widget>
    </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="styleSheet">
-        <string notr="true">QLabel
-{
-border: 1px solid line black;
-	
-	background-color: rgba(99, 69, 44,180);
-	font: 600 14pt &quot;Ubuntu&quot;;
-   border-radius: 4px;
-	color: rgb(210, 204, 182);
-}</string>
-       </property>
-       <property name="text">
-        <string>Строб</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="lineEditROI">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QLineEdit
-{
-border: 2px solid line black;
-	
-	
-	background-color: rgb(210, 204, 182);
-		font: 600 14pt &quot;Ubuntu&quot;;
-	border-radius: 4px;
-	color: rgb(15, 11, 1);
-}</string>
-       </property>
-       <property name="text">
-        <string>0:0:640:480</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="butSetCameraROI">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-  background-color: #455364;
-  color: #E0E1E3;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-  border: none;
-	font: 600 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:disabled {
-  background-color: #455364;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-QPushButton:checked {
-  background-color: #60798B;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-}
-
-QPushButton:checked:disabled {
-  background-color: #60798B;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-}
-
-QPushButton:checked:selected {
-  background: #60798B;
-}
-
-QPushButton:hover {
-  background-color: #54687A;
-  color: #E0E1E3;
-}
-
-QPushButton:pressed {
-  background-color: #60798B;
-}
-
-QPushButton:selected {
-  background: #60798B;
-  color: #E0E1E3;
-}
-
-QPushButton::menu-indicator {
-  subcontrol-origin: padding;
-  subcontrol-position: bottom right;
-  bottom: 4px;
-}</string>
-       </property>
-       <property name="text">
-        <string>Установить</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="butStartStopWork">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="horizontalGroupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
+      <string notr="true">QGroupBox
+{
+border: 1px solid line black;
+}
+
+QPushButton {
 	background-color: rgba(220, 59, 23,110);
   color: #E0E1E3;
   border-radius: 4px;
@@ -1488,7 +1388,7 @@ QPushButton:checked {
   border-radius: 4px;
   padding: 2px;
   outline: none;
-font: 14pt &quot;Ubuntu&quot;;
+font: 600 14pt &quot;Ubuntu Sans&quot;;
 }
 
 QPushButton:checked:disabled {
@@ -1529,19 +1429,42 @@ QDialogButtonBox QPushButton {
   min-width: 80px;
 }</string>
      </property>
-     <property name="text">
-      <string>Работа</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="pictures.qrc"/>
+ </resources>
  <connections/>
 </ui>

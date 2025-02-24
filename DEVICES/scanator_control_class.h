@@ -22,7 +22,7 @@ class ScanatorControlClass :public QObject,public PassTwoCoordClass
     Q_OBJECT
 public:
     ScanatorControlClass(QObject* parrent = 0);
-	QString TAG_NAME{"[ SCANATOR ]"};
+	std::string TAG_NAME{"[ SCANATOR ]"};
 
     StateEnumBlock StateBlock{StateBlockDisabled};
 
@@ -30,7 +30,6 @@ public:
 
 	void SetInput(const QPair<double,double>& Coord);
 	const QPair<double,double>& GetOutput();
-	int GetID(); 
 
     void LoadSettings();
     bool isAtLimit();

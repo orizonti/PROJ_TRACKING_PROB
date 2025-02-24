@@ -201,5 +201,3 @@ if (ROI.x < 0) ROI.x = 0;
 if (ROI.y < 0) ROI.y = 0;
 
 }
-
-int AimImageImitatorClass::GetID() {return SettingsRegister::GetValue("BLOCK_ID_SCANATOR"); }; 

@@ -8,7 +8,6 @@
 #include <chrono>
 #include <debug_output_filter.h>
 #include <QThread>
-#include "register_settings.h"
 OutputFilter Filter40{40};
 
 bool operator==(std::pair<int,int> pair, std::pair<int,int> pair2) { return pair.first == pair2.first && pair.second == pair2.second; };
@@ -196,7 +195,7 @@ void CVImageProcessing::SlotProcessImage(const cv::Mat& Image)
     ROIAim = ROIAim*1.2;
     emit ImageSourceInterface::SignalNewImage();
 
-    PassTwoCoordClass::PassCoord(); // PASS COORD TO LINKED RECEIVER
+    if(ReceiverLinkCoord) PassTwoCoordClass::PassCoord();
 }
 
 void CVImageProcessing::SlotProcessImage()
@@ -208,10 +207,9 @@ void CVImageProcessing::SlotProcessImage()
   //FindImageTemplate(ImageInput); PutImageToDisplay(ImageInput); ROIAim = ROIAim*1.2;
   FindImageCentroid(ImageInput); 
   ContoursProcessor.SetImage(ImageInput); ROIAim = ContoursProcessor.GetMaxContourRect(); 
-  ROIAim = ROIAim*2.0;
+  ROIAim = ROIAim*1.2;
   emit ImageSourceInterface::SignalNewImage();
-
-  PassTwoCoordClass::PassCoord(); // PASS COORD TO LINKED RECEIVER
+  //if(ReceiverLinkCoord) PassTwoCoordClass::PassCoord();
 }
 
 
@@ -408,7 +406,6 @@ void CVImageProcessing::SetProcessingRegim(int Regim) { this->WorkRegim = Regim;
 void CVImageProcessing::StartStopProcessing(bool StartStop) { }
 void CVImageProcessing::SetThreshold(int Thresh) {qDebug() << "THRES: " << Thresh; this->Threshold = Thresh; }
 
-int CVImageProcessing::GetID() { return SettingsRegister::GetValue("BLOCK_ID_IMG_PROC");} 
 //cv::Rect& operator*(float Scale, cv::Rect& rect)
 //{
 //return rect*Scale;

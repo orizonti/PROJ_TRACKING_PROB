@@ -1,18 +1,20 @@
-#ifndef WIDGET_SCenE_NODE_INTERFACE_H
-#define WIDGET_SCenE_NODE_INTERFACE_H
+#ifndef WIDGET_SCENE_NODE_INTERFACE_H
+#define WIDGET_SCENE_NODE_INTERFACE_H
 
 #include "node.h"
 #include <QGraphicsProxyWidget>
 #include <QGraphicsScene>
+#include "widget_adjustable.h"
 
 class LinkLine;
 
-class WidgetScenenodeInterface : public QGraphicsProxyWidget
+class WidgetSceneNodeInterface : public QGraphicsProxyWidget
 {
 Q_OBJECT
 public:
-    WidgetScenenodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS, QWidget *Widget);
-    ~WidgetScenenodeInterface();
+    WidgetSceneNodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS, QWidget *Widget);
+    WidgetSceneNodeInterface(QGraphicsScene* Scene, int X_POS, int Y_POS, WidgetAdjustable *Widget);
+    ~WidgetSceneNodeInterface();
 
     void SetScenePosition(int PosX, int PosY);
     void SetWidgetActive(bool active);
@@ -21,7 +23,7 @@ public:
 
     QWidget* WindowNode = 0;
     void setWidget(QWidget* widget);
-	LinkLine* ConnectNode(int sourcePortNode ,WidgetScenenodeInterface* Node, int destPortNode);
+	LinkLine* ConnectNode(int sourcePortNode ,WidgetSceneNodeInterface* Node, int destPortNode);
 
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
@@ -33,13 +35,19 @@ public:
 
 	 void focusInEvent(QFocusEvent *event);
 	 void focusOutEvent(QFocusEvent *event);
+     void HideNodes();
+     void HideLinks();
 
      static int CounterWidget;
      int NumberWidget = 0;
 
+private:
+    void Init(QWidget* widget);
+
 signals:
 void SignalWidgetPressed(int NumberWidget);
 public slots:
+void SlotHideWidget();
 
 };
 

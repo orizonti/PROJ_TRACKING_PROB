@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>502</height>
+    <width>436</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1315,6 +1315,24 @@ QComboBox::item:alternate {
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <property name="horizontalSpacing">
+    <number>1</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>4</number>
+   </property>
    <item row="1" column="0" colspan="2">
     <widget class="LabelImage" name="labelImageDisplay">
      <property name="sizePolicy">
@@ -1350,6 +1368,21 @@ border: 2px solid line black;
      </property>
     </widget>
    </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="labelName">
+     <property name="styleSheet">
+      <string notr="true">QLabel
+{
+border: 2px solid line black;
+	background-color: rgba(184, 105, 17,100);
+	font: 700 12pt &quot;Ubuntu&quot;;
+}</string>
+     </property>
+     <property name="text">
+      <string>Камера</string>
+     </property>
+    </widget>
+   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="labelDataDisplay">
      <property name="styleSheet">
@@ -1363,21 +1396,6 @@ border: 2px solid line black;
      </property>
      <property name="text">
       <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="labelName">
-     <property name="styleSheet">
-      <string notr="true">QLabel
-{
-border: 2px solid line black;
-	background-color: rgba(184, 105, 17,100);
-	font: 700 12pt &quot;Ubuntu&quot;;
-}</string>
-     </property>
-     <property name="text">
-      <string>Камера</string>
      </property>
     </widget>
    </item>

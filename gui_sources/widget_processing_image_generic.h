@@ -12,11 +12,32 @@
 #include "widget_adjustable.h"
 #include "labelimage.h"
 #include <QBrush>
+#include <QMoveEvent>
+#include <QVBoxLayout>
+#include "labelimage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WidgetProcessingImage; }
 QT_END_NAMESPACE
 
+
+class WidgetMiniLabelsGroup : public WidgetAdjustable
+{
+    Q_OBJECT
+    public: 
+    WidgetMiniLabelsGroup(QWidget* parent = 0): WidgetAdjustable(parent) 
+    {
+        this->setLayout(new QVBoxLayout);
+    };
+    void AddLabel(LabelImage* label); 
+    
+    int NumberChannel = 0;
+    void ChannelSelected(int Number);
+
+signals: 
+void SignalGroupSelected(int);
+
+};
 
 class WidgetProcessingImage : public WidgetAdjustable
 {
@@ -35,7 +56,8 @@ QLineF ObjectVelLine;
 QLineF ArrowLeft;
 QLineF ArrowRight;
 QImage DisplayImage;
-std::shared_ptr<ImageSourceInterface> ImageSource;
+std::shared_ptr<ImageSourceInterface> ImageSourceActive;
+std::vector<std::shared_ptr<ImageSourceInterface>> ImageSources;
 
 QPolygonF Trajectory;
 
@@ -43,18 +65,21 @@ void SetName(QString name);
 void CopyImageToDisplayImage(const QImage& Image);
 bool FLAG_PAINT_TRAJECTORY = false;
 
-QPen pen1{QBrush(Qt::green) ,2}; 
-QPen pen2{QBrush(Qt::red)   ,2, Qt::DashLine}; 
-QPen pen3{QBrush(Qt::yellow),2}; 
-QPen pen4{QBrush(Qt::black) ,2}; 
-QPen pen5{QBrush(Qt::white) ,2}; 
-QPen pen6{QBrush(Qt::red) ,1}; 
+QPen pen1{QBrush(Qt::green) ,1}; 
+QPen pen2{QBrush(Qt::red)   ,1, Qt::DashLine}; 
+QPen pen3{QBrush(Qt::yellow),1}; 
+QPen pen4{QBrush(Qt::black) ,1}; 
+QPen pen5{QBrush(Qt::white) ,1}; 
 std::vector<QPen> pens{pen1, pen2, pen4, pen4, pen4, pen4};
 
 QString strFreq; 
 QString strPeriodProcess; 
 QString strDisplayData; 
 
+WidgetAdjustable* LinkedWidget = 0;
+
+void AddMiniLabel();
+void moveEvent(QMoveEvent* event);
 signals:
 void SignalPosPressed(QPair<double,double>);
 
@@ -64,6 +89,7 @@ void SlotDisplayImage(const QImage& Image);
 void SlotDisplayString(QString InfoString);
 void SlotStartPaintTrajectory(bool OnOff);
 void SlotPosPressed(int x, int y);
+void SlotSetActiveChannel(int Channel);
 
 private:
 Ui::WidgetProcessingImage *ui;

@@ -1,5 +1,5 @@
-﻿#ifndef WidgetAdjustable_H
-#define WidgetAdjustable_H
+﻿#ifndef WIDGET_ADJUSTABLE_H
+#define WIDGET_ADJUSTABLE_H
 
 #include <QWidget>
 #include <QLabel>
@@ -20,6 +20,8 @@ class WidgetAdjustable : public QWidget
 public slots:
 void SlotSetWindowSize(int FontSize);
 void AdjustWindow();
+signals:
+void SignalHideWidget();
 };
 
 class AdjustableLabel : public QLabel
@@ -37,4 +39,4 @@ void SlotSetWindowSize(int FontSize);
 void AdjustWindow();
 };
 
-#endif // WidgetAdjustable_H
+#endif // WIDGET_ADJUSTABLE_H

@@ -168,7 +168,7 @@ void WidgetMainWindow::SetGuiFontSize(int GuiSize)
     QList<QGraphicsItem*> items = Scene->items();
 	for(auto Item: items)
 	{
-    WidgetScenenodeInterface* node = dynamic_cast<WidgetScenenodeInterface*>(Item);
+    WidgetSceneNodeInterface* node = dynamic_cast<WidgetSceneNodeInterface*>(Item);
 		if (node != nullptr)
 		{
 			WidgetAdjustable* widget = dynamic_cast<WidgetAdjustable*>(node->WindowNode);
@@ -194,7 +194,7 @@ void WidgetMainWindow::SetWidgetsPosition(int group_number)
   QList<QGraphicsItem*> items = Scene->items();
 	for(auto Item: items)
 	{
-     WidgetScenenodeInterface* node = dynamic_cast<WidgetScenenodeInterface*>(Item); 
+     WidgetSceneNodeInterface* node = dynamic_cast<WidgetSceneNodeInterface*>(Item); 
 	   if (node != nullptr)
 	   {
       node->SetScenePosition(WidgetsPositionList[group_number][node->NumberWidget].first,WidgetsPositionList[group_number][node->NumberWidget].second);  	
@@ -250,7 +250,7 @@ QTextStream out(&data);
     QList<QGraphicsItem*> items = Scene->items();
 	for(auto Item: items)
 	{
-    WidgetScenenodeInterface* node = dynamic_cast<WidgetScenenodeInterface*>(Item);
+    WidgetSceneNodeInterface* node = dynamic_cast<WidgetSceneNodeInterface*>(Item);
 		if ( node != nullptr)
 		{
 		WidgetsPositionList[CurrentInterfaceScheme][node->NumberWidget].first = node->NodePositionX;
@@ -308,22 +308,21 @@ ui.graphicsView->repaint();
 void WidgetMainWindow::AddProxyWidgetToDisplay(QWidget* widget)
 {
     //auto Position = WidgetsPositionList[CurrentInterfaceScheme][this->ModuleWidgets.size()];
-	this->ModuleWidgets.append(new WidgetScenenodeInterface(Scene, 400, 400,widget));
+	this->ModuleWidgets.append(new WidgetSceneNodeInterface(Scene, 400, 400,widget));
 }
 
 void WidgetMainWindow::AddWidgetToDisplay(WidgetAdjustable* widget)
 {
     auto Position = WidgetsPositionList[CurrentInterfaceScheme][this->ModuleWidgets.size()];
-	this->ModuleWidgets.append(new WidgetScenenodeInterface(Scene, Position.first, Position.second,widget));
+	this->ModuleWidgets.append(new WidgetSceneNodeInterface(Scene, Position.first, Position.second,widget));
 	QObject::connect(ModuleWidgets.last(),SIGNAL(SignalWidgetPressed(int)),this,SLOT(SlotSceneWidgetPressed(int)));
-
 	//qDebug() << TAG << "ADD NEW WIDGET : " << Position << " SCHEME: " << CurrentInterfaceScheme << "NUMBER: " << ModuleWidgets.size();
 }
 
 void WidgetMainWindow::AddWidgetToDisplay(AdjustableLabel* widget)
 {
     auto Position = WidgetsPositionList[CurrentInterfaceScheme][this->ModuleWidgets.size()];
-	this->ModuleWidgets.append(new WidgetScenenodeInterface(Scene, Position.first, Position.second+40,widget));
+	this->ModuleWidgets.append(new WidgetSceneNodeInterface(Scene, Position.first, Position.second+40,widget));
 }
 
 void WidgetMainWindow::LoadWidgetsLinks()

@@ -6,7 +6,6 @@
 
 #define TAG "[   AIMING   ]" 
 
-OutputFilter OutputFilter1;
 
 AimingClass::~AimingClass() 
 { 
@@ -21,22 +20,22 @@ AimingClass::AimingClass()
 	//======================================================================
 
   PortSetAiming.LinkAdapter(this,&AimingClass::SetAimingPosition,&AimingClass::GetAimPosition);
-  PortMoveAiming.LinkAdapter(this,&AimingClass::MoveAimingPosition,&AimingClass::GetAimPosition);
-  PortCalibration.LinkAdapter(this,&AimingClass::MoveAimingPosition,&AimingClass::GetBeamPosition);
+  PortMoveAiming.LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetAimPosition);
+  PortCalibration.LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetBeamPosition);
 
 	this->AimingSlowParam.Common = 1;
-	this->AimingSlowParam.RateParam = 10.0;
+	this->AimingSlowParam.RateParam = 3.1;
 	this->AimingSlowParam.IntParam  = 0.0002;
 	this->AimingSlowParam.DiffParam = 0.0002;
 
 	this->AimingWorkSlowParam.Common = 1;
-	this->AimingWorkSlowParam.RateParam = 10.0;
+	this->AimingWorkSlowParam.RateParam = 5.1;
 	this->AimingWorkSlowParam.IntParam  = 0.0002;
 	this->AimingWorkSlowParam.DiffParam = 0.0002;
 
 	this->AimingFastParam.Common = 1;           // for move by velocity one integrator plant
-	this->AimingFastParam.RateParam = 0.45;
-	this->AimingFastParam.IntParam  = 0.60;
+	this->AimingFastParam.RateParam = 16.45;
+	this->AimingFastParam.IntParam  = 46.60;
 	this->AimingFastParam.DiffParam = 0.0164;
 	ModulePID.SetPIDParam(AimingSlowParam);
 	//==================================================================
@@ -86,9 +85,9 @@ ModulePID.SetPIDParam(CurrentParam);
 
 void AimingClass::SetAimingSpeedRegim(TypeEnumAiming Aiming)
 {
-	AimingState = Aiming;
-	if (AimingState == AimingSlow) ModulePID.SetPIDParam(AimingSlowParam);
-  if (AimingState == AimingFast) ModulePID.SetPIDParam(AimingFastParam);
+	    AimingState = Aiming;
+	if (AimingState == AimingSlow)   ModulePID.SetPIDParam(AimingSlowParam);
+  if (AimingState == AimingFast)   ModulePID.SetPIDParam(AimingFastParam);
   if (AimingState == AimingTuning) ModulePID.SetPIDParam(PIDParamTable[0]);
 }
 
@@ -96,9 +95,25 @@ const QPair<double, double>& AimingClass::GetAimPosition()  { return CoordAim; }
 const QPair<double, double>& AimingClass::GetBeamPosition() { return CoordBeamPos; }
 const QPair<double, double>& AimingClass::GetAimingError()  { return CoordAimingError; }
 
-void AimingClass::SetAimingPosition(QPair<double, double> Coord)          { CoordAim = Coord; qDebug() << TAG_NAME << "SET AIM: " << Coord;}
-void AimingClass::SetAimingCorrection(QPair<double, double> Coord)        { CoordAimCorrection = Coord; }
-void AimingClass::MoveAimingPosition(QPair<double, double> RelativeCoord) { CoordAim = CoordAim + RelativeCoord; }
+void AimingClass::SetAimingPosition(const QPair<double, double>& Coord)       { CoordAim = Coord; qDebug() << TAG_NAME << "SET AIM: " << Coord;}
+void AimingClass::SetAimingCorrection(const QPair<double, double>& Coord)     { CoordAimCorrection = Coord; }
+void AimingClass::MoveAimingCorrection(const QPair<double, double>& Velocity) { Velocity >> IntegratorInputSignal >> CoordAimCorrection; }
+
+void AimingClass::SetInput(const QPair<double,double>& Coord)
+{
+  if (this->StateBlock == StateBlockDisabled) { VectorOutput = Coord; return; }
+
+  if (isAimingFault()) return;
+
+     Coord >> Substract;
+  CoordAim >> Substract >> Substract;
+     CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> PixToRadian >> VectorOutput;
+        
+  //PassCounter++; if(PassCounter) qDebug() << FilterCount2 << "AIMING: COORD:" << Coord << "AIM: " << AimingRelCoord << "CORR: " << AimingRelCorrection ;
+
+  if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
+   
+}
 
 void AimingClass::Reset()
 {
@@ -119,22 +134,6 @@ void AimingClass::SetBlockEnabled(bool OnOff)
   qDebug() << TAG_NAME << "BLOCK ENABLED: " << OnOff;
 };
 
-void AimingClass::SetInput(const QPair<double,double>& Coord)
-{
-
-  if (this->StateBlock == StateBlockDisabled) { VectorOutput = Coord; return; }
-
-     Coord >> Substract;
-  CoordAim >> Substract >> CoordAimingError >> ModulePID >> Integrator >> Saturation >> VectorOutput;
-  VectorOutput.second = -VectorOutput.second;
-
-        
-  auto Error = Coord - CoordAim;
-  qDebug() << OutputFilter1(50) << TAG_NAME << "ERROR: " << Error.first << Error.second << "CONTORL: " << VectorOutput.first << VectorOutput.second;
-
-  //if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
-   
-}
 
 void AimingClass::SlotFilterenable(bool OnOff) 
 { 
@@ -193,6 +192,8 @@ void AimingClass::LoadSettings()
 
   QSettings BeamPosSettings(BeamPosFile, QSettings::IniFormat);
   BeamPosSettings.beginGroup("BEAMS");
+  int BEAM_X_POS = BeamPosSettings.value(QString("X%1").arg(NumberChannel)).toInt();
+  int BEAM_Y_POS = BeamPosSettings.value(QString("Y%1").arg(NumberChannel)).toInt();
   int XPointerPos = BeamPosSettings.value("XPointer").toInt();
   int YPointerPos = BeamPosSettings.value("XPointer").toInt();
 
@@ -200,6 +201,7 @@ void AimingClass::LoadSettings()
 
   auto PointerCenteredCoord = QPair<double,double>(XPointerPos,YPointerPos);
   
+  this->CoordNullPosition = QPair<int, int>(BEAM_X_POS,BEAM_Y_POS);
   this->CoordAim = this->CoordNullPosition;
 
   this->LoadPIDParam(PIDParamFile);

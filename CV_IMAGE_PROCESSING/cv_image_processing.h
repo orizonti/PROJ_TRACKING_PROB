@@ -132,7 +132,6 @@ public:
     int Threshold = 50;
     int WorkRegim = 1;
 
-    int GetID(); 
     //===================================================
     // ImageSourceInterface
     QImage& GetImageToDisplay();

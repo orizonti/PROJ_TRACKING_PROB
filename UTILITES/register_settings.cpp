@@ -75,12 +75,6 @@ void SettingsRegister::LoadSettings()
   AppendSettings("GAIN_ANGLE_DAC"  ,ANGLE_TO_DAC);
   AppendSettings("DAC_OFFSET", 0);
 
-  AppendSettings("BLOCK_ID_CAMERA"  , 10);
-  AppendSettings("BLOCK_ID_IMG_PROC", 20);
-  AppendSettings("BLOCK_ID_AIMING"  , 30);
-  AppendSettings("BLOCK_ID_SCANATOR", 40);
-  AppendSettings("BLOCK_ID_IMITATOR", 50);
-
   qDebug() << "============================";
   qDebug() << "[ LOADED RECORDS ]";
   PrintSettingsList();

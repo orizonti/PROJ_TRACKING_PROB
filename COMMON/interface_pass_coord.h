@@ -21,12 +21,11 @@ class PassTwoCoordClass
 public:
 	PassTwoCoordClass* Link = nullptr;
 	bool isLinked() { return Link != nullptr;}
-	virtual int GetID() { return 0;}
 
 	virtual const QPair<double, double>& GetOutput() = 0;
 	virtual void SetInput(const QPair<double, double>& Coord) = 0;
 	void SetLink(PassTwoCoordClass* NewLink);
-	void PassCoord() { if(Link != nullptr ) *this >> *Link; }
+	void PassCoord() { *this >> *Link; }
 	
 	friend PassTwoCoordClass& operator >>(const     QPair<double,double>&  Coord, PassTwoCoordClass& Reciever);
 	friend PassTwoCoordClass& operator >>(const std::pair<double, double>& Coord, PassTwoCoordClass& Reciever);
@@ -39,6 +38,7 @@ public:
 
     friend std::shared_ptr<PassTwoCoordClass>  operator | (std::shared_ptr<PassTwoCoordClass> Sender, 
 	                                                       std::shared_ptr<PassTwoCoordClass> Reciever);
+    friend PassTwoCoordClass& operator | (std::shared_ptr<PassTwoCoordClass> Sender, PassTwoCoordClass& Reciever);
 
 
 };
