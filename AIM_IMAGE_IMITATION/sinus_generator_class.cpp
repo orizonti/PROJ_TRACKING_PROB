@@ -1,4 +1,5 @@
 #include "sinus_generator_class.h"
+#include "interface_pass_coord.h"
 #include "widget_sinus_source.h"
 #include <random>
 #include <math.h>
@@ -31,8 +32,8 @@ SinusGeneratorClass::~SinusGeneratorClass()
 
 void SinusGeneratorClass::SetInput(const QPair<double,double>& Coord) { }
 void SinusGeneratorClass::SlotSetFrequency(double Freq1, double Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360/Freq1;}
-void SinusGeneratorClass::SlotSetAmplitude(double Ampl1, double Ampl2) { Amplitude.first = Ampl1*60; 
-                                                                         Amplitude.second = Ampl2*60; }
+void SinusGeneratorClass::SlotSetAmplitude(double Ampl1, double Ampl2) { Amplitude.first = Ampl1*60*5; 
+                                                                         Amplitude.second = Ampl2*60*5; }
 void SinusGeneratorClass::SlotSetAmplitudeNoize(double Ampl) { this->AmplitudeNoize = Ampl; }
 
 void SinusGeneratorClass::SlotEnableChannel(bool Enable , int Channel)
@@ -50,8 +51,8 @@ void SinusGeneratorClass::SlotCalculateValue()
 {
   COUNTER++; if(COUNTER > PERIOD) COUNTER = 0;
 
-    CurrentOutput.first = Amplitude.first + Amplitude.first*std::sin(COUNTER*2*M_PI/PERIOD);
-    CurrentOutput.second = Amplitude.second + Amplitude.second*std::cos(COUNTER*2*M_PI/PERIOD);
+    CurrentOutput.first = Amplitude.first*std::sin(COUNTER*2*M_PI/PERIOD);
+    CurrentOutput.second = Amplitude.second*std::cos(COUNTER*2*M_PI/PERIOD);
 
     //CurrentOutput >> ScaleOutput >> CurrentOutput;
 
@@ -59,6 +60,7 @@ void SinusGeneratorClass::SlotCalculateValue()
     //if(BlockOutput2) CurrentOutput.second = 0;
 
 	if (LinkedReceiver != 0) *this >> *LinkedReceiver;
+    //PassTwoCoordClass::PassCoord();
 
     if(FLAG_ENABLE_NOIZE)
     {

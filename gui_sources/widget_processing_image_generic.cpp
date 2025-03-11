@@ -19,19 +19,32 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
    SlotDisplayString(strDisplayData);
 
                     auto ImageSize = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
-   DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32);
+   auto Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); DisplayImagesMini.append(Image);
+        Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); DisplayImagesMini.append(Image);
+
+        DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); 
+
    QObject::connect(ui->labelImageDisplay,SIGNAL(SignalPressedPos(int,int)),this, SLOT(SlotPosPressed(int,int)));
    auto Widget  = new WidgetMiniLabelsGroup;
-        Widget->setStyleSheet(this->styleSheet());
-        Widget->layout()->setSpacing(1);
-        Widget->layout()->setContentsMargins(1,1,1,1);
+        Widget->layout()->setSpacing(6);
+        Widget->layout()->setContentsMargins(2,2,2,2);
 
-   QObject::connect(Widget, SIGNAL(SignalGroupSelected(int)),this, SLOT(SlotSetActiveChannel(int)));
+        Widget->setStyleSheet(
+        " QWidget { background-color: rgba(46, 65, 83,100);"
+        " border: 2px solid #455364;"
+        " padding: 0px;"
+        " color: #E0E1E3;"
+        " selection-background-color: #346792;"
+        " selection-color: #E0E1E3; }"
+        );
+
+   QObject::connect(Widget, SIGNAL(SignalChannelChanged(int)),this, SLOT(SlotSetActiveChannel(int)));
    LinkedWidget = Widget;
-   this->AddMiniLabel();
-   this->AddMiniLabel();
+   this->AddMiniLabel(); 
+   this->AddMiniLabel(); 
    //LinkedWidget->hide();
 
+   connect(&timerDisplayMiniLabels, &QTimer::timeout, this, &WidgetProcessingImage::SlotDisplayMiniLabels);
 }
 
 void WidgetProcessingImage::AddMiniLabel()
@@ -42,14 +55,12 @@ void WidgetProcessingImage::AddMiniLabel()
 
 void WidgetProcessingImage::moveEvent(QMoveEvent* event)
 {
-  qDebug() << "WIDGET PROCESSING MOVE: " << event->pos() - event->oldPos();
   if(LinkedWidget != 0) LinkedWidget->move(LinkedWidget->pos() + event->pos() - event->oldPos());
   QWidget::moveEvent(event);
 }
 
 void WidgetProcessingImage::SlotPosPressed(int x, int y)
 {
- qDebug() << "WIDGET IMAGE POS: " << x << y; 
  emit SignalPosPressed(QPair<double,double>(x,y));
 }
 
@@ -74,32 +85,40 @@ void WidgetProcessingImage::CopyImageToDisplayImage(const QImage& Image)
 }
 void WidgetProcessingImage::SlotStartPaintTrajectory(bool OnOff)
 {
-qDebug() << "DISPLAY PAINT TRAJECTORY: " << OnOff;
 FLAG_PAINT_TRAJECTORY = OnOff; if(FLAG_PAINT_TRAJECTORY) Trajectory.clear();
+}
+
+void WidgetProcessingImage::SlotDisplayMiniLabels()
+{
+   for(int n = 0; n < ImageSources.size(); n++)
+   {
+   ImageSources[n]->GetImageToDisplay(DisplayImagesMini[n]);
+   reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->SlotDisplayImage(DisplayImagesMini[n], n);
+   }
+
 }
 
 void WidgetProcessingImage::SlotDisplayImage()
 {
-   //qDebug() << "DISPLAY: " << QThread::currentThread();
    if(!ImageSourceActive){ qDebug() << TAG_NAME << "SOURCE NOT LINKED";  return; };
 
-   //CopyImageToDisplayImage(ImageSourceActive->GetImageToDisplay());
    ImageSourceActive->GetImageToDisplay(DisplayImage);
-   //DisplayImage = ImageSourceActive->GetImageToDisplay().copy();
 
-   const auto& ImagePoints = ImageSourceActive->GetPoints(); 
-   const auto& ImageRects = ImageSourceActive->GetRects(); 
+   if(!timerDisplayMiniLabels.isActive()) { if(ImageSources.size() > 1) timerDisplayMiniLabels.start(100); }
+
+   const auto& CoordsImage = ImageSourceActive->GetPoints(); 
+   const auto& RectsImage = ImageSourceActive->GetRects(); 
    auto& InfoString = ImageSourceActive->GetInfo();
 
    auto pen_it = pens.begin();
    QPainter paint;
             paint.begin(&DisplayImage);
 
-            for(auto& rect: ImageRects){paint.setPen(*pen_it); 
+            for(auto& rect: RectsImage){paint.setPen(*pen_it); 
                                         paint.drawRect(rect); pen_it++;} pen_it = pens.begin();
                                                                          paint.setPen(pen1);
-                                        paint.drawPoint(ImagePoints[0].first, 
-                                                        ImagePoints[0].second);
+                                        paint.drawPoint(CoordsImage[0].first, 
+                                                        CoordsImage[0].second);
                                         paint.drawPoint(ui->labelImageDisplay->X_Pressed, 
                                                         ui->labelImageDisplay->Y_Pressed);
 
@@ -114,16 +133,20 @@ void WidgetProcessingImage::SlotDisplayImage(const QImage& Image)
    CopyImageToDisplayImage(Image);
    QPixmap pix = QPixmap::fromImage(DisplayImage);
    ui->labelImageDisplay->setPixmap(pix);
+   
+   reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->SlotDisplayImage(Image, NumberActiveChannel);
 }
 
 
 void WidgetProcessingImage::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)
 {
+   NumberActiveChannel++;
    ImageSourceActive = Source;
    ImageSources.push_back(Source);
    if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
 
    QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
+
 }
 
 void WidgetProcessingImage::SetName(QString name) {ui->labelName->setText(name);}; 
@@ -135,25 +158,47 @@ void WidgetProcessingImage::SlotDisplayString(QString InfoString)
 
 void WidgetProcessingImage::SlotSetActiveChannel(int Channel)
 {
- qDebug() << "WIDGET PROCESSING SET ACTIVE CHANNEL : " << Channel << " CHANNELS: " << ImageSources.size();
 
-                           if(Channel >= ImageSources.size()) return; 
+                           if(Channel >= ImageSources.size() ||
+                              Channel == NumberActiveChannel   ) return; 
+
  QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
                      ImageSourceActive = ImageSources[Channel]; 
     QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
+    NumberActiveChannel = Channel;
+    emit SignalChannelChanged(Channel);
+
+    reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->SlotSetActiveChannel(Channel);
+
 }
 
 //=============================================================
-void WidgetMiniLabelsGroup::ChannelSelected(int Number)
+
+void WidgetMiniLabelsGroup::SlotSetActiveChannel(int Number)
 {
-   qDebug() << "[ GROUP MINI LABELS SELEDTED ] " << Number;
-   emit SignalGroupSelected(Number-1);
+   if(Number == NumberChannel) return;
+   Labels[NumberChannel]->setStyleSheet("border-width: 3px; border-color: rgb(100, 90, 90); border-radius: 2px; background-color: rgb(39, 39, 36)");
+   NumberChannel = Number;
+   Labels[NumberChannel]->setStyleSheet("border-width: 3px; border-color: rgb(120, 61, 27); border-radius: 2px; background-color: rgb(39, 39, 36)");
+   emit SignalChannelChanged(Number); 
 }
+
+void WidgetMiniLabelsGroup::SlotDisplayImage(const QImage& Image, int Channel)
+{
+   Labels[Channel]->setPixmap(QPixmap::fromImage(Image.scaled(100,100)));
+}
+
 
 void WidgetMiniLabelsGroup::AddLabel(LabelImage* label) 
 { 
+
    this->layout()->addWidget(label);
 
-   int Number = ++NumberChannel;
-   connect(label, &LabelImage::SignalPressedPos, [Number,this](){ChannelSelected(Number);});
+   int Number = ++NumberChannel; 
+   connect(label, &LabelImage::SignalPressedPos, [Number,this](){ SlotSetActiveChannel(Number);});
+
+   if(!Labels.empty()) Labels.last()->setStyleSheet("border-width: 3px; border-color: rgb(100, 90, 90); border-radius: 2px; background-color: rgb(39, 39, 36)");
+                               label->setStyleSheet("border-width: 3px; border-color: rgb(120, 61, 27); border-radius: 2px; background-color: rgb(39, 39, 36)");
+
+   Labels.append(label);
 }

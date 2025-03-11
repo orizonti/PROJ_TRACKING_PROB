@@ -20,6 +20,6 @@ public:
 	QPair<double, double> TransformedCoord;
 
 	double Scale = 1;
-	double Offset = 1;
+	double Offset = 0;
 };
 #endif //TRANSFORMCOORDCLASS_H

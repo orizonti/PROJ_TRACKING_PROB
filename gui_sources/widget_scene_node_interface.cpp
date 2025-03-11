@@ -46,11 +46,8 @@ this->setEnabled(true);
 void WidgetSceneNodeInterface::HideNodes() { for(auto Node: PortNodes) Node->hide(); }
 void WidgetSceneNodeInterface::HideLinks() { for(auto Line: LinkLineList) Line->hide(); }
 
-void WidgetSceneNodeInterface::SlotHideWidget()
-{
-   qDebug() << "WIDGET NODE HIDE: " << NumberWidget;
-   HideNodes(); HideLinks(); this->hide();
-}
+void WidgetSceneNodeInterface::SlotHideWidget() { HideNodes(); HideLinks(); this->hide(); }
+void WidgetSceneNodeInterface::SlotHideLinks()  { HideNodes(); HideLinks();}
 
 WidgetSceneNodeInterface::~WidgetSceneNodeInterface()
 {

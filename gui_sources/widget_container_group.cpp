@@ -8,30 +8,41 @@ WidgetContainerGroup::WidgetContainerGroup(QWidget* parent) : WidgetAdjustable(p
 }
 
 
-
-void WidgetContainerGroup::SlotSetChannel(int Channel)
+void WidgetContainerGroup::SlotSetActiveChannel(int Channel)
 {
-    qDebug() << "WIDGET CONTAINER SET CHANNEL: " << Channel;
-    ui->stackedWidget->setCurrentIndex(Channel);
-    emit SignalChannelChanged(Channel);
+    if(Channel == NumberChannel) return;
+    qDebug() << "[ WIDGET GROUP CHANNEL ]" << Channel;
+
+    buttons[NumberChannel]->blockSignals(true);
+    buttons[NumberChannel]->setChecked(false);
+    buttons[NumberChannel]->blockSignals(false);
+
+    buttons[Channel]->blockSignals(true);
+    buttons[Channel]->setChecked(true);
+    buttons[Channel]->blockSignals(false);
+
+                  NumberChannel = Channel;
+
+    ui->stackedWidget->setCurrentIndex(Channel+1);
+             emit SignalChannelChanged(Channel);
 }
 
 void WidgetContainerGroup::AddWidget(WidgetAdjustable& Widget)
 {
     ui->stackedWidget->addWidget(&Widget);
+    if(!buttons.empty()) buttons.last()->setChecked(false);
     auto button = new QPushButton;
+         button->setCheckable(true);
+         button->setChecked(true);
+         button->setAutoExclusive(true);
+
+         button->setText(QString("%1").arg(NumberChannel+1));
+         button->setMinimumSize(30,30);
+         buttons.append(button);
+
     ui->horizontalGroupBox->layout()->addWidget(button);
-    button->setCheckable(true);
-    button->setCheckable(true);
-    button->setAutoExclusive(true);
 
-    //button->setStyleSheet(ui->pushButton1->styleSheet());
-    button->setText(QString("%1").arg(NumberChannels+1));
-    button->setMinimumSize(30,30);
-    button->setChecked(true);
-    qDebug() << "STACKED COUNT: " << ui->stackedWidget->count()-1;
-
-    NumberChannels++; int Channel = NumberChannels; ui->stackedWidget->setCurrentIndex(Channel);
-    QObject::connect(button, &QPushButton::toggled, [this, Channel]() {SlotSetChannel(Channel);});
+    int Channel = ++NumberChannel; ui->stackedWidget->setCurrentIndex(Channel);
+    QObject::connect(button, &QPushButton::toggled, [this, Channel](bool OnOff) { if(OnOff) SlotSetActiveChannel(Channel);});
 }
 

@@ -1,4 +1,5 @@
 #include "camera_interface_class.h"
+#include "arv.h"
 #include "register_settings.h"
 #include <QDebug>
 
@@ -6,8 +7,10 @@
 #include <semaphore>
 #include <thread>
 #include "register_settings.h"
+#include "debug_output_filter.h"
 
 std::counting_semaphore<2> bufferSemaphore{2};
+OutputFilter PrintFilter(200);
 
 CameraInterfaceClassAravis::CameraInterfaceClassAravis(QObject* parent): ImageSourceInterface(parent) 
 {
@@ -59,11 +62,14 @@ extern "C" void stream_callback (void *user_data, ArvStreamCallbackType type, Ar
 
 void CameraInterfaceClassAravis::PutNewFrameToStorage(ArvBuffer* buffer)
 {
-			if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) return;
+			//if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) 
+			//{
+			//qDebug() << PrintFilter << "ARV BUFFER FAILED";
+			//return;
+			//}
 
-	        buffer = arv_stream_pop_buffer(callback_data.stream);
-
-			//qDebug() << "ACQUIRED BUFFER : " << arv_buffer_get_image_width(buffer) << arv_buffer_get_image_height(buffer);
+	        //buffer = arv_stream_pop_buffer(callback_data.stream);
+	        buffer = arv_stream_try_pop_buffer(callback_data.stream);
 
 			std::copy_n((uint8_t*)arv_buffer_get_data(buffer,&payload),payload,*CurrentBuffer);
 			CurrentBuffer++; if(CurrentBuffer == Buffers.end()) CurrentBuffer = Buffers.begin();
@@ -72,13 +78,14 @@ void CameraInterfaceClassAravis::PutNewFrameToStorage(ArvBuffer* buffer)
             ImageToProcess = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1,*CurrentBuffer); 
 			emit SignalNewImage(ImageToProcess);
 
+			if(++ThinningCounter < 4) return; else ThinningCounter= 0;
+
+			emit SignalNewImage(); 
 			ImageToDisplay = QImage(ImageToProcess.data,
 										ImageToProcess.cols,
 										ImageToProcess.rows,
 						static_cast<int>(ImageToProcess.step),
 								QImage::Format_Grayscale8 );
-			//emit SignalNewImage(ImageToDisplay);
-		      emit SignalNewImage();
 
 }
 
@@ -119,7 +126,7 @@ int CameraInterfaceClassAravis::InitCamera()
 
     //Insert some buffers in the stream buffer pool 
 	//palyload = width*height*pixel_size;
-    for (int i = 0; i < 4; i++) 
+    for (int i = 0; i < 20; i++) 
 	{
 		arv_stream_push_buffer (callback_data.stream, arv_buffer_new (payload, NULL));  //SYSTEM BUFFERS TO RECEIVE IMAGE
 		Buffers.push_back(new uint8_t[payload]); //USER STORAGE BUFFERS TO PROCESSS

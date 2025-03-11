@@ -153,6 +153,7 @@ add_executable (ImageProcProject
 
         "./CV_IMAGE_PROCESSING/cv_image_processing.cpp"
         "./CV_IMAGE_PROCESSING/cv_image_processing.h"
+        "./CV_IMAGE_PROCESSING/optimization_threshold.cpp"
         "./CAMERA_INTERFACE/camera_interface_class.cpp"
         "./CAMERA_INTERFACE/camera_interface_class.h"
 

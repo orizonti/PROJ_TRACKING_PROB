@@ -23,14 +23,17 @@ public:
     explicit WidgetContainerGroup(QWidget* parent = 0);
 
     void AddWidget(WidgetAdjustable& Widget);
-    int NumberChannels = 0;
+    int NumberChannel = -1;
 
 public  slots:
-    void SlotSetChannel(int Channel);
+    void SlotSetActiveChannel(int Number);
 signals:
-    void SignalChannelChanged(int Channel);
+    void SignalChannelChanged(int);
+
+
 
 private:
+QVector<QPushButton*> buttons;
 Ui::WidgetContainerGroup *ui;
 };
 

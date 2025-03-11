@@ -72,10 +72,8 @@ void ScanatorControlClass::SlotMoveToPos(const QPair<double, double>& Pos)
     CommandChannel1->Position = ScanatorPos.first  * AngleToDAC.Scale + AngleToDAC.Offset;
     CommandChannel2->Position = ScanatorPos.second * AngleToDAC.Scale + AngleToDAC.Offset;
 
-    qDebug() << TAG_NAME << " SET POS: " << CommandScanator.DATA.StateChannel1.Position 
-                                         << CommandScanator.DATA.StateChannel2.Position;
-
-
+    //qDebug() << TAG_NAME << " SET POS: " << CommandScanator.DATA.StateChannel1.Position 
+    //                                     << CommandScanator.DATA.StateChannel2.Position;
     if(EnginePort != 0)
        EnginePort->SlotSendCommand(CommandScanator.toByteArray()); 
 
@@ -87,12 +85,9 @@ void ScanatorControlClass::SlotMoveOnStep(const QPair<double, double>& StepVecto
 
   CommandChannel1->ClearStruct(); CommandChannel2->ClearStruct();
   ScanatorPos = ScanatorPos + StepVector; 
-  if(ScanatorPos.first  < 0 ) ScanatorPos.first = 0;
-  if(ScanatorPos.second < 0 ) ScanatorPos.second = 0;
 
-  CommandChannel1->Position = ScanatorPos.first  * AngleToDAC.Scale + AngleToDAC.Offset;
-  CommandChannel2->Position = ScanatorPos.second * AngleToDAC.Scale + AngleToDAC.Offset;
-
+  CommandChannel2->Position = ScanatorPos.first  * AngleToDAC.Scale + AngleToDAC.Offset;
+  CommandChannel1->Position = ScanatorPos.second * AngleToDAC.Scale + AngleToDAC.Offset;
 
   qDebug() << TAG_NAME << " SET POS: " << CommandChannel1->Position 
                                        << CommandChannel2->Position;

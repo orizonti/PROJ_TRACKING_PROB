@@ -32,10 +32,10 @@ DynamicControl.LinkToImageImitator(this);
 
 ThinningTimePeriod = QTime::currentTime();
 
-ImagePoints.resize(1);
-ImageRects.resize(1);
-ImagePoints[0] = QPair<double,double>(0,0);
-ImageRects[0] = QRect(1,1,4,4);
+CoordsImage.resize(1);
+RectsImage.resize(1);
+CoordsImage[0] = QPair<double,double>(0,0);
+RectsImage[0] = QRect(1,1,4,4);
 }
 
 void AimImageImitatorClass::GenerateAimImage()
@@ -121,14 +121,14 @@ AimImageImitatorClass::~AimImageImitatorClass()
 
 const std::vector<QPair<int,int>>& AimImageImitatorClass::GetPoints()  
 {
-  ImagePoints[0].first = AIM_RECT.x + AIM_RECT.width/2; 
-  ImagePoints[0].second = AIM_RECT.y + AIM_RECT.height/2; 
-  return ImagePoints;
+  CoordsImage[0].first = AIM_RECT.x + AIM_RECT.width/2; 
+  CoordsImage[0].second = AIM_RECT.y + AIM_RECT.height/2; 
+  return CoordsImage;
 }
 const std::vector<QRect>& AimImageImitatorClass::GetRects()  
 {
-   ImageRects[0].setRect(AIM_RECT.x, AIM_RECT.y,  AIM_RECT.width,  AIM_RECT.height );
-   return ImageRects;
+   RectsImage[0].setRect(AIM_RECT.x, AIM_RECT.y,  AIM_RECT.width,  AIM_RECT.height );
+   return RectsImage;
 }
 
 

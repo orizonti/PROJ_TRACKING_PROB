@@ -22,17 +22,18 @@ public:
 	double MinValue = 0;
 	double MaxValue = 0;
 	double AvarageValue = 0;
-	double DispersionValue = 0;
+	double DispersionValue = 1000;
 
 	int Size = 10;
 	QPair<double, double> AvarageCoord;
-	QPair<double, double> DispersionCoord;
+	QPair<double, double> DispersionCoord{1000,1000};
 
-	double DispersionCoordDistance = 0;
-	double AmplitudeCoordDeviation = 0;
+	double DispersionCoordDistance = 1000;
+	double AmplitudeCoordDeviation = 1000;
 	int    Counter = 0;
 
 	void CalcDispersion();
+	void CalcDispersionValue();
 	static double Norm(QPair<double,double> Coord);
 
 	void Reset();
@@ -48,7 +49,11 @@ public:
 
 		StatObj.AvarageValue = StatObj.AvarageValue + NewValue / StatObj.Size;
 
-		if (StatObj.IsValueLoaded()) StatObj.AvarageValue = StatObj.AvarageValue - StatObj.ValueMassive.dequeue() / StatObj.Size;
+		if (StatObj.IsValueLoaded()) 
+		{
+		StatObj.AvarageValue = StatObj.AvarageValue - StatObj.ValueMassive.dequeue() / StatObj.Size;
+		StatObj.CalcDispersionValue();
+		}
 
 		StatObj.ValueMassive.enqueue(NewValue);
 	};
@@ -85,9 +90,10 @@ public:
 
 
 	const double& GetDispersionValue() { return DispersionValue;};
-	const double& GetAvarageValue() { return AvarageValue;};
+	const double& GetAvarageValue() {    return AvarageValue;};
 	QPair<double, double> GetAvarageCoord() { return AvarageCoord;};
 	QPair<double, double> GetDispersionCoord() { return DispersionCoord;};
+	      double GetDispersionNorm() { return Norm(DispersionCoord);};
 
 	void SetSize(int SizeStat){ this->Size = SizeStat;};
 

@@ -65,15 +65,15 @@ int main(int argc, char* argv[])
  WindowImageProcessingControl2.LinkToModule(ProcessControllerClass::ModuleImageProc2);
 
   WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+  //WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc2);
 
       WindowScanatorInterface.LinkToDevice(ProcessControllerClass::DeviceScanator);
           WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAimingLoop);
 
             WindowSinusSource.LinkToModule(ProcessControllerClass::ModuleSinusGenerator);
 
-  //auto AimingPort = &ProcessController->ModuleAimingLoop->PortSignalSetAiming; 
-  //QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<double,double>)), AimingPort,SLOT(SlotSetCoord(QPair<double,double>))) ;
+  auto AimingPort = &ProcessController->ModuleAimingLoop->PortSignalSetAiming; 
+  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<double,double>)), AimingPort,SLOT(SlotSetCoord(QPair<double,double>))) ;
 
   //=================================================
   WidgetMainWindow MainWindow;
@@ -96,10 +96,11 @@ int main(int argc, char* argv[])
 
                   MainWindow.LoadWidgetsLinks();
 
-                  //MainWindow.GetLastWidget()->SlotHideWidget();
+                  MainWindow.GetLastWidget()->HideNodes();
                   MainWindow.show();
 
-  QObject::connect(&WidgetGroup, SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(SlotSetActiveChannel(int)));
+  QObject::connect(&WidgetGroup,                  SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(SlotSetActiveChannel(int)));
+  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalChannelChanged(int)),&WidgetGroup,                  SLOT(SlotSetActiveChannel(int)));
 
   app.exec();
 }

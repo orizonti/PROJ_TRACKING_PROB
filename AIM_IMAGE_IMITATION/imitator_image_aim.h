@@ -99,8 +99,8 @@ const std::vector<QPair<int,int>>& GetPoints();
 const std::vector<QRect>&          GetRects();  
 const QString&                     GetInfo();  
 //==================================================
-std::vector<QPair<int,int>> ImagePoints;
-std::vector<QRect>          ImageRects;
+std::vector<QPair<int,int>> CoordsImage;
+std::vector<QRect>          RectsImage;
 
 void GenerateAimImage();
 void CheckCorrectROI(cv::Rect& ROI);

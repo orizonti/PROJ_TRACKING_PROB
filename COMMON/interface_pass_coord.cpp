@@ -1,4 +1,5 @@
 #include "interface_pass_coord.h"
+#include <QDebug>
 
 
 PassTwoCoordClass& operator >>(PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever) 
@@ -15,7 +16,7 @@ PassTwoCoordClass& operator >>(PassTwoCoordClass& Sender, QPair<double,double>& 
     Coord = Sender.GetOutput(); return Sender; 
 }
 
-void PassTwoCoordClass::SetLink(PassTwoCoordClass* NewLink) { Link = NewLink; }
+void PassTwoCoordClass::SetLink(PassTwoCoordClass* NewLink) { qDebug() << "SET LINK"; Link = NewLink; }
 PassTwoCoordClass& operator | (PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever) 
                                 { Sender.SetLink(&Reciever); return Reciever; }
 

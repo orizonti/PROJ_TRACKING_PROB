@@ -19,6 +19,9 @@
 #include <mutex>
 #include "interface_pass_coord.h"
 #include "interface_image_source.h"
+#include "engine_statistics.h"
+#include "optimization_threshold.h"
+
 
 bool operator==(std::pair<int,int> pair, std::pair<int,int> pair2);
 bool operator!=(std::pair<int,int> pair, std::pair<int,int> pair2);
@@ -40,13 +43,23 @@ cv::Rect& operator*(cv::Rect& rect, T Scale)
 	return rect;
 }
 
-class FindContoursProcessor
+class ContoursProcessorClass
 {
     public:
+    ContoursProcessorClass() ;
     void SetImage(const cv::Mat& Image);
     void PrintContoursRect(cv::Mat& OutputImage);
     void ClearBlotchRects(cv::Mat& OutputImage);
+    void CalcContoursStatistic();
+    cv::Mat InputImage;
+    cv::Mat MaskImage;
+    cv::Rect ObjectRect{100,100,300,300};
+
     cv::Rect GetMaxContourRect();
+    cv::Rect GetMostStableContour();
+    double GetMinimumContourDispersion();
+
+    QPair<double,double> GetCentroid(const cv::Mat& Image); 
     int NumberMaxContour = 0;
 
     std::vector<std::vector<cv::Point>> Contours;
@@ -56,17 +69,21 @@ class FindContoursProcessor
 
     std::vector<double> ContourAreas;
     std::vector<cv::Rect> ContourRects;
+    std::vector<cv::Rect> ContourRectsOld;
+    std::vector<Statistic> ContourStatistics;
+
     void operator()(const cv::Mat& Image){ SetImage(Image);}
 
 	bool isROIValid(const cv::Rect& ROI, int SizeImage);
 	void CheckROI(cv::Rect& ROI, int SizeImage);
+    int DelayCounter = 0;
 };
 
 class FilterBlotchClass
 {
     public:
     void FilterImage(cv::Mat& FilteringImage, cv::Mat& RawImage);
-    FindContoursProcessor FindContours;
+    ContoursProcessorClass FindContours;
     QString TAG_NAME{"[ BLOTCH_FILTER ]"};
 };
 
@@ -78,63 +95,22 @@ struct TrackingDataStruct
 };
 
 
-class WindowImageProcessingControlInterface
+class ModuleImageProcessing : public ImageSourceInterface, public PassTwoCoordClass
 {
+Q_OBJECT
 public:
-virtual void SetProcessingRegim(int Regim) = 0;
-virtual void StartStopProcessing(bool StartStop) = 0;
-virtual void SetThreshold(int Threshold) = 0;
-};
-
-class CVImageProcessing : public ImageSourceInterface, public WindowImageProcessingControlInterface, public PassTwoCoordClass
-{
-    Q_OBJECT
-public:
-    explicit CVImageProcessing(QObject* parent = 0);
-    ~CVImageProcessing();
-
-	std::string TAG_NAME{"[ IMAGE_PROC ]"};
-    QString ProcessInfo = "[ NO DATA ]";
-
-    std::mutex MutexImageAccess;
+ModuleImageProcessing(QObject* parent = 0) : ImageSourceInterface(parent) {} 
 
     //==================================================
-    std::queue<cv::Mat> ImageProcStore;
-    cv::Mat  ImageInput;
-    cv::Mat  ImageProcessing;
-    cv::Mat  ImageTemplate;
-    cv::Mat  ProcessResult;
-    cv::Size TemplateRect;
+    void SetProcessingRegim(int Regim)      ;
+    void StartStopProcessing(bool StartStop);
+    void SetThreshold(int Threshold)        ;
+
+                           void SetInput (const QPair<double,double>& Coord){};
+    const QPair<double,double>& GetOutput() { return CoordsObject[0]; }
+
     //==================================================
-    QImage   ImageToDisplay;
-    //==================================================
-
-    std::vector<QPair<int,int>> Trajectory;
-    std::vector<QPair<int,int>> TrajectoryIncrement;
-    std::vector<QPair<int,int>> TrajectoryIncrementAvarage;
-
-    QPair<double,double> PosAim;
-               cv::Point PosAimProcess;
-                cv::Rect ROIAim;
-    QPair<double,double> VelAimAvarage = QPair<double,double>(0,0); 
-    std::chrono::time_point<std::chrono::high_resolution_clock> ProcessTimePoint;
-    //==================================================
-
-    std::atomic<bool> FLAG_DISPLAY_IMAGE = false;
-                bool  FLAG_FAST_MATCHING = false;
-    //==================================================
-
-    FindContoursProcessor ContoursProcessor;
-        FilterBlotchClass FilterBlotch;
-    
-    int Counter = 0;
-    int DispCounter = 0;
-    int Threshold = 50;
-    int WorkRegim = 1;
-
-    //===================================================
-    // ImageSourceInterface
-    QImage& GetImageToDisplay();
+    QImage&  GetImageToDisplay();
     cv::Mat& GetImageToProcess();
 
     void GetImageToDisplay(QImage& ImageDst);
@@ -144,41 +120,122 @@ public:
     const std::vector<QRect>&          GetRects();  
     const QString&                     GetInfo();  
     //==================================================
-    std::vector<QPair<int,int>> ImagePoints{2};
-    std::vector<QRect>          ImageRects{2};
-    //===================================================
-    std::shared_ptr<ImageSourceInterface> SourceImage;
-    std::shared_ptr<PassTwoCoordClass> ReceiverLinkCoord;
-
-    void SetInput(const QPair<double,double>& Coord){};
-    const QPair<double,double>& GetOutput() { return PosAim; }
-
-    //=======================================
-    void SetProcessingRegim(int Regim);
-    void StartStopProcessing(bool StartStop);
-    void SetThreshold(int Thresh);
-    //=======================================
-
-    bool IsROIValid(cv::Rect& ROI);
-    void CheckCorrectROI(cv::Rect& ROI);
 
     void LinkToModule(std::shared_ptr<ImageSourceInterface> ImageSource);
+    friend std::shared_ptr<ModuleImageProcessing> operator| (std::shared_ptr<ImageSourceInterface > Source, 
+                                                             std::shared_ptr<ModuleImageProcessing> Rec);
+    public slots:
+    virtual void SlotProcessImage(const cv::Mat& Image) = 0;
+    virtual void SlotProcessImage() = 0;
 
-    friend std::shared_ptr<CVImageProcessing> operator|(std::shared_ptr<ImageSourceInterface> Source, 
-                                                        std::shared_ptr<CVImageProcessing> Rec);
-    void CalcVelocity();
+    //==================================================
+    bool IsROIValid(cv::Rect& ROI);
+    void CheckCorrectROI(cv::Rect& ROI);
+    virtual void CalcThreshold() {};
+    //=======================================
+    protected:
+    std::mutex MutexImageAccess;
+    std::queue<cv::Mat> ImageProcStore;
+    cv::Mat  ImageInput;
+    cv::Mat  ImageInputTemp;
+    cv::Mat  ImageProcessing;
+    cv::Mat  ImageProcessingROI;
+    QImage   ImageToDisplay;
 
-    void FindImageTemplate(cv::Mat& Image);
-    void FindImageCentroid(cv::Mat& Image);
+    //===================================================
+    std::shared_ptr<ImageSourceInterface> SourceImage;
+    std::shared_ptr<PassTwoCoordClass   > ReceiverLinkCoord;
+    //===================================================
+    std::vector<QPair<double,double>> CoordsObject{2};
+    std::vector<cv::Rect>  RectsObject{2};
+    std::vector<cv::Point> PointsProcess{2};
+
+    std::vector<QPair<int,int>> CoordsImage{2};
+    std::vector<QRect>          RectsImage{2};
+
+    int Threshold = 50;
+    //==================================================
     QTimer timerProcessImage;
     QTimer timerDisplay;
+    std::chrono::time_point<std::chrono::high_resolution_clock> ProcessTimePoint;
 
-
-public  slots:
-   void SlotProcessImage(const cv::Mat& Image);
-   void SlotProcessImage();
-   void SlotDisplayProcessingImage();
+    public:
+	std::string TAG_NAME{"[ TRACKER_CENTROID ]"};
+    QString ProcessInfo = "[ NO DATA ]";
 
 };
+
+class ImageTrackerCentroid : public ModuleImageProcessing
+{
+    Q_OBJECT
+public:
+    explicit ImageTrackerCentroid(QObject* parent = 0);
+    ~ImageTrackerCentroid();
+    int NumberChannel = 0;
+    static int NumberChannels;
+
+    ContoursProcessorClass ContoursProcessor;
+        FilterBlotchClass FilterBlotch;
+    ThresholdOptimizatorEngine ThresholdAdjuster{PROCESS_METHOD::PARALLEL_BY_DISPERSION};
+    
+    //Statistic StatisticCoord{40};
+    //Statistic StatisticDispersion{120};
+    //Statistic StatisticThreshold{200};
+
+    Statistic StatisticCoord{100};
+    Statistic StatisticDispersion{100};
+    Statistic StatisticThreshold{100};
+
+    ValueDetector<double> TrackingDetector;
+    ValueSaturation<double> Saturation;
+    ValueBinaryInversion<double> InversionBinary;
+    
+    void FindObjectCentroid(cv::Mat& Image);
+    void TrackObjectCentroid(cv::Mat& Image);
+    bool FLAG_OBJECT_FOUND = false;
+
+    void CalcCentroid(cv::Mat& Image);
+    void CalcThreshold() override;
+    QPair<double,double> GetCentroid(cv::Mat& Image);
+
+    std::function<void (cv::Mat&, cv::Mat&)> FilterSharpen;
+    std::function<void (cv::Mat&, cv::Mat&)> FilterSobel;
+    std::function<void (cv::Mat&, cv::Mat&)> FilterErosion;
+
+public  slots:
+   void SlotProcessImage(const cv::Mat& Image) override;
+   void SlotProcessImage() override;
+};
+
+class ImageTrackerTemplate : public ImageTrackerCentroid
+{
+    Q_OBJECT
+public:
+    explicit ImageTrackerTemplate(QObject* parent = 0);
+    ~ImageTrackerTemplate();
+
+    ContoursProcessorClass ContoursProcessor;
+        FilterBlotchClass FilterBlotch;
+
+    cv::Mat  ImageTemplate;
+    cv::Mat  ProcessResult;
+    cv::Size TemplateRect;
+
+    QPair<double,double> VelAimAvarage = QPair<double,double>(0,0); 
+    std::vector<QPair<int,int>> Trajectory;
+    std::vector<QPair<int,int>> TrajectoryIncrement;
+
+    bool  FLAG_FAST_MATCHING = false;
+
+    void FindImageTemplate(cv::Mat& Image);
+    void TrackImageTemplate(cv::Mat& Image);
+
+    void CalcObjectTrajectory();
+
+public  slots:
+   void SlotProcessImage(const cv::Mat& Image) override;
+   void SlotProcessImage() override;
+};
+
 
 #endif // CV_IMAGE_PROC_H

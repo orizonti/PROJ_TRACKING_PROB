@@ -29,8 +29,8 @@ static std::shared_ptr<ScanatorControlClass>       DeviceScanator;
 static std::shared_ptr<LaserControlClass>          DeviceLaser;
 //static std::shared_ptr<MotorInterface>             DeviceImitatorMotor;
 
-static std::shared_ptr<CVImageProcessing>          ModuleImageProc;
-static std::shared_ptr<CVImageProcessing>          ModuleImageProc2;
+static std::shared_ptr<ImageTrackerCentroid>          ModuleImageProc;
+static std::shared_ptr<ImageTrackerCentroid>          ModuleImageProc2;
 static std::shared_ptr<AimingClass>                ModuleAimingLoop;
 
 static std::shared_ptr<AimImageImitatorClass>      ModuleImitatorImage;

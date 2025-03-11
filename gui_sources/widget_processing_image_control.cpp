@@ -6,7 +6,7 @@ WidgetProcessingImageControl::WidgetProcessingImageControl(QWidget* parent) : Wi
     ui->setupUi(this);
 }
 
-void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<CVImageProcessing> ControlInterface)
+void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<ImageTrackerCentroid> ControlInterface)
 {
   connect(ui->spinThreshold,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, ControlInterface](int value)
   {

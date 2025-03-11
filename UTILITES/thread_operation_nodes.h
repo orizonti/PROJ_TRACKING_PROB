@@ -148,7 +148,7 @@ template<typename T = double>
 class ValueBinaryInversion : public PassValueClass<T>
 {
   public:
-  const T& GetValue() override { PassValueClass<T>::Value = (PassValueClass<T>::Value > 0) ? 0 : 1; return PassValueClass<T>::Value;}
+  T& GetValue() override { PassValueClass<T>::Value = (PassValueClass<T>::Value > 0) ? 0 : 1; return PassValueClass<T>::Value;}
 };
 
 template<typename T = double>
@@ -207,7 +207,7 @@ class ValueDetector : public PassValueClass<T>
   ValueDetector<T>& operator!(){FlagInversion = true; return *this;}
   
   ValueSaturation<T> SaturationDetector;
-  ValueDetector<T>* LinkedDetector = 0;
+  ValueDetector<T>*  LinkedDetector = 0;
 };
 
 template<typename T>
@@ -329,6 +329,7 @@ class ValuePeriodMeasure : public PassValueClass<T>
   std::chrono::milliseconds Period;
 };
 
+
 template<typename T = double>
 class ValueAbsolutization : public PassValueClass<T>
 {
@@ -397,4 +398,5 @@ template<typename T>
 void operator>>(const QPair<T,T>& Coord, QQueue<QPair<T,T>>& queue_stor) { queue_stor.enqueue(Coord);};
 template<typename T>
 void operator>>(const T& Coord, QQueue<T>& queue_stor) { queue_stor.enqueue(Coord);};
+
 #endif  //DATATHREADSPROCESSING_H

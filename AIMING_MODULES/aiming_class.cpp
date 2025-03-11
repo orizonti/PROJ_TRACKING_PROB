@@ -3,6 +3,7 @@
 #include "state_block_enum.h"
 #include <QTimer>
 #include <QFile>
+OutputFilter FilterOutput50{20};
 
 #define TAG "[   AIMING   ]" 
 
@@ -103,13 +104,18 @@ void AimingClass::SetInput(const QPair<double,double>& Coord)
 {
   if (this->StateBlock == StateBlockDisabled) { VectorOutput = Coord; return; }
 
-  if (isAimingFault()) return;
+  //if (isAimingFault()) return;
 
      Coord >> Substract;
   CoordAim >> Substract >> Substract;
-     CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> PixToRadian >> VectorOutput;
+     CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> VectorOutput;
+
+     //CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> PixToRadian >> VectorOutput;
         
-  //PassCounter++; if(PassCounter) qDebug() << FilterCount2 << "AIMING: COORD:" << Coord << "AIM: " << AimingRelCoord << "CORR: " << AimingRelCorrection ;
+  qDebug() << FilterOutput50 << "AIMING:   INPUT:" << Coord.first
+                                       << "AIM  :" << CoordAim.first
+                                       << "ERROR:" << CoordAimingError.first
+                                       << "OUT  :" << VectorOutput;
 
   if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
    

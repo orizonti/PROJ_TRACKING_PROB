@@ -30,13 +30,12 @@ QPair<double, double> PIDClass::CalcVelocityToengine(QPair<double, double> Coord
 	double StepPeriod = std::chrono::duration<double>((TimePoint - TimeFromLastCommand)).count();
     TimeFromLastCommand = TimePoint;
 
-	if (StepPeriod > StepPeriodThreshold) return  this->PIDControlOutput;
+	//if (StepPeriod > StepPeriodThreshold) return  this->PIDControlOutput;
 
 	double DerivateErrorXAxis = 0; double DerivateErrorYAxis = 0;
 
 	this->ErrorsSumm.first  = ErrorsSumm.first  + CoordError.first*StepPeriod;
 	this->ErrorsSumm.second = ErrorsSumm.second + CoordError.second*StepPeriod;
-
 
 	if (CoordAimingError.first != -10000 && CoordAimingError.second != -10000)
 	{

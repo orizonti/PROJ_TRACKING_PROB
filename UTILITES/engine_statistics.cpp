@@ -116,6 +116,14 @@ void StatisticGroup::PerformAvailableData()
     BestStatNumber = GetBestStatisticsCoord();
 };
 
+void Statistic::CalcDispersionValue()
+{
+        std::vector<double> DeviationMeasures;
+		DispersionValue = 0;
+        for(auto Value: ValueMassive)
+        DispersionValue += std::pow(Value - AvarageValue, 2) / ValueMassive.size();
+}
+
 void Statistic::CalcDispersion()
 {
 		DispersionCoord = QPair<double, double>(0, 0);

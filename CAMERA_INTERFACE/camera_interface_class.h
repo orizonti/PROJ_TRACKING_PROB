@@ -58,6 +58,7 @@ class CameraInterfaceClassAravis: public ImageSourceInterface, public CameraCont
     CameraRectRegion CameraRegion;
     std::pair<int,int> SizeImage{400,400}; // MAY BE CHANGED IN INIT
     std::pair<int,int> ImagePos{20,20}; // MAY BE CHANGED IN INIT
+    int ThinningCounter = 0;
 
     void GetCurrentCameraRegion();
 
@@ -72,6 +73,7 @@ class CameraInterfaceClassAravis: public ImageSourceInterface, public CameraCont
 
     cv::Mat ImageToProcess;
      QImage ImageToDisplay;
+     int FrameNumber = 0;
 
     QImage& GetImageToDisplay();
     cv::Mat& GetImageToProcess();

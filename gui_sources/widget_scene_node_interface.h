@@ -48,6 +48,7 @@ signals:
 void SignalWidgetPressed(int NumberWidget);
 public slots:
 void SlotHideWidget();
+void SlotHideLinks();
 
 };
 

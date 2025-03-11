@@ -6,8 +6,8 @@
 using namespace std;
 
 ProcessControllerClass* ProcessControllerClass::ProcessControllerInstance = nullptr;
-shared_ptr<CVImageProcessing>          ProcessControllerClass::ModuleImageProc;
-shared_ptr<CVImageProcessing>          ProcessControllerClass::ModuleImageProc2;
+shared_ptr<ImageTrackerCentroid>          ProcessControllerClass::ModuleImageProc;
+shared_ptr<ImageTrackerCentroid>          ProcessControllerClass::ModuleImageProc2;
 shared_ptr<AimingClass>                ProcessControllerClass::ModuleAimingLoop;
 
 shared_ptr<AimImageImitatorClass>      ProcessControllerClass::ModuleImitatorImage;
@@ -32,8 +32,8 @@ ProcessControllerClass::ProcessControllerClass(QObject* parrent): QObject(parren
 
 ModuleImitatorImage = make_shared<AimImageImitatorClass>();
 ModuleAimingLoop    = make_shared<AimingClass>();
-ModuleImageProc     = make_shared<CVImageProcessing>();
-ModuleImageProc2    = make_shared<CVImageProcessing>();
+ModuleImageProc     = make_shared<ImageTrackerCentroid>();
+ModuleImageProc2    = make_shared<ImageTrackerCentroid>();
 
 DeviceCamera        = make_shared<CameraInterfaceClassAravis>();
 DeviceScanator      = make_shared<ScanatorControlClass>();
@@ -59,7 +59,7 @@ ProcessFindRotation  = make_shared<RotationFindProcessClass>();
    utiliteThread.setPriority(QThread::NormalPriority);
    //=================================================
 
-   //SlotSetProcessImitation();
+   //SlotSetProcessImitation(true);
    SlotSetProcessAiming(true);
 
 }
@@ -78,8 +78,9 @@ void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)
    //DeviceCamera | ModuleImageProc | ModuleAimingLoop | DeviceScanator;  ProcessState = ProcessStateList::ProcessAiming; DisplayState();
   
 
-   DeviceCamera | ModuleImageProc  | ModuleAimingLoop; ProcessState = ProcessStateList::ProcessAiming; DisplayState();
-   DeviceCamera | ModuleImageProc2 | DeviceScanator; 
+   DeviceCamera | ModuleImageProc  | ModuleAimingLoop | DeviceScanator; ProcessState = ProcessStateList::ProcessAiming; DisplayState();
+   //DeviceCamera | ModuleImageProc2 ; 
+   //DeviceCamera | ModuleImageProc2 | DeviceScanator; 
 
 }
 
@@ -87,8 +88,10 @@ void ProcessControllerClass::SlotSetProcessImitation(bool OnOff)
 {
    if(!OnOff) return;
 
-                                           ModuleAimingLoop->SetBlockEnabled(false);
-   ModuleImitatorImage | ModuleImageProc | ModuleAimingLoop | DeviceScanator; ProcessState = ProcessStateList::ProcessImitation; DisplayState();
+                                           //ModuleAimingLoop->SetBlockEnabled(false);
+   //ModuleImitatorImage | ModuleImageProc | ModuleAimingLoop | DeviceScanator; ProcessState = ProcessStateList::ProcessImitation; DisplayState();
+   ModuleImitatorImage | ModuleImageProc; 
+   ModuleImitatorImage | ModuleImageProc2; 
 }
 
 void ProcessControllerClass::SlotSetProcessTestSignal(bool OnOff)

@@ -31,11 +31,14 @@ class WidgetMiniLabelsGroup : public WidgetAdjustable
     };
     void AddLabel(LabelImage* label); 
     
-    int NumberChannel = 0;
-    void ChannelSelected(int Number);
+    int NumberChannel = -1;
 
+    QVector<LabelImage*> Labels;
+public slots:
+    void SlotSetActiveChannel(int Number);
+    void SlotDisplayImage(const QImage& Image, int Channel);
 signals: 
-void SignalGroupSelected(int);
+void SignalChannelChanged(int);
 
 };
 
@@ -55,7 +58,11 @@ QRect  ObjectFindRect;
 QLineF ObjectVelLine;
 QLineF ArrowLeft;
 QLineF ArrowRight;
-QImage DisplayImage;
+QTimer timerDisplayMiniLabels;
+
+        QImage  DisplayImage;
+QVector<QImage> DisplayImagesMini;
+
 std::shared_ptr<ImageSourceInterface> ImageSourceActive;
 std::vector<std::shared_ptr<ImageSourceInterface>> ImageSources;
 
@@ -77,14 +84,18 @@ QString strPeriodProcess;
 QString strDisplayData; 
 
 WidgetAdjustable* LinkedWidget = 0;
+int NumberActiveChannel = -1;
 
 void AddMiniLabel();
 void moveEvent(QMoveEvent* event);
+
 signals:
 void SignalPosPressed(QPair<double,double>);
+void SignalChannelChanged(int);
 
 public  slots:
 void SlotDisplayImage();
+void SlotDisplayMiniLabels();
 void SlotDisplayImage(const QImage& Image);
 void SlotDisplayString(QString InfoString);
 void SlotStartPaintTrajectory(bool OnOff);

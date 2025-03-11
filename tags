@@ -3904,8 +3904,8 @@ COMPILER_VERSION_TWEAK	build/CMakeFiles/3.28.1/CompilerIdC/CMakeCCompilerId.c	/^
 COMPILER_VERSION_TWEAK	build/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	/^#  define COMPILER_VERSION_TWEAK /;"	d	file:
 COMPILER_VERSION_TWEAK	build/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	/^# define COMPILER_VERSION_TWEAK /;"	d	file:
 COUNTER	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	uint16_t COUNTER = 0;$/;"	m	class:SinusGeneratorClass	typeref:typename:uint16_t
-CVImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^CVImageProcessing::CVImageProcessing(QObject* parent) : ImageSourceInterface(parent)$/;"	f	class:CVImageProcessing
-CVImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class CVImageProcessing : public ImageSourceInterface, public WindowImageProcessingControlInterf/;"	c
+ImageTrackerTemplate	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^ImageTrackerTemplate::ImageTrackerTemplate(QObject* parent) : ImageSourceInterface(parent)$/;"	f	class:ImageTrackerTemplate
+ImageTrackerTemplate	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class ImageTrackerTemplate : public ImageSourceInterface, public WindowImageProcessingControlInterf/;"	c
 CV_AIM_IMIT_H	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^#define CV_AIM_IMIT_H$/;"	d
 CV_IMAGE_PROC_H	CV_IMAGE_PROCESSING/cv_image_processing.h	/^#define CV_IMAGE_PROC_H$/;"	d
 CV_VERSION	CMakeLists.txt	/^set(CV_VERSION "opencv410")$/;"	v
@@ -3920,7 +3920,7 @@ CachedLabel	gui_sources/qcustomplot.h	/^  struct CachedLabel$/;"	s	class:QCPAxis
 CachedLabel	gui_sources/qcustomplot.h	/^  struct CachedLabel$/;"	s	class:QCPLabelPainterPrivate
 CalcDispersion	UTILITES/engine_statistics.cpp	/^void Statistic::CalcDispersion()$/;"	f	class:Statistic	typeref:typename:void
 CalcTransformationScale	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^double RotateOperationContainer::CalcTransformationScale(vector<pair<double,double>> test_input,/;"	f	class:RotateOperationContainer	typeref:typename:double
-CalcVelocity	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::CalcVelocity() { }$/;"	f	class:CVImageProcessing	typeref:typename:void
+CalcVelocity	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::CalcVelocity() { }$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 CalcVelocityToengine	AIMING_MODULES/pid_class.cpp	/^QPair<double, double> PIDClass::CalcVelocityToengine(QPair<double, double> CoordError)$/;"	f	class:PIDClass	typeref:typename:QPair<double,double>
 CalcVirtualZComponent	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^double RotateOperationContainer::CalcVirtualZComponent(QPair<double,double> InputCoord)$/;"	f	class:RotateOperationContainer	typeref:typename:double
 Call1	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^void (*Call1)(ControlMessage1*);$/;"	m	struct:MessagesListScanator	typeref:typename:void (*)(ControlMessage1 *)
@@ -3946,14 +3946,14 @@ ChannelsCount	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^    int Chann
 ChartStyle	gui_sources/qcustomplot.h	/^  enum ChartStyle { csOhlc         \/\/\/< Open-High-Low-Close bar representation$/;"	g	class:QCPFinancial
 CheckCoordMatch	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^bool AccumulateDataFilter::CheckCoordMatch(QPair<double, double> Coord,QPair<double,double> AimC/;"	f	class:AccumulateDataFilter	typeref:typename:bool
 CheckCorrectROI	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimImageImitatorClass::CheckCorrectROI(cv::Rect& ROI)$/;"	f	class:AimImageImitatorClass	typeref:typename:void
-CheckCorrectROI	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::CheckCorrectROI(cv::Rect& ROI)$/;"	f	class:CVImageProcessing	typeref:typename:void
+CheckCorrectROI	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::CheckCorrectROI(cv::Rect& ROI)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 CheckPointsStat	DEVICES/scanator_control_class.h	/^	Statistic CheckPointsStat;$/;"	m	class:ScanatorControlClass	typeref:typename:Statistic
-CheckROI	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void FindContoursProcessor::CheckROI(cv::Rect& ROI, int SizeImage)$/;"	f	class:FindContoursProcessor	typeref:typename:void
+CheckROI	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ContoursProcessorClass::CheckROI(cv::Rect& ROI, int SizeImage)$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 ChillControlBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, Recie/;"	e	enum:TypeEnumBlock
 Chunked	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	e	enum:IteratorMode
 ChunkedContinous	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	e	enum:IteratorMode
 ChunkedFixed	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	e	enum:IteratorMode
-ClearBlotchRects	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void FindContoursProcessor::ClearBlotchRects(cv::Mat& OutputImage)$/;"	f	class:FindContoursProcessor	typeref:typename:void
+ClearBlotchRects	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ContoursProcessorClass::ClearBlotchRects(cv::Mat& OutputImage)$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 ClearStruct	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    void ClearStruct() { Position = 0; Velocity = 0; Acceleration = 0; PositionRel = 0;}$/;"	f	struct:AimStateStruct	typeref:typename:void
 ColorInterpolation	gui_sources/qcustomplot.h	/^  enum ColorInterpolation { ciRGB  \/\/\/< Color channels red, green and blue are linearly inter/;"	g	class:QCPColorGradient
 ColorList	gui_sources/widget_output_image_display.h	/^  QVector<QColor> ColorList;$/;"	m	class:WidgetOutputImageDisplay	typeref:typename:QVector<QColor>
@@ -3973,11 +3973,11 @@ ConnectToDevice	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^voi
 Connected	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    bool Connected = false;$/;"	m	class:UDPEngineInterface	typeref:typename:bool
 ConnectedToDevice	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    bool ConnectedToDevice = false;$/;"	m	class:LaserControlClass	typeref:typename:bool
 Continous	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	e	enum:IteratorMode
-ContourAreas	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<double> ContourAreas;$/;"	m	class:FindContoursProcessor	typeref:typename:std::vector<double>
-ContourRects	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<cv::Rect> ContourRects;$/;"	m	class:FindContoursProcessor	typeref:typename:std::vector<cv::Rect>
-Contours	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<std::vector<cv::Point>> Contours;$/;"	m	class:FindContoursProcessor	typeref:typename:std::vector<std::vector<cv::Point>>
-ContoursExtern	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<std::vector<cv::Point>> ContoursExtern;$/;"	m	class:FindContoursProcessor	typeref:typename:std::vector<std::vector<cv::Point>>
-ContoursProcessor	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    FindContoursProcessor ContoursProcessor;$/;"	m	class:CVImageProcessing	typeref:typename:FindContoursProcessor
+ContourAreas	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<double> ContourAreas;$/;"	m	class:ContoursProcessorClass	typeref:typename:std::vector<double>
+ContourRects	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<cv::Rect> ContourRects;$/;"	m	class:ContoursProcessorClass	typeref:typename:std::vector<cv::Rect>
+Contours	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<std::vector<cv::Point>> Contours;$/;"	m	class:ContoursProcessorClass	typeref:typename:std::vector<std::vector<cv::Point>>
+ContoursExtern	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<std::vector<cv::Point>> ContoursExtern;$/;"	m	class:ContoursProcessorClass	typeref:typename:std::vector<std::vector<cv::Point>>
+ContoursProcessor	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    ContoursProcessorClass ContoursProcessor;$/;"	m	class:ImageTrackerTemplate	typeref:typename:ContoursProcessorClass
 ControlCommandLaser	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    ControlCommandLaser()$/;"	f	struct:ControlCommandLaser
 ControlCommandLaser	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^struct ControlCommandLaser$/;"	s
 ControlData	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    ControlCommandLaser ControlData;$/;"	m	class:LaserControlClass	typeref:typename:ControlCommandLaser
@@ -4014,7 +4014,7 @@ CopyImageToDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void W
 CopyRotation	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::CopyRotation(const RotateOperationContainer& CopyContainer)$/;"	f	class:RotateOperationContainer	typeref:typename:void
 CountMessagesInStore	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^    int CountMessagesInStore() { return MESSAGE_COUNTER;}$/;"	f	class:RingBufferDense	typeref:typename:int
 CountMessagesInStore	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^    int CountMessagesInStore() { return MESSAGE_COUNTER;}$/;"	f	class:RingBufferGeneric	typeref:typename:int
-Counter	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int Counter = 0;$/;"	m	class:CVImageProcessing	typeref:typename:int
+Counter	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int Counter = 0;$/;"	m	class:ImageTrackerTemplate	typeref:typename:int
 Counter	UTILITES/debug_output_filter.h	/^  int Counter = 0;$/;"	m	class:BlockCounterClass	typeref:typename:int
 Counter	UTILITES/engine_statistics.h	/^	int    Counter = 0;$/;"	m	class:Statistic	typeref:typename:int
 Counter	gui_sources/widget_processing_image_generic.h	/^int Counter = 0;$/;"	m	class:WidgetProcessingImage	typeref:typename:int
@@ -4070,7 +4070,7 @@ DeviceScanator	controller_process_class.h	/^static std::shared_ptr<ScanatorContr
 Diff	UTILITES/thread_operation_nodes.h	/^  T Diff;$/;"	m	class:ValueDifference	typeref:typename:T
 DiffParam	AIMING_MODULES/pid_param_struct.h	/^	double DiffParam;$/;"	m	class:PIDParamStruct	typeref:typename:double
 Direction	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    int Direction = 0;$/;"	m	class:ManualAimControl	typeref:typename:int
-DispCounter	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int DispCounter = 0;$/;"	m	class:CVImageProcessing	typeref:typename:int
+DispCounter	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int DispCounter = 0;$/;"	m	class:ImageTrackerTemplate	typeref:typename:int
 DispatchNextMessage	TRANSMISSION/EMBEDED_RING_BUFFER/message_dispatcher_generic.h	/^void MessageDispatcherGenericClass<MessagesListScanatorFull>::DispatchNextMessage(RingBufferType/;"	f	class:MessageDispatcherGenericClass	typeref:typename:void
 DispersionCoord	UTILITES/engine_statistics.h	/^	QPair<double, double> DispersionCoord;$/;"	m	class:Statistic	typeref:typename:QPair<double,double>
 DispersionCoordDistance	UTILITES/engine_statistics.h	/^	double DispersionCoordDistance = 0;$/;"	m	class:Statistic	typeref:typename:double
@@ -4108,11 +4108,11 @@ ErrorsSumm	AIMING_MODULES/pid_class.h	/^	QPair<double, double> ErrorsSumm;$/;"	m
 ExportPen	gui_sources/qcustomplot.h	/^enum ExportPen { epNoCosmetic     \/\/\/< Cosmetic pens are converted to pens with pixel width 1/;"	g	namespace:QCP
 FLAG	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    quint16 FLAG = 0xC2C4;$/;"	m	struct:TestCommand	typeref:typename:quint16
 FLAG_CONTROL_PARAM_REGIM	AIMING_MODULES/aiming_class.h	/^  bool FLAG_CONTROL_PARAM_REGIM = false;$/;"	m	class:AimingParamOptimizator	typeref:typename:bool
-FLAG_DISPLAY_IMAGE	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::atomic<bool> FLAG_DISPLAY_IMAGE = false;$/;"	m	class:CVImageProcessing	typeref:typename:std::atomic<bool>
+FLAG_DISPLAY_IMAGE	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::atomic<bool> FLAG_DISPLAY_IMAGE = false;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::atomic<bool>
 FLAG_DISPLAY_TIME	gui_sources/widget_output_image_display.h	/^  bool FLAG_DISPLAY_TIME = false;$/;"	m	class:WidgetOutputImageDisplay	typeref:typename:bool
 FLAG_DISPLAY_TIME	gui_sources/widget_output_text_display.h	/^  bool FLAG_DISPLAY_TIME = false;$/;"	m	class:WidgetOutputTextDisplay	typeref:typename:bool
 FLAG_ENABLE_NOIZE	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^    bool FLAG_ENABLE_NOIZE = false;$/;"	m	class:SinusGeneratorClass	typeref:typename:bool
-FLAG_FAST_MATCHING	CV_IMAGE_PROCESSING/cv_image_processing.h	/^                bool  FLAG_FAST_MATCHING = false;$/;"	m	class:CVImageProcessing	typeref:typename:bool
+FLAG_FAST_MATCHING	CV_IMAGE_PROCESSING/cv_image_processing.h	/^                bool  FLAG_FAST_MATCHING = false;$/;"	m	class:ImageTrackerTemplate	typeref:typename:bool
 FLAG_PAINT_TRAJECTORY	gui_sources/widget_processing_image_generic.h	/^bool FLAG_PAINT_TRAJECTORY = false;$/;"	m	class:WidgetProcessingImage	typeref:typename:bool
 FLAG_REGISTRATION_REGIM	AIMING_MODULES/aiming_class.h	/^  bool FLAG_REGISTRATION_REGIM = true;$/;"	m	class:AimingParamOptimizator	typeref:typename:bool
 FLAG_SETTINGS_LOADED	UTILITES/register_settings.cpp	/^bool SettingsRegister::FLAG_SETTINGS_LOADED = false;$/;"	m	class:SettingsRegister	typeref:typename:bool
@@ -4120,16 +4120,16 @@ FLAG_SETTINGS_LOADED	UTILITES/register_settings.h	/^    static bool FLAG_SETTING
 FaultStatistic	AIMING_MODULES/aiming_class.h	/^  Statistic FaultStatistic;$/;"	m	class:AimingClass	typeref:typename:Statistic
 FillOrder	gui_sources/qcustomplot.h	/^  enum FillOrder { foRowsFirst    \/\/\/< Rows are filled first, and a new element is wrapped to/;"	g	class:QCPLayoutGrid
 Filter40	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^OutputFilter Filter40{40};$/;"	v	typeref:typename:OutputFilter
-FilterBlotch	CV_IMAGE_PROCESSING/cv_image_processing.h	/^        FilterBlotchClass FilterBlotch;$/;"	m	class:CVImageProcessing	typeref:typename:FilterBlotchClass
+FilterBlotch	CV_IMAGE_PROCESSING/cv_image_processing.h	/^        FilterBlotchClass FilterBlotch;$/;"	m	class:ImageTrackerTemplate	typeref:typename:FilterBlotchClass
 FilterBlotchClass	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class FilterBlotchClass$/;"	c
 FilterImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void FilterBlotchClass::FilterImage(cv::Mat& FilteringImage, cv::Mat& RawImage)$/;"	f	class:FilterBlotchClass	typeref:typename:void
 FindArbitraryRotationToVectors	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::FindArbitraryRotationToVectors(vector<pair<double,double>> test_i/;"	f	class:RotateOperationContainer	typeref:typename:void
 FindBestStatisticCoord	UTILITES/engine_statistics.h	/^    std::function<int (std::map<int,Statistic>::iterator,std::map<int,Statistic>::iterator)> Fin/;"	m	class:StatisticGroup	typeref:typename:std::function<int (std::map<int,Statistic>::iterator,std::map<int,Statistic>::iterator)>
 FindBestStatisticValue	UTILITES/engine_statistics.h	/^    std::function<int (std::map<int,Statistic>::iterator,std::map<int,Statistic>::iterator)> Fin/;"	m	class:StatisticGroup	typeref:typename:std::function<int (std::map<int,Statistic>::iterator,std::map<int,Statistic>::iterator)>
-FindContours	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    FindContoursProcessor FindContours;$/;"	m	class:FilterBlotchClass	typeref:typename:FindContoursProcessor
-FindContoursProcessor	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class FindContoursProcessor$/;"	c
-FindImageCentroid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::FindImageCentroid(cv::Mat& Image)$/;"	f	class:CVImageProcessing	typeref:typename:void
-FindImageTemplate	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::FindImageTemplate(cv::Mat& Image)$/;"	f	class:CVImageProcessing	typeref:typename:void
+FindContours	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    ContoursProcessorClass FindContours;$/;"	m	class:FilterBlotchClass	typeref:typename:ContoursProcessorClass
+ContoursProcessorClass	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class ContoursProcessorClass$/;"	c
+FindImageCentroid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::FindImageCentroid(cv::Mat& Image)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
+FindImageTemplate	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::FindImageTemplate(cv::Mat& Image)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 FitToTestVectors	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^torch::Tensor RotateOperationContainer::FitToTestVectors(torch::Tensor test_input, torch::Tensor/;"	f	class:RotateOperationContainer	typeref:typename:torch::Tensor
 FitToTestVectors	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^torch::Tensor RotateOperationContainer::FitToTestVectors(vector<pair<double,double>> test_input,/;"	f	class:RotateOperationContainer	typeref:typename:torch::Tensor
 FlagInverse	UTILITES/debug_output_filter.h	/^  bool FlagInverse = false;$/;"	m	class:BlockCounterClass	typeref:typename:bool
@@ -4162,28 +4162,28 @@ GetID	AIMING_MODULES/aiming_class.h	/^	int GetID() { return SettingsRegister::Ge
 GetID	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^int AimImageImitatorClass::GetID() {return SettingsRegister::GetValue("BLOCK_ID_SCANATOR"); }; /;"	f	class:AimImageImitatorClass	typeref:typename:int
 GetID	CAMERA_INTERFACE/camera_interface_class.cpp	/^int CameraInterfaceClassAravis::GetID() {return SettingsRegister::GetValue("BLOCK_ID_CAMERA"); }/;"	f	class:CameraInterfaceClassAravis	typeref:typename:int
 GetID	COMMON/interface_pass_coord.h	/^	virtual int GetID() { return 0;}$/;"	f	class:PassTwoCoordClass	typeref:typename:int
-GetID	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^int CVImageProcessing::GetID() { return SettingsRegister::GetValue("BLOCK_ID_IMG_PROC");} $/;"	f	class:CVImageProcessing	typeref:typename:int
+GetID	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^int ImageTrackerTemplate::GetID() { return SettingsRegister::GetValue("BLOCK_ID_IMG_PROC");} $/;"	f	class:ImageTrackerTemplate	typeref:typename:int
 GetID	DEVICES/scanator_control_class.cpp	/^int ScanatorControlClass::GetID() {return SettingsRegister::GetValue("BLOCK_ID_SCANATOR"); }; /;"	f	class:ScanatorControlClass	typeref:typename:int
 GetImageToDisplay	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^QImage& AimImageImitatorClass::GetImageToDisplay() { return ImageToDisplay; }$/;"	f	class:AimImageImitatorClass	typeref:typename:QImage &
 GetImageToDisplay	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^void GetImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};$/;"	f	class:AimImageImitatorClass	typeref:typename:void
 GetImageToDisplay	CAMERA_INTERFACE/camera_interface_class.cpp	/^QImage& CameraInterfaceClassAravis::GetImageToDisplay() { return ImageToDisplay; }$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:QImage &
 GetImageToDisplay	CAMERA_INTERFACE/camera_interface_class.h	/^    void GetImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:void
-GetImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^QImage& CVImageProcessing::GetImageToDisplay()$/;"	f	class:CVImageProcessing	typeref:typename:QImage &
-GetImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::GetImageToDisplay(QImage& ImageDst)$/;"	f	class:CVImageProcessing	typeref:typename:void
+GetImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^QImage& ImageTrackerTemplate::GetImageToDisplay()$/;"	f	class:ImageTrackerTemplate	typeref:typename:QImage &
+GetImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::GetImageToDisplay(QImage& ImageDst)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 GetImageToDisplayColor	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimImageImitatorClass::GetImageToDisplayColor(QImage& ImageDst)$/;"	f	class:AimImageImitatorClass	typeref:typename:void
 GetImageToProcess	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^cv::Mat& AimImageImitatorClass::GetImageToProcess() { return ImageToProcess; }$/;"	f	class:AimImageImitatorClass	typeref:typename:cv::Mat &
 GetImageToProcess	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^void GetImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};$/;"	f	class:AimImageImitatorClass	typeref:typename:void
 GetImageToProcess	CAMERA_INTERFACE/camera_interface_class.cpp	/^cv::Mat& CameraInterfaceClassAravis::GetImageToProcess() { return ImageToProcess; }$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:cv::Mat &
 GetImageToProcess	CAMERA_INTERFACE/camera_interface_class.h	/^    void GetImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:void
-GetImageToProcess	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^cv::Mat& CVImageProcessing::GetImageToProcess() { return ImageProcessing; }$/;"	f	class:CVImageProcessing	typeref:typename:cv::Mat &
-GetImageToProcess	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::GetImageToProcess(cv::Mat& ImageDst)$/;"	f	class:CVImageProcessing	typeref:typename:void
+GetImageToProcess	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^cv::Mat& ImageTrackerTemplate::GetImageToProcess() { return ImageProcessing; }$/;"	f	class:ImageTrackerTemplate	typeref:typename:cv::Mat &
+GetImageToProcess	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::GetImageToProcess(cv::Mat& ImageDst)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 GetInfo	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^const QString& AimImageImitatorClass::GetInfo()  { return INFO_STRING; }$/;"	f	class:AimImageImitatorClass	typeref:typename:const QString &
 GetInfo	CAMERA_INTERFACE/camera_interface_class.cpp	/^const QString& CameraInterfaceClassAravis::GetInfo()  { return CAMERA_INFO; }$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:const QString &
-GetInfo	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const QString& CVImageProcessing::GetInfo()  { return ProcessInfo; }$/;"	f	class:CVImageProcessing	typeref:typename:const QString &
+GetInfo	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const QString& ImageTrackerTemplate::GetInfo()  { return ProcessInfo; }$/;"	f	class:ImageTrackerTemplate	typeref:typename:const QString &
 GetInstance	controller_process_class.cpp	/^ProcessControllerClass* ProcessControllerClass::GetInstance()$/;"	f	class:ProcessControllerClass	typeref:typename:ProcessControllerClass *
 GetLastCoordError	AIMING_MODULES/pid_class.h	/^	QPair<double, double> GetLastCoordError() { return this->CoordAimingError;};$/;"	f	class:PIDClass	typeref:typename:QPair<double,double>
 GetLinkScheme	gui_sources/link_line.cpp	/^std::tuple<int,int,int,int> LinkLine::GetLinkScheme()$/;"	f	class:LinkLine	typeref:typename:std::tuple<int,int,int,int>
-GetMaxContourRect	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^cv::Rect FindContoursProcessor::GetMaxContourRect()$/;"	f	class:FindContoursProcessor	typeref:typename:cv::Rect
+GetMaxContourRect	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^cv::Rect ContoursProcessorClass::GetMaxContourRect()$/;"	f	class:ContoursProcessorClass	typeref:typename:cv::Rect
 GetMaxTypeSize	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^      static int GetMaxTypeSize() {return TypeTagRegister::GetMaxTypeSize();}$/;"	f	class:TypeRegister	typeref:typename:int
 GetMaxTypeSize	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^      static size_t GetMaxTypeSize() { return MaxTypeSize;};$/;"	f	class:TypeTagRegister	typeref:typename:size_t
 GetMessagePtr	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^MessageStructGeneric<void*,H>* MessageIteratorDense<H>::GetMessagePtr() { return reinterpret_cas/;"	f	class:MessageIteratorDense	typeref:typename:MessageStructGeneric<void *,H> *
@@ -4197,7 +4197,7 @@ GetOutput	AIMING_MODULES/aiming_class.h	/^  const QPair<double,double>& GetOutpu
 GetOutput	AIMING_MODULES/pid_class.cpp	/^const QPair<double, double>& PIDClass::GetOutput()                 { return PIDControlOutput; }$/;"	f	class:PIDClass	typeref:typename:const QPair<double,double> &
 GetOutput	AIMING_MODULES/rotate_vector_class.cpp	/^const QPair<double, double>& RotateVectorClass::GetOutput() $/;"	f	class:RotateVectorClass	typeref:typename:const QPair<double,double> &
 GetOutput	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	const QPair<double,double>& GetOutput() { return CurrentOutput;};$/;"	f	class:SinusGeneratorClass	typeref:typename:const QPair<double,double> &
-GetOutput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    const QPair<double,double>& GetOutput() { return PosAim; }$/;"	f	class:CVImageProcessing	typeref:typename:const QPair<double,double> &
+GetOutput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    const QPair<double,double>& GetOutput() { return PosAim; }$/;"	f	class:ImageTrackerTemplate	typeref:typename:const QPair<double,double> &
 GetOutput	DEVICES/EngineControlClass.cpp	/^const QPair<double, double>& ScanatorControlClass::GetOutput() $/;"	f	class:ScanatorControlClass	typeref:typename:const QPair<double,double> &
 GetOutput	DEVICES/scanator_control_class.cpp	/^const QPair<double, double>& ScanatorControlClass::GetOutput() { return ScanatorPos; }$/;"	f	class:ScanatorControlClass	typeref:typename:const QPair<double,double> &
 GetOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^const QPair<double, double>& RotateOperationContainer::GetOutput()$/;"	f	class:RotateOperationContainer	typeref:typename:const QPair<double,double> &
@@ -4211,10 +4211,10 @@ GetOutputVector	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContaine
 GetPair	UTILITES/register_settings.h	/^    static std::pair<float,float> GetPair(const QString& setting_name)$/;"	f	class:SettingsRegister	typeref:typename:std::pair<float,float>
 GetPoints	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^const std::vector<QPair<int,int>>& AimImageImitatorClass::GetPoints()  $/;"	f	class:AimImageImitatorClass	typeref:typename:const std::vector<QPair<int,int>> &
 GetPoints	CAMERA_INTERFACE/camera_interface_class.cpp	/^const std::vector<QPair<int,int>>& CameraInterfaceClassAravis::GetPoints()  $/;"	f	class:CameraInterfaceClassAravis	typeref:typename:const std::vector<QPair<int,int>> &
-GetPoints	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const std::vector<QPair<int,int>>& CVImageProcessing::GetPoints()  $/;"	f	class:CVImageProcessing	typeref:typename:const std::vector<QPair<int,int>> &
+GetPoints	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const std::vector<QPair<int,int>>& ImageTrackerTemplate::GetPoints()  $/;"	f	class:ImageTrackerTemplate	typeref:typename:const std::vector<QPair<int,int>> &
 GetRects	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^const std::vector<QRect>& AimImageImitatorClass::GetRects()  $/;"	f	class:AimImageImitatorClass	typeref:typename:const std::vector<QRect> &
 GetRects	CAMERA_INTERFACE/camera_interface_class.cpp	/^const std::vector<QRect>& CameraInterfaceClassAravis::GetRects()  $/;"	f	class:CameraInterfaceClassAravis	typeref:typename:const std::vector<QRect> &
-GetRects	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const std::vector<QRect>& CVImageProcessing::GetRects()  $/;"	f	class:CVImageProcessing	typeref:typename:const std::vector<QRect> &
+GetRects	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^const std::vector<QRect>& ImageTrackerTemplate::GetRects()  $/;"	f	class:ImageTrackerTemplate	typeref:typename:const std::vector<QRect> &
 GetSecondOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^std::pair<double,double> AccumulateDataFilter::GetSecondOutput()$/;"	f	class:AccumulateDataFilter	typeref:typename:std::pair<double,double>
 GetSize	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic.h	/^         int GetSize()    { return this->toByteArray().size(); };$/;"	f	class:MessageStructGeneric	typeref:typename:int
 GetSizeFromHeader	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic.h	/^         int GetSizeFromHeader(){ return HEADER.DATA_SIZE + sizeof(H);};$/;"	f	class:MessageStructGeneric	typeref:typename:int
@@ -4272,7 +4272,7 @@ HEX	build/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	/^#define HEX(/
 HOST	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^QString HOST;$/;"	m	class:TCPConnectionEngine	typeref:typename:QString
 Header	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    HEADERStruct Header;$/;"	m	struct:ControlCommandLaser	typeref:typename:HEADERStruct
 Header	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    HEADERStruct Header;$/;"	m	struct:TestCommand	typeref:typename:HEADERStruct
-Hierarchy	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<cv::Vec4i>  Hierarchy;$/;"	m	class:FindContoursProcessor	typeref:typename:std::vector<cv::Vec4i>
+Hierarchy	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<cv::Vec4i>  Hierarchy;$/;"	m	class:ContoursProcessorClass	typeref:typename:std::vector<cv::Vec4i>
 ID_VOID_MAIN	build/CMakeFiles/3.28.1/CompilerIdC/CMakeCCompilerId.c	/^# define ID_VOID_MAIN$/;"	d	file:
 IMAGE_PROCESSING_WIDGET_H	gui_sources/widget_processing_image_control.h	/^#define IMAGE_PROCESSING_WIDGET_H$/;"	d
 IMITATOR_WIDGET_H	gui_sources/widget_imitator_control.h	/^#define IMITATOR_WIDGET_H$/;"	d
@@ -4287,28 +4287,28 @@ ImageCounter	gui_sources/widget_processing_image_generic.h	/^int ImageCounter = 
 ImageDisplay	gui_sources/widget_main_window.h	/^	WidgetOutputImageDisplay* ImageDisplay;$/;"	m	class:WidgetMainWindow	typeref:typename:WidgetOutputImageDisplay *
 ImageHeight	gui_sources/widget_output_image_display.h	/^  int ImageHeight = 192;$/;"	m	class:WidgetOutputImageDisplay	typeref:typename:int
 ImageImitator	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    AimImageImitatorClass* ImageImitator = 0;$/;"	m	class:AimControlInterface	typeref:typename:AimImageImitatorClass *
-ImageInput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageInput;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Mat
-ImagePoints	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^std::vector<QPair<int,int>> ImagePoints;$/;"	m	class:AimImageImitatorClass	typeref:typename:std::vector<QPair<int,int>>
-ImagePoints	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> ImagePoints{2};$/;"	m	class:CVImageProcessing	typeref:typename:std::vector<QPair<int,int>>
+ImageInput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageInput;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Mat
+CoordsImage	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^std::vector<QPair<int,int>> CoordsImage;$/;"	m	class:AimImageImitatorClass	typeref:typename:std::vector<QPair<int,int>>
+CoordsImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> CoordsImage{2};$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::vector<QPair<int,int>>
 ImagePos	CAMERA_INTERFACE/camera_interface_class.h	/^    std::pair<int,int> ImagePos{20,20}; \/\/ MAY BE CHANGED IN INIT$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:std::pair<int,int>
 ImageProc	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    cv::Mat ImageProc;$/;"	m	class:AimImageImitatorClass	typeref:typename:cv::Mat
 ImageProcBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, Recie/;"	e	enum:TypeEnumBlock
 ImageProcProject	CMakeLists.txt	/^add_executable (ImageProcProject$/;"	t
 ImageProcProject	CMakeLists.txt	/^project(ImageProcProject)$/;"	p
-ImageProcStore	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::queue<cv::Mat> ImageProcStore;$/;"	m	class:CVImageProcessing	typeref:typename:std::queue<cv::Mat>
-ImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageProcessing;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Mat
+ImageProcStore	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::queue<cv::Mat> ImageProcStore;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::queue<cv::Mat>
+ImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageProcessing;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Mat
 ImageProcessingTorch	PYTORCH_PROCESSING/TorchProcessing.cpp	/^ImageProcessingTorch::ImageProcessingTorch()$/;"	f	class:ImageProcessingTorch
 ImageProcessingTorch	PYTORCH_PROCESSING/TorchProcessing.h	/^class TORCH_PROCESSING_MODULE_EXPORT ImageProcessingTorch$/;"	c
-ImageRects	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^std::vector<QRect>          ImageRects;$/;"	m	class:AimImageImitatorClass	typeref:typename:std::vector<QRect>
-ImageRects	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QRect>          ImageRects{2};$/;"	m	class:CVImageProcessing	typeref:typename:std::vector<QRect>
+RectsImage	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^std::vector<QRect>          RectsImage;$/;"	m	class:AimImageImitatorClass	typeref:typename:std::vector<QRect>
+RectsImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QRect>          RectsImage{2};$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::vector<QRect>
 ImageSource	gui_sources/widget_processing_image_generic.h	/^std::shared_ptr<ImageSourceInterface> ImageSource;$/;"	m	class:WidgetProcessingImage	typeref:typename:std::shared_ptr<ImageSourceInterface>
 ImageSourceInterface	COMMON/interface_image_source.cpp	/^ImageSourceInterface::ImageSourceInterface(QObject* parent): QObject(parent){};/;"	f	class:ImageSourceInterface
 ImageSourceInterface	COMMON/interface_image_source.h	/^class ImageSourceInterface: public QObject$/;"	c
-ImageTemplate	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageTemplate;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Mat
+ImageTemplate	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ImageTemplate;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Mat
 ImageTestObject	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    cv::Mat ImageTestObject;$/;"	m	class:AimImageImitatorClass	typeref:typename:cv::Mat
 ImageToDisplay	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    QImage  ImageToDisplay;$/;"	m	class:AimImageImitatorClass	typeref:typename:QImage
 ImageToDisplay	CAMERA_INTERFACE/camera_interface_class.h	/^     QImage ImageToDisplay;$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:QImage
-ImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QImage   ImageToDisplay;$/;"	m	class:CVImageProcessing	typeref:typename:QImage
+ImageToDisplay	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QImage   ImageToDisplay;$/;"	m	class:ImageTrackerTemplate	typeref:typename:QImage
 ImageToDisplay	gui_sources/widget_output_image_display.h	/^  QImage ImageToDisplay;$/;"	m	class:WidgetOutputImageDisplay	typeref:typename:QImage
 ImageToProcess	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    cv::Mat ImageToProcess;$/;"	m	class:AimImageImitatorClass	typeref:typename:cv::Mat
 ImageToProcess	CAMERA_INTERFACE/camera_interface_class.h	/^    cv::Mat ImageToProcess;$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:cv::Mat
@@ -4348,7 +4348,7 @@ IsHeaderValid	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^temp
 IsMemoryatEnd	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^template<typename H> bool MessageIteratorDense<H>::IsMemoryatEnd()  { return (PtrBufferend - Ptr/;"	f	class:MessageIteratorDense	typeref:typename:bool
 IsMemoryatEnd	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^    template<typename H> bool MessageIteratorGeneric<H,IteratorMode::Continous>::IsMemoryatEnd()/;"	f	class:MessageIteratorGeneric::Continous	typeref:typename:bool
 IsROIValid	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^bool AimImageImitatorClass::IsROIValid(cv::Rect& ROI)$/;"	f	class:AimImageImitatorClass	typeref:typename:bool
-IsROIValid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^bool CVImageProcessing::IsROIValid(cv::Rect& ROI)$/;"	f	class:CVImageProcessing	typeref:typename:bool
+IsROIValid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^bool ImageTrackerTemplate::IsROIValid(cv::Rect& ROI)$/;"	f	class:ImageTrackerTemplate	typeref:typename:bool
 IsStatisticsLoaded	UTILITES/engine_statistics.h	/^    bool IsStatisticsLoaded() { return Statistics[Statistics.size()-1].IsCoordLoaded();};$/;"	f	class:StatisticGroup	typeref:typename:bool
 IsValueLoaded	UTILITES/engine_statistics.h	/^	bool IsValueLoaded() { if (ValueMassive.size() == Size) { return true; } else { return false; }/;"	f	class:Statistic	typeref:typename:bool
 IteratorMode	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	g
@@ -4404,10 +4404,10 @@ LinkToDevice	gui_sources/widget_camera_control.cpp	/^void WidgetCameraControl::L
 LinkToDevice	gui_sources/widget_scanator_control.cpp	/^void WidgetScanatorControl::LinkToDevice(std::shared_ptr<ScanatorControlClass> EngineModule)$/;"	f	class:WidgetScanatorControl	typeref:typename:void
 LinkToImageImitator	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimControlInterface::LinkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr)$/;"	f	class:AimControlInterface	typeref:typename:void
 LinkToModule	AIM_IMAGE_IMITATION/widget_sinus_source.cpp	/^void WidgetSinusSource::LinkToModule(std::shared_ptr<SinusGeneratorClass> SinusGenerator)$/;"	f	class:WidgetSinusSource	typeref:typename:void
-LinkToModule	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)$/;"	f	class:CVImageProcessing	typeref:typename:void
+LinkToModule	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 LinkToModule	gui_sources/widget_aiming_control.cpp	/^void WidgetAimingControl::LinkToModule(std::shared_ptr<AimingClass> Module)$/;"	f	class:WidgetAimingControl	typeref:typename:void
 LinkToModule	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::LinkToModule(std::shared_ptr<AimImageImitatorClass> Imitator)$/;"	f	class:WidgetImageImitator	typeref:typename:void
-LinkToModule	gui_sources/widget_processing_image_control.cpp	/^void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<CVImageProcessing> ControlInterf/;"	f	class:WidgetProcessingImageControl	typeref:typename:void
+LinkToModule	gui_sources/widget_processing_image_control.cpp	/^void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<ImageTrackerTemplate> ControlInterf/;"	f	class:WidgetProcessingImageControl	typeref:typename:void
 LinkToModule	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)$/;"	f	class:WidgetProcessingImage	typeref:typename:void
 LinkToPort	AIMING_MODULES/aiming_class.h	/^    void LinkToPort(PassTwoCoordClass* Port) { SetCoordPort = Port;};$/;"	f	class:SignalPortAdapter	typeref:typename:void
 LinkedDetector	UTILITES/thread_operation_nodes.h	/^  ValueDetector<T>* LinkedDetector = 0;$/;"	m	class:ValueDetector	typeref:typename:ValueDetector<T> *
@@ -4545,8 +4545,8 @@ MinValue	UTILITES/engine_statistics.h	/^	double MinValue = 0;$/;"	m	class:Statis
 ModuleAiming	controller_process_class.cpp	/^shared_ptr<AimingClass>                ProcessControllerClass::ModuleAiming;$/;"	m	class:ProcessControllerClass	typeref:typename:shared_ptr<AimingClass>
 ModuleAiming	controller_process_class.h	/^static std::shared_ptr<AimingClass>                ModuleAiming;$/;"	m	class:ProcessControllerClass	typeref:typename:std::shared_ptr<AimingClass>
 ModuleAiming	gui_sources/widget_aiming_control.h	/^	std::shared_ptr<AimingClass> ModuleAiming;$/;"	m	class:WidgetAimingControl	typeref:typename:std::shared_ptr<AimingClass>
-ModuleImageProc	controller_process_class.cpp	/^shared_ptr<CVImageProcessing>          ProcessControllerClass::ModuleImageProc;$/;"	m	class:ProcessControllerClass	typeref:typename:shared_ptr<CVImageProcessing>
-ModuleImageProc	controller_process_class.h	/^static std::shared_ptr<CVImageProcessing>          ModuleImageProc;$/;"	m	class:ProcessControllerClass	typeref:typename:std::shared_ptr<CVImageProcessing>
+ModuleImageProc	controller_process_class.cpp	/^shared_ptr<ImageTrackerTemplate>          ProcessControllerClass::ModuleImageProc;$/;"	m	class:ProcessControllerClass	typeref:typename:shared_ptr<ImageTrackerTemplate>
+ModuleImageProc	controller_process_class.h	/^static std::shared_ptr<ImageTrackerTemplate>          ModuleImageProc;$/;"	m	class:ProcessControllerClass	typeref:typename:std::shared_ptr<ImageTrackerTemplate>
 ModuleImitatorImage	controller_process_class.cpp	/^shared_ptr<AimImageImitatorClass>      ProcessControllerClass::ModuleImitatorImage;$/;"	m	class:ProcessControllerClass	typeref:typename:shared_ptr<AimImageImitatorClass>
 ModuleImitatorImage	controller_process_class.h	/^static std::shared_ptr<AimImageImitatorClass>      ModuleImitatorImage;$/;"	m	class:ProcessControllerClass	typeref:typename:std::shared_ptr<AimImageImitatorClass>
 ModulePID	AIMING_MODULES/aiming_class.h	/^	PIDClass ModulePID;$/;"	m	class:AimingClass	typeref:typename:PIDClass
@@ -4557,7 +4557,7 @@ MoveAimingPosition	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::MoveAimin
 MoveDataToBegin	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^void MessageIteratorDense<H>::MoveDataToBegin()$/;"	f	class:MessageIteratorDense	typeref:typename:void
 MoveDataToBegin	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^    void MessageIteratorGeneric<H,IteratorMode::Continous>::MoveDataToBegin()$/;"	f	class:MessageIteratorGeneric::Continous	typeref:typename:void
 MoveGeneratorToThread	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::MoveGeneratorToThread(QThread* Thread)$/;"	f	class:SinusGeneratorClass	typeref:typename:void
-MutexImageAccess	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::mutex MutexImageAccess;$/;"	m	class:CVImageProcessing	typeref:typename:std::mutex
+MutexImageAccess	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::mutex MutexImageAccess;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::mutex
 NODE_H	gui_sources/node.h	/^#define NODE_H$/;"	d
 NOMINMAX	main.cpp	/^#define NOMINMAX$/;"	d	file:
 NanHandling	gui_sources/qcustomplot.h	/^  enum NanHandling { nhNone \/\/\/< NaN data points are not explicitly handled and shouldn't occ/;"	g	class:QCPColorGradient
@@ -4573,7 +4573,7 @@ NullAbsolutePos	DEVICES/scanator_control_class.h	/^	QPair<double, double> NullAb
 NullRelativePos	DEVICES/scanator_control_class.h	/^	QPair<double, double> NullRelativePos{0.0,0.0};$/;"	m	class:ScanatorControlClass	typeref:typename:QPair<double,double>
 Number	gui_sources/node.h	/^    int Number = 0;$/;"	m	class:Node	typeref:typename:int
 NumberLink	gui_sources/link_line.h	/^    int NumberLink = 0;$/;"	m	class:LinkLine	typeref:typename:int
-NumberMaxContour	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int NumberMaxContour = 0;$/;"	m	class:FindContoursProcessor	typeref:typename:int
+NumberMaxContour	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int NumberMaxContour = 0;$/;"	m	class:ContoursProcessorClass	typeref:typename:int
 NumberWidget	gui_sources/widget_scene_node_interface.h	/^     int NumberWidget = 0;$/;"	m	class:WidgetScenenodeInterface	typeref:typename:int
 OPENCV_LIB_DIR	CMakeLists.txt	/^set(OPENCV_LIB_DIR "${LIBRARY_DIR}\/IMAGE_PROCESSING\/OPENCV\/${CV_VERSION}\/")$/;"	v
 OPTIONS	build/CMakeFiles/ImageProcProject_autogen.dir/AutoRcc_pictures_TGLKY5MCHO_Info.json	/^	"OPTIONS" : [ "-name", "pictures" ],$/;"	a
@@ -4657,8 +4657,8 @@ PortMoveVelocity	DEVICES/scanator_control_class.h	/^	TimeIntegratorClass PortMov
 PortNodes	gui_sources/widget_scene_node_interface.h	/^    std::vector<Node*> PortNodes;$/;"	m	class:WidgetScenenodeInterface	typeref:typename:std::vector<Node * >
 PortSetAiming	AIMING_MODULES/aiming_class.h	/^	PortAdapter<AimingClass> PortSetAiming;$/;"	m	class:AimingClass	typeref:typename:PortAdapter<AimingClass>
 PortSignalSetAiming	AIMING_MODULES/aiming_class.h	/^  SignalPortAdapter PortSignalSetAiming{(PassTwoCoordClass*)&PortSetAiming};$/;"	m	class:AimingClass	typeref:typename:SignalPortAdapter
-PosAim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QPair<double,double> PosAim;$/;"	m	class:CVImageProcessing	typeref:typename:QPair<double,double>
-PosAimProcess	CV_IMAGE_PROCESSING/cv_image_processing.h	/^               cv::Point PosAimProcess;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Point
+PosAim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QPair<double,double> PosAim;$/;"	m	class:ImageTrackerTemplate	typeref:typename:QPair<double,double>
+PosAimProcess	CV_IMAGE_PROCESSING/cv_image_processing.h	/^               cv::Point PosAimProcess;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Point
 Position	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::pair<float,float> Position;$/;"	m	struct:TrackingDataStruct	typeref:typename:std::pair<float,float>
 Position	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    float Position = 20.2; $/;"	m	struct:AimStateStruct	typeref:typename:float
 Position	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t Position = 20; $/;"	m	struct:AimStateStructInt	typeref:typename:uint16_t
@@ -4666,7 +4666,7 @@ PositionRel	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    floa
 PositionRel	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t PositionRel = 20;$/;"	m	struct:AimStateStructInt	typeref:typename:uint16_t
 PositionType	gui_sources/qcustomplot.h	/^  enum PositionType { ptAbsolute        \/\/\/< Static positioning in pixels, starting from the /;"	g	class:QCPItemPosition
 Print	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^  void Print() { TestInterface<T,MOD>::PrintHeader(); }$/;"	f	class:Worker	typeref:typename:void
-PrintContoursRect	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void FindContoursProcessor::PrintContoursRect(cv::Mat& OutputImage)$/;"	f	class:FindContoursProcessor	typeref:typename:void
+PrintContoursRect	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ContoursProcessorClass::PrintContoursRect(cv::Mat& OutputImage)$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 PrintFilter	DEVICES/EngineControlClass.cpp	/^OutputFilter PrintFilter(20);$/;"	v	typeref:typename:OutputFilter
 PrintFilter	UTILITES/thread_operation_nodes.h	/^  OutputFilter PrintFilter;$/;"	m	class:ValueDebugOutput	typeref:typename:OutputFilter
 PrintHeader	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^  void PrintHeader() { qDebug() << "PRINT: " << MOD << sizeof(T);};$/;"	f	class:TestInterface	typeref:typename:void
@@ -4689,12 +4689,12 @@ ProcessControllerInstance	controller_process_class.h	/^    static ProcessControl
 ProcessFindRotation	controller_process_class.cpp	/^shared_ptr<RotationFindProcessClass>  ProcessControllerClass::ProcessFindRotation;$/;"	m	class:ProcessControllerClass	typeref:typename:shared_ptr<RotationFindProcessClass>
 ProcessFindRotation	controller_process_class.h	/^static std::shared_ptr<RotationFindProcessClass>  ProcessFindRotation;$/;"	m	class:ProcessControllerClass	typeref:typename:std::shared_ptr<RotationFindProcessClass>
 ProcessImitation	controller_process_class.h	/^enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibr/;"	e	enum:ProcessStateList
-ProcessInfo	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QString ProcessInfo = "[ NO DATA ]";$/;"	m	class:CVImageProcessing	typeref:typename:QString
-ProcessResult	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ProcessResult;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Mat
+ProcessInfo	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QString ProcessInfo = "[ NO DATA ]";$/;"	m	class:ImageTrackerTemplate	typeref:typename:QString
+ProcessResult	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Mat  ProcessResult;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Mat
 ProcessState	controller_process_class.h	/^ProcessStateList ProcessState{ProcessStateList::ProcessAiming};$/;"	m	class:ProcessControllerClass	typeref:typename:ProcessStateList
 ProcessStateList	controller_process_class.h	/^enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibr/;"	g
 ProcessTestSignal	controller_process_class.h	/^enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibr/;"	e	enum:ProcessStateList
-ProcessTimePoint	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::chrono::time_point<std::chrono::high_resolution_clock> ProcessTimePoint;$/;"	m	class:CVImageProcessing	typeref:typename:std::chrono::time_point<std::chrono::high_resolution_clock>
+ProcessTimePoint	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::chrono::time_point<std::chrono::high_resolution_clock> ProcessTimePoint;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::chrono::time_point<std::chrono::high_resolution_clock>
 PtrBufferBegin	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^  uint8_t* PtrBufferBegin;$/;"	m	class:MessageIteratorDense	typeref:typename:uint8_t *
 PtrBufferBegin	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^	uint8_t* PtrBufferBegin;$/;"	m	class:MessageIteratorGenericBase	typeref:typename:uint8_t *
 PtrBufferend	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^  uint8_t* PtrBufferend;$/;"	m	class:MessageIteratorDense	typeref:typename:uint8_t *
@@ -4992,7 +4992,7 @@ REMOTE_DEVICE_WIDGET_h	gui_sources/widget_scanator_control.h	/^#define REMOTE_DE
 REMOTE_DEVICE_WIDGET_h	gui_sources/widget_transmission_interface.h	/^#define REMOTE_DEVICE_WIDGET_h$/;"	d
 RING_BUFFER_Dense_H	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^#define RING_BUFFER_Dense_H$/;"	d
 RING_BUFFER_GENERIC_H	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^#define RING_BUFFER_GENERIC_H$/;"	d
-ROIAim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^                cv::Rect ROIAim;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Rect
+ROIAim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^                cv::Rect ROIAim;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Rect
 ROTATEOPERATIONCONTAINER_H	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^#define ROTATEOPERATIONCONTAINER_H$/;"	d
 ROTATEOPTIMIZATION_EXPORT	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOptimization_global.h	/^#  define ROTATEOPTIMIZATION_EXPORT /;"	d
 ROTATEOPTIMIZATION_GLOBAL_H	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOptimization_global.h	/^#define ROTATEOPTIMIZATION_GLOBAL_H$/;"	d
@@ -5006,7 +5006,7 @@ RangeY	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^	QPair<int, int> Ran
 RateParam	AIMING_MODULES/pid_param_struct.h	/^	double RateParam;$/;"	m	class:PIDParamStruct	typeref:typename:double
 Receiver	AIMING_MODULES/aiming_class.h	/^    T* Receiver =  nullptr;$/;"	m	class:PortAdapter	typeref:typename:T *
 Receiver	CAMERA_INTERFACE/camera_interface_class.h	/^    CameraInterfaceClassAravis* Receiver;$/;"	m	struct:ArvStreamCallbackData	typeref:typename:CameraInterfaceClassAravis *
-ReceiverLinkCoord	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::shared_ptr<PassTwoCoordClass> ReceiverLinkCoord;$/;"	m	class:CVImageProcessing	typeref:typename:std::shared_ptr<PassTwoCoordClass>
+ReceiverLinkCoord	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::shared_ptr<PassTwoCoordClass> ReceiverLinkCoord;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::shared_ptr<PassTwoCoordClass>
 RecieveErrorBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, Recie/;"	e	enum:TypeEnumBlock
 RectObject	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Rect RectObject;$/;"	m	struct:TrackingDataStruct	typeref:typename:cv::Rect
 RefreshPriority	gui_sources/qcustomplot.h	/^  enum RefreshPriority { rpImmediateRefresh \/\/\/< Replots immediately and repaints the widget /;"	g	class:QCustomPlot
@@ -5155,7 +5155,7 @@ SetDevice	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    void Se
 SetDispatchList	TRANSMISSION/EMBEDED_RING_BUFFER/message_dispatcher_generic.h	/^    void SetDispatchList(LIST_TYPE MessageDispatchList) { MessagesList = MessageDispatchList;};$/;"	f	class:MessageDispatcherGenericClass	typeref:typename:void
 SetFrameRate	AIMING_MODULES/pid_class.cpp	/^                 void PIDClass::SetFrameRate(double Rate)         { StepPeriodThreshold = 2.0\/R/;"	f	class:PIDClass	typeref:typename:void
 SetGuiFontSize	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SetGuiFontSize(int GuiSize)$/;"	f	class:WidgetMainWindow	typeref:typename:void
-SetImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void FindContoursProcessor::SetImage(const cv::Mat& Image)$/;"	f	class:FindContoursProcessor	typeref:typename:void
+SetImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ContoursProcessorClass::SetImage(const cv::Mat& Image)$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 SetInput	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetInput(const QPair<double,double>& Coord)$/;"	f	class:AimingClass	typeref:typename:void
 SetInput	AIMING_MODULES/aiming_class.cpp	/^void AimingParamOptimizator::SetInput(const QPair<double,double>& Coord)$/;"	f	class:AimingParamOptimizator	typeref:typename:void
 SetInput	AIMING_MODULES/aiming_class.h	/^	void SetInput(const QPair<double,double>& Coord)$/;"	f	class:TimeIntegratorClass	typeref:typename:void
@@ -5163,7 +5163,7 @@ SetInput	AIMING_MODULES/aiming_class.h	/^    void SetInput(const QPair<double,do
 SetInput	AIMING_MODULES/pid_class.cpp	/^void PIDClass::SetInput(const QPair<double,double>& Coord)$/;"	f	class:PIDClass	typeref:typename:void
 SetInput	AIMING_MODULES/rotate_vector_class.cpp	/^void RotateVectorClass::SetInput(const QPair<double,double>& Coord)$/;"	f	class:RotateVectorClass	typeref:typename:void
 SetInput	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SetInput(const QPair<double,double>& Coord) { }$/;"	f	class:SinusGeneratorClass	typeref:typename:void
-SetInput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    void SetInput(const QPair<double,double>& Coord){};$/;"	f	class:CVImageProcessing	typeref:typename:void
+SetInput	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    void SetInput(const QPair<double,double>& Coord){};$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SetInput	DEVICES/EngineControlClass.cpp	/^void ScanatorControlClass::SetInput(const QPair<double,double>& Coord) $/;"	f	class:ScanatorControlClass	typeref:typename:void
 SetInput	DEVICES/scanator_control_class.cpp	/^void ScanatorControlClass::SetInput(const QPair<double,double>& Coord) { this->SlotMoveToPos(Coo/;"	f	class:ScanatorControlClass	typeref:typename:void
 SetInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)$/;"	f	class:AccumulateDataFilter	typeref:typename:void
@@ -5182,12 +5182,12 @@ SetPIDParam	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetPIDParam(PIDP
 SetPIDParam	AIMING_MODULES/pid_class.cpp	/^                 void PIDClass::SetPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this/;"	f	class:PIDClass	typeref:typename:void
 SetPIDParamFromTable	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetPIDParamFromTable(int Number)$/;"	f	class:AimingClass	typeref:typename:void
 SetPeak	UTILITES/thread_operation_nodes.h	/^    void SetPeak(int PeakValue) { peak = PeakValue;}$/;"	f	class:ThinningFilter	typeref:typename:void
-SetProcessingRegim	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::SetProcessingRegim(int Regim) { this->WorkRegim = Regim; }$/;"	f	class:CVImageProcessing	typeref:typename:void
+SetProcessingRegim	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::SetProcessingRegim(int Regim) { this->WorkRegim = Regim; }$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SetRotateMatrix	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::SetRotateMatrix(torch::Tensor RotateMatrix)$/;"	f	class:RotateOperationContainer	typeref:typename:void
 SetRotatedModules	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassTwoCoordClass> Base, std::s/;"	f	class:RotationFindProcessClass	typeref:typename:void
 SetScenePosition	gui_sources/widget_scene_node_interface.cpp	/^void WidgetScenenodeInterface::SetScenePosition(int PosX, int PosY) $/;"	f	class:WidgetScenenodeInterface	typeref:typename:void
 SetSize	UTILITES/engine_statistics.h	/^	void SetSize(int SizeStat){ this->Size = SizeStat;};$/;"	f	class:Statistic	typeref:typename:void
-SetThreshold	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::SetThreshold(int Thresh) {qDebug() << "THRES: " << Thresh; this->Thresho/;"	f	class:CVImageProcessing	typeref:typename:void
+SetThreshold	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::SetThreshold(int Thresh) {qDebug() << "THRES: " << Thresh; this->Thresho/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SetTimerPeriod	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	void SetTimerPeriod(int Period) { TimerPeriod = Period;};$/;"	f	class:SinusGeneratorClass	typeref:typename:void
 SetToNullReal	DEVICES/EngineControlClass.cpp	/^void ScanatorControlClass::SetToNullReal()$/;"	f	class:ScanatorControlClass	typeref:typename:void
 SetToNullReal	DEVICES/scanator_control_class.cpp	/^void ScanatorControlClass::SetToNullReal() { SlotMoveToPos(NullAbsolutePos); }$/;"	f	class:ScanatorControlClass	typeref:typename:void
@@ -5252,7 +5252,7 @@ SlotDeinitMainWindow	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow:
 SlotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayImage()$/;"	f	class:WidgetProcessingImage	typeref:typename:void
 SlotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayImage(const QImage& Image)$/;"	f	class:WidgetProcessingImage	typeref:typename:void
 SlotDisplayProcessImage	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceClassAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProce/;"	f	class:CameraInterfaceClassAravis	typeref:typename:void
-SlotDisplayProcessingImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::SlotDisplayProcessingImage()$/;"	f	class:CVImageProcessing	typeref:typename:void
+SlotDisplayProcessingImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::SlotDisplayProcessingImage()$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SlotDisplayScanatorState	gui_sources/widget_scanator_control.cpp	/^void WidgetScanatorControl::SlotDisplayScanatorState()$/;"	f	class:WidgetScanatorControl	typeref:typename:void
 SlotDisplayState	gui_sources/widget_aiming_control.cpp	/^void WidgetAimingControl::SlotDisplayState()$/;"	f	class:WidgetAimingControl	typeref:typename:void
 SlotDisplayString	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayString(QString InfoString)$/;"	f	class:WidgetProcessingImage	typeref:typename:void
@@ -5275,8 +5275,8 @@ SlotMoveWithVelocity	DEVICES/scanator_control_class.cpp	/^void ScanatorControlCl
 SlotPosPressed	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotPosPressed(int x, int y)$/;"	f	class:WidgetProcessingImage	typeref:typename:void
 SlotPrintString	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImageDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputImageDisplay	typeref:typename:void
 SlotPrintString	gui_sources/widget_output_text_display.cpp	/^void WidgetOutputTextDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputTextDisplay	typeref:typename:void
-SlotProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::SlotProcessImage()$/;"	f	class:CVImageProcessing	typeref:typename:void
-SlotProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::SlotProcessImage(const cv::Mat& Image)$/;"	f	class:CVImageProcessing	typeref:typename:void
+SlotProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::SlotProcessImage()$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
+SlotProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SlotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::SlotReadData()$/;"	f	class:TCPConnectionEngine	typeref:typename:void
 SlotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::SlotReadData()$/;"	f	class:UDPEngineInterface	typeref:typename:void
 SlotSaveWidgetsPosition	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSaveWidgetsPosition()$/;"	f	class:WidgetMainWindow	typeref:typename:void
@@ -5305,7 +5305,7 @@ SlotUpdateScene	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::Slot
 SlotWindowDisplayThreadClosed	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotWindowDisplayThreadClosed()$/;"	f	class:WidgetMainWindow	typeref:typename:void
 SmallSize	gui_sources/widget_main_window.h	/^enum InterfaceSizes {SmallSize = 0, BigSize = 1};$/;"	e	enum:InterfaceSizes
 SmoothenodeClass	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^class SmoothenodeClass$/;"	c
-SourceImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::shared_ptr<ImageSourceInterface> SourceImage;$/;"	m	class:CVImageProcessing	typeref:typename:std::shared_ptr<ImageSourceInterface>
+SourceImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::shared_ptr<ImageSourceInterface> SourceImage;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::shared_ptr<ImageSourceInterface>
 SpacingType	gui_sources/qcustomplot.h	/^  enum SpacingType { stAbsolute       \/\/\/< Bar spacing is in absolute pixels$/;"	g	class:QCPBarsGroup
 SpinAmp	build/ImageProcProject_autogen/include/ui_widget_sinus_source.h	/^    QSpinBox *SpinAmp;$/;"	m	class:Ui_WidgetSinusSource	typeref:typename:QSpinBox *
 SpinFreq	build/ImageProcProject_autogen/include/ui_widget_sinus_source.h	/^    QDoubleSpinBox *SpinFreq;$/;"	m	class:Ui_WidgetSinusSource	typeref:typename:QDoubleSpinBox *
@@ -5313,7 +5313,7 @@ StartCameraStream	CAMERA_INTERFACE/camera_interface_class.cpp	/^int CameraInterf
 StartGenerateSignal	AIM_IMAGE_IMITATION/widget_sinus_source.h	/^void StartGenerateSignal(bool StartStop) { emit SignalStart(StartStop);}$/;"	f	class:WidgetSinusSource	typeref:typename:void
 StartMove	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimControlInterface::StartMove(){ timerMoveAim.start(20); }$/;"	f	class:AimControlInterface	typeref:typename:void
 StartProcess	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::StartProcess()$/;"	f	class:RotationFindProcessClass	typeref:typename:void
-StartStopProcessing	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void CVImageProcessing::StartStopProcessing(bool StartStop) { }$/;"	f	class:CVImageProcessing	typeref:typename:void
+StartStopProcessing	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^void ImageTrackerTemplate::StartStopProcessing(bool StartStop) { }$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 StateAimingFullImage	COMMON/state_block_enum.h	/^	StateAimingFullImage = 2, $/;"	e	enum:StateEnumAiming
 StateAimingNoSpot	COMMON/state_block_enum.h	/^	StateAimingNoSpot = 0, $/;"	e	enum:StateEnumAiming
 StateAimingNotAiming	COMMON/state_block_enum.h	/^	StateAimingNotAiming = 5$/;"	e	enum:StateEnumAiming
@@ -5392,7 +5392,7 @@ TAG_NAME	AIMING_MODULES/aiming_class.h	/^	QString TAG_NAME{"[ AIMING ]"};$/;"	m	
 TAG_NAME	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^	std::string TAG_NAME{"[ IMAGE_IMIT ]"};$/;"	m	class:AimImageImitatorClass	typeref:typename:std::string
 TAG_NAME	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	std::string TAG_NAME{"[ SIN_GEN ]"};$/;"	m	class:SinusGeneratorClass	typeref:typename:std::string
 TAG_NAME	CAMERA_INTERFACE/camera_interface_class.h	/^    QString TAG_NAME{"[ CAMERA ]"};$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:QString
-TAG_NAME	CV_IMAGE_PROCESSING/cv_image_processing.h	/^	std::string TAG_NAME{"[ IMAGE_PROC ]"};$/;"	m	class:CVImageProcessing	typeref:typename:std::string
+TAG_NAME	CV_IMAGE_PROCESSING/cv_image_processing.h	/^	std::string TAG_NAME{"[ IMAGE_PROC ]"};$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::string
 TAG_NAME	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QString TAG_NAME{"[ BLOTCH_FILTER ]"};$/;"	m	class:FilterBlotchClass	typeref:typename:QString
 TAG_NAME	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^	std::string TAG_NAME{"[ LASER ]"};$/;"	m	class:LaserControlClass	typeref:typename:std::string
 TAG_NAME	DEVICES/scanator_control_class.h	/^	QString TAG_NAME{"[ SCANATOR ]"};$/;"	m	class:ScanatorControlClass	typeref:typename:QString
@@ -5421,7 +5421,7 @@ TakeMessage	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^Messag
 TakeMessage	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^const MessageStructGeneric<void*,H>& RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessage()$/;"	f	class:RingBufferGeneric	typeref:typename:const MessageStructGeneric<void *,H> &
 TakeMessagePtr	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^MessageStructGeneric<void*,H>* RingBufferDense<H,S_M,N_M>::TakeMessagePtr()$/;"	f	class:RingBufferDense	typeref:typename:MessageStructGeneric<void *,H> *
 TakeMessagePtr	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^MessageStructGeneric<void*,H>* RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessagePtr()$/;"	f	class:RingBufferGeneric	typeref:typename:MessageStructGeneric<void *,H> *
-TemplateRect	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Size TemplateRect;$/;"	m	class:CVImageProcessing	typeref:typename:cv::Size
+TemplateRect	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    cv::Size TemplateRect;$/;"	m	class:ImageTrackerTemplate	typeref:typename:cv::Size
 TestCommand	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    TestCommand()$/;"	f	struct:TestCommand
 TestCommand	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^struct TestCommand$/;"	s
 TestCoordVectorInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	vector<QPair<double,double>> TestCoordVectorInput;$/;"	m	class:TestDataVectorsContainer	typeref:typename:vector<QPair<double,double>>
@@ -5433,7 +5433,7 @@ Thinning	UTILITES/thread_operation_nodes.h	/^  int Thinning = 0;$/;"	m	class:Val
 ThinningFilter	UTILITES/thread_operation_nodes.h	/^    ThinningFilter(int peak = 100) {this->peak = peak;}; $/;"	f	class:ThinningFilter
 ThinningFilter	UTILITES/thread_operation_nodes.h	/^class ThinningFilter : public PassValueClass<V>$/;"	c
 ThinningTimePeriod	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^QTime ThinningTimePeriod;$/;"	m	class:AimImageImitatorClass	typeref:typename:QTime
-Threshold	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int Threshold = 50;$/;"	m	class:CVImageProcessing	typeref:typename:int
+Threshold	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int Threshold = 50;$/;"	m	class:ImageTrackerTemplate	typeref:typename:int
 Threshold	UTILITES/thread_operation_nodes.h	/^  T Threshold;$/;"	m	class:ValueDetector	typeref:typename:T
 Threshold	UTILITES/thread_operation_nodes.h	/^  double Threshold = 10;$/;"	m	class:ValueInversion	typeref:typename:double
 Threshold	UTILITES/thread_operation_nodes.h	/^  double Threshold = 10;$/;"	m	class:ValueSaturation	typeref:typename:double
@@ -5460,10 +5460,10 @@ Torch_DIR	CMakeLists.txt	/^set(Torch_DIR ${PYTORCH_DIR})$/;"	v
 Torch_DIR	PYTORCH_PROCESSING/CMakeLists.txt	/^set(Torch_DIR ${PYTORCH_DIR})$/;"	v
 TracerStyle	gui_sources/qcustomplot.h	/^  enum TracerStyle { tsNone        \/\/\/< The tracer is not visible$/;"	g	class:QCPItemTracer
 TrackingDataStruct	CV_IMAGE_PROCESSING/cv_image_processing.h	/^struct TrackingDataStruct$/;"	s
-Trajectory	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> Trajectory;$/;"	m	class:CVImageProcessing	typeref:typename:std::vector<QPair<int,int>>
+Trajectory	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> Trajectory;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::vector<QPair<int,int>>
 Trajectory	gui_sources/widget_processing_image_generic.h	/^QPolygonF Trajectory;$/;"	m	class:WidgetProcessingImage	typeref:typename:QPolygonF
-TrajectoryIncrement	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> TrajectoryIncrement;$/;"	m	class:CVImageProcessing	typeref:typename:std::vector<QPair<int,int>>
-TrajectoryIncrementAvarage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> TrajectoryIncrementAvarage;$/;"	m	class:CVImageProcessing	typeref:typename:std::vector<QPair<int,int>>
+TrajectoryIncrement	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> TrajectoryIncrement;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::vector<QPair<int,int>>
+TrajectoryIncrementAvarage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::vector<QPair<int,int>> TrajectoryIncrementAvarage;$/;"	m	class:ImageTrackerTemplate	typeref:typename:std::vector<QPair<int,int>>
 TransformCoord	UTILITES/transform_coord_class.h	/^	std::function<void(QPair<double,double>)> TransformCoord;$/;"	m	class:TransformCoordClass	typeref:typename:std::function<void (QPair<double,double>)>
 TransformCoordClass	UTILITES/transform_coord_class.cpp	/^TransformCoordClass::TransformCoordClass()$/;"	f	class:TransformCoordClass
 TransformCoordClass	UTILITES/transform_coord_class.cpp	/^TransformCoordClass::TransformCoordClass(const TransformCoordClass& CopyTransform)$/;"	f	class:TransformCoordClass
@@ -5568,7 +5568,7 @@ ValueSaturation	UTILITES/thread_operation_nodes.h	/^class ValueSaturation : publ
 VectorAccelOutput	AIMING_MODULES/aiming_class.h	/^	QPair<double, double> VectorAccelOutput   {0.0,0.0};$/;"	m	class:AimingClass	typeref:typename:QPair<double,double>
 VectorOutput	AIMING_MODULES/aiming_class.h	/^	QPair<double, double> VectorOutput        {0.0,0.0};$/;"	m	class:AimingClass	typeref:typename:QPair<double,double>
 VectorVelocityOutput	AIMING_MODULES/aiming_class.h	/^	QPair<double, double> VectorVelocityOutput{0.0,0.0};$/;"	m	class:AimingClass	typeref:typename:QPair<double,double>
-VelAimAvarage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QPair<double,double> VelAimAvarage = QPair<double,double>(0,0); $/;"	m	class:CVImageProcessing	typeref:typename:QPair<double,double>
+VelAimAvarage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QPair<double,double> VelAimAvarage = QPair<double,double>(0,0); $/;"	m	class:ImageTrackerTemplate	typeref:typename:QPair<double,double>
 Velocity	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    std::pair<float,float> Velocity;$/;"	m	struct:TrackingDataStruct	typeref:typename:std::pair<float,float>
 Velocity	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    float Velocity = 20.2;$/;"	m	struct:AimStateStruct	typeref:typename:float
 Velocity	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t Velocity = 20;$/;"	m	struct:AimStateStructInt	typeref:typename:uint16_t
@@ -5631,10 +5631,10 @@ WidthType	gui_sources/qcustomplot.h	/^  enum WidthType { wtAbsolute       \/\/\/
 WidthType	gui_sources/qcustomplot.h	/^  enum WidthType { wtAbsolute       \/\/\/< width is in absolute pixels$/;"	g	class:QCPFinancial
 WindowClosedSignal	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_main_window.cpp	/^void WidgetMainWindow::WindowClosedSignal()$/;"	f	class:WidgetMainWindow	typeref:typename:void
 WindowControl	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    WindowLaserControlClass* WindowControl = 0;$/;"	m	class:LaserControlClass	typeref:typename:WindowLaserControlClass *
-WindowImageProcessingControlInterface	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class WindowImageProcessingControlInterface$/;"	c
+ModuleImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.h	/^class ModuleImageProcessing$/;"	c
 WindowLaserControlClass	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^class WindowLaserControlClass : public WidgetAdjustable$/;"	c
 WindowNode	gui_sources/widget_scene_node_interface.h	/^    QWidget* WindowNode = 0;$/;"	m	class:WidgetScenenodeInterface	typeref:typename:QWidget *
-WorkRegim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int WorkRegim = 1;$/;"	m	class:CVImageProcessing	typeref:typename:int
+WorkRegim	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    int WorkRegim = 1;$/;"	m	class:ImageTrackerTemplate	typeref:typename:int
 Worker	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^class Worker: public TestInterface<T,MOD>$/;"	c
 XCoordPos	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    float XCoordPos = 0;$/;"	m	class:DynamicAimControl	typeref:typename:float
 XNumberPos	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    float XNumberPos = 0;$/;"	m	class:DynamicAimControl	typeref:typename:float
@@ -6473,7 +6473,7 @@ __anon30398cd80102	UTILITES/engine_statistics.cpp	/^    {$/;"	f	function:Statist
 __anon30398cd80202	UTILITES/engine_statistics.cpp	/^    {$/;"	f	function:StatisticGroup::StatisticGroup	typeref:typename:int	file:
 __anon36e111cb0111	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_control.cpp	/^namespace {$/;"	n	file:
 __anon38964e880111	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_main_window.cpp	/^namespace {$/;"	n	file:
-__anon3a475eb30102	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^                                                                                      { acc.firs/;"	f	function:CVImageProcessing::FindImageTemplate	file:
+__anon3a475eb30102	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^                                                                                      { acc.firs/;"	f	function:ImageTrackerTemplate::FindImageTemplate	file:
 __anon3ab406d50111	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_camera_control.cpp	/^namespace {$/;"	n	file:
 __anon3b8007300111	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^namespace {$/;"	n	file:
 __anon3d6cf2070111	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^namespace {$/;"	n	file:
@@ -9459,7 +9459,7 @@ isOpen	UTILITES/debug_output_filter.h	/^  bool isOpen() { return (Counter >= Pea
 isOpen	UTILITES/thread_operation_nodes.h	/^    bool isOpen(){ return counter >= peak;}$/;"	f	class:ThinningFilter	typeref:typename:bool
 isOpen	UTILITES/thread_operation_nodes.h	/^  bool isOpen() { return Shutteropencved ^ FlagInversion;}$/;"	f	class:ValuePassShutter	typeref:typename:bool
 isPenDefined	gui_sources/qcustomplot.h	/^  bool isPenDefined() const { return mPenDefined; }$/;"	f	class:QCPScatterStyle	typeref:typename:bool
-isROIValid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^bool FindContoursProcessor::isROIValid(const cv::Rect& ROI, int SizeImage)$/;"	f	class:FindContoursProcessor	typeref:typename:bool
+isROIValid	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^bool ContoursProcessorClass::isROIValid(const cv::Rect& ROI, int SizeImage)$/;"	f	class:ContoursProcessorClass	typeref:typename:bool
 isSignal	UTILITES/thread_operation_nodes.h	/^  bool isSignal() $/;"	f	class:ValueDetector	typeref:typename:bool
 isSystem	build/.cmake/api/v1/reply/target-ImageProcProject-Debug-eb52a70c724e4a9f1fa7.json	/^					"isSystem" : true,$/;"	b	object:compileGroups.0.includes.27
 isSystem	build/.cmake/api/v1/reply/target-ImageProcProject-Debug-eb52a70c724e4a9f1fa7.json	/^					"isSystem" : true,$/;"	b	object:compileGroups.0.includes.28
@@ -10456,7 +10456,7 @@ metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image
 metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scanator_control.cpp	/^const QMetaObject *WidgetScanatorControl::metaObject() const$/;"	f	class:WidgetScanatorControl	typeref:typename:const QMetaObject *
 metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^const QMetaObject *WidgetScenenodeInterface::metaObject() const$/;"	f	class:WidgetScenenodeInterface	typeref:typename:const QMetaObject *
 metaObject	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^const QMetaObject *ProcessControllerClass::metaObject() const$/;"	f	class:ProcessControllerClass	typeref:typename:const QMetaObject *
-metaObject	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^const QMetaObject *CVImageProcessing::metaObject() const$/;"	f	class:CVImageProcessing	typeref:typename:const QMetaObject *
+metaObject	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^const QMetaObject *ImageTrackerTemplate::metaObject() const$/;"	f	class:ImageTrackerTemplate	typeref:typename:const QMetaObject *
 metaObject	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^const QMetaObject *CameraInterfaceClassAravis::metaObject() const$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:const QMetaObject *
 metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^const QMetaObject *AimControlInterface::metaObject() const$/;"	f	class:AimControlInterface	typeref:typename:const QMetaObject *
 metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^const QMetaObject *AimImageImitatorClass::metaObject() const$/;"	f	class:AimImageImitatorClass	typeref:typename:const QMetaObject *
@@ -11912,7 +11912,7 @@ operator !=	gui_sources/qcustomplot.h	/^  bool operator!=(const QCPDataRange& ot
 operator !=	gui_sources/qcustomplot.h	/^  bool operator!=(const QCPDataSelection& other) const { return !(*this == other); }$/;"	f	class:QCPDataSelection	typeref:typename:bool
 operator !=	gui_sources/qcustomplot.h	/^  bool operator!=(const QCPRange& other) const { return !(*this == other); }$/;"	f	class:QCPRange	typeref:typename:bool
 operator &&	UTILITES/thread_operation_nodes.h	/^  ValueDetector<T>& operator&&(ValueDetector<T>& Detector) { LinkedDetector = &Detector; return /;"	f	class:ValueDetector	typeref:typename:ValueDetector<T> &
-operator ()	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    void operator()(const cv::Mat& Image){ SetImage(Image);}$/;"	f	class:FindContoursProcessor	typeref:typename:void
+operator ()	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    void operator()(const cv::Mat& Image){ SetImage(Image);}$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 operator ()	UTILITES/debug_output_filter.h	/^  	OutputFilter& operator()(int size) {peak = size; return *this; };$/;"	f	class:OutputFilter	typeref:typename:OutputFilter &
 operator ()	UTILITES/debug_output_filter.h	/^  BlockCounterClass& operator()(int NewPeak) {this->Peak = NewPeak; return *this;};$/;"	f	class:BlockCounterClass	typeref:typename:BlockCounterClass &
 operator ()	UTILITES/thread_operation_nodes.h	/^  	ThinningFilter& operator()(int size) {peak = size; return *this; };$/;"	f	class:ThinningFilter	typeref:typename:ThinningFilter &
@@ -12061,7 +12061,7 @@ operator >>	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^    friend void
 operator bool	UTILITES/debug_output_filter.h	/^  operator bool () {return isOpen();};$/;"	f	class:BlockCounterClass
 operator |	COMMON/interface_pass_coord.cpp	/^ std::shared_ptr<PassTwoCoordClass> operator | (std::shared_ptr<PassTwoCoordClass> Sender, $/;"	f	typeref:typename:std::shared_ptr<PassTwoCoordClass>
 operator |	COMMON/interface_pass_coord.cpp	/^PassTwoCoordClass& operator | (PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever) $/;"	f	typeref:typename:PassTwoCoordClass &
-operator |	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^std::shared_ptr<CVImageProcessing> operator|(std::shared_ptr<ImageSourceInterface> Source, std::/;"	f	typeref:typename:std::shared_ptr<CVImageProcessing>
+operator |	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^std::shared_ptr<ImageTrackerTemplate> operator|(std::shared_ptr<ImageSourceInterface> Source, std::/;"	f	typeref:typename:std::shared_ptr<ImageTrackerTemplate>
 operator |	TRANSMISSION/EMBEDED_RING_BUFFER/message_dispatcher_generic.h	/^    template<typename RingBufferType> friend void operator|(RingBufferType& RingBuffer, MessageD/;"	f	typeref:typename:void
 opposite	gui_sources/qcustomplot.cpp	/^QCPAxis::AxisType QCPAxis::opposite(QCPAxis::AxisType type)$/;"	f	class:QCPAxis	typeref:typename:QCPAxis::AxisType
 optional	.vscode/settings.json	/^        "optional": "cpp",$/;"	s	object:files.associations
@@ -13707,7 +13707,7 @@ qnxnto	build/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	/^char const
 qt_meta_data_CLASSAdjustableLabelENDCLASS	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSAdjustableLabelENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
 qt_meta_data_CLASSAimControlInterfaceENDCLASS	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSAimControlInterfaceENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
 qt_meta_data_CLASSAimImageImitatorClassENDCLASS	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSAimImageImitatorClassENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
-qt_meta_data_CLASSCVImageProcessingENDCLASS	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSCVImageProcessingENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
+qt_meta_data_CLASSImageTrackerTemplateENDCLASS	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSImageTrackerTemplateENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
 qt_meta_data_CLASSCameraInterfaceClassAravisENDCLASS	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSCameraInterfaceClassAravisENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
 qt_meta_data_CLASSDynamicAimControlENDCLASS	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSDynamicAimControlENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
 qt_meta_data_CLASSGraphicsWindowENDCLASS	build/ImageProcProject_autogen/7DZ625BZ3E/moc_widget_graphics_plot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_CLASSGraphicsWindowENDCLASS[] = {$/;"	v	typeref:typename:Q_CONSTINIT const uint[]	file:
@@ -13800,8 +13800,8 @@ qt_meta_stringdata_CLASSAimControlInterfaceENDCLASS	build/ImageProcProject_autog
 qt_meta_stringdata_CLASSAimControlInterfaceENDCLASS_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_stringdata_CLASSAimControlInterfaceENDCLASS_t {};$/;"	s	namespace:__anoneb0ca3580111	file:
 qt_meta_stringdata_CLASSAimImageImitatorClassENDCLASS	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^static constexpr auto qt_meta_stringdata_CLASSAimImageImitatorClassENDCLASS = QtMocHelpers::stri/;"	v	namespace:__anoneb0ca3580411	typeref:typename:auto	file:
 qt_meta_stringdata_CLASSAimImageImitatorClassENDCLASS_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_stringdata_CLASSAimImageImitatorClassENDCLASS_t {};$/;"	s	namespace:__anoneb0ca3580411	file:
-qt_meta_stringdata_CLASSCVImageProcessingENDCLASS	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^static constexpr auto qt_meta_stringdata_CLASSCVImageProcessingENDCLASS = QtMocHelpers::stringDa/;"	v	namespace:__anon3b8007300111	typeref:typename:auto	file:
-qt_meta_stringdata_CLASSCVImageProcessingENDCLASS_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^struct qt_meta_stringdata_CLASSCVImageProcessingENDCLASS_t {};$/;"	s	namespace:__anon3b8007300111	file:
+qt_meta_stringdata_CLASSImageTrackerTemplateENDCLASS	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^static constexpr auto qt_meta_stringdata_CLASSImageTrackerTemplateENDCLASS = QtMocHelpers::stringDa/;"	v	namespace:__anon3b8007300111	typeref:typename:auto	file:
+qt_meta_stringdata_CLASSImageTrackerTemplateENDCLASS_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^struct qt_meta_stringdata_CLASSImageTrackerTemplateENDCLASS_t {};$/;"	s	namespace:__anon3b8007300111	file:
 qt_meta_stringdata_CLASSCameraInterfaceClassAravisENDCLASS	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^static constexpr auto qt_meta_stringdata_CLASSCameraInterfaceClassAravisENDCLASS = QtMocHelpers:/;"	v	namespace:__anon4ff56e310111	typeref:typename:auto	file:
 qt_meta_stringdata_CLASSCameraInterfaceClassAravisENDCLASS_t	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^struct qt_meta_stringdata_CLASSCameraInterfaceClassAravisENDCLASS_t {};$/;"	s	namespace:__anon4ff56e310111	file:
 qt_meta_stringdata_CLASSDynamicAimControlENDCLASS	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^static constexpr auto qt_meta_stringdata_CLASSDynamicAimControlENDCLASS = QtMocHelpers::stringDa/;"	v	namespace:__anoneb0ca3580311	typeref:typename:auto	file:
@@ -14028,7 +14028,7 @@ qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_imag
 qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scanator_control.cpp	/^int WidgetScanatorControl::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:WidgetScanatorControl	typeref:typename:int
 qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^int WidgetScenenodeInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:WidgetScenenodeInterface	typeref:typename:int
 qt_metacall	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^int ProcessControllerClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ProcessControllerClass	typeref:typename:int
-qt_metacall	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^int CVImageProcessing::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CVImageProcessing	typeref:typename:int
+qt_metacall	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^int ImageTrackerTemplate::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ImageTrackerTemplate	typeref:typename:int
 qt_metacall	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^int CameraInterfaceClassAravis::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:int
 qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^int AimControlInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:AimControlInterface	typeref:typename:int
 qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^int AimImageImitatorClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:AimImageImitatorClass	typeref:typename:int
@@ -14101,7 +14101,7 @@ qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_imag
 qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scanator_control.cpp	/^void *WidgetScanatorControl::qt_metacast(const char *_clname)$/;"	f	class:WidgetScanatorControl	typeref:typename:void *
 qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^void *WidgetScenenodeInterface::qt_metacast(const char *_clname)$/;"	f	class:WidgetScenenodeInterface	typeref:typename:void *
 qt_metacast	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^void *ProcessControllerClass::qt_metacast(const char *_clname)$/;"	f	class:ProcessControllerClass	typeref:typename:void *
-qt_metacast	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^void *CVImageProcessing::qt_metacast(const char *_clname)$/;"	f	class:CVImageProcessing	typeref:typename:void *
+qt_metacast	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^void *ImageTrackerTemplate::qt_metacast(const char *_clname)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void *
 qt_metacast	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^void *CameraInterfaceClassAravis::qt_metacast(const char *_clname)$/;"	f	class:CameraInterfaceClassAravis	typeref:typename:void *
 qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void *AimControlInterface::qt_metacast(const char *_clname)$/;"	f	class:AimControlInterface	typeref:typename:void *
 qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void *AimImageImitatorClass::qt_metacast(const char *_clname)$/;"	f	class:AimImageImitatorClass	typeref:typename:void *
@@ -14177,7 +14177,7 @@ qt_static_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processi
 qt_static_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scanator_control.cpp	/^void WidgetScanatorControl::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void /;"	f	class:WidgetScanatorControl	typeref:typename:void
 qt_static_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^void WidgetScenenodeInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo/;"	f	class:WidgetScenenodeInterface	typeref:typename:void
 qt_static_metacall	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^void ProcessControllerClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void/;"	f	class:ProcessControllerClass	typeref:typename:void
-qt_static_metacall	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^void CVImageProcessing::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a/;"	f	class:CVImageProcessing	typeref:typename:void
+qt_static_metacall	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^void ImageTrackerTemplate::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 qt_static_metacall	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^void CameraInterfaceClassAravis::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, /;"	f	class:CameraInterfaceClassAravis	typeref:typename:void
 qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void AimControlInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **/;"	f	class:AimControlInterface	typeref:typename:void
 qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void AimImageImitatorClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void /;"	f	class:AimImageImitatorClass	typeref:typename:void
@@ -15472,7 +15472,7 @@ staticMetaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing
 staticMetaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scanator_control.cpp	/^Q_CONSTINIT const QMetaObject WidgetScanatorControl::staticMetaObject = { {$/;"	m	class:WidgetScanatorControl	typeref:typename:Q_CONSTINIT const QMetaObject
 staticMetaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^Q_CONSTINIT const QMetaObject WidgetScenenodeInterface::staticMetaObject = { {$/;"	m	class:WidgetScenenodeInterface	typeref:typename:Q_CONSTINIT const QMetaObject
 staticMetaObject	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^Q_CONSTINIT const QMetaObject ProcessControllerClass::staticMetaObject = { {$/;"	m	class:ProcessControllerClass	typeref:typename:Q_CONSTINIT const QMetaObject
-staticMetaObject	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^Q_CONSTINIT const QMetaObject CVImageProcessing::staticMetaObject = { {$/;"	m	class:CVImageProcessing	typeref:typename:Q_CONSTINIT const QMetaObject
+staticMetaObject	build/ImageProcProject_autogen/F4UU7PBV5P/moc_cv_image_processing.cpp	/^Q_CONSTINIT const QMetaObject ImageTrackerTemplate::staticMetaObject = { {$/;"	m	class:ImageTrackerTemplate	typeref:typename:Q_CONSTINIT const QMetaObject
 staticMetaObject	build/ImageProcProject_autogen/IUOK47BH6O/moc_camera_interface_class.cpp	/^Q_CONSTINIT const QMetaObject CameraInterfaceClassAravis::staticMetaObject = { {$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:Q_CONSTINIT const QMetaObject
 staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT const QMetaObject AimControlInterface::staticMetaObject = { {$/;"	m	class:AimControlInterface	typeref:typename:Q_CONSTINIT const QMetaObject
 staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT const QMetaObject AimImageImitatorClass::staticMetaObject = { {$/;"	m	class:AimImageImitatorClass	typeref:typename:Q_CONSTINIT const QMetaObject
@@ -15643,11 +15643,11 @@ timeSeriesToOhlc	gui_sources/qcustomplot.cpp	/^QCPFinancialDataContainer QCPFina
 timeZone	gui_sources/qcustomplot.h	/^  QTimeZone timeZone() const { return mTimeZone; }$/;"	f	class:QCPAxisTickerDateTime	typeref:typename:QTimeZone
 timerAutoClear	gui_sources/widget_output_image_display.h	/^  QTimer timerAutoClear;$/;"	m	class:WidgetOutputImageDisplay	typeref:typename:QTimer
 timerAutoClear	gui_sources/widget_output_text_display.h	/^  QTimer timerAutoClear;$/;"	m	class:WidgetOutputTextDisplay	typeref:typename:QTimer
-timerDisplay	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QTimer timerDisplay;$/;"	m	class:CVImageProcessing	typeref:typename:QTimer
+timerDisplay	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QTimer timerDisplay;$/;"	m	class:ImageTrackerTemplate	typeref:typename:QTimer
 timerDisplayState	gui_sources/widget_aiming_control.h	/^	QTimer timerDisplayState;$/;"	m	class:WidgetAimingControl	typeref:typename:QTimer
 timerDisplayTestImage	CAMERA_INTERFACE/camera_interface_class.h	/^    QTimer timerDisplayTestImage;$/;"	m	class:CameraInterfaceClassAravis	typeref:typename:QTimer
 timerMoveAim	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    QTimer timerMoveAim;$/;"	m	class:AimControlInterface	typeref:typename:QTimer
-timerProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QTimer timerProcessImage;$/;"	m	class:CVImageProcessing	typeref:typename:QTimer
+timerProcessImage	CV_IMAGE_PROCESSING/cv_image_processing.h	/^    QTimer timerProcessImage;$/;"	m	class:ImageTrackerTemplate	typeref:typename:QTimer
 timerStepper	ROTATE_OPTIMIZATION/rotation_find_executor.h	/^	QTimer timerStepper;$/;"	m	class:RotationFindProcessClass	typeref:typename:QTimer
 timerUpdateState	gui_sources/widget_scanator_control.h	/^    QTimer timerUpdateState;$/;"	m	class:WidgetScanatorControl	typeref:typename:QTimer
 toByteArray	TRANSMISSION/DATA_STRUCTURES/message_command_structures.cpp	/^QByteArray MESSAGE_HEADER::toByteArray()$/;"	f	class:MESSAGE_HEADER	typeref:typename:QByteArray
@@ -17735,7 +17735,7 @@ zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRec
 zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRect, const QList<QCPAxis*> &affectedAxes)$/;"	f	class:QCPAxisRect	typeref:typename:void
 ~AimImageImitatorClass	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^AimImageImitatorClass::~AimImageImitatorClass()$/;"	f	class:AimImageImitatorClass
 ~AimingClass	AIMING_MODULES/aiming_class.cpp	/^AimingClass::~AimingClass() $/;"	f	class:AimingClass
-~CVImageProcessing	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^CVImageProcessing::~CVImageProcessing()$/;"	f	class:CVImageProcessing
+~ImageTrackerTemplate	CV_IMAGE_PROCESSING/cv_image_processing.cpp	/^ImageTrackerTemplate::~ImageTrackerTemplate()$/;"	f	class:ImageTrackerTemplate
 ~CameraInterfaceClassAravis	CAMERA_INTERFACE/camera_interface_class.cpp	/^CameraInterfaceClassAravis::~CameraInterfaceClassAravis()$/;"	f	class:CameraInterfaceClassAravis
 ~GraphicsWindow	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^GraphicsWindow::~GraphicsWindow()$/;"	f	class:GraphicsWindow
 ~LabelImage	gui_sources/labelimage.cpp	/^LabelImage::~LabelImage()$/;"	f	class:LabelImage
