@@ -75,7 +75,8 @@ void UDPEngineInterface::SlotReadData()
 void UDPEngineInterface::SlotSendCommand(QByteArray ArrayCommand)
 {
  //qDebug() << "COMMAND: " << ArrayCommand.toHex();
- ControlSocket->writeDatagram(ArrayCommand,QHostAddress(RemoteHost),RemotePort); ControlSocket->waitForBytesWritten(2);
+ //qDebug() << "SET TO : " << RemoteHost << RemotePort;
+ ControlSocket->writeDatagram(ArrayCommand,QHostAddress(RemoteHost),RemotePort); //ControlSocket->waitForBytesWritten(2);
 }
 
 void UDPEngineInterface::SlotCheckConnection()

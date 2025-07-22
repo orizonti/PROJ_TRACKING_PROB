@@ -27,7 +27,7 @@ class RingBufferGeneric
     bool isMessageAvailable();
     void AppendData(uint8_t* Data, uint8_t Size);
     MessageStructGeneric<void*,H>* TakeMessagePtr();
-	  const MessageStructGeneric<void*,H>& TakeMessage();
+	  MessageStructGeneric<void*,H>& TakeMessage();
 
     int CountMessagesInStore() { return MESSAGE_COUNTER;}
 
@@ -67,20 +67,31 @@ RingBufferGeneric<H,M_S,M_N,I_T>::~RingBufferGeneric() { delete DATA; }
 template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>
 void RingBufferGeneric<H,M_S,M_N,I_T>::AppendData(uint8_t* Data, uint8_t Size)
 {
-   IncommingPointer.LoadData(Data, Size); 
+   H* HEADER = (H*)Data; if(!HEADER->isValid()) { qDebug() << "HEADER NO VALID SKIP DATA" << Qt::hex << HEADER->HEADER; return; }
+
+                                IncommingPointer.LoadData(Data, Size); 
    MessagePointer.RangeLimits = IncommingPointer.RangeLimits;
    MESSAGE_COUNTER = MessagePointer.StepsTo(IncommingPointer);
 
-   //qDebug() << "MESSAGE IN STORE: " << MESSAGE_COUNTER << "PASSED: " 
-   //         << IncommingPointer.Messagenumber << "PROC: " 
-   //         << MessagePointer.Messagenumber;
+   //qDebug() << "MESSAGE NOT PROCESSED: " << MESSAGE_COUNTER 
+   //         << "TOTAL: " << IncommingPointer.Messagenumber 
+   //         << "PROCESSED: " << MessagePointer.Messagenumber;
 
-   if(MESSAGE_COUNTER > 8) MessagePointer++;
+     MessagePointer++;
+   //if(MESSAGE_COUNTER > 8) MessagePointer++;
+}
+
+template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>
+bool RingBufferGeneric<H,M_S,M_N,I_T>::isMessageAvailable()
+{
+  //qDebug() << "[ MESSAGE COUNT ]" << MessagePointer.StepsTo(IncommingPointer);
+  return MessagePointer.StepsTo(IncommingPointer) > 0;
 }
 
 template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>
 MessageStructGeneric<void*,H>* RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessagePtr()
 {
+  qDebug() << "TAKE MESSAGE";
   CurrentMessage = MessagePointer.GetMessagePtr(); if(!isMessageAvailable()) return CurrentMessage;
 
   MessagePointer++; MESSAGE_COUNTER  = MessagePointer.StepsTo(IncommingPointer); 
@@ -90,20 +101,18 @@ MessageStructGeneric<void*,H>* RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessagePtr(
 }
 
 template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>
-const MessageStructGeneric<void*,H>& RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessage()
+MessageStructGeneric<void*,H>& RingBufferGeneric<H,M_S,M_N,I_T>::TakeMessage()
 {
-  auto& Message = *MessagePointer; CurrentMessage = &Message; if(!isMessageAvailable()) return Message;
+  qDebug() << "TAKE MESSAGE";
+      auto& Message = *MessagePointer; CurrentMessage = &Message; if(!isMessageAvailable()) return Message;
+                       MessagePointer++; 
+    MESSAGE_COUNTER  = MessagePointer.StepsTo(IncommingPointer); 
 
-  MessagePointer++; MESSAGE_COUNTER  = MessagePointer.StepsTo(IncommingPointer); 
-  if(IncommingPointer.Messagenumber > 10000) { IncommingPointer.Messagenumber -= MessagePointer.Messagenumber; MessagePointer.Messagenumber = 0;}
+  if(IncommingPointer.Messagenumber > 10000) { IncommingPointer.Messagenumber -= MessagePointer.Messagenumber; 
+                                                                                 MessagePointer.Messagenumber = 0;}
   return Message;
 }
 
-template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>
-bool RingBufferGeneric<H,M_S,M_N,I_T>::isMessageAvailable()
-{
-  return MessagePointer.StepsTo(IncommingPointer) > 0;
-}
 
 
 template<typename H, size_t M_S, size_t M_N, IteratorMode I_T>

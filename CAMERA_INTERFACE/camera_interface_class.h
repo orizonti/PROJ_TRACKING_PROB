@@ -9,6 +9,8 @@
 #include <QImage>
 #include "interface_image_source.h"
 #include <QTimer>
+#include "camera_control_interface.h"
+#include <QThread>
 
 
 #undef signals
@@ -19,52 +21,49 @@ extern "C"
 }
 #define signals Q_SIGNALS
 
-class CameraInterfaceClassAravis;
+class CameraInterfaceAravis;
 struct ArvStreamCallbackData
 {
-	ArvStream *stream;
+	ArvStream *stream = NULL;
 	int counter;
 	gboolean done;
-    CameraInterfaceClassAravis* Receiver;
-
+  CameraInterfaceAravis* Receiver = NULL;
 };
 
-struct CameraRectRegion
-{
-    int x;
-    int y;
-    int width;
-    int heigh;
 
-};
-class CameraControlInterface
-{
-    public:
-    virtual int StartCameraStream() = 0;
-    virtual int StopCameraStream() = 0;
-    virtual void SlotSetCameraRegion(int x, int y, int width, int height ) = 0;
-};
 
-class CameraInterfaceClassAravis: public ImageSourceInterface, public CameraControlInterface
+class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlInterface
 {
     Q_OBJECT
     public:
-    CameraInterfaceClassAravis(QObject* parent = 0);
-    ~CameraInterfaceClassAravis();
+    CameraInterfaceAravis(QObject* parent = 0);
+    ~CameraInterfaceAravis();
 	GError *error = NULL;
-    QString TAG_NAME{"[ CAMERA ]"};
+    QString TAG_NAME{"[ ARAVIS ]"};
     QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
+    bool FLAG_CAMERA_CONNECTED = false;
+    bool FLAG_CAMERA_WORK = false;
 
-    CameraRectRegion CameraRegion;
     std::pair<int,int> SizeImage{400,400}; // MAY BE CHANGED IN INIT
     std::pair<int,int> ImagePos{20,20}; // MAY BE CHANGED IN INIT
-    int ThinningCounter = 0;
 
+    int ThinningCounter = 0;
+    int FrequencyDevider = 4;
+    int BaseFrequency = 200;
+    int CurrentReceiver = 0;
+
+    int  GetAvailableFrames() override { return NumberFrameToProcess; };
     void GetCurrentCameraRegion();
 
-    int  StartCameraStream();
-    int  StopCameraStream();
-    void SlotSetCameraRegion(int x, int y, int width, int height );
+    void SetCameraRegion(std::pair<int,int> Pos, std::pair<int,int> Size) override;
+    void SetCameraRegion(int x, int y, int width, int height ) override;
+    void SetCameraExposure(int Exposure) override {}; 
+    void  StartCameraStream() override;
+    void  StopCameraStream()  override;
+
+    bool SwitchToNextFrame() override;
+    void SkipFrames() override;
+    void SetFrequency(int Frequency) ;
 
     int  InitCamera();
     void DeinitCamera();
@@ -72,31 +71,42 @@ class CameraInterfaceClassAravis: public ImageSourceInterface, public CameraCont
     QTimer timerDisplayTestImage;
 
     cv::Mat ImageToProcess;
-     QImage ImageToDisplay;
-     int FrameNumber = 0;
+    QImage ImageToDisplay;
+    int NumberFrameToProcess = 0;
+    int Counter = 0;
 
-    QImage& GetImageToDisplay();
-    cv::Mat& GetImageToProcess();
+     QImage& GetImageToDisplay() override ;
+    cv::Mat& GetImageToProcess() override ;
 
-    void GetImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};
-    void GetImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};
+    void GetImageToDisplay(QImage& ImageDst) override { ImageDst = ImageToDisplay.copy();};
+    void GetImageToProcess(cv::Mat& ImageDst)override ;
 
-    const std::vector<QPair<int,int>>& GetPoints();  
-    const std::vector<QRect>& GetRects();  
-    const QString& GetInfo();  
+
+    std::vector<QPair<int,int>>& GetPoints() override;  
+    std::vector<QRect>& GetRects() override;  
+    QString& GetInfo() override;  
 
     std::vector<QPair<int,int>> CameraPoints{2};
     std::vector<QRect>          CameraRects{2};
 
-
-	ArvCamera *camera;
+	  ArvCamera *camera = nullptr;
     std::vector<uint8_t*> Buffers;
-    std::vector<uint8_t*>::iterator CurrentBuffer;
+    std::vector<ArvBuffer*> BuffersArv;
+
+    std::vector<uint8_t*>::iterator BufferToWrite;
+    std::vector<uint8_t*>::iterator BufferToRead;
 
     size_t payload;
 
 	ArvStreamCallbackData callback_data;
 
+    std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint;
+    std::chrono::duration<double> Duration;
+
     public slots:
     void SlotDisplayProcessImage();
+    void SlotSetFrequencyDevider(int param) { FrequencyDevider = param; };
+    void SlotSetHighFrequency();
+
+    void SlotDeinitCamera(); 
 };

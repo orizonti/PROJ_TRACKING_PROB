@@ -9,26 +9,36 @@ RotationFindProcessClass::RotationFindProcessClass(QObject* parrent)
   qDebug() << "[ CREATE ROTATION EXECUTOR EMPTY]";
 }
 
-RotationFindProcessClass::RotationFindProcessClass(std::shared_ptr<PassTwoCoordClass> Base, std::shared_ptr<PassTwoCoordClass> Rot,QObject* parrent) : QObject(parrent)
+RotationFindProcessClass::RotationFindProcessClass(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,QObject* parrent) : QObject(parrent)
 {
   BaseObject = Base;
 	RotationObject = Rot;
 }
 
-void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassTwoCoordClass> Base, std::shared_ptr<PassTwoCoordClass> Rot)
+void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot)
 {
   BaseObject = Base;
 	RotationObject = Rot;
 }
+
+void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,std::shared_ptr<PassCoordClass<double>> Middle)
+{
+  BaseObject = Base;
+	RotationObject = Rot;
+  MiddleObject = Middle;
+}
+
 void RotationFindProcessClass::StopProcess()
 {
+    qDebug() << TAG_NAME << "[ STOP FINE ROTATION PROCEDURE ]";
     timerStepper.stop();
     QObject::disconnect(&timerStepper, SIGNAL(timeout()), this, SLOT(SlotMakeStep()));
 }
 void RotationFindProcessClass::StartProcess()
 {
+    qDebug() << "START ROTATION FIND PROCESS";
     QObject::connect(&timerStepper, SIGNAL(timeout()), this, SLOT(SlotMakeStep()));
-    timerStepper.start(200);
+    timerStepper.start(10);
 }
 
 void RotationFindProcessClass::SlotStartRotationFind(bool StartStop)
@@ -42,23 +52,28 @@ void RotationFindProcessClass::SlotMakeStep()
 	auto CoordBase = BaseObject->GetOutput();     
 	auto CoordRot  = RotationObject->GetOutput();
 
-	//CoordBase >> InputTransform >> CoordBase;  // DEFAULT NO TRANSFORM SCALE = 1;
-	//CoordRot >> OutputTransform >> CoordRot;  // DEFAULT NO TRANSFORM SCALE = 1;
+	auto AimCoord = RotationContainer.MeasureFilter.GetWaitInputCoord();
+       AimCoord >> *BaseObject;
 
-	auto& AimCoord = RotationContainer.MeasureFilter.GetWaitInputCoord();
-	BaseObject->SetInput(AimCoord);
+  CoordBase = CoordBase + AimCoord;
 
   CoordBase >> RotationContainer.MeasureFilter >> RotationContainer;
-  CoordRot >>  RotationContainer.MeasureFilter >> RotationContainer;
-  
-  if(RotationContainer.IsDataFull()) StopProcess();
+  CoordRot  >> RotationContainer.MeasureFilter >> RotationContainer;
 
-    qDebug() << TAG << "WAIT: " << AimCoord.first 
-                                << AimCoord.second 
-                                << RotationContainer.MeasureFilter.DataFilter.accumulate_counter;
+  if(!RotationContainer.IsDataFull()) return;
 
-    qDebug() << TAG << " INPUT : " << CoordBase.first << CoordBase.second 
-	                  << " OUTPUT: " << CoordRot.first  << CoordRot.second;
+  StopProcess(); QPair<double,double>(0,0) >> *BaseObject;
+
+  QTimer::singleShot(2000,[this]()
+  {
+  qDebug() << "===============================";
+  qDebug() << "[ PROCESS ROTATION DATA ]";
+  qDebug() << "===============================";
+  RotationContainer.FindArbitraryRotationToVectors(RotationContainer.input_to_optimize_rotation, 
+                                                   RotationContainer.output_to_optimize_rotation);
+  qDebug() << "===============================";
+  });
 
 }
+
 

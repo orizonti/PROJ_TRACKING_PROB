@@ -51,16 +51,15 @@ void SinusGeneratorClass::SlotCalculateValue()
 {
   COUNTER++; if(COUNTER > PERIOD) COUNTER = 0;
 
-    CurrentOutput.first = Amplitude.first*std::sin(COUNTER*2*M_PI/PERIOD);
-    CurrentOutput.second = Amplitude.second*std::cos(COUNTER*2*M_PI/PERIOD);
+    CurrentOutput.first = Offset + Amplitude.first*std::sin(COUNTER*2*M_PI/PERIOD);
+    CurrentOutput.second = Offset + Amplitude.second*std::cos(COUNTER*2*M_PI/PERIOD);
 
     //CurrentOutput >> ScaleOutput >> CurrentOutput;
 
     //if(BlockOutput1) CurrentOutput.first  = 0;
     //if(BlockOutput2) CurrentOutput.second = 0;
 
-	if (LinkedReceiver != 0) *this >> *LinkedReceiver;
-    //PassTwoCoordClass::PassCoord();
+    PassCoordClass<double>::PassCoord();
 
     if(FLAG_ENABLE_NOIZE)
     {
@@ -74,6 +73,6 @@ void SinusGeneratorClass::SlotCalculateValue()
 void SinusGeneratorClass::SlotStartGenerate(bool StartStop)
 {
     qDebug() << "SINUS GENERATOR START GENERATE : " << StartStop;
-	if (StartStop) this->TimerGenerateSinus.start(5);
+	if (StartStop) this->TimerGenerateSinus.start(50);
 	else this->TimerGenerateSinus.stop();
 }

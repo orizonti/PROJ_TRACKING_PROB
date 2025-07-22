@@ -12,7 +12,7 @@
 //SIMPLE VECTOR ROTATION, CLASS IS NOT USED IN PROGRAM NOW, RAPLACED BY RotateVectorContainer
 enum RotateAxisenum { X_AXIS = 0, Y_AXIS= 1 , Z_AXIS = 2};
 
-class RotateVectorClass : public PassTwoCoordClass
+class RotateVectorClass : public PassCoordClass<double>
 {
 public:
 	RotateVectorClass(RotateVectorClass& RotateObject);

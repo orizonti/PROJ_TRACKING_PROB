@@ -1,5 +1,5 @@
-#ifndef PASSTWOCOORDCLASS_H
-#define PASSTWOCOORDCLASS_H
+#ifndef PassCoordClass<double>_H
+#define PassCoordClass<double>_H
 
 #include <QPair>
 
@@ -14,19 +14,19 @@ void operator+=(QPair<double, double>& x, const QPair<double, double>& y);
 void operator-=(QPair<double, double>& x, const QPair<double, double>& y);
 
 
-class PassTwoCoordClass
+class PassCoordClass<double>
 {
 public:
-	PassTwoCoordClass* Link = 0;
+	PassCoordClass<double>* Link = 0;
 
 	virtual const QPair<double, double>& GetOutput() = 0;
 	virtual void SetInput(const QPair<double,double>& Coord) = 0;
-	void SetLink(PassTwoCoordClass* NewLink);
+	void SetLink(PassCoordClass<double>* NewLink);
 	
-	friend QPair<double,double>& operator >>(PassTwoCoordClass& Sender, QPair<double, double>& Coord);
-    friend PassTwoCoordClass& operator >>(PassTwoCoordClass& Sender, PassTwoCoordClass& Reciever);
-	friend PassTwoCoordClass& operator >>(QPair<double,double> Coord, PassTwoCoordClass& Reciever);
-	friend std::pair<double,double>& operator >>(PassTwoCoordClass& Sender, std::pair<double,double>& Coord);
-	friend PassTwoCoordClass& operator >>(std::pair<double, double> Coord, PassTwoCoordClass& Reciever);
+	friend QPair<double,double>& operator >>(PassCoordClass<double>& Sender, QPair<double, double>& Coord);
+    friend PassCoordClass<double>& operator >>(PassCoordClass<double>& Sender, PassCoordClass<double>& Reciever);
+	friend PassCoordClass<double>& operator >>(QPair<double,double> Coord, PassCoordClass<double>& Reciever);
+	friend std::pair<double,double>& operator >>(PassCoordClass<double>& Sender, std::pair<double,double>& Coord);
+	friend PassCoordClass<double>& operator >>(std::pair<double, double> Coord, PassCoordClass<double>& Reciever);
 };
-#endif //PASSTWOCOORDCLASS_H
+#endif //PassCoordClass<double>_H

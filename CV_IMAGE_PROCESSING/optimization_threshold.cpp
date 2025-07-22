@@ -1,7 +1,6 @@
 #include "optimization_threshold.h"
 #include "debug_output_filter.h"
 #include "thread_operation_nodes.h"
-#include "cv_image_processing.h"
 OutputFilter OutFilter_1{10};
 OutputFilter OutFilter_2{10};
 OutputFilter OutFilter_3{10};
@@ -47,6 +46,10 @@ void ThresholdAdjustionDispersion::CalcThreshold(const cv::Mat& Image)
     qDebug()<< OutFilter_1 << "[ THRESHOLD OPTIMIZATION DISP ]" << ValueOffset << sum_all << StatNode.GetDispersionValue();
 
 	Value = ValueOffset + InputValue;
+}
+void ThresholdFindingParallelDispersion::Reset()
+{
+  SetParam(MinThreshold, Step, NumberGroup);
 }
 
 void ThresholdFindingParallelDispersion::SetParam(int MinThreshold, int Step, int NumberGroup)
@@ -104,7 +107,7 @@ void ThresholdFindingParallelDispersion::CalcThreshold(const cv::Mat& Image)
 
 int  ThresholdFindingParallelDispersion::GetResult()
 {
-     auto element = std::max_element(GroupStatistics.begin(), GroupStatistics.end(), [](Statistic& Stat1,Statistic& Stat2) -> bool 
+     auto element = std::max_element(GroupStatistics.begin(), GroupStatistics.end(), [](StatisticNode<double>& Stat1,StatisticNode<double>& Stat2) -> bool 
                                                                          {return Stat1.GetAvarageValue() > Stat2.GetAvarageValue();});
      int number = std::distance(GroupStatistics.begin(), element);
 

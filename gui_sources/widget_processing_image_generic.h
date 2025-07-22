@@ -1,7 +1,6 @@
 #ifndef MYWIDGET_H
 #define MYWIDGET_H
 
-#include "cv_image_processing.h"
 #include <QWidget>
 #include <QDebug>
 #include <QImage>
@@ -15,6 +14,7 @@
 #include <QMoveEvent>
 #include <QVBoxLayout>
 #include "labelimage.h"
+#include "debug_output_filter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WidgetProcessingImage; }
@@ -59,6 +59,9 @@ QLineF ObjectVelLine;
 QLineF ArrowLeft;
 QLineF ArrowRight;
 QTimer timerDisplayMiniLabels;
+QTimer timerDisplay;
+ThinningCounter Thinning;
+//StatisticValue<double> StatError;
 
         QImage  DisplayImage;
 QVector<QImage> DisplayImagesMini;

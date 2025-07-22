@@ -8,12 +8,14 @@
 #include "AIM_IMAGE_IMITATION/sinus_generator_class.h"
 #include "scanator_control_class.h"
 #include "AIM_IMAGE_IMITATION/imitator_image_aim.h"
-#include "CV_IMAGE_PROCESSING/cv_image_processing.h"
-#include "CAMERA_INTERFACE/camera_interface_class.h"
-//#include "motor_imitator_control_interface.h"
-#include "rotation_find_executor.h"
+//#include "CAMERA_INTERFACE/camera_interface_class.h"
+#include "CAMERA_INTERFACE/interface_camera_hik.h"
 #include "aiming_class.h"
 #include "WindowLaserControl.h"
+#include "rotation_find_executor.h"
+
+#include "CV_IMAGE_PROCESSING/tracker_centroid.h"
+#include "CV_IMAGE_PROCESSING/tracker_template.h"
 
 enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibration}; 
 
@@ -21,49 +23,55 @@ class ProcessControllerClass : public QObject
 {
     Q_OBJECT
 public:
-std::string TAG_NAME{"[CONTROLLER]"};
-static ProcessControllerClass* GetInstance();
+      ~ProcessControllerClass();
+QString TAG_NAME{"[CONTROLLER]"};
+static ProcessControllerClass* GetInstance(QObject* parent = nullptr);
 
-static std::shared_ptr<CameraInterfaceClassAravis> DeviceCamera;
+static std::shared_ptr<CameraInterfaceHIK> DeviceCamera;
+//static std::shared_ptr<CameraInterfaceAravis> DeviceCamera;
+
+static std::shared_ptr<ImageTrackerCentroid>  ModuleImageProc;
+static std::shared_ptr<ImageTrackerCentroid>  ModuleImageProc2;
+static std::shared_ptr<ImageTrackerCentroidGPU>  ModuleImageProc3;
+static std::shared_ptr<AimImageImitatorClass> ModuleImitatorImage;
+
 static std::shared_ptr<ScanatorControlClass>       DeviceScanator;
-static std::shared_ptr<LaserControlClass>          DeviceLaser;
-//static std::shared_ptr<MotorInterface>             DeviceImitatorMotor;
 
-static std::shared_ptr<ImageTrackerCentroid>          ModuleImageProc;
-static std::shared_ptr<ImageTrackerCentroid>          ModuleImageProc2;
-static std::shared_ptr<AimingClass>                ModuleAimingLoop;
-
-static std::shared_ptr<AimImageImitatorClass>      ModuleImitatorImage;
-static std::shared_ptr<SinusGeneratorClass>        ModuleSinusGenerator;
+static std::shared_ptr<AimingClass>                ModuleAiming1;
+static std::shared_ptr<AimingClass>                ModuleAiming2;
 
 static std::shared_ptr<RotationFindProcessClass>  ProcessFindRotation;
 
-ProcessStateList ProcessState{ProcessStateList::ProcessAiming};
 
-private:
     ProcessControllerClass(QObject* parrent = 0);
     ProcessControllerClass(const ProcessControllerClass& Copy) = delete;
     void operator=(const ProcessControllerClass& Copy) = delete;
 
+ProcessStateList ProcessState{ProcessStateList::ProcessAiming};
+void StopAllProcess();
+void DeleteModulesLinks();
+
+private:
+
     static ProcessControllerClass* ProcessControllerInstance;
 
-QThread processThread;
-QThread utiliteThread;
+QThread ThreadProcess;
+QThread ThreadProcess2;
+
+QThread ThreadCamera;
+QThread ThreadUtilite;
 
 public slots:
-void SlotStartProcessRotFind(bool OnOff);
-void SlotStartProcessRotFindRevert(bool OnOff);
 
-void SlotSetProcessAiming(bool OnOff);
+void SlotSetProcessCamera(bool OnOff);
 void SlotSetProcessImitation(bool OnOff);
-void SlotSetProcessTestSignal(bool OnOff);
+void SlotSetProcessAiming(bool OnOff);
+void SlotSetProcessAiming2(bool OnOff);
+
 
 signals:
 void SignalProcessEnd();
 
-
-private:
-void DisplayState();
 };
 
 

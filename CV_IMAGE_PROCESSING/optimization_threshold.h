@@ -10,8 +10,9 @@
 #include "thread_operation_nodes.h"
 #include "debug_output_filter.h"
 #include <QtConcurrent/QtConcurrent>
+#include "contour_processing.h"
 
-class ContoursProcessorClass;
+//class ContoursProcessorClass;
 
 template<typename T = double>
 class ValueSpongeShift : public PassValueClass<T>
@@ -26,8 +27,8 @@ class ValueSpongeShift : public PassValueClass<T>
 
   void SetValue(T Value) override {InputValue = Value; Value >> TimeDiffer >> Saturation(Value/50) >> InversionLogic >> StatNode;
                                                                 TimeDiffer >> StatNode2;}
-  Statistic StatNode{20};
-  Statistic StatNode2{20};
+  StatisticNode<double> StatNode{20};
+  StatisticNode<double> StatNode2{20};
   ValueSaturation<double>      Saturation;
   ValueBinaryInversion<double> InversionLogic;
   ValueDifference<double>      TimeDiffer;
@@ -46,22 +47,21 @@ class OptimizationThreshold : public PassValueClass<double>
   void Disable(){ DISABLED = true;};
 	bool isEnabled() { return !DISABLED;}
   void SetValue(double NewValue) override {InputValue = NewValue;}
-  double& GetValue() override  { return Value;}
-  void operator>>(double& Receiver) override { Receiver = GetValue();};
+  virtual void Reset() = 0;
 
   virtual void CalcThreshold(const cv::Mat& Image) = 0;
 
-	friend OptimizationThreshold& operator>>(const cv::Mat& Image, OptimizationThreshold& Node) {if(Node.DISABLED) return Node; 
-	                                                                                                Node.CalcThreshold(Image); 
-																									                                                               return Node; }
-	void operator>>(int& OutputValue) { OutputValue = Value;}
-	Statistic  StatNode{40};
+	friend OptimizationThreshold& operator>>(const cv::Mat& Image, OptimizationThreshold& Node) 
+  {if(Node.DISABLED) return Node; Node.CalcThreshold(Image); return Node; }
+
+	StatisticNode<double>  StatNode{40};
 };
 
 class ThresholdCalculationLumen : public OptimizationThreshold
 {
 	public:
   void CalcThreshold(const cv::Mat& Image) override;
+  void Reset() override {};
 };
 
 class ThresholdAdjustionDispersion : public OptimizationThreshold
@@ -69,6 +69,7 @@ class ThresholdAdjustionDispersion : public OptimizationThreshold
 	public:
   void CalcThreshold(const cv::Mat& Image) override;
 	    ValueSpongeShift<double> SpongeValue;
+  void Reset() override {};
 };
 
 class ThresholdFindingParallelDispersion : public OptimizationThreshold
@@ -79,9 +80,14 @@ class ThresholdFindingParallelDispersion : public OptimizationThreshold
 
   int  GetResult();
   void SetParam(int MinThreshold, int Step, int NumberGroup);
+
+  void Reset();
+  int MinThreshold = 0;
+  int Step = 10;
+  int NumberGroup = 10;
   cv::Mat InputImage;
 
-  std::vector<Statistic> GroupStatistics;
+  std::vector<StatisticNode<double>> GroupStatistics;
   std::vector<ContoursProcessorClass> ControursProcessors;
   std::vector<double>    GroupDispersion;
   std::vector<cv::Mat>    GroupImages;
@@ -106,6 +112,7 @@ class ThresholdOptimizatorEngine : public OptimizationThreshold
   ThresholdFindingParallelDispersion NodeFindingParallel{20,10,18};
         ThresholdAdjustionDispersion NodeDispersionRunaway;
         ThresholdCalculationLumen    NodeGetForLumen;
+  void Reset() override { CurrentProcess->Reset();}
   void CalcThreshold(const cv::Mat& Image) override { Image >> *CurrentProcess >> Value; };
 
   void SetParam(int MinThreshold, int Step, int NumberGroup) {MinThreshold = MinThresholdFinding; MaxThresholdFinding = MinThreshold + Step*NumberGroup;  

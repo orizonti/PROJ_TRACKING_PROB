@@ -17,7 +17,7 @@ public:
 
 	void LinkToModule(std::shared_ptr<AimingClass> Module);
 
-	std::shared_ptr<AimingClass> ModuleAimingLoop;
+	std::vector<std::shared_ptr<AimingClass>> Modules;
 	QTimer timerDisplayState;
 
 private:

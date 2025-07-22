@@ -1,24 +1,29 @@
 #include "RotateOperationContainer.h"
+#include "interface_pass_coord.h"
 #include <DebugStream.h>
 #include <iostream>
 #include <QDebug>
 #include <QFile>
 static char* TAG = "[ ROTATION ]";
+#include "rotate_vector_class.h"
 
 TestDataVectorsContainer::TestDataVectorsContainer()
 {
 	TestCoordVectorInput.resize(TEST_DATA_COUNT+1);
 	TestCoordVectorInput[0] = QPair<double,double>(0,0);
-	int NumberPoints = TestCoordVectorInput.size();
+	int NumberPoints = TestCoordVectorInput.size()-1;
 	int CurrentPoint = 0;
-	int Radius = 300;
-	auto GenerateCircle = [NumberPoints,CurrentPoint,Radius]() mutable -> QPair<double,double>
+	int Radius = 25;
+	RotateVectorClass rotation;
+	QPair<double,double> Point;
+
+	auto GenerateCircle = [rotation,NumberPoints,CurrentPoint,Radius]() mutable -> QPair<double,double>
 	{
         double current_angle = CurrentPoint*2*M_PI/NumberPoints;
-		QPair<double,double> PointOnCircle; PointOnCircle.first = Radius*std::cos(current_angle); 
-		                                    PointOnCircle.second = Radius*std::sin(current_angle);
+		QPair<double,double> Point; Point.first = Radius*std::cos(current_angle); 
+									Point.second = Radius*std::sin(current_angle);
 		CurrentPoint++;
-		return PointOnCircle;
+		              return Point;
 
 	};
     std::generate(TestCoordVectorInput.begin()+1,TestCoordVectorInput.end(),GenerateCircle);
@@ -45,8 +50,8 @@ void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
 
 			if(CheckCoordMatch(Coord,WaitInputCoord))
 			{
-				AvarageOutputFirst.first += Coord.first/avarage_window_size;
-				AvarageOutputFirst.second += Coord.second/avarage_window_size;
+				AvarageOutputFirst.first += InputCoord.first/avarage_window_size;
+				AvarageOutputFirst.second += InputCoord.second/avarage_window_size;
 			    channel_counter++;
 			}
 			return;
@@ -56,8 +61,8 @@ void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
 		{
 			InputCoord.first = Coord.first - OutputSecondCenter.first; InputCoord.second = Coord.second - OutputSecondCenter.second; 
 
-			AvarageOutputSecond.first += Coord.first/avarage_window_size;
-			AvarageOutputSecond.second += Coord.second/avarage_window_size;
+			AvarageOutputSecond.first += InputCoord.first/avarage_window_size;
+			AvarageOutputSecond.second += InputCoord.second/avarage_window_size;
 			accumulate_counter++;
 			channel_counter--;
 		}
@@ -68,7 +73,6 @@ void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
 		OutputFirstCenter.first += InputCoord.first/avarage_window_size;
 		OutputFirstCenter.second += InputCoord.second/avarage_window_size;
 		channel_counter++;
-		qDebug() <<"FIRST CenTER: " << OutputFirstCenter.first <<OutputFirstCenter.second ;
 		return;
 	}
 
@@ -77,18 +81,23 @@ void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
 		OutputSecondCenter.first += InputCoord.first/avarage_window_size;
 		OutputSecondCenter.second += InputCoord.second/avarage_window_size;
 		
-		qDebug() <<"SECOND CenTER: " << OutputSecondCenter.first <<OutputSecondCenter.second ;
 		accumulate_counter++; channel_counter--;
 	}
+
+	if(WaitInputCoord == ZeroCoord && accumulate_counter == avarage_window_size) 
+	{
+	qDebug() <<"[CENTER]" << "[INPUT ]"  << OutputFirstCenter.first <<OutputFirstCenter.second;
+	qDebug() <<"[CENTER]" << "[OUTPUT ]" << OutputSecondCenter.first <<OutputSecondCenter.second; 
+	}
     //==================================================================
-	if(accumulate_counter == avarage_window_size) flag_filter_opencv = true;
+	if(accumulate_counter == avarage_window_size) flag_filter_open = true;
 }
 
 void AccumulateDataFilter::WaitCoord(QPair<double,double> coord)
 {
   //qDebug()<< TAG << "FILTER WAIT NEW COORD - " << coord.first << coord.second;
   WaitInputCoord = coord;	
-  flag_filter_opencv = false;
+  flag_filter_open = false;
   accumulate_counter = 0;
   pass_counter = 0;
 }
@@ -107,37 +116,37 @@ std::pair<double,double> AccumulateDataFilter::GetFirstOutput()
 
 std::pair<double,double> AccumulateDataFilter::GetSecondOutput()
 {
-	flag_filter_opencv = false;  // close filter when two output coords is passed
+	flag_filter_open = false;  // close filter when two output coords is passed
 	pass_counter++;
 	auto output_coord = std::make_pair(AvarageOutputSecond.first,AvarageOutputSecond.second);
 	AvarageOutputSecond = QPair<double,double>(0,0);
 	return output_coord;
 }
 
-RotateDataMeasureengine& operator>>(std::pair<double,double> coord, RotateDataMeasureengine& Measureengine)
+RotateDataMeasureEngine& operator>>(std::pair<double,double> coord, RotateDataMeasureEngine& MeasureEngine)
 {
-  Measureengine.CurrentMeasureCoordAbs.first = coord.first;
-  Measureengine.CurrentMeasureCoordAbs.second = coord.second;
-	return Measureengine;
+  MeasureEngine.CurrentMeasureCoordAbs.first = coord.first;
+  MeasureEngine.CurrentMeasureCoordAbs.second = coord.second;
+	return MeasureEngine;
 }
-//RotateDataMeasureengine& operator>>(QPair<double, double> coord, RotateDataMeasureengine& Measureengine)
+//RotateDataMeasureEngine& operator>>(QPair<double, double> coord, RotateDataMeasureEngine& MeasureEngine)
 //{
-//  Measureengine.CurrentMeasureCoordAbs = coord; return Measureengine;
+//  MeasureEngine.CurrentMeasureCoordAbs = coord; return MeasureEngine;
 //}
 
-void operator>>(RotateDataMeasureengine& Measureengine, RotateOperationContainer& RotateContainer)
+void operator>>(RotateDataMeasureEngine& MeasureEngine, RotateOperationContainer& RotateContainer)
 {
-	Measureengine.CurrentMeasureCoordAbs >> Measureengine.DataFilter >> RotateContainer;
-	if(Measureengine.DataFilter.pass_counter > 0) Measureengine.SwitchToNextTestCoord();
+	MeasureEngine.CurrentMeasureCoordAbs >> MeasureEngine.DataFilter >> RotateContainer;
+	if(MeasureEngine.DataFilter.pass_counter > 0) MeasureEngine.SwitchToNextTestCoord();
 }
 	
 void operator>>(AccumulateDataFilter& Filter, RotateOperationContainer& RotateContainer)
 {
-	if (Filter.flag_filter_opencv)
+	if (Filter.flag_filter_open)
 	{
 		if(Filter.WaitInputCoord == QPair<double,double>(0,0))
 		{
-			Filter.pass_counter++; Filter.flag_filter_opencv = false;
+			Filter.pass_counter++; Filter.flag_filter_open = false;
 			return;
 		}; // when pass_counter > 0 measures switch to next coord
 
@@ -146,7 +155,7 @@ void operator>>(AccumulateDataFilter& Filter, RotateOperationContainer& RotateCo
 	}
 }
 
-void RotateDataMeasureengine::SwitchToNextTestCoord() { DataFilter.WaitCoord(DataVectors.GetTestCoord()); }
+void RotateDataMeasureEngine::SwitchToNextTestCoord() { DataFilter.WaitCoord(DataVectors.GetTestCoord()); }
 
 QPair<double, double> TestDataVectorsContainer::GetTestCoord()
 {
@@ -158,7 +167,7 @@ AccumulateDataFilter::AccumulateDataFilter() { }
 
 void AccumulateDataFilter::reset()
 {
-	flag_filter_opencv = false;
+	flag_filter_open = false;
 	accumulate_counter = 0;
 	pass_counter = 0;
 
@@ -171,11 +180,11 @@ void AccumulateDataFilter::reset()
 	OutputSecondCenter = QPair<double,double>(0,0);
 }
 
-RotateDataMeasureengine::RotateDataMeasureengine() 
+RotateDataMeasureEngine::RotateDataMeasureEngine() 
 { 
 	SwitchToNextTestCoord(); 
 }
-void RotateDataMeasureengine::Reset() 
+void RotateDataMeasureEngine::Reset() 
 { 
 	this->DataVectors.reset(); 
 	SwitchToNextTestCoord(); 
@@ -318,9 +327,9 @@ torch::Tensor RotateOperationContainer::FitToTestVectors(torch::Tensor test_inpu
 
 			 }
 
-			 if (n % 500 == 0)
+			 if (n % 50 == 0)
 			 {
-			 auto Angle = *RotateOperationSequenseTensor[0].second[0].data_ptr<float>() * 180 / 3.14;
+			 auto Angle = *RotateOperationSequenseTensor[0].second[0].data_ptr<float>() * 180.0 / M_PI;
 			 qDebug()  << "   LOSS - " << fixed << qSetRealNumberPrecision(3) << loss.data_ptr<float>()[0] << " | "<< Angle;
 			 }
 
@@ -328,7 +337,7 @@ torch::Tensor RotateOperationContainer::FitToTestVectors(torch::Tensor test_inpu
 			}
 
 			 for(int n = 0; n < RotateOperationSequense.size(); n++)
-				 RotateOperationSequense[n].second = *RotateOperationSequenseTensor[n].second[0].data_ptr<float>() * 180/3.14;
+				 RotateOperationSequense[n].second = *RotateOperationSequenseTensor[n].second[0].data_ptr<float>() * 180.0/M_PI;
 
 			
 			return loss;
@@ -378,12 +387,12 @@ void RotateOperationContainer::FindArbitraryRotationToVectors(vector<pair<double
 		vector<float> Losses;
 		for(auto Sequence: Sequenses)
 		{
-		float speed = 0.000003;
-		float momentum = 0.9;
-		float number_iteration = 4000;
+		float speed = 0.000001;
+		float momentum = 0.7;
+		float number_iteration = 9000;
 		RotateOperationContainer Rotate;
-								Rotate.AppendOperation(pair<RotateAxis,double>(Sequence.at(0),52));
-								Rotate.AppendOperation(pair<RotateAxis,double>(Sequence.at(1),40));
+								Rotate.AppendOperation(pair<RotateAxis,double>(Sequence.at(0),0));
+								Rotate.AppendOperation(pair<RotateAxis,double>(Sequence.at(1),0));
 								Rotate.AppendOperation(pair<RotateAxis,double>(Sequence.at(2),0));
 
 			RotateVariants.push_back(Rotate);
@@ -396,7 +405,7 @@ void RotateOperationContainer::FindArbitraryRotationToVectors(vector<pair<double
 		}
 
 		for(int n = 0; n<Losses.size(); n++)
-			qDebug() << QString(RotateVariants[n].RotationToString().c_str()) << " [ enD LOSS - " << Losses[n] << " ]";
+			qDebug() << QString(RotateVariants[n].RotationToString().c_str()) << " [ END LOSS - " << Losses[n] << " ]";
 
 		auto min = min_element(Losses.begin(),Losses.end());
 		int number_min_loss = distance(Losses.begin(),min);
@@ -414,7 +423,7 @@ void RotateOperationContainer::FindArbitraryRotationToVectors(vector<pair<double
     FitTestVectorsToRotation(test_data_z);
 	FitTestVectorsToRotation(test_data_inverse_z);
 	
-	SaveMeasureDataToFile(QString("/home/spp/DATA/TrainerData/MEASURES/MeasureData.txt"));
+	SaveMeasureDataToFile(QString("/home/broms/DATA/TrackingProject/MEASURES/MeasureData.txt"));
 	qDebug() << "=================================================================================" << Qt::endl;
 
 	RotationValid = true; this->Inverse();
@@ -427,6 +436,11 @@ torch::Tensor output;
 if(!is_rotation_inverse) output = torch::matmul(CommonMatrix, Input);	
 if(is_rotation_inverse)  output = torch::matmul(CommonMatrixInverse, Input);	
 return output;
+}
+
+void RotateOperationContainer::operator=(const RotateOperationContainer& CopyContainer)
+{
+	this->CopyRotation(CopyContainer);
 }
 
 RotateOperationContainer::RotateOperationContainer(const RotateOperationContainer& CopyContainer) : RotateOperationContainer()
@@ -518,10 +532,13 @@ void RotateOperationContainer::AppendInputData(pair<double,double> test_coord)
 	output_to_optimize_rotation.push_back(test_coord);
 	auto& coord = input_to_optimize_rotation.back();
 	auto& coord2 = output_to_optimize_rotation.back();
-	qDebug() << "APPEND " << coord.first << coord.second << " | " << coord2.first << coord2.second << " COUNT: " << counter_test++;
+
+	auto coord_rel = coord - MeasureFilter.DataFilter.OutputFirstCenter;
+	auto coord_rel2 = coord2 - MeasureFilter.DataFilter.OutputSecondCenter;
+	//qDebug() << "APPEND " << coord.first << coord.second << " | " << coord2.first << coord2.second << " COUNT: " << counter_test++;
+	qDebug() << "[ APPEND_REL ]" << coord_rel.first << coord_rel.second << " | " << coord_rel2.first << coord_rel2.second << "[ COUNT ]" << counter_test++;
    }
    
-   if(IsDataFull()) FindArbitraryRotationToVectors(input_to_optimize_rotation, output_to_optimize_rotation);
 }
 
 
@@ -545,7 +562,8 @@ void RotateOperationContainer::SetInput(const QPair<double,double>& Coord)
 
 const QPair<double, double>& RotateOperationContainer::GetOutput()
 {
-	return QPair<double, double>(this->OutputCoord.data_ptr<float>()[0], this->OutputCoord.data_ptr<float>()[1]);
+	PassCoordClass<double>::OutputCoord = QPair<double, double>(this->OutputCoord.data_ptr<float>()[0], this->OutputCoord.data_ptr<float>()[1]);
+	return PassCoordClass<double>::OutputCoord;
 }
 
 std::vector<float> RotateOperationContainer::GetOutputVector() 

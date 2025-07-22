@@ -8,7 +8,7 @@
 #include <QTime>
 
 
-class PIDClass : public PassTwoCoordClass
+class PIDClass : public PassCoordClass<double>
 {
 public:
 	PIDClass();

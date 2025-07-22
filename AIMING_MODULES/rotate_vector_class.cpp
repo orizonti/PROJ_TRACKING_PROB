@@ -1,4 +1,5 @@
 #include "rotate_vector_class.h"
+#include "interface_pass_coord.h"
 #include <iomanip>
 
 RotateVectorClass::RotateVectorClass(RotateVectorClass& RotateObject)
@@ -56,7 +57,8 @@ void RotateVectorClass::SetInput(const QPair<double,double>& Coord)
 
 const QPair<double, double>& RotateVectorClass::GetOutput() 
 { 
-	return QPair<double, double>(this->OutputVector(0, 0), this->OutputVector(1, 0)); 
+	PassCoordClass<double>::OutputCoord = QPair<double, double>(this->OutputVector(0, 0), this->OutputVector(1, 0)); 
+	return OutputCoord;
 }
 
 RotateVectorClass& RotateVectorClass::Inverse()
@@ -130,10 +132,31 @@ RotateOperations.push_back(std::make_pair(axis,angle_degree));
 
      RotateMatrixPlane = RotateMatrix.block<2,2>(0,0);
 
-	 //qDebug() << "===================================================";
-	 //qDebug() << " ROTATION " << RotationToString(RotateOperations).c_str() << "[ SCALE ] " << SystemScale;
-	 //qDebug() << " MATRIX   " << Qt::endl << this->MatrixToString().c_str();
-	 //qDebug() << "===================================================";
+in_stream.readLine(); in_stream.readLine(); in_stream.readLine(); in_stream.readLine(); in_stream.readLine(); in_stream.readLine(); 
+
+QPair<double,double> InputCoord; 
+QPair<double,double> OutputCoord; 
+QPair<double,double> OutputCoordTest; 
+QPair<double,double> Error; 
+qDebug() << "=======================================";
+qDebug() << "INPUT >> OUTPUT";
+for(int n = 0; n < 300; n = n + 10)
+{
+ in_stream >> InputCoord.first >> InputCoord.second;
+ in_stream >> OutputCoord.first >> OutputCoord.second;
+ InputCoord >> *this >> OutputCoordTest;
+ Error = OutputCoord - OutputCoordTest;
+ qDebug() << "[ INPUT ]" << InputCoord.first << InputCoord.second 
+          << "[ OUTPUT ]" << OutputCoord.first << OutputCoord.second
+          << "[ TEST ]" << OutputCoordTest.first << OutputCoordTest.second 
+          << "[ ERROR ]" << Error.first << Error.second;
+}
+
+
+qDebug() << "===================================================";
+qDebug() << " ROTATION " << RotationToString(RotateOperations).c_str() << "[ SCALE ] " << SystemScale;
+//qDebug() << " MATRIX   " << Qt::endl << this->MatrixToString().c_str();
+qDebug() << "===================================================";
 }
 
 

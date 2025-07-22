@@ -6,7 +6,7 @@
 
 template <class Type>
 
-class Substract : public PassTwoCoordClass
+class Substract : public PassCoordClass<double>
 {
 public:
 	QPair<Type, Type> CoordFirst;
@@ -41,7 +41,7 @@ public:
 
 
 template <class Type>
-class SummVec : public PassTwoCoordClass
+class SummVec : public PassCoordClass<double>
 {
 public:
 	QPair<Type, Type> CoordOutput;
@@ -67,7 +67,7 @@ public:
 			return SubObj;
 
     }
-	friend SummVec<Type>& operator<<( SummVec<Type>& SubObj,PassTwoCoordClass& Sender)
+	friend SummVec<Type>& operator<<( SummVec<Type>& SubObj,PassCoordClass<double>& Sender)
     {
 
 		SubObj.SetInput(Sender.GetOutput());

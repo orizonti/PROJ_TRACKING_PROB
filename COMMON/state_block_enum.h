@@ -36,7 +36,7 @@ class StateBlockInfo
    }
 };
 
-enum TypeEnumAiming { AimingFast = 0, AimingSlow = 1, AimingTuning = 2 };
+enum TypeEnumAiming { AimingLoop = 0, AimingLoop1 = 1, AimingLoop2 = 2 , AimingLoop3 = 3, AimingDirect = 4};
 
 enum StateEnumAiming {
 	StateAimingNoSpot = 0, 

@@ -1,24 +1,42 @@
-#include "tcp_server_common.h"
+#include "engine_tcp_interface.h"
 #include "message_struct_generic.h"
 #include "engine_ring_buffer_generic.h"
 #include <type_traits>
 
 
+void DispatchMessage1(ControlMessage1* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+void DispatchMessage2(ControlMessage2* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+void DispatchMessage3(ControlMessage3* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+void DispatchMessage4(ControlMessage4* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+void DispatchMessage5(ControlMessage5* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+void DispatchMessage6(ControlMessage6* message) { qDebug() << "DISPATCH: " << message->toString().c_str(); }
+
+MessageListDispatcher List{
+    DispatchMessage1,
+    DispatchMessage2,
+    DispatchMessage3,
+    DispatchMessage4,
+    DispatchMessage5,
+    DispatchMessage6
+};
+
 //===================================================
 void TCPConnectionEngine::SlotConnectedToHost()
 {
-    qDebug() << "CONNECTED TO HOST: " << HOST << PORT; emit DeviceConnected();
+    qDebug() << "[ TCP ]" << "CONNECTED TO HOST: " << HOST << PORT; emit DeviceConnected();
 }
 
 
 void TCPConnectionEngine::SlotReadData()
 {
    int bytes_available = engineSocket->bytesAvailable();
-    if(bytes_available < RingBuffer->MIN_MESSAGE_SIZE) return;
+    if(bytes_available < 20) return;
+    //if(bytes_available < RingBuffer->MIN_MESSAGE_SIZE) return;
 
-      RingBuffer->AppendData((uint8_t*)engineSocket->readAll().data(), bytes_available);
-                                    if(engineSocket->bytesAvailable() > 24) SlotReadData();
+      RingBuffer->AppendData((uint8_t*)engineSocket->readAll().data(), 20);
+                                    if(engineSocket->bytesAvailable() >= 20) SlotReadData();
 
+     //*RingBuffer | MessageDispatcher;
    if(RingBuffer->isMessageAvailable()) emit SignalMessageAvailable();
 }
 
@@ -46,6 +64,22 @@ TCPConnectionEngine::TCPConnectionEngine(QObject *parent)
      RingBuffer->RegisterMessage(ControlMessage3());
      RingBuffer->RegisterMessage(ControlMessage4());
      RingBuffer->RegisterMessage(ControlMessage5());
+     RingBuffer->RegisterMessage(ControlMessage6());
+     MessageDispatcher.SetDispatchList(List);
+}
+
+TCPConnectionEngine::TCPConnectionEngine(QString address, int Port, QObject *parent)
+{
+     RingBuffer = new std::remove_reference<decltype((*RingBuffer))>::type;
+
+     RingBuffer->RegisterMessage(ControlMessage1());
+     RingBuffer->RegisterMessage(ControlMessage2());
+     RingBuffer->RegisterMessage(ControlMessage3());
+     RingBuffer->RegisterMessage(ControlMessage4());
+     RingBuffer->RegisterMessage(ControlMessage5());
+     RingBuffer->RegisterMessage(ControlMessage6());
+     MessageDispatcher.SetDispatchList(List);
+     this->ConnectToDevice(address, Port);
 }
 
 bool TCPConnectionEngine::IsConnected()
@@ -93,7 +127,6 @@ void TCPConnectionEngine::SlotConnectionAttempt()
 
 void TCPConnectionEngine::WaitConnectionOn(QString address, int Port)
 {
-  qDebug() << "WAIT DEVICE AT ADDRESS : " << address << " PORT: " << Port;
   delete engineSocket;
   HOST = address; PORT = Port;
   Server = new QTcpServer;
@@ -103,7 +136,6 @@ void TCPConnectionEngine::WaitConnectionOn(QString address, int Port)
 
 void TCPConnectionEngine::WaitConnectionOn(QHostAddress::SpecialAddress address, int Port)
 {
-  qDebug() << "WAIT DEVICE AT ADDRESS : " << address << " PORT: " << Port;
   PORT = Port;
 
   if(engineSocket != 0) delete engineSocket; //MUST BE NEW SOCKET IF CONNECTION ALREADY HAD BEen ESTABLISHED
@@ -116,8 +148,6 @@ void TCPConnectionEngine::SlotAcceptConnection()
 {
   engineSocket = Server->nextPendingConnection();
   connect(engineSocket, SIGNAL(readyRead()), this, SLOT(SlotReadData()),Qt::QueuedConnection);
-
-  qDebug() << "ACCEPT CONNECTION DEVICE: " << engineSocket->peerAddress();
 }
 
 void TCPConnectionEngine::ConnectToDevice(QHostAddress::SpecialAddress address, int Port)
@@ -128,7 +158,6 @@ void TCPConnectionEngine::ConnectToDevice(QHostAddress::SpecialAddress address, 
     connect(engineSocket, SIGNAL(connected()), this, SLOT(SlotConnectedToHost()),Qt::QueuedConnection);
  }
  PORT = Port;
- qDebug() << "CONNECT TO DEVICE : " << HOST << PORT;
 
  connect(engineSocket, SIGNAL(readyRead()), this, SLOT(SlotReadData()),Qt::QueuedConnection);
 

@@ -10,14 +10,17 @@
 #include <QTimer>
 #include "state_block_enum.h"
 #include "engine_udp_interface.h"
+#include "engine_tcp_interface.h"
 #include "transform_coord_class.h"
 #include "message_command_structures.h"
 #include "message_struct_generic.h"
 
+
+
 typedef ControlMessage1 ScanatorControlStruct;
 
 
-class ScanatorControlClass :public QObject,public PassTwoCoordClass
+class ScanatorControlClass :public QObject,public PassCoordClass<double>
 {
     Q_OBJECT
 public:
@@ -30,29 +33,40 @@ public:
 
 	void SetInput(const QPair<double,double>& Coord);
 	const QPair<double,double>& GetOutput();
+	const QPair<double,double>& GetRelativePos() { return ScanatorPosCorrection;};
+
 
     void LoadSettings();
     bool isAtLimit();
+	bool isEnabled();
 	void SetToNullReal();
 	void SetToNullWork();
 	void SetBlockEnabled(bool OnOff);
 
-	TimeIntegratorClass PortMoveVelocity; // EMULATE MOVE WITH VELOCITY, INTEGRATOR LINKED TO SlotMoveToPos
+	std::shared_ptr<PortAdapter<ScanatorControlClass>> PortMoveRelative = nullptr;
+
+	TimeIntegratorClass<double> PortMoveVelocity; // EMULATE MOVE WITH VELOCITY, INTEGRATOR LINKED TO SlotMoveToPos
 
 	QPair<double, double> ScanatorPos;
+	QPair<double, double> ScanatorPosCorrection;
 	QPair<double, double> ScanatorVel;
 	QPair<double, double> ScanatorAccel;
 	QPair<double, double> ScanatorError;
 
 	QPair<double, double> ScanatorPosControl;
 
+	//QPair<double, double> NullRelativePos{-200.0,6200.0};
+	//QPair<double, double> NullRelativePos{0.0,-3300.0};
+	//QPair<double, double> NullAbsolutePos{0.0, 3300.0};
+
 	QPair<double, double> NullRelativePos{0.0,0.0};
 	QPair<double, double> NullAbsolutePos{0.0,0.0};
 
-	Statistic CheckPointsStat;
+	StatisticNode<double> CheckPointsStat;
 
 private:
 	UDPEngineInterface* EnginePort = 0;
+	TCPConnectionEngine* DebugPort = 0;
 
     MessageStructGeneric<ScanatorControlStruct,MESSAGE_HEADER> CommandScanator;
 					   AimStateStruct* CommandChannel1{&CommandScanator.DATA.StateChannel1};
@@ -60,8 +74,11 @@ private:
 
 	RotateVectorClass   RotEngineToCamera;
     TransformCoordClass AngleToDAC;
+
+
 public slots:
 
+	void SlotMoveToPosRelative(const QPair<double, double>& Pos);
 	void SlotMoveToPos(const QPair<double, double>& Pos);
 	void SlotMoveOnStep(const QPair<double, double>& StepVector);
 	void SlotMoveWithVelocity(const QPair<double, double>& VelVector);
@@ -70,6 +87,7 @@ public slots:
 	                    const QPair<double,double>& Vel, 
 						const QPair<double,double>& Accel, 
 						const QPair<double,double>& RelPos);
+
 };
 
 #endif //ScanatorControlClass_H

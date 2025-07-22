@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GraphicsWindow</class>
- <widget class="QWidget" name="GraphicsWindow">
+ <class>WidgetGraphisPlot</class>
+ <widget class="QWidget" name="WidgetGraphisPlot">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>GraphicsWindow</string>
+   <string>WidgetGraphisPlot</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget

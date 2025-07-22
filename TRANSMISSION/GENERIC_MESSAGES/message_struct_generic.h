@@ -41,8 +41,8 @@ template<typename T,typename H>
 MessageStructGeneric<T,H>::MessageStructGeneric()
 { 
   HEADER.DATA_SIZE = sizeof(T);
-  HEADER.MESSAGE_IDenT = TypeRegister<T>::GetTypeID();
-  qDebug() << "CREATE MESSAGE: " << HEADER.MESSAGE_IDenT << "SIZE: " << HEADER.DATA_SIZE;
+  HEADER.MESSAGE_IDENT = TypeRegister<T>::GetTypeID();
+  qDebug() << "CREATE MESSAGE: " << HEADER.MESSAGE_IDENT << "SIZE: " << HEADER.DATA_SIZE;
 };
 
 

@@ -1,5 +1,6 @@
 #include "imitator_image_aim.h"
 #include "register_settings.h"
+#include "debug_output_filter.h"
 
 std::pair<int,int> AimImageImitatorClass::SizeImage{420,420}; // MAY BE CHANGED IN INIT
 std::pair<int,int> AimImageImitatorClass::SizeAimBoundry{420-40,420-40}; // MAY BE CHANGED IN INIT
@@ -7,21 +8,24 @@ std::pair<int,int> AimImageImitatorClass::SizeAimBoundry{420-40,420-40}; // MAY 
 AimImageImitatorClass::AimImageImitatorClass(QObject* parent) : ImageSourceInterface(parent)
 {
 
-//QString AimImagePath = "D:/DATA/UFO.png"; qDebug() << "LOAD IMAGE: " <<  AimImagePath;
-//QString BlotchImagePath = "D:/DATA/blotch.png"; qDebug() << "LOAD IMAGE: " <<  BlotchImagePath;
+//QString AimImagePath = "D:/DATA/UFO.png"; 
+//QString BlotchImagePath = "D:/DATA/blotch.png"; 
 
-QString AimImagePath = "/home/broms/DATA/UFO.png"; qDebug() << "LOAD IMAGE: " <<  AimImagePath;
-QString BlotchImagePath = "/home/broms/DATA/blotch.png"; qDebug() << "LOAD IMAGE: " <<  BlotchImagePath;
+QString AimImagePath = "/home/broms/DATA/UFO.png"; 
+QString BlotchImagePath = "/home/broms/DATA/blotch.png"; 
+
+//QString AimImagePath = "/home/orangepi/DATA/UFO.png"; 
+//QString BlotchImagePath = "/home/orangepi/DATA/blotch.png"; 
 
 ImageTestObject = cv::imread(AimImagePath.toStdString(),cv::IMREAD_GRAYSCALE );
 BlotchObject = cv::imread(BlotchImagePath.toStdString(),cv::IMREAD_GRAYSCALE );
 
-SizeImage = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
+SizeImage = std::pair<int,int>(400,400);
 SizeAimBoundry = std::pair<int,int>(SizeImage.first - 40, SizeImage.second - 40);
 
 OutputImage = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1); OutputImage = cv::Scalar(0,0,0);
 
-AIM_RECT = cv::Rect(300,300,ImageTestObject.cols,ImageTestObject.rows);
+AIM_RECT = cv::Rect(0,0,ImageTestObject.cols,ImageTestObject.rows);
 
 auto BLOTCH_RECT = AIM_RECT; BLOTCH_RECT.x += 30; BlotchObject.copyTo(OutputImage(BLOTCH_RECT)); 
 
@@ -43,6 +47,8 @@ void AimImageImitatorClass::GenerateAimImage()
     if(!IsROIValid(AIM_RECT)) qDebug() << "INVALID ROI: " << AIM_RECT.x << AIM_RECT.y << AIM_RECT.width << AIM_RECT.height;
     if(!IsROIValid(AIM_RECT)) CheckCorrectROI(AIM_RECT);
 
+    //qDebug() << OutputFilter::Filter(20) << "IMIT POS: " << AIM_RECT.x << AIM_RECT.y;
+
     auto BLOTCH_RECT = AIM_RECT; BLOTCH_RECT.x += 30;
     OutputImage = cv::Scalar(0);
     BlotchObject.copyTo(OutputImage(BLOTCH_RECT)); 
@@ -54,13 +60,13 @@ void AimImageImitatorClass::GenerateAimImage()
                static_cast<int>(OutputImage.step),
                          QImage::Format_Grayscale8 );
 
-    emit ImageSourceInterface::SignalNewImage(ImageToDisplay);
 
-    if(ThinningTimePeriod.msecsTo(QTime::currentTime()) >= 20)
+    if(ThinningTimePeriod.msecsTo(QTime::currentTime()) >= 10)
     {
     ImageToProcess = OutputImage.clone();
     ThinningTimePeriod = QTime::currentTime();
-    emit ImageSourceInterface::SignalNewImage();
+    emit SignalNewImage();
+    FLAG_FRAME_AVAILABLE = true;
     }
 
 }
@@ -111,21 +117,21 @@ void AimImageImitatorClass::SlotSetAimPos(int PosX, int PosY)
 }
 
 QImage& AimImageImitatorClass::GetImageToDisplay() { return ImageToDisplay; }
-cv::Mat& AimImageImitatorClass::GetImageToProcess() { return ImageToProcess; }
-const QString& AimImageImitatorClass::GetInfo()  { return INFO_STRING; }
+cv::Mat& AimImageImitatorClass::GetImageToProcess() { FLAG_FRAME_AVAILABLE = false; return ImageToProcess; }
+QString& AimImageImitatorClass::GetInfo()  { return INFO_STRING; }
 
 AimImageImitatorClass::~AimImageImitatorClass()
 {
  qDebug() << "STOP AND DEINIT CAMERA";
 }
 
-const std::vector<QPair<int,int>>& AimImageImitatorClass::GetPoints()  
+std::vector<QPair<int,int>>& AimImageImitatorClass::GetPoints()  
 {
   CoordsImage[0].first = AIM_RECT.x + AIM_RECT.width/2; 
   CoordsImage[0].second = AIM_RECT.y + AIM_RECT.height/2; 
   return CoordsImage;
 }
-const std::vector<QRect>& AimImageImitatorClass::GetRects()  
+std::vector<QRect>& AimImageImitatorClass::GetRects()  
 {
    RectsImage[0].setRect(AIM_RECT.x, AIM_RECT.y,  AIM_RECT.width,  AIM_RECT.height );
    return RectsImage;
@@ -133,7 +139,7 @@ const std::vector<QRect>& AimImageImitatorClass::GetRects()
 
 
 //==================================================================================
-void AimControlInterface::StartMove(){ timerMoveAim.start(20); }
+void AimControlInterface::StartMove(){ timerMoveAim.start(50); }
 void AimControlInterface::StopMove() { timerMoveAim.stop(); }
 
 void AimControlInterface::LinkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr)

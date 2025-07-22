@@ -90,14 +90,16 @@ QTime ThinningTimePeriod;
 QImage& GetImageToDisplay();
 cv::Mat& GetImageToProcess();
 
+bool FLAG_FRAME_AVAILABLE = false;
 void GetImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};
 //void GetImageToDisplay(QImage& ImageDst) { GetImageToDisplayColor(ImageDst);};
 void GetImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};
 void GetImageToDisplayColor(QImage& ImageDst);
 
-const std::vector<QPair<int,int>>& GetPoints();  
-const std::vector<QRect>&          GetRects();  
-const QString&                     GetInfo();  
+bool isFrameAvailable() override { return FLAG_FRAME_AVAILABLE;};
+std::vector<QPair<int,int>>& GetPoints()override ;  
+std::vector<QRect>&          GetRects() override ;  
+QString&                     GetInfo()  override ;  
 //==================================================
 std::vector<QPair<int,int>> CoordsImage;
 std::vector<QRect>          RectsImage;
@@ -110,6 +112,7 @@ public  slots:
 
 void SlotMoveAimPos(int XStep, int YStep);
 void SlotSetAimPos(int PosX, int PosY);
+void SlotStartWork() { DynamicControl.StartMove(); }
 
 };
 

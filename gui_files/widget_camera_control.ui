@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>336</width>
-    <height>142</height>
+    <width>361</width>
+    <height>197</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1320,6 +1320,21 @@ QComboBox::item:alternate {
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="styleSheet">
@@ -1356,14 +1371,14 @@ border: 1px solid line black;
 }</string>
        </property>
        <property name="text">
-        <string>Строб</string>
+        <string>Выдержка</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEditROI">
+      <widget class="QLineEdit" name="lineExposure">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -1381,14 +1396,14 @@ border: 2px solid line black;
 }</string>
        </property>
        <property name="text">
-        <string>0:0:640:480</string>
+        <string>500</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="butSetCameraROI">
+      <widget class="QPushButton" name="butSetExposure">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -1457,7 +1472,7 @@ QPushButton::menu-indicator {
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QPushButton" name="butStartStopWork">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1538,6 +1553,245 @@ QDialogButtonBox QPushButton {
      <property name="checked">
       <bool>false</bool>
      </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="styleSheet">
+      <string notr="true">QGroupBox
+{
+border: 0px solid line black;
+}
+
+QPushButton {
+	
+	
+	
+	
+	background-color: rgba(129, 69, 44,180);
+
+	color: rgb(210, 204, 182);
+
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+  border: none;
+	font: 600 12pt &quot;Ubuntu&quot;;
+}
+
+QPushButton:disabled {
+  background-color: #455364;
+  color: #9DA9B5;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+QPushButton:checked {
+	background-color: rgba(35, 102, 12,160);
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+	font: 600 12pt &quot;Ubuntu&quot;;
+}
+
+QPushButton:checked:disabled {
+  background-color: #60798B;
+  color: #9DA9B5;
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+}
+
+QPushButton:checked:selected {
+  background: #60798B;
+}
+
+QPushButton:hover {
+  background-color: #54687A;
+  color: #E0E1E3;
+}
+
+QPushButton:pressed {
+  background-color: #60798B;
+}
+
+QPushButton:selected {
+  background: #60798B;
+  color: #E0E1E3;
+}
+
+QPushButton::menu-indicator {
+  subcontrol-origin: padding;
+  subcontrol-position: bottom right;
+  bottom: 4px;
+	background-color: rgb(210, 204, 182);
+}
+
+QDialogButtonBox QPushButton {
+  /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
+  min-width: 80px;
+}</string>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="butROI100_100">
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>X1</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="butROI200_200">
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>X2</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="butROI300_300">
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>X3</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="butROI400_400">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>X4</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="butROI500_500">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>65</width>
+          <height>65</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>X5</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

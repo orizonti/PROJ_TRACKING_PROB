@@ -6,19 +6,19 @@
 
 
 class SinusGeneratorClass :
-	public QObject, public PassTwoCoordClass
+	public QObject, public PassCoordClass<double>
 {
 	Q_OBJECT
 public:
 	SinusGeneratorClass(QObject* Obj = 0);
 	~SinusGeneratorClass();
 
-	std::string TAG_NAME{"[ SIN_GEN ]"};
+	QString TAG_NAME{"[ SIN_GEN ]"};
 
 	void DisplayControlWindow();
 	void DisplayControlWindow(QGraphicsScene* Scene);
-	PassTwoCoordClass* LinkedReceiver = 0;
-	void LinkToDevice(PassTwoCoordClass& Receiver) { LinkedReceiver = &Receiver;}
+	PassCoordClass<double>* LinkedReceiver = 0;
+	void LinkToDevice(PassCoordClass<double>& Receiver) { LinkedReceiver = &Receiver;}
 	void SetTimerPeriod(int Period) { TimerPeriod = Period;};
 	void MoveGeneratorToThread(QThread* Thread);
 
@@ -31,9 +31,11 @@ public:
 	bool BlockOutput1 = false;
 	bool BlockOutput2 = false;
 
+    int Offset = 0;
 	QPair<double, double> CurrentOutput;
 
 	QPair<double, double> Amplitude = QPair<double,double>(60*60,60*60);
+	//QPair<double, double> Amplitude = QPair<double,double>(3000,3000);
 
 	QPair<double, double> Freq = QPair<double,double>(1,1);
     QPair<double, double> Noize = QPair<double,double>(0,0);

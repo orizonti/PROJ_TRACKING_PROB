@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>198</height>
+    <width>272</width>
+    <height>351</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1342,8 +1342,14 @@ QComboBox::item:alternate {
    <property name="spacing">
     <number>4</number>
    </property>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="labelDisplayVelocity1">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>260</width>
@@ -1352,7 +1358,7 @@ QComboBox::item:alternate {
      </property>
      <property name="maximumSize">
       <size>
-       <width>260</width>
+       <width>300</width>
        <height>16777215</height>
       </size>
      </property>
@@ -1372,76 +1378,7 @@ border-radius: 4px;
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QLabel" name="labelDisplayPos2">
-     <property name="minimumSize">
-      <size>
-       <width>260</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>260</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel
-{
-border: 2px solid line black;
-background-color: rgb(99, 69, 44);
-
-color: rgb(210, 204, 182);
-font: 600 12pt &quot;Ubuntu&quot;;
-border-radius: 4px;
-}</string>
-     </property>
-     <property name="text">
-      <string>           УГОЛ [ 00000 ] [ 00000 ] </string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLabel" name="label_2">
-     <property name="styleSheet">
-      <string notr="true">QLabel
-{
-border: 0px solid line black;
-	background-color: rgba(184, 105, 17,10);
-font: 600 14pt &quot;Ubuntu Sans&quot;;
-	color: rgb(210, 204, 182);
-}</string>
-     </property>
-     <property name="text">
-      <string>Устройство</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QLabel" name="labelStatus">
-     <property name="maximumSize">
-      <size>
-       <width>540</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel
-{
-border: 2px solid line black;
-	background-color: rgba(184, 105, 17,80);
-font: 600 14pt &quot;Ubuntu Sans&quot;;
-	color: rgb(210, 204, 182);
-border-radius: 4px;
-}</string>
-     </property>
-     <property name="text">
-      <string>Привод [192.168.1.148]             НЕТ ПОДКЛЮЧЕНИЯ</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="labelDisplayPos1">
      <property name="minimumSize">
       <size>
@@ -1451,7 +1388,7 @@ border-radius: 4px;
      </property>
      <property name="maximumSize">
       <size>
-       <width>260</width>
+       <width>300</width>
        <height>16777215</height>
       </size>
      </property>
@@ -1471,102 +1408,80 @@ border: 2px solid line black;
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel
-{
-border: 0px solid line black;
-	background-color: rgba(184, 105, 17,10);
-font: 600 14pt &quot;Ubuntu Sans&quot;;
-	color: rgb(210, 204, 182);
-}</string>
-     </property>
-     <property name="text">
-      <string>Задание</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="butMoveRight">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="pictures.qrc">
-         <normaloff>:/ProgramPictures/IMAGES/left_arrow.png</normaloff>:/ProgramPictures/IMAGES/left_arrow.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="butMoveDown">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="pictures.qrc">
-         <normaloff>:/ProgramPictures/IMAGES/down_arrow.png</normaloff>:/ProgramPictures/IMAGES/down_arrow.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="butMoveLeft">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="pictures.qrc">
-         <normaloff>:/ProgramPictures/IMAGES/right_arrow.png</normaloff>:/ProgramPictures/IMAGES/right_arrow.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="butMoveUp">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="pictures.qrc">
-         <normaloff>:/ProgramPictures/IMAGES/up_arrow.png</normaloff>:/ProgramPictures/IMAGES/up_arrow.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>24</width>
-         <height>24</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="butMoveRight">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="pictures.qrc">
+           <normaloff>:/ProgramPictures/IMAGES/left_arrow.png</normaloff>:/ProgramPictures/IMAGES/left_arrow.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="butMoveDown">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="pictures.qrc">
+           <normaloff>:/ProgramPictures/IMAGES/down_arrow.png</normaloff>:/ProgramPictures/IMAGES/down_arrow.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="butMoveLeft">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="pictures.qrc">
+           <normaloff>:/ProgramPictures/IMAGES/right_arrow.png</normaloff>:/ProgramPictures/IMAGES/right_arrow.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="butMoveUp">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="pictures.qrc">
+           <normaloff>:/ProgramPictures/IMAGES/up_arrow.png</normaloff>:/ProgramPictures/IMAGES/up_arrow.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="QPushButton" name="butSetToNull">
        <property name="styleSheet">
@@ -1659,11 +1574,70 @@ QDialogButtonBox QPushButton {
         <bool>true</bool>
        </property>
        <property name="checked">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelDisplayPos2">
+     <property name="minimumSize">
+      <size>
+       <width>260</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel
+{
+border: 2px solid line black;
+background-color: rgb(99, 69, 44);
+
+color: rgb(210, 204, 182);
+font: 600 12pt &quot;Ubuntu&quot;;
+border-radius: 4px;
+}</string>
+     </property>
+     <property name="text">
+      <string>           УГОЛ [ 00000 ] [ 00000 ] </string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelStatus">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>300</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel
+{
+border: 2px solid line black;
+	background-color: rgba(184, 105, 17,80);
+font: 600 14pt &quot;Ubuntu Sans&quot;;
+	color: rgb(210, 204, 182);
+border-radius: 4px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Привод [192.168.1.148]</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

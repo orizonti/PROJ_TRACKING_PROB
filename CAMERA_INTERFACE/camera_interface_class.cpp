@@ -4,15 +4,24 @@
 #include <QDebug>
 
 #include <chrono>
+#include <opencv2/core/types.hpp>
 #include <semaphore>
 #include <thread>
 #include "register_settings.h"
 #include "debug_output_filter.h"
 
 std::counting_semaphore<2> bufferSemaphore{2};
-OutputFilter PrintFilter(200);
+OutputFilter PrintFilter(10);
+OutputFilter PrintFilter2(100);
 
-CameraInterfaceClassAravis::CameraInterfaceClassAravis(QObject* parent): ImageSourceInterface(parent) 
+void DestroyBufferInfo ( gpointer data)
+{
+  std::cout << "BUFFER DELETE: " << data << std::endl;
+}
+
+void CameraInterfaceAravis::SlotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};
+
+CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): ImageSourceInterface(parent) 
 {
    qDebug() << "CAMERA INTERFACE CREATE";
 
@@ -22,15 +31,14 @@ CameraInterfaceClassAravis::CameraInterfaceClassAravis(QObject* parent): ImageSo
    bufferSemaphore.acquire();
    //CameraPoints.resize(2);
    //CameraRects.resize(2);
+   ImageToProcess = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1);
+   ImageToProcess = cv::Scalar(0);
 
    QObject::connect(&timerDisplayTestImage,SIGNAL(timeout()),this, SLOT(SlotDisplayProcessImage()));
 }
 
-CameraInterfaceClassAravis::~CameraInterfaceClassAravis()
+CameraInterfaceAravis::~CameraInterfaceAravis()
 {
-	this->StopCameraStream();
-	if(Buffers.size())
-	for(auto Buffer: Buffers) delete Buffer;
 }
 
 extern "C" void stream_callback (void *user_data, ArvStreamCallbackType type, ArvBuffer *buffer)
@@ -60,48 +68,93 @@ extern "C" void stream_callback (void *user_data, ArvStreamCallbackType type, Ar
 	}
 }
 
-void CameraInterfaceClassAravis::PutNewFrameToStorage(ArvBuffer* buffer)
+void CameraInterfaceAravis::PutNewFrameToStorage(ArvBuffer* buffer)
 {
-			//if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) 
-			//{
-			//qDebug() << PrintFilter << "ARV BUFFER FAILED";
-			//return;
-			//}
 
-	        //buffer = arv_stream_pop_buffer(callback_data.stream);
-	        buffer = arv_stream_try_pop_buffer(callback_data.stream);
+	                buffer = arv_stream_pop_buffer(callback_data.stream);
+	                //buffer = arv_stream_try_pop_buffer(callback_data.stream);
 
-			std::copy_n((uint8_t*)arv_buffer_get_data(buffer,&payload),payload,*CurrentBuffer);
-			CurrentBuffer++; if(CurrentBuffer == Buffers.end()) CurrentBuffer = Buffers.begin();
+      std::copy_n((uint8_t*)arv_buffer_get_data(buffer,&payload),payload,*BufferToWrite);
 			arv_stream_push_buffer(callback_data.stream, buffer);
 
-            ImageToProcess = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1,*CurrentBuffer); 
-			emit SignalNewImage(ImageToProcess);
+			//if(++ThinningCounter < FrequencyDevider) return; else ThinningCounter= 0;
 
-			if(++ThinningCounter < 4) return; else ThinningCounter= 0;
+			BufferToWrite++; if(BufferToWrite == Buffers.end()) BufferToWrite = Buffers.begin();
+			NumberFrameToProcess++;
+
+
+			ImageToDisplay = QImage(*BufferToWrite,
+									ImageToProcess.cols,
+									ImageToProcess.rows,
+				   static_cast<int>(ImageToProcess.step), QImage::Format_Grayscale8 );
+
+      FrameMeasureInput.PushTick();
+      FrameMeasureProcess.PushTick();
+
+      //std::chrono::time_point<std::chrono::high_resolution_clock> TimePointNew = std::chrono::high_resolution_clock::now();
+			//Duration = TimePointNew - TimePoint; 
+			//			                    TimePoint = TimePointNew;
+			//Counter++; if(Counter % 50 == 0) qDebug() << " CAMERA PERIOD: " << Duration.count();
 
 			emit SignalNewImage(); 
-			ImageToDisplay = QImage(ImageToProcess.data,
-										ImageToProcess.cols,
-										ImageToProcess.rows,
-						static_cast<int>(ImageToProcess.step),
-								QImage::Format_Grayscale8 );
+
+			//if(NumberFrameToProcess > 3) SkipFrames();
 
 }
 
-QImage& CameraInterfaceClassAravis::GetImageToDisplay() { return ImageToDisplay; }
-cv::Mat& CameraInterfaceClassAravis::GetImageToProcess() { return ImageToProcess; }
+void CameraInterfaceAravis::SetFrequency(int Frequency) 
+{ 
+	if(Frequency > BaseFrequency) Frequency = BaseFrequency;
+	FrequencyDevider = BaseFrequency / Frequency;
+	//qDebug() << TAG_NAME << "FREQUENCY: " << Frequency << "BASE: " << BaseFrequency << "DEVIDER: " << FrequencyDevider;
+};
 
-int CameraInterfaceClassAravis::InitCamera()
+QImage& CameraInterfaceAravis::GetImageToDisplay() 
+{ 
+	return ImageToDisplay; 
+}
+
+cv::Mat& CameraInterfaceAravis::GetImageToProcess()                  {SwitchToNextFrame(); return ImageToProcess; }
+void     CameraInterfaceAravis::GetImageToProcess(cv::Mat& ImageDst) {SwitchToNextFrame(); ImageDst = ImageToProcess.clone(); };
+
+//cv::Mat& CameraInterfaceAravis::GetImageToProcess()                  {    return ImageToProcess; }
+//void     CameraInterfaceAravis::GetImageToProcess(cv::Mat& ImageDst) {ImageDst = ImageToProcess.clone(); };
+
+bool CameraInterfaceAravis::SwitchToNextFrame() 
 {
-    //Connect to the first available camera, then acquire 10 buffers.
-    ImagePos = SettingsRegister::GetPair("CAMERA_IMAGE_POS"); SizeImage = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
-	qDebug() << TAG_NAME << "SET ROI: " << ImagePos.first << ImagePos.second << "SIZE: " << SizeImage.first << SizeImage.second;
+	if(NumberFrameToProcess <= 0 || BufferToRead == BufferToWrite) return false;
+
+	ImageToProcess = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1,*BufferToRead); 
+
+	NumberFrameToProcess--; 
+	BufferToRead++; if(BufferToRead == Buffers.end()) BufferToRead = Buffers.begin();
+	return true;
+}
+
+void CameraInterfaceAravis::SkipFrames()
+{
+	qDebug() << TAG_NAME << "SKIP FRAMES: " << NumberFrameToProcess;
+	while(NumberFrameToProcess != 0)
+	{
+	BufferToRead++; if(BufferToRead == Buffers.end()) BufferToRead = Buffers.begin(); NumberFrameToProcess--; 
+	}
+}
+
+
+
+int CameraInterfaceAravis::InitCamera()
+{
+                                      SizeImage = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
+                                         ImagePos = SettingsRegister::GetPair("CAMERA_IMAGE_POS"); 
+	qDebug() << TAG_NAME << "SET ROI: " << ImagePos.first 
+                                      << ImagePos.second 
+                       << "SIZE: " << SizeImage.first 
+                                   << SizeImage.second;
 
 	callback_data.Receiver = this;
 
-	camera = arv_camera_new (NULL, &error); //Connect to the first available camera
-								if(!ARV_IS_CAMERA(camera))  return -1; 
+                    camera = arv_camera_new (NULL, &error); //Connect to the first available camera
+  if(!ARV_IS_CAMERA(camera))  return -1; 
 
 	qDebug() << "FOUND CAMERA " << arv_camera_get_model_name (camera, NULL);
 	qDebug() << "          ID " << arv_camera_get_device_id (camera, NULL);
@@ -116,88 +169,137 @@ int CameraInterfaceClassAravis::InitCamera()
 	callback_data.stream = NULL;
 
 
-	callback_data.stream = arv_camera_create_stream (camera, stream_callback, &callback_data, &error); 
+	callback_data.stream = arv_camera_create_stream (camera, stream_callback, &callback_data, NULL); 
 								if(!ARV_IS_STREAM (callback_data.stream)) { return -1; }
 
     
     payload = arv_camera_get_payload (camera, &error); //Retrieve the payload size for buffer creation
-								            if(error) return error->code;  
+								                            if(error) return error->code;  
     
 
     //Insert some buffers in the stream buffer pool 
-	//palyload = width*height*pixel_size;
-    for (int i = 0; i < 20; i++) 
+    //Palyload = width*height*pixel_size;
+    //
+  uint8_t* buffer = 0;
+  for (int i = 0; i < 6; i++) 
 	{
-		arv_stream_push_buffer (callback_data.stream, arv_buffer_new (payload, NULL));  //SYSTEM BUFFERS TO RECEIVE IMAGE
+    buffer = new uint8_t[payload];
 		Buffers.push_back(new uint8_t[payload]); //USER STORAGE BUFFERS TO PROCESSS
+                                             //
+    //auto rec_buffer =  arv_buffer_new (payload, (void*)buffer);
+    auto rec_buffer =  arv_buffer_new (payload, NULL);
+    //ArvBuffer* rec_buffer =  arv_buffer_new_full (payload, (void*)buffer, NULL, DestroyBufferInfo);
+    BuffersArv.push_back(rec_buffer);
+
+    qDebug() << "CREATE BUFFER: " << buffer << rec_buffer << ARV_IS_BUFFER(rec_buffer);
+
+		arv_stream_push_buffer (callback_data.stream, rec_buffer);  //SYSTEM BUFFERS TO RECEIVE IMAGE
 	}
 
-	CurrentBuffer = Buffers.begin();
+	BufferToWrite = Buffers.begin();
+	BufferToRead = Buffers.begin();
 
 
 	arv_camera_set_region (camera, ImagePos.first,ImagePos.first, SizeImage.first, SizeImage.second, NULL);
-
+  FLAG_CAMERA_CONNECTED = true;
+  qDebug() << "CAMERA INIT DONE:" << FLAG_CAMERA_CONNECTED;
 	return EXIT_SUCCESS;
 }
 
-int CameraInterfaceClassAravis::StartCameraStream ()
+
+
+void CameraInterfaceAravis::SlotDeinitCamera() 
 {
-    
-
-    qDebug() << "START CAMERA STREAM";
-    arv_camera_start_acquisition (camera, &error);
-								if(error) return error->code;  
-
-    //timerDisplayTestImage.start(40);
-
-	return EXIT_SUCCESS;
+  qDebug() << TAG_NAME << "[ DEINIT ]" ;
+  DeinitCamera();
+  qDebug() << TAG_NAME << "[ DEINIT END ]" ;
 }
 
-void CameraInterfaceClassAravis::DeinitCamera()
+void CameraInterfaceAravis::DeinitCamera()
 {
-    StopCameraStream();
-    g_clear_object(&callback_data.stream); //Destroy the stream object 
-    g_clear_object(&camera);               //Destroy the camera instance 
+  //if(FLAG_CAMERA_WORK) arv_camera_abort_acquisition (camera, &error);
+  //if(!FLAG_CAMERA_CONNECTED) return;
 
-    for (auto Buffer: Buffers) delete Buffer; 
-	Buffers.clear();
+  StopCameraStream(); QThread::msleep(10);
+
+  for (auto buffer: BuffersArv) arv_stream_push_buffer(callback_data.stream, buffer);
+
+
+  if(ARV_IS_STREAM (callback_data.stream)) 
+  {
+    qDebug() << TAG_NAME << "DELETE CAMERA STREAM";
+    //arv_stream_delete_buffers(callback_data.stream);
+    g_clear_object(&callback_data.stream); 
+  }
+
+  if(ARV_IS_CAMERA(camera)) 
+  {
+  qDebug() << TAG_NAME << "DELETE CAMERA ";
+  //g_clear_object(&camera); 
+  }
+
+  for (auto Buffer: Buffers)  delete Buffer; ; 
+
+  FLAG_CAMERA_CONNECTED = false;
+  qDebug() << TAG_NAME << "DELETE CAMERA END";
+
 }
 
-int CameraInterfaceClassAravis::StopCameraStream()
+void CameraInterfaceAravis::StartCameraStream ()
 {
+    qDebug() << TAG_NAME << "START CAMERA STREAM";
+       FLAG_CAMERA_WORK = true;
+    if(FLAG_CAMERA_CONNECTED) arv_camera_start_acquisition (camera, &error);
+}
 
+void CameraInterfaceAravis::StopCameraStream()
+{
+    if(!FLAG_CAMERA_CONNECTED) return;
+    if(!FLAG_CAMERA_WORK     ) return;
+
+    qDebug() << TAG_NAME << "STOP CAMERA STREAM";
     arv_camera_stop_acquisition (camera, &error);
-	if(error) { qDebug() << "Error: ", error->message; return EXIT_FAILURE; }
 
-	return EXIT_SUCCESS;
+    FLAG_CAMERA_WORK = false;
+
 }
 
-void CameraInterfaceClassAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
+void CameraInterfaceAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
 
-void CameraInterfaceClassAravis::SlotSetCameraRegion(int x, int y, int width, int height )
+void CameraInterfaceAravis::SetCameraRegion(int x, int y, int width, int height )
 {
 	qDebug() << TAG_NAME << "SET ROI: " << x << y << width << height;
 	arv_camera_set_region (camera, x, y, width, height, NULL);
 	GetCurrentCameraRegion();
 }
 
-void CameraInterfaceClassAravis::GetCurrentCameraRegion() { arv_camera_get_region (camera, &CameraRegion.x, &CameraRegion.y, &CameraRegion.width, &CameraRegion.width, NULL); }
+void CameraInterfaceAravis::SetCameraRegion(std::pair<int,int> Pos, std::pair<int,int> Size)
+{
+   SetCameraRegion(Pos.first, Pos.second, Size.first, Size.second);
+}
 
-const std::vector<QPair<int,int>>& CameraInterfaceClassAravis::GetPoints()  
+void CameraInterfaceAravis::GetCurrentCameraRegion() { arv_camera_get_region (camera, &ImagePos.first, &ImagePos.second, &SizeImage.first, &SizeImage.second, NULL); }
+
+std::vector<QPair<int,int>>& CameraInterfaceAravis::GetPoints()  
 {
 		if(CameraPoints.empty()) CameraPoints.resize(2);
-		   CameraPoints[0].first  = CameraRegion.x; 
-		   CameraPoints[0].second = CameraRegion.y; CameraPoints[1] = CameraPoints[0]; 
+		   CameraPoints[0].first  = ImagePos.first; 
+		   CameraPoints[0].second = ImagePos.second; CameraPoints[1] = CameraPoints[0]; 
 													CameraPoints[2] = CameraPoints[0];
 	return CameraPoints;
 }
 
-const std::vector<QRect>& CameraInterfaceClassAravis::GetRects()  
+std::vector<QRect>& CameraInterfaceAravis::GetRects()  
 {
-		if(CameraRects.empty()) CameraRects.resize(2);
-		   CameraRects[0].setRect(CameraRegion.x    ,CameraRegion.y,
-								  CameraRegion.width,CameraRegion.heigh); CameraRects[1] = CameraRects[0]; 
-																		  CameraRects[2] = CameraRects[0];
+     CameraRects[0].setRect(ImagePos.first ,ImagePos.second, SizeImage.first,SizeImage.second); 
+     CameraRects[1] = CameraRects[0]; 
 	return CameraRects;
 }
-const QString& CameraInterfaceClassAravis::GetInfo()  { return CAMERA_INFO; }
+QString& CameraInterfaceAravis::GetInfo()  { return CAMERA_INFO; }
+
+			//if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) 
+			//{
+			//qDebug() << PrintFilter << "ARV BUFFER FAILED";
+			//return;
+			//}
+	        //buffer = arv_stream_pop_buffer(callback_data.stream);

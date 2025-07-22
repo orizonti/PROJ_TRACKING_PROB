@@ -41,14 +41,14 @@ public:
 	H&  GetHeader();
 	H&  GetHeader(uint8_t* PtrHeader);
 
-	int  StepsTo(const MessageIteratorGenericBase<H>& It) { return It.Messagenumber - Messagenumber;}; 
+	int  StepsTo(const MessageIteratorGenericBase<H>& It) { return It.MessageNumber - MessageNumber;}; 
 
 	void operator=(const MessageIteratorGenericBase& Message);
 	bool operator==(MessageIteratorGenericBase& Message);
 	bool operator!=(MessageIteratorGenericBase& Message);
 
 	MessagesRange RangeLimits;
-	uint32_t Messagenumber = 0;
+	uint32_t MessageNumber = 0;
 
     void PrintIterator();
 	protected:
@@ -86,10 +86,6 @@ MessageIteratorGenericBase<H>::MessageIteratorGenericBase(uint8_t* STORAGE, std:
 	RangeLimits.endMessageBuffer = PtrBufferend;
 	RangeLimits.LastMessage = PtrMessageBegin; 
 }
-
-
-
-
 
 
 template<typename H>
@@ -154,7 +150,7 @@ void MessageIteratorGenericBase<H>::SwitchToNext()
 {
  if(this->PtrMessageBegin == this->RangeLimits.LastMessage) return;
 
-    this->Messagenumber++;   this->PtrMessageBegin += this->BufferChunkSize; 
+    this->MessageNumber++;   this->PtrMessageBegin += this->BufferChunkSize; 
 
  if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) 
     this->PtrMessageBegin =  this->PtrBufferBegin; 
@@ -189,12 +185,12 @@ public:
 	{
 	if(BytesCountReceived < this->BufferChunkSize) return;
 
-	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->BufferChunkSize); this->Messagenumber++;
+	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->BufferChunkSize); this->MessageNumber++;
 				this->PtrMessageBegin += this->BufferChunkSize; 
 
 								this->RangeLimits.LastMessage = this->PtrMessageBegin; 
 	if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) //RESET TO BEGIN
-		this->PtrMessageBegin  = this->PtrBufferBegin; 
+	   this->PtrMessageBegin  = this->PtrBufferBegin; 
 
 	LoadData(DataSourceBuffer + this->BufferChunkSize, BytesCountReceived - this->BufferChunkSize);
 	}
@@ -224,7 +220,9 @@ public:
 	if(!this->GetHeader(DataSourceBuffer).isValid()) return;
 
 														this->MessageDataSize = this->MessageSize(DataSourceBuffer);
-	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->MessageDataSize); this->Messagenumber++;
+													 if(this->MessageDataSize > this->BufferChunkSize) return;
+
+	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->MessageDataSize); this->MessageNumber++;
 				this->PtrMessageBegin += this->BufferChunkSize; 
 
 								this->RangeLimits.LastMessage = this->PtrMessageBegin; 
@@ -287,7 +285,7 @@ public:
 	if(BytesToLoad == 0) 
 	{
 		qDebug() << "HEADER NOT FOUND NO DATA TO LOAD";
-		this->Messagenumber++;                                
+		this->MessageNumber++;                                
 									this->PtrMessageBegin += this->BufferChunkSize;
 	this->RangeLimits.LastMessage = this->PtrMessageBegin;
 				 this->PtrDataend = this->PtrMessageBegin; return;
@@ -307,8 +305,8 @@ public:
 		//qDebug() << "LOAD FULL MESSAGE: " << BytesToLoad;
 		std::memcpy(this->PtrDataend,DataSourceBuffer, BytesToLoad); 
 
-		this->Messagenumber++;                                
-		qDebug() << "LOAD FULL MESSAGE: " << this->Messagenumber;
+		this->MessageNumber++;                                
+		qDebug() << "LOAD FULL MESSAGE: " << this->MessageNumber;
 									this->PtrMessageBegin += this->BufferChunkSize;
 	this->RangeLimits.LastMessage = this->PtrMessageBegin;
 				 this->PtrDataend = this->PtrMessageBegin;
@@ -365,7 +363,7 @@ protected:
     
      auto& Header = this->GetHeader(); if(!Header.isValid()) { this->ResetIterator(); return *this;};
     
-        this->Messagenumber++;
+        this->MessageNumber++;
         this->PtrMessageBegin += sizeof(H) + Header.DATA_SIZE; 
      if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) 
         this->PtrMessageBegin =  this->PtrBufferBegin; 
@@ -394,7 +392,7 @@ protected:
 
 				                                                    PtrMessageBeginPrevious = this->PtrMessageBegin; 
 				this->PtrMessageBegin += this->MessageSize(); this->RangeLimits.LastMessage = this->PtrMessageBegin;
-				this->Messagenumber++;
+				this->MessageNumber++;
 
 				if(IsMemoryatEnd()) 
 				{

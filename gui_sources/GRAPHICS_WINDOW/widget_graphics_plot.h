@@ -1,126 +1,179 @@
 #ifndef WIGET_GRAPHICS_PLOT
 #define WIGET_GRAPHICS_PLOT
 
+#include "interface_pass_coord.h"
 #include "ui_widget_graphics_plot.h"
 #include "qcustomplot.h"
+#include "widget_adjustable.h"
 
 
-class SmoothenodeClass
-{
-public:
-	QQueue<QPair<double, double>> MeasureMassive;
-
-	int Size = 10;
-	QPair<double, double> Avarage;
-
-    QPair<double, double> GetAvarage()
-    {
-        return Avarage;
-    };
-
-    int MAX_VALUE = 0;
-    void CHECK_MAX(QPair<double,double> Coord) { if(std::abs(Coord.first) > MAX_VALUE)MAX_VALUE = Coord.first;
-                                                 if(std::abs(Coord.second) > MAX_VALUE)MAX_VALUE = Coord.second;}
-
-    friend void operator>>(SmoothenodeClass& Object, QPair<double,double>& Coord)
-    {
-        Coord = Object.Avarage;
-    };
-
-	friend void operator>>(QPair<double, double> NewValue, SmoothenodeClass& StatObj)
-	{
-		StatObj.MeasureMassive.enqueue(NewValue);
-
-		StatObj.Avarage.first += NewValue.first/StatObj.Size;
-		StatObj.Avarage.second += NewValue.second/StatObj.Size;
-        StatObj.CHECK_MAX(NewValue);
-
-
-		if (StatObj.MeasureMassive.size() > StatObj.Size)
-		{
-			QPair<double,double> FirstValue =  StatObj.MeasureMassive.dequeue();
-			
-		StatObj.Avarage.first -= FirstValue.first/StatObj.Size;
-		StatObj.Avarage.second -= FirstValue.second/StatObj.Size;
-		}
-	};
-
-};
-
-class WidgetGraphicsPlot : public QObject
+class PlotGraphicsInterface : public QObject, public PassCoordClass<double>
 {
 	Q_OBJECT
 public:
-	WidgetGraphicsPlot(QCustomPlot* Graphics, int NumberChannels = 1);
-	~WidgetGraphicsPlot();
+	PlotGraphicsInterface(QCustomPlot* Graphics, int NumberChannels = 1);
+	~PlotGraphicsInterface();
 
 	void CreateGraphics(int NumberChannel);
 
 	QCustomPlot* GraphicsDisplay;
 	QElapsedTimer TimeMeasurePeriod;
-
-	double TimeFromStartMs;
-	double TimePeriod= 0;
-	double PlotPeriod= 0;
-	double TimePoint;
-    int ChannelsCount = 1;
-
 	std::vector<QPen> Pens;
 	std::vector<QBrush> Brushes;
 
-	std::vector<SmoothenodeClass> GraphSmootheFilters;
 
-	std::vector<bool>  DisplayFlags;
-	std::vector<bool>  DisplaySmootheFlags;
-	std::array<bool,2> DisplayAxis{true,true};
+    template<typename INPUT_TYPE>
+    void DisplaySingleSeriesGeneric(const std::vector<INPUT_TYPE>& Values);
+    template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+    void DisplaySeriesPairGeneric(const std::vector<INPUT_TYPE>& Values1,const std::vector<OUTPUT_TYPE>& Values2);
+    template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+    void DisplaySeriesPairGeneric(const std::vector<INPUT_TYPE>& Values1,const std::vector<OUTPUT_TYPE>& Values2, 
+                                                                         const std::vector<OUTPUT_TYPE>& Values3);
+    template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+    void DisplayTimeSeriesGeneric(const std::vector<INPUT_TYPE>& Times, const std::vector<OUTPUT_TYPE>& Values);
 
-	QPair<int, int> RangeY;
 
-	template<typename V> friend void operator>>(std::vector<V> Data, WidgetGraphicsPlot& Display) { Display.DisplayGraph(Data); } 
-	template<typename V> void DisplayGraph(std::vector<V> Data)
-		{
-			
-			TimePeriod = TimeMeasurePeriod.restart();
-			TimeFromStartMs += TimePeriod;
-			PlotPeriod += TimePeriod;
-			TimePoint = TimeFromStartMs/1000;  
-			int DataCount = Data.size(); if(DataCount > ChannelsCount) DataCount = ChannelsCount;
+    void SetTimeScale(double StepMilli, double LimitMilli) { TimePos = 0; TimeStep = StepMilli; TimeLimit = LimitMilli; }
 
-			for(int n = 0; n < DataCount; n++) { GraphicsDisplay->graph(n)->addData(TimePoint, Data[n]); }
+  friend void operator>>(QPair<double,double> Point, PlotGraphicsInterface& Graph); 
+  void DisplayPair(double pos,double pos2);
 
-			if(TimeFromStartMs > 4200) 
-			for(int n = 0; n < ChannelsCount; n++) { GraphicsDisplay->graph(n)->data()->clear(); TimeFromStartMs = 0;}
+	void SetInput(const QPair<double, double>& Coord) 
+  {
+    OutputCoord = Coord;
+    DisplayPair(Coord.first, Coord.second);
+  };
+  void GenerateTimeSeries(double TimeStep,int length);
 
-			GraphicsDisplay->xAxis->setRange(TimePoint, 4, Qt::AlignRight);
-			GraphicsDisplay->replot();
-			PlotPeriod = 0;
-		}
+    int ChannelsCount = 1;
 
+    double TimePos = 0;
+    double TimeStep = 1;
+    double TimeLimit = 300;
+
+    QVector<double> InputSeries1;
+    QVector<double> InputSeries2;
+    QVector<double> InputSeries3;
+    QVector<double>  TimeSeries;
+
+public slots:
+
+  void SlotDisplayCoord(QPair<double,double> Point);
+
+  void SlotDisplayTimeSeries();
+  void SlotDisplayTimePairSeries();
+
+  //void SetLabelAxisX(QString label_str);
+
+signals: 
+  void SignalSeriesPlot();
+  void SignalSeriesPairPlot();
 };
 
 //template<typename V>
-//void WidgetGraphicsPlot::DisplayGraph(std::vector<V>& Data)
+//void PlotGraphicsInterface::DisplayGraph(std::vector<V>& Data)
+template<typename INPUT_TYPE>
+void PlotGraphicsInterface::DisplaySingleSeriesGeneric(const std::vector<INPUT_TYPE>& Values)
+{
+
+   if(TimeSeries.size() != Values.size())
+   {
+    GenerateTimeSeries(1,Values.size());
+     InputSeries1.resize(Values.size());  
+   }
+
+   std::copy(InputSeries1,InputSeries1.end(), Values);
+
+   emit SignalSeriesPlot();
+
+}
 
 
-class GraphicsWindow : public QWidget
+template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+void PlotGraphicsInterface::DisplayTimeSeriesGeneric(const std::vector<INPUT_TYPE>& Times, const std::vector<OUTPUT_TYPE>& Values)
+{
+
+   if(TimeSeries.size() != Times.size())
+   {
+      TimeSeries.resize(Times.size()); 
+    InputSeries1.resize(Times.size());  
+   }
+
+   for(int n = 0; n < Times.size(); n++)
+   {
+      TimeSeries[n] =  Times[n]; 
+    InputSeries1[n] = Values[n]; 
+   }
+
+   emit SignalSeriesPlot();
+
+}
+
+
+template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+void PlotGraphicsInterface::DisplaySeriesPairGeneric(const std::vector<INPUT_TYPE>& Values1,const std::vector<OUTPUT_TYPE>& Values2)
+{
+   if(TimeSeries.size() != Values1.size() || InputSeries1.size() != TimeSeries.size())
+   {
+    InputSeries1.resize(Values1.size());  
+    InputSeries2.resize(Values1.size()); 
+      TimeSeries.resize(Values1.size());
+   }  
+
+   double TimePos = 0;
+   for(int n = 0; n < Values1.size(); n++)
+   {
+    InputSeries1[n] = Values1[n]; 
+    InputSeries2[n] = Values2[n]; 
+
+                      TimePos += TimeStep;
+      TimeSeries[n] = TimePos;
+   }
+
+   emit SignalSeriesPairPlot();
+}
+
+template<typename INPUT_TYPE, typename OUTPUT_TYPE>
+void PlotGraphicsInterface::DisplaySeriesPairGeneric(const std::vector<INPUT_TYPE>& Values1,const std::vector<OUTPUT_TYPE>& Values2,
+                                                                             const std::vector<OUTPUT_TYPE>& Values3)
+{
+
+   if(TimeSeries.size() != Values1.size() || InputSeries1.size() != TimeSeries.size())
+   {
+    InputSeries1.resize(Values1.size());  
+    InputSeries2.resize(Values1.size()); 
+    InputSeries3.resize(Values1.size()); 
+      TimeSeries.resize(Values1.size());
+   }  
+
+   double TimePos = 0;
+   for(int n = 0; n < Values1.size(); n++)
+   {
+    InputSeries1[n] = Values1[n]; 
+    InputSeries2[n] = Values2[n]; 
+    InputSeries3[n] = Values3[n]; 
+
+                      TimePos += TimeStep;
+      TimeSeries[n] = TimePos;
+   }
+
+   emit SignalSeriesPairPlot();
+}
+
+
+class WidgetGraphisPlot : public WidgetAdjustable, public PassCoordClass<double> 
 {
 	Q_OBJECT
 
 public:
-	GraphicsWindow(int NumberChannels = 1, QWidget *parent = 0);
-	~GraphicsWindow();
+	WidgetGraphisPlot(int NumberChannels = 1, QWidget *parent = 0);
+	~WidgetGraphisPlot();
 
-public slots:
-	void DisplayDataVector(std::vector<uint16_t> Data);
-	void DisplayDataVector(std::vector<int> Data);
-	void DisplayDataVector(std::vector<float> Data);
-	void DisplayDataVector(std::vector<double> Data);
-	void ChangeDataLimit(double DataLimitup, double DataLimitDown);
+	PlotGraphicsInterface* Graph1 = nullptr;
 
 private:
-	Ui::GraphicsWindow ui;
+	Ui::WidgetGraphisPlot ui;
 
-	WidgetGraphicsPlot* Graph1;
 };
 
 #endif // WIGET_GRAPHICS_PLOT

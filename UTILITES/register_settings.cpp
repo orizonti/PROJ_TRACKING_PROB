@@ -36,6 +36,7 @@ void SettingsRegister::LoadSettings()
 
   QString env_Path = qgetenv("TRACKING_SETTINGS_PATH");
   QString currentPath = QDir::currentPath() + "/DATA/TrackingProject/TrackingSettings.ini";
+  //QString homePath = QString("/home/orangepi/DATA/TrackingProject/TrackingSettings.ini");
   QString homePath = QString("/home/broms/DATA/TrackingProject/TrackingSettings.ini");
 
 
@@ -55,9 +56,10 @@ void SettingsRegister::LoadSettings()
 
     result = TryLoadSettings(SettingsRegister::GetString("FILE_PORTS"),"PORTS");
 
-  AppendSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(20.0,20.0));
-  AppendSettings("CAMERA_IMAGE_SIZE", 400.0);
-  AppendSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(400.0,400.0));
+  AppendSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(720/2 - 60,540/2 -60 + 2));
+  AppendSettings("CAMERA_IMAGE_SIZE", 120.0);
+  AppendSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(120.0,120.0));
+
 
   //SCANATOR +-10V -> +-14 degree
   float ANGLE_RANGE = 2*60*60;

@@ -12,6 +12,7 @@ LabelImage::LabelImage(QWidget *parent)
 	this->setObjectName("ImageLabelDisplay");
 	SizeImage = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
 	this->setBaseSize(SizeImage.first,SizeImage.second);
+	//qDebug() << "AIMING IMAGE SIZE: " << SizeImage.first << SizeImage.second;
 }
 
 LabelImage::~LabelImage()

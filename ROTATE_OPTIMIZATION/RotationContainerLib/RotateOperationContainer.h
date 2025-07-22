@@ -27,7 +27,7 @@ public:
 };
 
 
-class AccumulateDataFilter : public PassTwoCoordClass
+class AccumulateDataFilter : public PassCoordClass<double>
 {
 public:
 	AccumulateDataFilter();
@@ -39,8 +39,8 @@ public:
 	bool CheckCoordMatch(QPair<double, double> Coord,QPair<double,double> AimCoord);
 	void reset();
 
-	bool flag_filter_opencv = false;
-	int avarage_window_size = 8;
+	bool flag_filter_open = false;
+	int avarage_window_size = 16;
 	int accumulate_counter = 0;
 	int channel_counter = 1;
 	int pass_counter = 0;
@@ -59,10 +59,10 @@ public:
     friend AccumulateDataFilter& operator>>(QPair<double, double> coord, AccumulateDataFilter& Filter);
 };
 
-class RotateDataMeasureengine 
+class RotateDataMeasureEngine 
 {
 public:
-	RotateDataMeasureengine();
+	RotateDataMeasureEngine();
 	TestDataVectorsContainer DataVectors;
 	AccumulateDataFilter DataFilter;
 	void SwitchToNextTestCoord();
@@ -70,26 +70,28 @@ public:
 	QPair<double,double> CurrentRelativeCoord;
 	void Reset();
 	QPair<double,double>& GetWaitInputCoord() { return DataFilter.WaitInputCoord;};
+	void SetWindowSize(int Size) { DataFilter.avarage_window_size  = Size;};
 
-	friend RotateDataMeasureengine& operator>>(QPair<double,double> coord, RotateDataMeasureengine& Measureengine);
-	friend RotateDataMeasureengine& operator>>(std::pair<double,double> coord, RotateDataMeasureengine& Measureengine);
-	friend void operator>>(RotateDataMeasureengine& Measureengine, RotateOperationContainer& RotateContainer);
+	friend RotateDataMeasureEngine& operator>>(QPair<double,double> coord, RotateDataMeasureEngine& MeasureEngine);
+	friend RotateDataMeasureEngine& operator>>(std::pair<double,double> coord, RotateDataMeasureEngine& MeasureEngine);
+	friend void operator>>(RotateDataMeasureEngine& MeasureEngine, RotateOperationContainer& RotateContainer);
 };
 
-class RotateOperationContainer : public PassTwoCoordClass
+class RotateOperationContainer : public PassCoordClass<double>
 {
 public:
 	RotateOperationContainer();
 	RotateOperationContainer(const RotateOperationContainer& CopyContainer);
+	void operator=(const RotateOperationContainer& CopyContainer);
 
 public:
 	vector<pair<double,double>> input_to_optimize_rotation;
 	vector<pair<double,double>> output_to_optimize_rotation;
-	RotateDataMeasureengine MeasureFilter;
+	RotateDataMeasureEngine MeasureFilter;
 
 	void Reset();
 	void CopyRotation(const RotateOperationContainer& CopyContainer);
-  bool IsDataFull() { return output_to_optimize_rotation.size() == TEST_DATA_COUNT; } ;
+    bool IsDataFull() { return output_to_optimize_rotation.size() == TEST_DATA_COUNT; } ;
 
     void SetRotateMatrix(torch::Tensor RotateMatrix);
 	void SetInput(const QPair<double,double>& Coord) override;
@@ -97,11 +99,10 @@ public:
 	std::vector<float> GetOutputVector();
 	void Inverse();
 	double CalcVirtualZComponent(QPair<double,double> InputCoord);
-  double CalcTransformationScale(vector<pair<double,double>> test_input, vector<pair<double,double>> test_output);
+    double CalcTransformationScale(vector<pair<double,double>> test_input, vector<pair<double,double>> test_output);
 
 	void AppendOperation(pair<RotateAxis,double> Operation);
 	void AppendInputData(pair<double,double> test_coord);
-
 
 	torch::Tensor ConvertInput(torch::Tensor& Input);
 	torch::Tensor FitToTestVectors(torch::Tensor test_input, torch::Tensor test_output, float gamma, float speed, int number_iteration);

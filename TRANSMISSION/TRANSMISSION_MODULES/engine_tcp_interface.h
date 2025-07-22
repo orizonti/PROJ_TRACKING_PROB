@@ -18,13 +18,23 @@
 #include "engine_ring_buffer_generic.h"
 #include "message_struct_generic.h"
 #include "message_command_structures.h"
+#include "message_dispatcher_generic.h"
 
+
+void DispatchMessage1(ControlMessage1* message); 
+void DispatchMessage2(ControlMessage2* message);
+void DispatchMessage3(ControlMessage3* message);
+void DispatchMessage4(ControlMessage4* message);
+void DispatchMessage5(ControlMessage5* message);
+void DispatchMessage6(ControlMessage6* message);
+extern MessageListDispatcher List;
 
 class TCPConnectionEngine : public QObject
 {
     Q_OBJECT
 public:
     explicit TCPConnectionEngine(QObject *parent = nullptr);
+             TCPConnectionEngine(QString address, int Port, QObject *parent = nullptr);
     ~TCPConnectionEngine();
 
 protected:
@@ -50,6 +60,7 @@ bool IsConnected();
 RingBufferGeneric<MESSAGE_HEADER,50, 1000,IteratorMode::Continous>* RingBuffer = 0;
 //RingBufferMessageGenericFixed<MESSAGE_HEADER,50, 100,IteratorMode::Continous>* RingBuffer = 0;
 //RingBufferengine<MESSAGE_HEADER,50,100>* RingBuffer = 0;
+MessageDispatcherGenericClass<MessageListDispatcher> MessageDispatcher;
 
 public slots:
 virtual void SlotReadData();

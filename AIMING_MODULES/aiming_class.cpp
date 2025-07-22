@@ -1,12 +1,18 @@
 #include "aiming_class.h"
 #include "debug_output_filter.h"
+#include "interface_pass_coord.h"
+#include "rotate_vector_class.h"
 #include "state_block_enum.h"
 #include <QTimer>
 #include <QFile>
 OutputFilter FilterOutput50{20};
+OutputFilter FilterOutput2{100};
+OutputFilter FilterOutput3{2};
+OutputFilter FilterOutput4{200};
 
 #define TAG "[   AIMING   ]" 
 
+int AimingClass::ModuleCounter = 0;
 
 AimingClass::~AimingClass() 
 { 
@@ -18,16 +24,26 @@ const QPair<double, double>& AimingClass::GetOutput() { return this->VectorOutpu
 
 AimingClass::AimingClass()
 {
+  ModuleCounter++; NumberChannel = ModuleCounter;
 	//======================================================================
+  PortSetAiming = std::make_shared<PortAdapter<AimingClass>>();
+  PortMoveAiming = std::make_shared<PortAdapter<AimingClass>>();
+  PortCalibration = std::make_shared<PortAdapter<AimingClass>>();
+  PortCorrection = std::make_shared<PortAdapter<AimingClass>>();
+  PortCorrectionOutput = std::make_shared<PortAdapter<AimingClass>>();
 
-  PortSetAiming.LinkAdapter(this,&AimingClass::SetAimingPosition,&AimingClass::GetAimPosition);
-  PortMoveAiming.LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetAimPosition);
-  PortCalibration.LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetBeamPosition);
+  PortSignalSetAiming.LinkToPort(PortSetAiming.get());
+
+  PortSetAiming->LinkAdapter(this,&AimingClass::SetAimingPosition,&AimingClass::GetAimPosition);
+  PortMoveAiming->LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetAimPosition);
+  PortCalibration->LinkAdapter(this,&AimingClass::SetAimingCorrection,&AimingClass::GetBeamPosition);
+  PortCorrection->LinkAdapter(this,&AimingClass::SetAimingCorrection,&AimingClass::GetAimingError);
+  PortCorrectionOutput->LinkAdapter(this,&AimingClass::SetOutputCorrection,&AimingClass::GetAimingError);
 
 	this->AimingSlowParam.Common = 1;
-	this->AimingSlowParam.RateParam = 3.1;
-	this->AimingSlowParam.IntParam  = 0.0002;
-	this->AimingSlowParam.DiffParam = 0.0002;
+	this->AimingSlowParam.RateParam = 500;
+	this->AimingSlowParam.IntParam  = 2.8;
+	this->AimingSlowParam.DiffParam = 1.8;
 
 	this->AimingWorkSlowParam.Common = 1;
 	this->AimingWorkSlowParam.RateParam = 5.1;
@@ -41,22 +57,25 @@ AimingClass::AimingClass()
 	ModulePID.SetPIDParam(AimingSlowParam);
 	//==================================================================
 
-	ErrorRecord.assign(100,QPair<double,double>(0,0));
-	CurrentRecord = ErrorRecord.begin();
+  Rotation.LoadRotationFromFile("/home/broms/DATA/TrackingProject/MEASURES/MeasureData.txt");
+
+
+                                            
 
 	this->PixToRadian.TransformCoord = [this](QPair<double,double> CoordError)
 							{
-								PixToRadian.TransformedCoord.first = (CoordError.first * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
-								PixToRadian.TransformedCoord.second = (CoordError.second * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
+								PixToRadian.Output.first = (CoordError.first * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
+								PixToRadian.Output.second = (CoordError.second * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
 							};
 
 	this->RadianToPix.TransformCoord = [this](QPair<double,double> CoordError)
 							{
-								RadianToPix.TransformedCoord.first = (CoordError.first*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
-								RadianToPix.TransformedCoord.second = (CoordError.second*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
+								RadianToPix.Output.first = (CoordError.first*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
+								RadianToPix.Output.second = (CoordError.second*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
 							};
 
 	//Filter.enableFiltering(false);
+  SetBlockEnabled(false);
 }
 
 
@@ -67,6 +86,11 @@ bool AimingClass::isAimingFault()
 
 double AimingClass::GetAbsError() { return std::hypot(CoordAimingError.first, CoordAimingError.second); }
 
+void AimingClass::SetGain(int Number, double Gain)
+{
+  GainList[Number] = Gain;
+}
+
 
 void AimingClass::SetPIDParamFromTable(int Number)
 {
@@ -76,75 +100,162 @@ void AimingClass::SetPIDParamFromTable(int Number)
 }
 void AimingClass::SetPIDParam(PIDParamStruct param)
 {
-  auto CurrentParam = param;
-if (AimingState == AimingSlow) AimingSlowParam = param;
-if (AimingState == AimingFast) AimingFastParam = param;
+auto CurrentParam = param;
 
 ModulePID.SetPIDParam(CurrentParam);
 
 }
 
-void AimingClass::SetAimingSpeedRegim(TypeEnumAiming Aiming)
+void AimingClass::SetAimingRegim(TypeEnumAiming Aiming)
 {
-	    AimingState = Aiming;
-	if (AimingState == AimingSlow)   ModulePID.SetPIDParam(AimingSlowParam);
-  if (AimingState == AimingFast)   ModulePID.SetPIDParam(AimingFastParam);
-  if (AimingState == AimingTuning) ModulePID.SetPIDParam(PIDParamTable[0]);
+  AimingState = Aiming;
 }
 
 const QPair<double, double>& AimingClass::GetAimPosition()  { return CoordAim; }
-const QPair<double, double>& AimingClass::GetBeamPosition() { return CoordBeamPos; }
-const QPair<double, double>& AimingClass::GetAimingError()  { return CoordAimingError; }
+const QPair<double, double>& AimingClass::GetBeamPosition() { return CoordAimingError; }
+const QPair<double, double>& AimingClass::GetAimingError()  
+{ 
+  CoordSpot >> Substract;
+   CoordAim >> Substract >> CoordAimingError;
+                     return CoordAimingError; 
+}
 
-void AimingClass::SetAimingPosition(const QPair<double, double>& Coord)       { CoordAim = Coord; qDebug() << TAG_NAME << "SET AIM: " << Coord;}
-void AimingClass::SetAimingCorrection(const QPair<double, double>& Coord)     { CoordAimCorrection = Coord; }
-void AimingClass::MoveAimingCorrection(const QPair<double, double>& Velocity) { Velocity >> IntegratorInputSignal >> CoordAimCorrection; }
+void AimingClass::SetAimingPosition(const QPair<double, double>& Coord)       { CoordAim = Coord; qDebug() << "SET AIM POS: " << Coord;}
+void AimingClass::SetAimingCorrection(const QPair<double, double>& Coord)     { CoordAimCorrection = Coord; qDebug() << "SET CORR: " << Coord;}
+void AimingClass::SetOutputCorrection(const QPair<double, double>& Coord)     { CoordOutputCorrection = Coord; };
+
+void AimingClass::MoveAimingCorrection(const QPair<double, double>& Velocity) { Velocity >> Integrator >> CoordAimCorrection; }
+
+
+void AimingClass::PrintPassCoords(QPair<double,double> Coord)
+{
+    qDebug() << FilterOutput2 << "INPUT" << Coord.first << Coord.second 
+                              << "AIM" << CoordAim.first << CoordAim.second 
+                              << "ERROR" << CoordAimingError.first << CoordAimingError.second
+                              << "OUTPUT" << VectorOutput.first << VectorOutput.second
+                              << "TYPE: " << (int)TypeEnumAiming::AimingLoop;
+}
+
+void AimingClass::BlockOutput(bool channelx, bool channely)
+{
+  if(channelx) VectorOutput.first = 0;
+  if(channely) VectorOutput.second = 0;
+};
+
+void AimingClass::ProcessLoop1()
+{
+  //MUST WORK ALWAYS, SIMPLE INTEGRATOR
+   CoordSpot >> Substract;
+    CoordAim >> Substract >> CoordAimingError >> Rotation >> IntegratorInput >> Gain(GainList[3]) >> VectorOutput; //BlockOutput(true,false);
+}
+
+void AimingClass::ProcessLoop2()
+{
+   CoordOutputCorrection = ZeroCoord;
+   decltype(CoordSpot) RotatedCoord;
+
+   CoordSpot >> Substract;
+    CoordAim >> Substract >> CoordAimingError >> Rotation >>  Gain(GainList[0]) >> VectorOutput;
+                             CoordAimingError >> Rotation >> IntegratorInput >> Gain(GainList[1]) >> CoordOutputCorrection;
+
+                             VectorOutput.second *= GainList[2];
+                             VectorOutput = VectorOutput + CoordOutputCorrection; 
+
+}
+void AimingClass::ProcessLoop3() 
+{
+   CoordSpot >> Substract;
+    CoordAim >> Substract >> CoordAimingError >> PassFilter >> ModulePID >> IntegratorInput >> Saturation >> VectorOutput;
+}
+
+void AimingClass::ProcessLoop4() 
+{
+}
+
+void AimingClass::ProcessLoopForCalibration()
+{
+             CoordAim >> Substract;
+   CoordAimCorrection >> Substract >> Substract;
+                         CoordSpot >> Substract >> CoordAimingError >> IntegratorInput >> Gain(10000) >> AxisInversion(0) >> VectorOutput ; //BlockOutput(false,true);
+
+}
+
+
+void AimingClass::ProcessDirect1()
+{
+                CoordAim >> Substract;                               
+      CoordAimCorrection >> Substract >> Rotation >> AxisInversion(2) >> VectorOutput; 
+}
+void AimingClass::ProcessDirect2()
+{
+}
+void AimingClass::ProcessDirect3()
+{
+
+}
+void AimingClass::ProcessDirect4()
+{
+
+}
+
+
 
 void AimingClass::SetInput(const QPair<double,double>& Coord)
 {
-  if (this->StateBlock == StateBlockDisabled) { VectorOutput = Coord; return; }
 
-  //if (isAimingFault()) return;
+  CoordSpot = Coord;
+  if (this->StateBlock != StateBlockAtWork) return; 
 
-     Coord >> Substract;
-  CoordAim >> Substract >> Substract;
-     CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> VectorOutput;
+  if(AimingState == TypeEnumAiming::AimingLoop)
+  {
 
-     //CoordAimCorrection >> Substract >> CoordAimingError >> ModulePID >> PixToRadian >> VectorOutput;
-        
-  qDebug() << FilterOutput50 << "AIMING:   INPUT:" << Coord.first
-                                       << "AIM  :" << CoordAim.first
-                                       << "ERROR:" << CoordAimingError.first
-                                       << "OUT  :" << VectorOutput;
+      ProcessLoop1();
+      //ProcessLoop2();
+      //ProcessLoop3();
+      //ProcessLoop4();
+      //ProcessLoopForCalibration();
 
-  if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
+  }
+ 
+  if(AimingState == TypeEnumAiming::AimingDirect)
+  {
+      ProcessDirect1();
+      //ProcessDirect2();
+      //ProcessDirect3();
+      //ProcessDirect4();
+  }
+
+  //PrintPassCoords(Coord);
+  //PassCoordClass<double>::PassCoord();
+
+  //if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
    
 }
 
 void AimingClass::Reset()
 {
-  qDebug() << TAG << "RESET AIMING";
-  this->SetBlockEnabled(false);
+
+  qDebug() << "[ AIMING RESET ]";
   this->ModulePID.ResetPID();
   this->VectorOutput = QPair<double,double>(0,0);
-  this->SetAimingSpeedRegim(AimingSlow);
   AimingStatistic.Reset();
   FaultStatistic.Reset();
-  QTimer::singleShot(8000,[this](){this->SetBlockEnabled(true);}); 
+
+  Integrator.Reset();
+  IntegratorInput.Reset();
+  IntegratorInputSignal.Reset();
+
 }
 
 void AimingClass::SetBlockEnabled(bool OnOff) 
 { 
-  if( OnOff) StateBlock = StateBlockAtWork; 
-  if(!OnOff) StateBlock = StateBlockDisabled; 
-  qDebug() << TAG_NAME << "BLOCK ENABLED: " << OnOff;
+                                              PassCoordClass::PassBlocked = true;
+  if( OnOff) { StateBlock = StateBlockAtWork; PassCoordClass::PassBlocked = false; } 
+  if(!OnOff)   StateBlock = StateBlockDisabled; 
+  qDebug() << TAG_NAME << "BLOCK ENABLED: " << OnOff << "Number: " << NumberChannel;
 };
 
 
-void AimingClass::SlotFilterenable(bool OnOff) 
-{ 
-  //Filter.enableFiltering(OnOff); 
-}
 
 
 void AimingClass::LoadPIDParam(QString SettingsFile)
@@ -215,7 +326,7 @@ void AimingClass::LoadSettings()
 
 bool AimingParamOptimizator::isAimingFaultStatistic()
 {
-   auto& Error =  CurrentStatistic.DispersionCoordDistance; 
+   auto Error =  CurrentStatistic.NodeCoord.GetAvarageDeviation(); 
    if(Error > 3) { LimitDispersionCounter++; CurrentStatistic.Reset();} 
 
    if(LimitDispersionCounter >= 10) { LimitDispersionCounter = 0; return true; }
@@ -256,32 +367,32 @@ void AimingParamOptimizator::AppendPIDParam(PIDParamStruct PIDParam)
 
 AimingParamOptimizator::AimingParamOptimizator(std::vector<PIDParamStruct> ParamTable)
 {
-   this->PIDParamTable = ParamTable;
-   if(PIDParamTable.size() != 0) BestPIDParam = PIDParamTable[BestPIDParamNumber];
-   PIDParamGroupStat = StatisticGroup(PIDParamTable.size(),1500);
+ //  this->PIDParamTable = ParamTable;
+ //  if(PIDParamTable.size() != 0) BestPIDParam = PIDParamTable[BestPIDParamNumber];
+ //  PIDParamGroupStat = StatisticGroup(PIDParamTable.size(),1500);
 
-    double dispersion_threshold = 1.6;
-    PIDParamGroupStat.FindBestStatisticCoord = [dispersion_threshold](std::map<int,Statistic>::iterator BeginStatistic,
-                                                                      std::map<int,Statistic>::iterator endStatistic) -> int
-    {
-        int min_pos = 1;
-        auto current_stat = BeginStatistic;
-        std::vector<float> dispersions;
+ //   double dispersion_threshold = 1.6;
+ //   PIDParamGroupStat.FindBestStatisticCoord = [dispersion_threshold](std::map<int,Statistic>::iterator BeginStatistic,
+ //                                                                     std::map<int,Statistic>::iterator endStatistic) -> int
+ //   {
+ //       int min_pos = 1;
+ //       auto current_stat = BeginStatistic;
+ //       std::vector<float> dispersions;
 
-        while(current_stat != endStatistic) { dispersions.push_back(current_stat->second.AmplitudeCoordDeviation); current_stat++;};
-        std::reverse(dispersions.begin(), dispersions.end());
+ //       while(current_stat != endStatistic) { dispersions.push_back(current_stat->second.AmplitudeCoordDeviation); current_stat++;};
+ //       std::reverse(dispersions.begin(), dispersions.end());
 
-        auto compare_to_threshold = [dispersion_threshold](double i){ return i < dispersion_threshold; };
-        auto min_element = std::find_if(dispersions.begin(), dispersions.end(),compare_to_threshold);
-             min_pos = std::distance(dispersions.begin(),min_element);
-             min_pos = dispersions.size() - min_pos;
+ //       auto compare_to_threshold = [dispersion_threshold](double i){ return i < dispersion_threshold; };
+ //       auto min_element = std::find_if(dispersions.begin(), dispersions.end(),compare_to_threshold);
+ //            min_pos = std::distance(dispersions.begin(),min_element);
+ //            min_pos = dispersions.size() - min_pos;
 
-             //qDebug() << "FOUND BEST PID WITH ERROR AMPLITUDE  - " << *min_element  
-             //                                                      << " NUMBER - " << min_pos  
-             //                                                      << " SIZE - " << dispersions.size();
+ //            //qDebug() << "FOUND BEST PID WITH ERROR AMPLITUDE  - " << *min_element  
+ //            //                                                      << " NUMBER - " << min_pos  
+ //            //                                                      << " SIZE - " << dispersions.size();
 
-        return min_pos-1;
-    };
+ //       return min_pos-1;
+ //   };
 
 }
 
@@ -302,4 +413,3 @@ void AimingParamOptimizator::Reset()
 //std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint = std::chrono::high_resolution_clock::now();
 //std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint2 = std::chrono::high_resolution_clock::now();
 //auto StepPeriod = std::chrono::duration<double>((TimePoint2 - TimePoint)).count();
-//*CurrentRecord = CoordAimingError; CurrentRecord++; if(CurrentRecord == ErrorRecord.end()) CurrentRecord = ErrorRecord.begin();

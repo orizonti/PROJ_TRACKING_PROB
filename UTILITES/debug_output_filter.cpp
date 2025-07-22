@@ -15,3 +15,5 @@ template<> OutputFilter& operator<<(OutputFilter& filter, QTextStream& (*control
     if(filter.counter == filter.peak) filter.out_message << control; return filter;
 }
 
+int OutputFilter::current_ident = 0;
+std::map<int,OutputFilter> OutputFilter::Filters;

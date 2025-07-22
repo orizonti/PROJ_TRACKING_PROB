@@ -5,6 +5,7 @@
 #include <QThread>
 #include "register_settings.h"
 #include "widget_adjustable.h"
+#include "debug_output_filter.h"
 
 WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent) : WidgetAdjustable(parent), ui(new Ui::WidgetProcessingImage)
 {
@@ -44,6 +45,7 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
    this->AddMiniLabel(); 
    //LinkedWidget->hide();
 
+   connect(&timerDisplay, &QTimer::timeout, this, static_cast<void (WidgetProcessingImage::*)()>(&WidgetProcessingImage::SlotDisplayImage));
    connect(&timerDisplayMiniLabels, &QTimer::timeout, this, &WidgetProcessingImage::SlotDisplayMiniLabels);
 }
 
@@ -102,7 +104,15 @@ void WidgetProcessingImage::SlotDisplayImage()
 {
    if(!ImageSourceActive){ qDebug() << TAG_NAME << "SOURCE NOT LINKED";  return; };
 
-   ImageSourceActive->GetImageToDisplay(DisplayImage);
+   ImageSourceActive->GetImageToDisplay(DisplayImage); if(DisplayImage.isNull()) return;
+
+      Thinning(30)++;
+   if(Thinning.isOpen()) 
+   {
+   auto FramePeriods = ImageSources[0]->GetFramePeriod();
+   strDisplayData = QString("ПЕРИОД: %1  ОБРАБОТКА: %2").arg(1/FramePeriods.first,5,'f',2).arg(FramePeriods.second,5,'f',2);
+   this->SlotDisplayString(strDisplayData);
+   }
 
    if(!timerDisplayMiniLabels.isActive()) { if(ImageSources.size() > 1) timerDisplayMiniLabels.start(100); }
 
@@ -111,12 +121,17 @@ void WidgetProcessingImage::SlotDisplayImage()
    auto& InfoString = ImageSourceActive->GetInfo();
 
    auto pen_it = pens.begin();
+   QFont font("Ubunt Sans");
+   font.setWeight(QFont::Thin);
+   font.setPixelSize(8);
    QPainter paint;
             paint.begin(&DisplayImage);
+            paint.setFont(font);
 
             for(auto& rect: RectsImage){paint.setPen(*pen_it); 
                                         paint.drawRect(rect); pen_it++;} pen_it = pens.begin();
                                                                          paint.setPen(pen1);
+                                        paint.drawText(20,20,QString("%1 %2").arg(CoordsImage[0].first - 61).arg(CoordsImage[0].second - 62));
                                         paint.drawPoint(CoordsImage[0].first, 
                                                         CoordsImage[0].second);
                                         paint.drawPoint(ui->labelImageDisplay->X_Pressed, 
@@ -143,9 +158,10 @@ void WidgetProcessingImage::LinkToModule(std::shared_ptr<ImageSourceInterface> S
    NumberActiveChannel++;
    ImageSourceActive = Source;
    ImageSources.push_back(Source);
-   if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
 
-   QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
+   timerDisplay.start(30);
+   //if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
+   //QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
 
 }
 
@@ -185,7 +201,7 @@ void WidgetMiniLabelsGroup::SlotSetActiveChannel(int Number)
 
 void WidgetMiniLabelsGroup::SlotDisplayImage(const QImage& Image, int Channel)
 {
-   Labels[Channel]->setPixmap(QPixmap::fromImage(Image.scaled(100,100)));
+   if(Image.isNull()) return; Labels[Channel]->setPixmap(QPixmap::fromImage(Image.scaled(100,100)));
 }
 
 
