@@ -10,17 +10,15 @@ OutputFilter FilterOutput2{100};
 OutputFilter FilterOutput3{2};
 OutputFilter FilterOutput4{200};
 
-#define TAG "[   AIMING   ]" 
-
 int AimingClass::ModuleCounter = 0;
 
 AimingClass::~AimingClass() 
 { 
-  qDebug() << TAG << "DELETE";
+  qDebug() << TAG_NAME.c_str() << "DELETE";
 }
 
 
-const QPair<double, double>& AimingClass::GetOutput() { return this->VectorOutput; }
+const QPair<float,float>& AimingClass::getOutput() { return this->VectorOutput; }
 
 AimingClass::AimingClass()
 {
@@ -57,25 +55,24 @@ AimingClass::AimingClass()
 	ModulePID.SetPIDParam(AimingSlowParam);
 	//==================================================================
 
-  Rotation.LoadRotationFromFile("/home/broms/DATA/TrackingProject/MEASURES/MeasureData.txt");
-
-
+  auto path = QString("/home/%1/DATA/TrackingProject/MEASURES/MeasureData.txt").arg(SettingsRegister::GetString("USER"));
+  Rotation.LoadRotationFromFile(path);
                                             
 
-	this->PixToRadian.TransformCoord = [this](QPair<double,double> CoordError)
+	this->PixToRadian.TransformCoord = [this](QPair<float,float> CoordError)
 							{
 								PixToRadian.Output.first = (CoordError.first * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
 								PixToRadian.Output.second = (CoordError.second * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
 							};
 
-	this->RadianToPix.TransformCoord = [this](QPair<double,double> CoordError)
+	this->RadianToPix.TransformCoord = [this](QPair<float,float> CoordError)
 							{
 								RadianToPix.Output.first = (CoordError.first*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
 								RadianToPix.Output.second = (CoordError.second*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
 							};
 
 	//Filter.enableFiltering(false);
-  SetBlockEnabled(false);
+  SetModuleEnabled(false);
 }
 
 
@@ -84,9 +81,9 @@ bool AimingClass::isAimingFault()
   return StateBlock == StateBlockDisabled || StateBlock == StateBlockFault || StateBlock == StateBlockBroken;
 }
 
-double AimingClass::GetAbsError() { return std::hypot(CoordAimingError.first, CoordAimingError.second); }
+float AimingClass::GetAbsError() { return std::hypot(CoordAimingError.first, CoordAimingError.second); }
 
-void AimingClass::SetGain(int Number, double Gain)
+void AimingClass::SetGain(int Number, float Gain)
 {
   GainList[Number] = Gain;
 }
@@ -111,25 +108,28 @@ void AimingClass::SetAimingRegim(TypeEnumAiming Aiming)
   AimingState = Aiming;
 }
 
-const QPair<double, double>& AimingClass::GetAimPosition()  { return CoordAim; }
-const QPair<double, double>& AimingClass::GetBeamPosition() { return CoordAimingError; }
-const QPair<double, double>& AimingClass::GetAimingError()  
+const QPair<float,float>& AimingClass::GetAimPosition()  { return CoordAim; }
+const QPair<float,float>& AimingClass::GetBeamPosition() { return CoordAimingError; }
+const QPair<float,float>& AimingClass::GetAimingError()  
 { 
   CoordSpot >> Substract;
    CoordAim >> Substract >> CoordAimingError;
                      return CoordAimingError; 
 }
 
-void AimingClass::SetAimingPosition(const QPair<double, double>& Coord)       { CoordAim = Coord; qDebug() << "SET AIM POS: " << Coord;}
-void AimingClass::SetAimingCorrection(const QPair<double, double>& Coord)     { CoordAimCorrection = Coord; qDebug() << "SET CORR: " << Coord;}
-void AimingClass::SetOutputCorrection(const QPair<double, double>& Coord)     { CoordOutputCorrection = Coord; };
+void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       
+{ 
+  CoordAim = Coord; //this->SetBlockEnabled(true);
+}
+void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection    = Coord; }
+void AimingClass::SetOutputCorrection(const QPair<float,float>& Coord)     { CoordOutputCorrection = Coord; };
 
-void AimingClass::MoveAimingCorrection(const QPair<double, double>& Velocity) { Velocity >> Integrator >> CoordAimCorrection; }
+void AimingClass::MoveAimingCorrection(const QPair<float,float>& Velocity) { Velocity >> Integrator >> CoordAimCorrection; }
 
 
-void AimingClass::PrintPassCoords(QPair<double,double> Coord)
+void AimingClass::PrintpassCoords(QPair<float,float> Coord)
 {
-    qDebug() << FilterOutput2 << "INPUT" << Coord.first << Coord.second 
+    qDebug() << FilterOutput2 << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second 
                               << "AIM" << CoordAim.first << CoordAim.second 
                               << "ERROR" << CoordAimingError.first << CoordAimingError.second
                               << "OUTPUT" << VectorOutput.first << VectorOutput.second
@@ -146,7 +146,8 @@ void AimingClass::ProcessLoop1()
 {
   //MUST WORK ALWAYS, SIMPLE INTEGRATOR
    CoordSpot >> Substract;
-    CoordAim >> Substract >> CoordAimingError >> Rotation >> IntegratorInput >> Gain(GainList[3]) >> VectorOutput; //BlockOutput(true,false);
+    CoordAim >> Substract >> CoordAimingError >> Rotation >> IntegratorInput>> Gain(GainList[3]) >> VectorOutput; //BlockOutput(true,false);
+    //PrintpassCoords(CoordSpot);
 }
 
 void AimingClass::ProcessLoop2()
@@ -160,7 +161,6 @@ void AimingClass::ProcessLoop2()
 
                              VectorOutput.second *= GainList[2];
                              VectorOutput = VectorOutput + CoordOutputCorrection; 
-
 }
 void AimingClass::ProcessLoop3() 
 {
@@ -200,7 +200,7 @@ void AimingClass::ProcessDirect4()
 
 
 
-void AimingClass::SetInput(const QPair<double,double>& Coord)
+void AimingClass::setInput(const QPair<float,float>& Coord)
 {
 
   CoordSpot = Coord;
@@ -209,8 +209,8 @@ void AimingClass::SetInput(const QPair<double,double>& Coord)
   if(AimingState == TypeEnumAiming::AimingLoop)
   {
 
-      ProcessLoop1();
-      //ProcessLoop2();
+      //ProcessLoop1();
+      ProcessLoop2();
       //ProcessLoop3();
       //ProcessLoop4();
       //ProcessLoopForCalibration();
@@ -225,8 +225,8 @@ void AimingClass::SetInput(const QPair<double,double>& Coord)
       //ProcessDirect4();
   }
 
-  //PrintPassCoords(Coord);
-  //PassCoordClass<double>::PassCoord();
+  //PrintpassCoords(Coord);
+  //PassCoordClass<float>::passCoord();
 
   //if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
    
@@ -234,10 +234,10 @@ void AimingClass::SetInput(const QPair<double,double>& Coord)
 
 void AimingClass::Reset()
 {
+  qDebug() << TAG_NAME.c_str() << "[ AIMING RESET ]";
 
-  qDebug() << "[ AIMING RESET ]";
   this->ModulePID.ResetPID();
-  this->VectorOutput = QPair<double,double>(0,0);
+  this->VectorOutput = QPair<float,float>(0,0);
   AimingStatistic.Reset();
   FaultStatistic.Reset();
 
@@ -247,12 +247,11 @@ void AimingClass::Reset()
 
 }
 
-void AimingClass::SetBlockEnabled(bool OnOff) 
+void AimingClass::SetModuleEnabled(bool OnOff) 
 { 
                                               PassCoordClass::PassBlocked = true;
   if( OnOff) { StateBlock = StateBlockAtWork; PassCoordClass::PassBlocked = false; } 
   if(!OnOff)   StateBlock = StateBlockDisabled; 
-  qDebug() << TAG_NAME << "BLOCK ENABLED: " << OnOff << "Number: " << NumberChannel;
 };
 
 
@@ -275,10 +274,10 @@ void AimingClass::LoadPIDParam(QString SettingsFile)
 
         if(list_preference.size() < 3) continue;
 
-        double Common = 1;
-        double rate_param = list_preference.at(0).toDouble();
-        double int_param = list_preference.at(1).toDouble();
-        double diff_param = list_preference.at(2).toDouble();
+        float Common = 1;
+        float rate_param = list_preference.at(0).toFloat();
+        float int_param = list_preference.at(1).toFloat();
+        float diff_param = list_preference.at(2).toFloat();
 
         this->PIDParamTable.push_back(PIDParamStruct(rate_param,diff_param,int_param));
 
@@ -316,7 +315,7 @@ void AimingClass::LoadSettings()
 
   BeamPosSettings.endGroup();
 
-  auto PointerCenteredCoord = QPair<double,double>(XPointerPos,YPointerPos);
+  auto PointerCenteredCoord = QPair<float,float>(XPointerPos,YPointerPos);
   
   this->CoordNullPosition = QPair<int, int>(BEAM_X_POS,BEAM_Y_POS);
   this->CoordAim = this->CoordNullPosition;
@@ -334,7 +333,7 @@ bool AimingParamOptimizator::isAimingFaultStatistic()
    return false;
 }
 
-void AimingParamOptimizator::SetInput(const QPair<double,double>& Coord)
+void AimingParamOptimizator::setInput(const QPair<float,float>& Coord)
 {
 
   Coord >> CurrentStatistic;

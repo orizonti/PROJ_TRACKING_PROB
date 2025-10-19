@@ -37,7 +37,7 @@ WidgetMainWindow::WidgetMainWindow(QWidget *parent)
 	//QObject::connect(LaserControlDisplay, SIGNAL(SignalDisplayMessage(QString) ), CriticalMessageOutputBig,SLOT(SlotPrintString(QString)));
 	//QObject::connect(               this, SIGNAL(SignalCriticalMessage(QString) ), CriticalMessageOutputBig,SLOT(SlotPrintString(QString)));
 
-	//QObject::connect(this, SIGNAL(SignalNewImage(DataImageProcStructure)),       this, SLOT(DisplayImage(DataImageProcStructure)));
+	//QObject::connect(this, SIGNAL(signalNewImage(DataImageProcStructure)),       this, SLOT(DisplayImage(DataImageProcStructure)));
 	//QObject::connect(this, SIGNAL(SignalNewAimingData(DataAimingErrorStructure)), this, SLOT(DisplayAimingData(DataAimingErrorStructure)));
 	//QObject::connect(this, SIGNAL(SignalNewAimingData(DataAimingErrorStructure)), GraphicsWidget, SLOT(DisplayAimingData(DataAimingErrorStructure)));
 	//QObject::connect(this, SIGNAL(SignalNewCoordsData(DataCoordStructure)),this,SLOT(DisplayCoordData(DataCoordStructure)));

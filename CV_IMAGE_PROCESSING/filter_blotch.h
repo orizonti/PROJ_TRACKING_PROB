@@ -9,7 +9,7 @@ class FilterBlotchClass
     public:
     void FilterImage(cv::Mat& FilteringImage, cv::Mat& RawImage);
     ContoursProcessorClass FindContours;
-    QString TAG_NAME{"[ BLOTCH_FILTER ]"};
+    std::string TAG_NAME{"[ BLOTCH_FILTER ]"};
 };
 
 #endif 

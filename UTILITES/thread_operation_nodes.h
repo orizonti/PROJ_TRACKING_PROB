@@ -14,40 +14,39 @@ template<typename T> class EndReceiver;
 template<typename T> class QQueue;
 template<typename T> class PassValueVoid;
 
-template<typename T = double> 
+template<typename T = float> 
 class PassCoordNop : public PassCoordClass<T>
 {
   public: 
   QPair<T,T>& operator>>(QPair<T, T>& Coord)     override { return Coord;}
-  QPair<int,int>& operator>>(QPair<int, int>& Coord) override { return Coord;}
 
   PassCoordClass<T>& operator>>(PassCoordClass<T>& Reciever) override {qDebug() << "PASS NOP"; return *this;}
 };
 
-template<typename T = double> 
+template<typename T = float> 
 class CoordPassEnd : public PassCoordClass<T>
 {
   public: 
   void operator>>(QPair<T, T>& Coord)     override {}
   void operator>>(QPair<int, int>& Coord) override {}
 
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
-  void SetInput(const QPair<T,T>& Input) { qDebug() << "[ END ]";}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
+  void setInput(const QPair<T,T>& Input) { qDebug() << "[ END ]";}
 
   PassCoordClass<T>& operator>>(PassCoordClass<T>& Reciever) override { return *this;}
 };
 
 template <class T>
-class SubstractNode : public PassCoordClass<double>
+class SubstractNode : public PassCoordClass<float>
 {
 public:
   std::vector<QPair<T,T>> InputCoords{QPair<T,T>(0,0), QPair<T,T>(0,0)};
 
 	int InputCount = 0;
 
-	 const QPair<T,T>& GetOutput() override { return PassCoordClass<double>::OutputCoord;}
+	 const QPair<T,T>& getOutput() override { return PassCoordClass<float>::OutputCoord;}
 
-	 void SetInput(const QPair<T,T>& Coord) override
+	 void setInput(const QPair<T,T>& Coord) override
 	 {
                                            InputCoords[InputCount] = Coord; 
                                                        InputCount++; 
@@ -60,17 +59,16 @@ public:
 };
 
 
-
 template <class T>
-class SumNode : public PassCoordClass<double>
+class SumNode : public PassCoordClass<float>
 {
 public:
   QPair<T, T> SumCoord;
 
-  const QPair<T,T>& GetOutput() override
+  const QPair<T,T>& getOutput() override
   { PassCoordClass<T>::OutputCoord = SumCoord; SumCoord.first = 0; SumCoord.second = 0; return PassCoordClass<T>::OutputCoord; }
 
-  void SetInput(const QPair<T,T>& Coord) override
+  void setInput(const QPair<T,T>& Coord) override
   { SumCoord.first += Coord.first; SumCoord.second += Coord.second; }
 
 };
@@ -84,11 +82,11 @@ class CoordDetector : public PassCoordClass<T>
 	CoordDetector(double tolerance_distance, QPair<T,T> Wait){ tolerance = tolerance_distance;
                                                              WaitCoord = Wait;};
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
     PassCoordClass<T>::OutputCoord = Coord; CheckCoord(Coord);
 	};
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
   void CheckCoord(const QPair<T,T>& Coord)
   {
@@ -122,11 +120,11 @@ class CoordPassShutter : public PassCoordClass<T>
 	public:
 	CoordPassShutter(){};
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
     PassCoordClass<T>::OutputCoord = Coord;
 	};
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
     
   PassCoordNop<T> NopNode;
   bool ShutterOpened = false;
@@ -143,7 +141,7 @@ class CoordPassShutter : public PassCoordClass<T>
 
 
 template <class T>
-class CoordInversionAxisNode : public PassCoordClass<double>
+class CoordInversionAxisNode : public PassCoordClass<float>
 {
 public:
   QPair<T, T> SumCoord;
@@ -160,7 +158,7 @@ public:
 
 	CoordInversionAxisNode<T>& operator()(double Axis) { SetInversion(Axis); return *this;}
 
-  void SetInput(const QPair<T,T>& Coord) override
+  void setInput(const QPair<T,T>& Coord) override
   {
     PassCoordClass<T>::OutputCoord.first = Coord.first*AxisXDirection; 
     PassCoordClass<T>::OutputCoord.second = Coord.second*AxisYDirection; 
@@ -175,9 +173,9 @@ class CoordPassFilter : public PassCoordClass<T>
 	CoordPassFilter(){};
 	CoordPassFilter(double LimitNorm){ CoordNormLimit = LimitNorm;};
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
-    PassCoordClass<T>::OutputCoord = Coord;  FilterOpened = StatisticCoord<double>::Norm(Coord) < CoordNormLimit;
+    PassCoordClass<T>::OutputCoord = Coord;  FilterOpened = StatisticCoord<float>::Norm(Coord) < CoordNormLimit;
 	};
     
   PassCoordNop<T> NopNode;
@@ -187,8 +185,6 @@ class CoordPassFilter : public PassCoordClass<T>
   PassCoordClass<T>& operator>>(PassCoordClass<T>& Receiver) override 
                          { if(!FilterOpened) return NopNode; PassCoordClass<T>::OutputCoord >> Receiver; return Receiver; }
   QPair<T,T>& operator>>(QPair<T,T>& Receiver) override  
-                         { if(FilterOpened) Receiver = PassCoordClass<T>::OutputCoord; return Receiver; };
-  QPair<int,int>& operator>>(QPair<int,int>& Receiver) override  
                          { if(FilterOpened) Receiver = PassCoordClass<T>::OutputCoord; return Receiver; };
 
 	CoordPassFilter<T>& operator()(double Limit) { CoordNormLimit =  Limit; return *this; }
@@ -203,7 +199,7 @@ class CoordPassThinning : public PassCoordClass<T>
   int counter = 0;
   int peak = 10;
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
                                      FilterOpened = false;
     counter++; if(counter >= peak) { FilterOpened = true; counter = 0; }
@@ -231,7 +227,7 @@ class CoordPassRandomizer : public PassCoordClass<T>
 	CoordPassRandomizer(){};
   CoordPassRandomizer(float Amplitude): AmplitudeNoize(Amplitude) {}; 
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
     PassCoordClass<T>::OutputCoord.first = Coord.first + AmplitudeNoize*std::rand()/RAND_MAX;
     PassCoordClass<T>::OutputCoord.second = Coord.second + AmplitudeNoize*std::rand()/RAND_MAX;
@@ -250,7 +246,7 @@ class CoordAvaragePeriodicNode : public PassCoordClass<T>
 	CoordAvaragePeriodicNode(){};
 	CoordAvaragePeriodicNode(int size) { window_size = size;};
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
       if(input_counter >= window_size) 
       {  input_counter = 0; PassCoordClass<T>::OutputCoord.first = 0; 
@@ -260,7 +256,7 @@ class CoordAvaragePeriodicNode : public PassCoordClass<T>
      PassCoordClass<T>::OutputCoord.second += Coord.second/window_size; 
          input_counter++;
 	};
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
 	bool isLoaded() { return window_size == input_counter;}
     
@@ -270,7 +266,7 @@ class CoordAvaragePeriodicNode : public PassCoordClass<T>
 
   PassCoordClass<T>& operator>>(PassCoordClass<T>& Receiver) override 
   { 
-    if(isLoaded()) { this->GetOutput() >> Receiver; return Receiver; }; return NopNode;
+    if(isLoaded()) { this->getOutput() >> Receiver; return Receiver; }; return NopNode;
   };
 
   void operator>>(QPair<T,T>& Receiver) override  { if(isLoaded()) Receiver = PassCoordClass<T>::OutputCoord; };
@@ -294,7 +290,7 @@ class CoordAvarageGlidingNode : public PassCoordClass<T>
                                          CurrentPoint = SamplePoints.begin(); 
                                          PassCoordClass<T>::OutputCoord = QPair<T,T>(0,0);};
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
       PassCoordClass<T>::OutputCoord.first  -= *CurrentPoint.first/window_size;
       PassCoordClass<T>::OutputCoord.second -= *CurrentPoint.second/window_size; 
@@ -306,7 +302,7 @@ class CoordAvarageGlidingNode : public PassCoordClass<T>
       CurrentPoint++; if(CurrentPoint == SamplePoints.end()) CurrentPoint = SamplePoints.begin();
 
 	};
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
     
 	int window_size = 10;
@@ -315,7 +311,7 @@ class CoordAvarageGlidingNode : public PassCoordClass<T>
 
   PassCoordClass<T>& operator>>(PassCoordClass<T>& Receiver) override 
   { 
-     this->GetOutput() >> Receiver; return Receiver; ; 
+     this->getOutput() >> Receiver; return Receiver; ; 
   };
 
   void operator>>(QPair<T,T>& Receiver) override  { Receiver = PassCoordClass<T>::OutputCoord; };
@@ -330,16 +326,16 @@ class CoordPopByInputNode : public PassCoordClass<T>
   void SetCoords(std::vector<QPair<T,T>> PopCoords) { Coords = PopCoords; CurrentCoord = Coords.begin(); };
   void SetCoords(QVector<QPair<T,T>> PopCoords) {Coords.resize(0); for(auto& Coord: PopCoords) Coords.push_back(Coord); CurrentCoord = Coords.begin(); };
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
     PassCoordClass<T>::OutputCoord = *CurrentCoord; CurrentCoord++;
     if(CurrentCoord == Coords.end()) CurrentCoord = Coords.begin();
 	};
 
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
   std::vector<QPair<T,T>> Coords;
-  QPair<double,double> PopCoord() 
+  QPair<float,float> PopCoord() 
   {
     PassCoordClass<T>::OutputCoord = *CurrentCoord; CurrentCoord++;
     if(CurrentCoord == Coords.end()) CurrentCoord = Coords.begin();
@@ -349,19 +345,19 @@ class CoordPopByInputNode : public PassCoordClass<T>
   typename std::vector<QPair<T,T>>::iterator CurrentCoord; 
 };
 
-template<typename T = double>
+template<typename T = float>
 class CoordPassWaitNode : public PassCoordClass<T>
 {
 	public:
   CoordPassWaitNode () {};
 	CoordPassWaitNode (QPair<T,T> Wait) { WaitCoord = Wait;};
-	void SetInput(const QPair<double,double>& Coord) override
+	void setInput(const QPair<float,float>& Coord) override
 	{
     DiffCoord = Coord - WaitCoord;
     Distance = std::hypot(DiffCoord.first, DiffCoord.second);
     PassCoordClass<T>::OutputCoord = Coord;
 	};
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
   PassCoordNop<T> NopNode;
 
@@ -378,32 +374,40 @@ class CoordPassWaitNode : public PassCoordClass<T>
   void operator>>(QPair<T,T>& Receiver) override  { if(Distance < 2) Receiver = PassCoordClass<T>::OutputCoord; };
 };
 
-template<typename T = double>
+template<typename T = float>
 class CoordStorage : public PassCoordClass<T>
 {
 	public:
-  CoordStorage () { SetSize(10); };
+  CoordStorage ()         {  SetSize(10); };
 	CoordStorage (int size) {  SetSize(size); };
-  void SetSize(int size) { Coords.resize(size); CurrentInputCoord = Coords.begin();
-                                                CurrentOutputCoord = Coords.begin();} 
+  void SetSize(int size)  { Coords.resize(size); CurrentInputCoord  = Coords.begin();
+                                                 CurrentOutputCoord = Coords.begin();} 
 
-	void SetInput(const QPair<double,double>& Coord) override
+//                                  void (*SignalStorageFull)(void) = nullptr;
+//  void LinkSignal(void (*call)(void) ) { SignalStorageFull = call;};
+
+	void setInput(const QPair<float,float>& Coord) override
 	{
-                LastInput = Coord;
-      *CurrentInputCoord  = Coord; CurrentInputCoord++; Counter++;
-    if(CurrentInputCoord == Coords.end()) 
-     { CurrentInputCoord  = Coords.begin(); Counter = 1; }  
+    if(CurrentInputCoord == Coords.end() && ContinousMode) 
+    CurrentInputCoord = Coords.begin();
+    else return;
 
+      *CurrentInputCoord  = Coord; CurrentInputCoord++; 
+//    if(CurrentInputCoord == Coords.end() && SignalStorageFull != nullptr) 
+//                                            SignalStorageFull();   
 	};
 
-  const QPair<T,T>& GetOutput() { return PassCoordClass<T>::OutputCoord;}
+  std::vector<QPair<T,T>>& GetCoords() { return Coords;}
+  void operator>>(std::vector<QPair<T,T>>& Storage) { Storage = Coords; }
 
-  bool isLoaded() { return Counter >= Coords.size();}
-  QPair<T,T> GetLastInput() { return LastInput;}
+  const QPair<T,T>& getOutput() { return PassCoordClass<T>::OutputCoord;}
 
-              QPair<T,T> LastInput{0,0};
+  bool isLoaded() { return CurrentInputCoord = Coords.end();}
+  QPair<T,T> GetLastInput() { return *CurrentInputCoord;}
+  void SetContinousMode(bool OnOff) { ContinousMode = OnOff; }
+
   std::vector<QPair<T,T>> Coords;
-  int Counter = 1;
+  bool ContinousMode = true;
 
   typename std::vector<QPair<T,T>>::iterator CurrentInputCoord; 
   typename std::vector<QPair<T,T>>::iterator CurrentOutputCoord; 
@@ -425,7 +429,7 @@ class CoordStorage : public PassCoordClass<T>
 };
 
 //======================================================================
-template<typename T = double> 
+template<typename T = float> 
 class PassValueNop : public PassValueClass<T>
 {
   public: 
@@ -434,7 +438,7 @@ class PassValueNop : public PassValueClass<T>
     void operator >>(int& OutputValue) {}
     void operator >>(uint32_t& OutputValue) {}
 
-    //StatisticNode<double> operator>>(StatisticNode<double> receiver) override { return receiver;}
+    //StatisticNode<float> operator>>(StatisticNode<float> receiver) override { return receiver;}
 };
 //===========================================================================
 template< typename T = double>
@@ -449,7 +453,7 @@ class ValueDifference : public PassValueClass<T>
 template<typename T>
 void ValueDifference<T>::SetValue(T NewValue) { Diff = PassValueClass<T>::Value - NewValue; PassValueClass<T>::Value = NewValue; }
 
-template<typename T = double>
+template<typename T = float>
 class ValueSaturation : public PassValueClass<T>
 {
   public:
@@ -462,7 +466,7 @@ class ValueSaturation : public PassValueClass<T>
   ValueSaturation<T>& operator()(double NewThreshold){ Threshold = NewThreshold; return *this;};
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueInversion : public PassValueClass<T>
 {
   public:
@@ -471,14 +475,14 @@ class ValueInversion : public PassValueClass<T>
   ValueInversion<T>& operator()(double NewThreshold){ Threshold = NewThreshold; return *this;};
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueBinaryInversion : public PassValueClass<T>
 {
   public:
 	virtual void SetValue(T InputValue) { PassValueClass<T>::Value = (InputValue > 0) ? 0 : 1;};
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueRandomization : public PassValueClass<T>
 {
   public:
@@ -488,7 +492,7 @@ class ValueRandomization : public PassValueClass<T>
 };
 
 
-template<typename T = double>
+template<typename T = float>
 class ValueBreeder : public PassValueClass<T>
 {
   public:
@@ -497,7 +501,7 @@ class ValueBreeder : public PassValueClass<T>
   PassValueClass<T>& operator>>(PassValueClass<T>& Receiver) override; 
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueDetector : public PassValueClass<T>
 {
   public:
@@ -556,7 +560,7 @@ void ValueDetector<T>::operator=(ValueDetector<T>& Detector)
 };
 
 
-template<typename T = double>
+template<typename T = float>
 class ValuePassShutter : public PassValueClass<T>
 {
   public:
@@ -591,7 +595,7 @@ PassValueClass<T>& ValueBreeder<T>::operator>>(PassValueClass<T>& Receiver)
   for(int n = 0; n < BreedMultiplier; n++) PassValueClass<T>::GetValue() >> Receiver; return Receiver;
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueCategorizer : public PassValueClass<T>
 {
   public:
@@ -618,8 +622,72 @@ void ValueCategorizer<T>::SetValue(T InputValue)
 };
 
 
+template<typename StorType = std::vector<float>, typename T = double>
+class ValueStorage : public PassValueClass<T>
+{
+	public:
+  ValueStorage()         { SetSize(10); };
+	ValueStorage(int size) { SetSize(size); };
+  void SetSize(int size) { Values.resize(size); CurrentInputValue = Values.begin();
+                                                CurrentOutputValue = Values.begin(); } 
 
-template<typename T = double>
+	void SetValue(T Value) override
+	{
+    if(CurrentInputValue == Values.end() && ContinousLoad) 
+       CurrentInputValue  = Values.begin();
+
+    if(CurrentInputValue == Values.end() && !ContinousLoad) return;
+
+      *CurrentInputValue  = Value; CurrentInputValue++; 
+
+	};
+
+
+  friend void operator>>(const std::vector<T>& Storage, ValueStorage& Receiver) { std::copy_n(Storage.begin(), Receiver.Values.size(), Receiver.Values.begin()); }
+  friend void operator>>(const QVector<T>& Storage, ValueStorage& Receiver)     { std::copy_n(Storage.begin(), Receiver.Values.size(), Receiver.Values.begin()); }
+
+  T getOutput() 
+  { 
+    PassValueClass<T>::Value = *CurrentOutputValue; 
+    if(CurrentOutputValue != CurrentInputValue) CurrentOutputValue++; 
+    if(CurrentOutputValue == Values.end()) CurrentOutputValue = Values.end();
+
+    return PassValueClass<T>::Value;
+  }
+
+  StorType& GetValues() { CurrentInputValue  = Values.begin(); 
+                          CurrentOutputValue = Values.begin(); return Values; }
+
+  template<typename OutputStore>
+  void operator>>(OutputStore Storage) 
+  { 
+         if(Storage.size() < Values.size()) Storage.resize(Values.size());
+    std::copy(Values.begin(), Values.end(), Storage.begin());
+
+    CurrentInputValue  = Values.begin(); 
+    CurrentOutputValue = Values.begin(); 
+  }
+
+
+  void SetContinousLoad(bool OnOff) { ContinousLoad = OnOff;};
+
+  void Reset() { CurrentInputValue = Values.begin(); 
+                 CurrentOutputValue = Values.begin(); std::fill(Values.begin(),Values.end(),0); };
+
+  bool isLoaded()  { return CurrentInputValue == Values.end();}
+  T GetLastInput() { return *CurrentInputValue; }
+
+  StorType Values{10};
+  bool ContinousLoad = false;
+
+  typename StorType::iterator CurrentInputValue; 
+  typename StorType::iterator CurrentOutputValue; 
+
+  PassValueClass<T>& operator()(int size) { if(Values.size() != size) SetSize(size); return *this; }
+};
+
+
+template<typename T = float>
 class ValueDebugOutput : public PassValueClass<T>
 {
   public:
@@ -631,7 +699,7 @@ class ValueDebugOutput : public PassValueClass<T>
   void SetValue(T NewValue) override { qDebug()<< TAG.c_str() << NewValue;};
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValuePeriodMeasure : public PassValueClass<T>
 {
   public:
@@ -651,7 +719,7 @@ class ValuePeriodMeasure : public PassValueClass<T>
   std::chrono::milliseconds Period;
 };
 
-template<typename T = double>
+template<typename T = float>
 class ValueAbsolutization : public PassValueClass<T>
 {
   public:
@@ -705,7 +773,7 @@ class ValueBlockCounter : public ThinningFilter<V>
 
 
 //==========================================================
-template<typename T = double>
+template<typename T = float>
 class EndReceiver: public PassValueClass<T>
 {
     public:
@@ -721,7 +789,7 @@ void operator>>(const T& Coord, QQueue<T>& queue_stor) { queue_stor.enqueue(Coor
 
 
 //==========================================================
-class TrackHoldDetectorNode: public PassCoordClass<double>
+class TrackHoldDetectorNode: public PassCoordClass<float>
 {
   public:
     TrackHoldDetectorNode(double Threshold, int Dispersion)
@@ -734,14 +802,14 @@ class TrackHoldDetectorNode: public PassCoordClass<double>
       SignalThreshold = Threshold; DispersionThreshold = Dispersion; return *this;
     }
 
-    StatisticNode<double> StatisticTrack{100};
-    StatisticNode<double> StatisticDispersion{100};
+    StatisticNode<float> StatisticTrack{100};
+    StatisticNode<float> StatisticDispersion{100};
 
-           ValueDetector<double> TrackingDetector;
-         ValueSaturation<double> Saturation;
-    ValueBinaryInversion<double> InversionBinary;
+           ValueDetector<float> TrackingDetector;
+         ValueSaturation<float> Saturation;
+    ValueBinaryInversion<float> InversionBinary;
 
-    SubstractNode<double> SubstractPair;
+    SubstractNode<float> SubstractPair;
 
   bool isTrackHold() { return TrackingDetector.isSignal(); };
 
@@ -756,8 +824,8 @@ class TrackHoldDetectorNode: public PassCoordClass<double>
   }
 
 
-	const QPair<double, double>& GetOutput() override { return OutputCoord;};
-	void SetInput(const QPair<double, double>& Coord) override  
+	const QPair<float,float>& getOutput() override { return OutputCoord;};
+	void setInput(const QPair<float,float>& Coord) override  
   {
 
      Coord >> SubstractPair >> StatisticTrack; 
@@ -777,22 +845,3 @@ class TrackHoldDetectorNode: public PassCoordClass<double>
 #endif  //DATATHREADSPROCESSING_H
 
 //===========================================================================
-//template<typename T = double> 
-//class PassValueNode
-//{
-//  public: 
-//    T Value;
-//    virtual void SetValue(T NewValue) { Value = NewValue;}
-//    virtual const T& GetValue() { return Value;}
-//
-//    template<typename M> friend PassValueNode<M>& operator>>(const M& Value, PassValueNode<M>& Receiver);
-//    virtual PassValueNode<T>& operator>>(PassValueNode<T>& Receiver) { GetValue() >> Receiver; return Receiver;};
-//    virtual void operator>>(const T& Receiver) { Receiver = GetValue();};
-//    virtual StatisticNode<double> operator>>(StatisticNode<double> receiver) { GetValue() >> receiver; return receiver; }
-//};
-//
-//template<typename T>
-//PassValueNode<T>& operator>>(const const T& Value, PassValueNode<T>& Receiver) { Receiver.SetValue(Value); return Receiver; }
-
-//===========================================================================
-//

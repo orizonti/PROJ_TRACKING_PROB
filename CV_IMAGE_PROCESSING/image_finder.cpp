@@ -1,14 +1,15 @@
 #include "image_finder.h"
+#include "register_settings.h"
 
 ImageTemplateFinder::ImageTemplateFinder(QObject* parent) : ModuleImageProcessing(parent)
 {
-             if(QFile::exists("/home/orangepi/DATA/UFO.png"))
-   ImageTemplate = cv::imread("/home/orangepi/DATA/UFO.png",cv::IMREAD_GRAYSCALE );
-             else qDebug() << "[ IMAGE TEMPLATE FINDER ]" << "/home/orangepi/DATA/UFO.png" << "[NOT EXISTS]";
+   auto user = SettingsRegister::GetString("USER");
+   auto path = QString("/home/%1/DATA/UFO.png").arg(user);
 
-             if(QFile::exists("/home/broms/DATA/UFO.png"))
-   ImageTemplate = cv::imread("/home/broms/DATA/UFO.png",cv::IMREAD_GRAYSCALE );
-             else qDebug() << "[ IMAGE TEMPLATE FINDER ]" << "/home/broms/DATA/UFO.png" << "[NOT EXISTS]";
+             if(QFile::exists(path))
+   ImageTemplate = cv::imread(path.toStdString(),cv::IMREAD_GRAYSCALE );
+             else qDebug() << "[ IMAGE TEMPLATE FINDER ]" << "/home//DATA/UFO.png" << "[NOT EXISTS]";
+
 }
 
 ImageTemplateFinder::~ImageTemplateFinder()
@@ -48,8 +49,8 @@ void ImageTemplateFinder::FindImageTemplate(cv::Mat& Image)
 void ImageTemplateFinder::SlotProcessImage()
 {
     MutexImageAccess.lock();
-                 SourceImage->SwitchToNextFrame();
-    ImageInput = SourceImage->GetImageToProcess().clone(); ImageProcessing = ImageInput;
+                 SourceImage->switchToNextFrame();
+    ImageInput = SourceImage->getImageToProcess().clone(); ImageProcessing = ImageInput;
     MutexImageAccess.unlock();
 
     FilterBlotch.FilterImage(ImageProcessing, ImageProcessing); 

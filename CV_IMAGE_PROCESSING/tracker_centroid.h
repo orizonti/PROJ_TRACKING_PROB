@@ -66,7 +66,7 @@ public:
     bool CalcCentroid(cv::Mat& Image);
     void CalcThreshold() override;
 
-    QPair<double,double> GetCentroid(cv::Mat& Image);
+    QPair<float,float> GetCentroid(cv::Mat& Image);
 
     std::function<void (cv::Mat&, cv::Mat&)> FilterSharpen;
     std::function<void (cv::Mat&, cv::Mat&)> FilterSobel;

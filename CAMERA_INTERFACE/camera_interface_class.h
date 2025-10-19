@@ -34,12 +34,12 @@ struct ArvStreamCallbackData
 
 class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlInterface
 {
-    Q_OBJECT
+    //Q_OBJECT
     public:
     CameraInterfaceAravis(QObject* parent = 0);
     ~CameraInterfaceAravis();
 	GError *error = NULL;
-    QString TAG_NAME{"[ ARAVIS ]"};
+    std::string TAG_NAME{"[ ARAVIS ]"};
     QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
     bool FLAG_CAMERA_CONNECTED = false;
     bool FLAG_CAMERA_WORK = false;
@@ -52,17 +52,16 @@ class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlIn
     int BaseFrequency = 200;
     int CurrentReceiver = 0;
 
-    int  GetAvailableFrames() override { return NumberFrameToProcess; };
+    int  getAvailableFrames() override { return NumberFrameToProcess; };
     void GetCurrentCameraRegion();
 
-    void SetCameraRegion(std::pair<int,int> Pos, std::pair<int,int> Size) override;
+    void SetZoom(int Number) override;
     void SetCameraRegion(int x, int y, int width, int height ) override;
     void SetCameraExposure(int Exposure) override {}; 
-    void  StartCameraStream() override;
-    void  StopCameraStream()  override;
+    void StartCameraStream(bool OnOff) override;
 
-    bool SwitchToNextFrame() override;
-    void SkipFrames() override;
+    bool switchToNextFrame() override;
+    void skipFrames() override;
     void SetFrequency(int Frequency) ;
 
     int  InitCamera();
@@ -75,16 +74,16 @@ class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlIn
     int NumberFrameToProcess = 0;
     int Counter = 0;
 
-     QImage& GetImageToDisplay() override ;
-    cv::Mat& GetImageToProcess() override ;
+     QImage& getImageToDisplay() override ;
+    cv::Mat& getImageToProcess() override ;
 
-    void GetImageToDisplay(QImage& ImageDst) override { ImageDst = ImageToDisplay.copy();};
-    void GetImageToProcess(cv::Mat& ImageDst)override ;
+    void getImageToDisplay(QImage& ImageDst) override { ImageDst = ImageToDisplay.copy();};
+    void getImageToProcess(cv::Mat& ImageDst)override ;
 
 
-    std::vector<QPair<int,int>>& GetPoints() override;  
-    std::vector<QRect>& GetRects() override;  
-    QString& GetInfo() override;  
+    std::vector<QPair<int,int>>& getPoints() override;  
+    std::vector<QRect>& getRects() override;  
+    QString& getInfo() override;  
 
     std::vector<QPair<int,int>> CameraPoints{2};
     std::vector<QRect>          CameraRects{2};

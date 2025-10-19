@@ -47,7 +47,7 @@ class WidgetProcessingImage : public WidgetAdjustable
     Q_OBJECT
 public:
     WidgetProcessingImage(QString ModuleName = "ДИСПЛЕЙ", QWidget* parent = 0);
-    QString TAG_NAME{"[ IMG_CTRL ]"};
+    std::string TAG_NAME{"[ IMG_CTRL ]"};
 
 void LinkToModule(std::shared_ptr<ImageSourceInterface> ImageSource);
 
@@ -93,7 +93,7 @@ void AddMiniLabel();
 void moveEvent(QMoveEvent* event);
 
 signals:
-void SignalPosPressed(QPair<double,double>);
+void SignalPosPressed(QPair<float,float>);
 void SignalChannelChanged(int);
 
 public  slots:

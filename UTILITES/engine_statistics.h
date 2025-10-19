@@ -90,8 +90,8 @@ public:
 	bool isLoaded() { return StatLoaded;};
 	bool isValueRising();
 
-	void SetInput(const QPair<T,T>& Input);
-	const QPair<T,T>& GetOutput() { return CoordAvarage;};
+	void setInput(const QPair<T,T>& Input);
+	const QPair<T,T>& getOutput() { return CoordAvarage;};
 
 	static T Norm(QPair<T,T> Coord) { return std::sqrt(std::pow(Coord.first,2) + std::pow(Coord.second,2)); }
 
@@ -108,7 +108,7 @@ public:
 
 };
 
-template<typename T = double>
+template<typename T = float>
 class StatisticNode : public PassValueClass<T>, public PassCoordClass<T>
 {
 	public:
@@ -119,8 +119,8 @@ class StatisticNode : public PassValueClass<T>, public PassCoordClass<T>
 	StatisticValue<T> NodeValue{10};
 	StatisticCoord<T> NodeCoord{10};
 
-	 const QPair<T, T>& GetOutput() override { return NodeCoord.GetOutput();};
-	 void SetInput(const QPair<T, T>& Coord) override  { Coord >> NodeCoord;};
+	 const QPair<T, T>& getOutput() override { return NodeCoord.getOutput();};
+	 void setInput(const QPair<T, T>& Coord) override  { Coord >> NodeCoord;};
 
 	 const T& GetValue() override  { return NodeValue.GetValue();};
 	 void SetValue(T InputValue) override  { InputValue >> NodeValue; };
@@ -164,7 +164,7 @@ void StatisticValue<T>::CalcDispersion()
 //================================================================================
 
 template<typename T>
-void StatisticCoord<T>::SetInput(const QPair<T,T>& Input)
+void StatisticCoord<T>::setInput(const QPair<T,T>& Input)
 {
 	//qDebug() << EngFilter << "[ STAT COORD SET ] " << Input.first << Input.second << "AVARAGE: " << CoordAvarage.first << CoordAvarage.second;
 
@@ -210,7 +210,7 @@ void StatisticCoord<T>::CalcDispersion()
 
 //================================================================================
 
-template<typename T = double>
+template<typename T = float>
 class StatisticGroup
 {
 public:
@@ -226,7 +226,7 @@ public:
     void PerformAvailableData() {};
 
     friend void operator>>(double NewValue, StatisticGroup& StatObj) {};
-    friend void operator>>(QPair<double, double> NewValue, StatisticGroup& StatObj) {};
+    friend void operator>>(QPair<float,float> NewValue, StatisticGroup& StatObj) {};
 
 
     int BestStatNumber = 1;

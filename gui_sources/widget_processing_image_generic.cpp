@@ -63,7 +63,7 @@ void WidgetProcessingImage::moveEvent(QMoveEvent* event)
 
 void WidgetProcessingImage::SlotPosPressed(int x, int y)
 {
- emit SignalPosPressed(QPair<double,double>(x,y));
+ emit SignalPosPressed(QPair<float,float>(x,y));
 }
 
 
@@ -94,7 +94,7 @@ void WidgetProcessingImage::SlotDisplayMiniLabels()
 {
    for(int n = 0; n < ImageSources.size(); n++)
    {
-   ImageSources[n]->GetImageToDisplay(DisplayImagesMini[n]);
+   ImageSources[n]->getImageToDisplay(DisplayImagesMini[n]);
    reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->SlotDisplayImage(DisplayImagesMini[n], n);
    }
 
@@ -104,21 +104,21 @@ void WidgetProcessingImage::SlotDisplayImage()
 {
    if(!ImageSourceActive){ qDebug() << TAG_NAME << "SOURCE NOT LINKED";  return; };
 
-   ImageSourceActive->GetImageToDisplay(DisplayImage); if(DisplayImage.isNull()) return;
+   ImageSourceActive->getImageToDisplay(DisplayImage); if(DisplayImage.isNull()) return;
 
       Thinning(30)++;
    if(Thinning.isOpen()) 
    {
-   auto FramePeriods = ImageSources[0]->GetFramePeriod();
+   auto FramePeriods = ImageSources[0]->getFramePeriod();
    strDisplayData = QString("ПЕРИОД: %1  ОБРАБОТКА: %2").arg(1/FramePeriods.first,5,'f',2).arg(FramePeriods.second,5,'f',2);
    this->SlotDisplayString(strDisplayData);
    }
 
    if(!timerDisplayMiniLabels.isActive()) { if(ImageSources.size() > 1) timerDisplayMiniLabels.start(100); }
 
-   const auto& CoordsImage = ImageSourceActive->GetPoints(); 
-   const auto& RectsImage = ImageSourceActive->GetRects(); 
-   auto& InfoString = ImageSourceActive->GetInfo();
+   const auto& CoordsImage = ImageSourceActive->getPoints(); 
+   const auto& RectsImage = ImageSourceActive->getRects(); 
+   auto& InfoString = ImageSourceActive->getInfo();
 
    auto pen_it = pens.begin();
    QFont font("Ubunt Sans");
@@ -160,8 +160,8 @@ void WidgetProcessingImage::LinkToModule(std::shared_ptr<ImageSourceInterface> S
    ImageSources.push_back(Source);
 
    timerDisplay.start(30);
-   //if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
-   //QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
+   //if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(SlotDisplayImage()));
+   //QObject::connect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
 
 }
 
@@ -178,9 +178,9 @@ void WidgetProcessingImage::SlotSetActiveChannel(int Channel)
                            if(Channel >= ImageSources.size() ||
                               Channel == NumberActiveChannel   ) return; 
 
- QObject::disconnect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()));
+ QObject::disconnect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(SlotDisplayImage()));
                      ImageSourceActive = ImageSources[Channel]; 
-    QObject::connect(ImageSourceActive.get(),SIGNAL(SignalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
+    QObject::connect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(SlotDisplayImage()),Qt::QueuedConnection);
     NumberActiveChannel = Channel;
     emit SignalChannelChanged(Channel);
 

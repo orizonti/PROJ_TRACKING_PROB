@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QDebug>
 #include "widget_adjustable.h"
-#include "scanator_control_class.h"
+#include "device_rotary_interface.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WidgetScanatorControl; }
@@ -18,9 +18,8 @@ public:
     explicit WidgetScanatorControl(QWidget* parent = 0);
     WidgetScanatorControl(QString Modulename, QWidget* parent = 0);
 
-    void LinkToDevice(std::shared_ptr<ScanatorControlClass> EngineModule);
-
-    std::shared_ptr<ScanatorControlClass> ScanatorDevice;
+    void LinkToDevice(std::shared_ptr<DeviceRotaryGenericInterface> EngineModule);
+                      std::shared_ptr<DeviceRotaryGenericInterface> ScanatorDevice;
 
     QTimer timerUpdateState;
 

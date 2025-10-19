@@ -175,7 +175,7 @@ int TrackerFirst::thread(cv::Mat& image)
 
 } 
 
-//void PassCoords::avg(cv::Rect bbox1, cv::Rect bbox2)
+//void passCoords::avg(cv::Rect bbox1, cv::Rect bbox2)
 //{
 //    int x_center = (bbox1.x + bbox2.x) / 2 + (bbox1.width + bbox2.width) / 4;
 //    int y_center = (bbox1.y + bbox2.y) / 2 + (bbox1.height + bbox2.height) / 4;

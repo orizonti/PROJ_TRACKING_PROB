@@ -2,8 +2,6 @@
 #include "interface_image_source.h"
 #include <QDebug>
 #include "debug_output_filter.h"
-OutputFilter DebugFilter{200};
-OutputFilter DebugFilter2{200};
 
 CameraInterfaceHIK* CameraInterfaceHIK::CameraInterface;
 
@@ -17,14 +15,14 @@ bool CameraInterfaceHIK::PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
 {
     if (NULL == pstMVDevInfo)
     {
-        qDebug() << "[ HIK CAMERAS NOT FOUND ]";
+        qDebug() << TAG_NAME.c_str() << "[ HIK CAMERAS NOT FOUND ]";
         return false;
     }
 
-    if (pstMVDevInfo->nTLayerType == MV_USB_DEVICE)
+    if (pstMVDevInfo->nTLayerType == MV_GIGE_DEVICE)
     {
-        qDebug() << QString("[ DEVICE MODEL NAME: %1 ]").arg((char*)pstMVDevInfo->SpecialInfo.stUsb3VInfo.chModelName);
-        qDebug() << QString("[ USER_DEFINED_NAME: %1 ]").arg((char*)pstMVDevInfo->SpecialInfo.stUsb3VInfo.chUserDefinedName);
+        qDebug() << TAG_NAME.c_str() << QString("[ DEVICE MODEL NAME: %1 ]").arg((char*)pstMVDevInfo->SpecialInfo.stGigEInfo.chModelName);
+        qDebug() << TAG_NAME.c_str() << QString("[ USER_DEFINED_NAME: %1 ]").arg((char*)pstMVDevInfo->SpecialInfo.stGigEInfo.chUserDefinedName);
     }
     return true;
 }
@@ -33,14 +31,14 @@ void __stdcall CameraInterfaceHIK::ImageCallBackEx(unsigned char * pData, MV_FRA
 {
   CameraInterfaceHIK::CameraImageStorage::PutNewFrameToStorage(pData, FrameInfo->nFrameLenEx,FrameInfo->nExtendWidth,FrameInfo->nExtendHeight);
                            CameraInterface->FrameMeasureInput++;
-  emit CameraInterfaceHIK::CameraInterface->SignalNewImage();
+  emit CameraInterfaceHIK::CameraInterface->signalNewImage();
 }
 
-std::pair<float,float> CameraInterfaceHIK::GetFramePeriod() { return std::pair<float,float>(FrameMeasureInput.FramePeriod, 
+std::pair<float,float> CameraInterfaceHIK::getFramePeriod() { return std::pair<float,float>(FrameMeasureInput.FramePeriod, 
                                                                                     FrameMeasureProcess.FramePeriod);};
 
 
-std::shared_ptr<ImageSourceInterface> CameraInterfaceHIK::GetImageSourceChannel()
+std::shared_ptr<ImageSourceInterface> CameraInterfaceHIK::getImageSourceChannel()
 {
   auto ImageSourceChannel = ImageChanneledStore.back();
                             ImageChanneledStore.push_back(std::make_shared<CameraImageStorage>(this));
@@ -55,64 +53,60 @@ void CameraInterfaceHIK::EnumerateCameras()
     memset(&stDeviceList, 0, sizeof(MV_CC_DEVICE_INFO_LIST));
 
     nRet = MV_CC_EnumDevices(MV_GIGE_DEVICE, &stDeviceList);
-                                if (MV_OK != nRet) { qDebug() << "MV_CC_ENUMDEVICES FAIL!" << nRet; return; }
+                                if (MV_OK != nRet) { qDebug() << TAG_NAME.c_str() << "MV_CC_ENUMDEVICES FAIL!" << nRet; return; }
 
     if (stDeviceList.nDeviceNum > 0)
     {
-        for (int i = 0; i < stDeviceList.nDeviceNum; i++)
-        {
-            qDebug() << "[DEVICE]:" << i;
-            MV_CC_DEVICE_INFO* pDeviceInfo = stDeviceList.pDeviceInfo[i]; if (NULL == pDeviceInfo) return;  
-            PrintDeviceInfo(pDeviceInfo);            
-        }  
+        MV_CC_DEVICE_INFO* pDeviceInfo = stDeviceList.pDeviceInfo[0]; if (NULL == pDeviceInfo) return;  
+        PrintDeviceInfo(pDeviceInfo);            
         return;
     } 
     
-    qDebug() << "[ FIND NO DEVICES ]"; 
+    qDebug() << TAG_NAME.c_str() << "[ FIND NO DEVICES ]"; 
 
 }
 
 void CameraInterfaceHIK::CameraInit()
 {
     int nRet = MV_OK;
-        nRet = MV_CC_Initialize(); if (MV_OK != nRet) { qDebug() << "INITIALIZE SDK FAIL" << nRet; return; }
+        nRet = MV_CC_Initialize(); if (MV_OK != nRet) { qDebug() << TAG_NAME.c_str() << "INITIALIZE SDK FAIL" << nRet; return; }
 
         EnumerateCameras();
         // Select device and create handle
         unsigned int nIndex = 0;
         nRet = MV_CC_CreateHandle(&handle, stDeviceList.pDeviceInfo[nIndex]);
-                                             if (MV_OK != nRet) { qDebug() << "MV_CC_CREATE HANDLE FAIL " << nRet; return; }
-        nRet = MV_CC_OpenDevice(handle);     if (MV_OK != nRet) { qDebug() << "MV_CC_OPEND EVICE FAIL "   << nRet; return; }
+                                             if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_CREATE HANDLE FAIL " << nRet; return; }
+        nRet = MV_CC_OpenDevice(handle);     if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_OPEND EVICE FAIL "   << nRet; return; }
         
         // Set trigger mode as off
-        nRet = MV_CC_SetEnumValue(handle, "TriggerMode", 0); if (MV_OK != nRet) { qDebug() << "MV_CC_SETTRIGGER MODE FAIL" << nRet; return; }
+        nRet = MV_CC_SetEnumValue(handle, "TriggerMode", 0); if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_SETTRIGGER MODE FAIL" << nRet; return; }
 
         nRet = MV_CC_RegisterImageCallBackEx(handle, ImageCallBackEx, handle);
-                                             if (MV_OK != nRet) { qDebug() << "MV_CC_REGISTER_IMAGECALLBACKEX FAIL" << nRet; return; }
+                                             if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_REGISTER_IMAGECALLBACKEX FAIL" << nRet; return; }
 
 }
 
 void CameraInterfaceHIK::StartStream()
 {
-    qDebug() << "[ START CAMERA ]";
+    qDebug()<< TAG_NAME.c_str()  << "[HIK START CAMERA ]";
     int nRet = MV_OK;
-        nRet = MV_CC_StartGrabbing(handle);  if (MV_OK != nRet) { qDebug() << "MV_CC_STARTG_RABBING FAIL" << nRet; return; }
+        nRet = MV_CC_StartGrabbing(handle);  if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_STARTG_RABBING FAIL" << nRet; return; }
 }
 
 void CameraInterfaceHIK::StopStream()
 {
-    qDebug() << "[ STOP CAMERA ]";
+    qDebug() << "[HIK STOP CAMERA ]";
     int nRet = MV_OK;
-        nRet = MV_CC_StopGrabbing(handle);  if (MV_OK != nRet) { qDebug() << "MV_CC_STOP_GRABBING FAIL" << nRet; return; }
+        nRet = MV_CC_StopGrabbing(handle);  if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_STOP_GRABBING FAIL" << nRet; return; }
 
 }
 
 void CameraInterfaceHIK::DeinitCamera()
 {
 int nRet = MV_OK;
-    nRet = MV_CC_StopGrabbing(handle);   if (MV_OK != nRet) { qDebug() << "MV_CC_STOP_GRABBING FAIL" << nRet;  return; }
-    nRet = MV_CC_CloseDevice(handle);    if (MV_OK != nRet) { qDebug() << "MV_CC_CLOSE_DEVICE FAIL" << nRet;   return; }
-    nRet = MV_CC_DestroyHandle(handle);  if (MV_OK != nRet) { qDebug() << "MV_CC_DESTROY_HANDLE FAIL" << nRet; return; } 
+    nRet = MV_CC_StopGrabbing(handle);   if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_STOP_GRABBING FAIL" << nRet;  return; }
+    nRet = MV_CC_CloseDevice(handle);    if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_CLOSE_DEVICE FAIL" << nRet;   return; }
+    nRet = MV_CC_DestroyHandle(handle);  if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_DESTROY_HANDLE FAIL" << nRet; return; } 
     handle = NULL;
 
 MV_CC_Finalize();
@@ -120,7 +114,7 @@ MV_CC_Finalize();
 
 CameraInterfaceHIK::CameraInterfaceHIK()
 {
-qDebug() << "[ HIK CAMERA INTERFACE CREATE FORMAT 720 540 ]";
+qDebug()<< TAG_NAME.c_str()  << "[ HIK CAMERA INTERFACE CREATE FORMAT 720 540 ]";
 CameraInterface = this;
 CameraInit();
 ImageChanneledStore.push_back(std::make_shared<CameraImageStorage>(this));
@@ -130,7 +124,7 @@ CurrentStoreChannel = ImageChanneledStore.begin();
 
 CameraInterfaceHIK::~CameraInterfaceHIK()
 {
-qDebug() << "[ HIK CAMERA INTERFACE DEINIT]"; DeinitCamera();
+qDebug()<< TAG_NAME.c_str()  << "[ HIK CAMERA INTERFACE DEINIT]"; DeinitCamera();
 }
 
 void CameraInterfaceHIK::CameraSetOffset(int XOffset, int YOffset)
@@ -138,20 +132,20 @@ void CameraInterfaceHIK::CameraSetOffset(int XOffset, int YOffset)
 int Result = MV_CC_SetIntValueEx(handle, "OffsetX", XOffset);    
     Result = MV_CC_SetIntValueEx(handle, "OffsetY", YOffset);    
 
-qDebug() << "[ SET OFFSET ]" << XOffset << YOffset; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
+qDebug()<< TAG_NAME.c_str()  << "[ SET OFFSET ]" << XOffset << YOffset; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
 }
 
 
 void CameraInterfaceHIK::CameraSetHeight(int Height)
 {
 int Result = MV_CC_SetIntValueEx(handle, "Height", Height);    
-qDebug() << "[ SET HEIGHT ]" << Height; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
+qDebug()<< TAG_NAME.c_str()  << "[ SET HEIGHT ]" << Height; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
 }
 
 void CameraInterfaceHIK::CameraSetWidth(int Width)
 {
 int Result = MV_CC_SetIntValueEx(handle, "Width", Width);    
-qDebug() << "[ SET WIDTH ]" << Width; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
+qDebug()<< TAG_NAME.c_str()  << "[ SET WIDTH ]" << Width; if (MV_OK != Result) qDebug() << "[ FAILED ]";  
 }
 
 void CameraInterfaceHIK::CameraSetSize(int Width, int Height) 
@@ -165,7 +159,7 @@ void CameraInterfaceHIK::CameraSetSize(int Width, int Height)
 void CameraInterfaceHIK::CameraSetExposure(float Exposure)
 {
 int Result = MV_CC_SetFloatValue(handle, "ExposureTime", Exposure);
-qDebug() << "[ SET EXPOSURE ]" << Exposure; if (MV_OK != Result) qDebug() << "[ FAILED ]";   
+qDebug()<< TAG_NAME.c_str()  << "[ SET EXPOSURE ]" << Exposure; if (MV_OK != Result) qDebug() << "[ FAILED ]";   
 }
 
 void CameraInterfaceHIK::CameraSetTriggerMode(int Mode)
@@ -173,7 +167,7 @@ void CameraInterfaceHIK::CameraSetTriggerMode(int Mode)
 unsigned int nTriggerMode = 0;
 int Result = MV_CC_SetEnumValue(handle, "TriggerMode", nTriggerMode);
 
-if (MV_OK == Result) qDebug() << "[ SET TRIGGERMODE OK! ]"; else qDebug() << "[ SET TRIGGERMODE FAILED! ]", Result;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ SET TRIGGERMODE OK! ]"; else qDebug() << "[ SET TRIGGERMODE FAILED! ]", Result;
 }
 
 void CameraInterfaceHIK::CameraSetHorisontalReverse(bool OnOff)
@@ -181,7 +175,7 @@ void CameraInterfaceHIK::CameraSetHorisontalReverse(bool OnOff)
     
 int Result = MV_CC_SetBoolValue(handle, "ReverseX", OnOff);
 
-if (MV_OK == Result) qDebug() << "[ SET REVERSEX OK! ]"; else qDebug() << "[ SET REVERSEX FAILED! ]", Result;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ SET REVERSEX OK! ]"; else qDebug() << "[ SET REVERSEX FAILED! ]", Result;
 }
 
 void CameraInterfaceHIK::CameraSetCameraID(QString str)
@@ -189,7 +183,7 @@ void CameraInterfaceHIK::CameraSetCameraID(QString str)
 
 int Result = MV_CC_SetStringValue(handle, "DeviceUserID", str.toStdString().c_str());
 
-if (MV_OK == Result) qDebug() << "[ SET DEVICEUSERID OK! ]"; else qDebug() << "[ SET DEVICEUSERID FAILED! ]", Result;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ SET DEVICEUSERID OK! ]"; else qDebug() << "[ SET DEVICEUSERID FAILED! ]", Result;
 }
 
 
@@ -199,10 +193,10 @@ void CameraInterfaceHIK::CameraGetTriggerMode()
 MVCC_ENUMVALUE stTriggerMode = {0};
 int Result = MV_CC_GetEnumValue(handle, "TriggerMode", &stTriggerMode);
 
-if (MV_OK != Result) { qDebug() << "[ GET TRIGGERMODE FAILED! ]" << Result; return; } 
+if (MV_OK != Result) { qDebug()<< TAG_NAME.c_str()  << "[ GET TRIGGERMODE FAILED! ]" << Result; return; } 
 
-qDebug() << "[ TRIGGERMODE CURRENT ]" << stTriggerMode.nCurValue << "[ SUPPORTED TRIGGER_MODE ]" << stTriggerMode.nSupportedNum;
-for (unsigned int i = 0; i < stTriggerMode.nSupportedNum; ++i) qDebug() << "[ SUPPORTED TRIGGERMODE ]" << i << stTriggerMode.nSupportValue[i];
+qDebug()<< TAG_NAME.c_str()  << "[ TRIGGERMODE CURRENT ]" << stTriggerMode.nCurValue << "[ SUPPORTED TRIGGER_MODE ]" << stTriggerMode.nSupportedNum;
+for (unsigned int i = 0; i < stTriggerMode.nSupportedNum; ++i) qDebug()<< TAG_NAME.c_str()  << "[ SUPPORTED TRIGGERMODE ]" << i << stTriggerMode.nSupportValue[i];
 }
 
 //===================================================
@@ -210,7 +204,8 @@ void CameraInterfaceHIK::CameraGetID()
 {
 MVCC_STRINGVALUE stStringValue = {0};
 int Result = MV_CC_GetStringValue(handle, "DeviceUserID", &stStringValue);
-if (MV_OK == Result) qDebug() << "[ GET DEVICE_USER_ID  ]", stStringValue.chCurValue; else qDebug() << "[ GET DEVICE_USER_ID FAILED ]", Result;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ GET DEVICE_USER_ID  ]", stStringValue.chCurValue; 
+                else qDebug()<< TAG_NAME.c_str()  << "[ GET DEVICE_USER_ID FAILED ]", Result;
 }
 
 //===================================================
@@ -219,14 +214,14 @@ bool CameraInterfaceHIK::isReverseHorizontal()
 bool bGetBoolValue = false;
 int Result = MV_CC_GetBoolValue(handle, "ReverseX", &bGetBoolValue);
 
-    if(!Result) { qDebug() << "[ GET REVERSEX FAILED! ]", Result; return false; } 
+    if(!Result) { qDebug() << TAG_NAME.c_str() << "[ GET REVERSEX FAILED! ]", Result; return false; } 
 
 if (0 != bGetBoolValue) return true; else return false;
 
 }
 
 //===================================================
-void CameraInterfaceHIK::CameraGetImageSize()
+void CameraInterfaceHIK::CameragetImageSize()
 {
 
 MVCC_INTVALUE height = {0}; MVCC_INTVALUE width = {0};
@@ -234,10 +229,10 @@ MVCC_INTVALUE height = {0}; MVCC_INTVALUE width = {0};
 int Result = MV_CC_GetIntValue(handle, "Height", &height);
     Result = MV_CC_GetIntValue(handle, "Width", &width);
 
-if (MV_OK == Result) qDebug() << "[ HEIGHT] [ CURRENT ]"<< height.nCurValue << "[ MAX ]" << height.nMax << "[ MIN ]"<< height.nMin << "[ INCREMENT ]"<< height.nInc;
-if (MV_OK == Result) qDebug() << "[ WIDTH] [ CURRENT ]"<< width.nCurValue << "[ MAX ]" << width.nMax << "[ MIN ]"<< width.nMin << "[ INCREMENT ]"<< width.nInc;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ HEIGHT] [ CURRENT ]"<< height.nCurValue << "[ MAX ]" << height.nMax << "[ MIN ]"<< height.nMin << "[ INCREMENT ]"<< height.nInc;
+if (MV_OK == Result) qDebug()<< TAG_NAME.c_str()  << "[ WIDTH] [ CURRENT ]"<< width.nCurValue << "[ MAX ]" << width.nMax << "[ MIN ]"<< width.nMin << "[ INCREMENT ]"<< width.nInc;
 
-qDebug() << "[ GET SIZE FAILED ]", Result;
+qDebug()<< TAG_NAME.c_str()  << "[ GET SIZE FAILED ]", Result;
 }
 
 //===================================================
@@ -245,8 +240,8 @@ void CameraInterfaceHIK::CameraGetExposure()
 {
 MVCC_FLOATVALUE stExposureTime = {0};
 int Result = MV_CC_GetFloatValue(handle, "ExposureTime", &stExposureTime);
-if (MV_OK == Result) { qDebug() << "[ EXPOSURE]  [CURRENT ]"<< stExposureTime.fCurValue <<  "[ MAX ]"<< stExposureTime.fMax << "[ MIN ]"<< stExposureTime.fMin; }
-else                   qDebug() << "[ GET EXPOSURE FAILED ]"<< Result;
+if (MV_OK == Result) { qDebug()<< TAG_NAME.c_str()  << "[ EXPOSURE]  [CURRENT ]"<< stExposureTime.fCurValue <<  "[ MAX ]"<< stExposureTime.fMax << "[ MIN ]"<< stExposureTime.fMin; }
+else                   qDebug()<< TAG_NAME.c_str()  << "[ GET EXPOSURE FAILED ]"<< Result;
 }
 //==========================================================================================================
 
@@ -259,7 +254,6 @@ for (int i = 0; i < 20; i++) Buffers.push_back(new uint8_t[720*540]); //USER STO
              BufferToWrite = Buffers.begin();
 }
              BufferToRead = Buffers.begin();
-             qDebug() << "INIT STORAGE FRAME AVAILABLE: " << GetAvailableFrames();
 }
 
 void CameraInterfaceHIK::CameraImageStorage::DeinitStorage() { if(Buffers.size()) for(auto Buffer: Buffers) delete Buffer; }
@@ -275,30 +269,28 @@ void CameraInterfaceHIK::CameraImageStorage::PutNewFrameToStorage(uint8_t* Data,
   FrameNumber++;
 }
 
-void CameraInterfaceHIK::CameraImageStorage::SkipFrames()
+void CameraInterfaceHIK::CameraImageStorage::skipFrames()
 {
-	qDebug() << "[ SKIP FRAMES ]" << BufferToWrite - BufferToRead;
+	qDebug()<< TAG_NAME.c_str() << "[ SKIP FRAMES ]" << BufferToWrite - BufferToRead;
     FrameNumber = 0; FrameProcessed = 0;
     BufferToRead = BufferToWrite;
 }
 
-QImage& CameraInterfaceHIK::CameraImageStorage::GetImageToDisplay() { return ImageToDisplay; }
-void CameraInterfaceHIK::CameraImageStorage::GetImageToDisplay(QImage& ImageDst){ ImageDst = ImageToDisplay.copy();};
+QImage& CameraInterfaceHIK::CameraImageStorage::getImageToDisplay() { return ImageToDisplay; }
+void CameraInterfaceHIK::CameraImageStorage::getImageToDisplay(QImage& ImageDst){ ImageDst = ImageToDisplay.copy();};
 
-cv::Mat& CameraInterfaceHIK::CameraImageStorage::GetImageToProcess()                  
+cv::Mat& CameraInterfaceHIK::CameraImageStorage::getImageToProcess()                  
 {
-    //FrameProcessed++; qDebug() << DebugFilter2 << "[ FRAME PASSED ]" << FrameNumber << "[ PROCESSED ]" << FrameProcessed;
-    SwitchToNextFrame(); return ImageToProcess; 
+   switchToNextFrame(); return ImageToProcess; 
 }
 
-void   CameraInterfaceHIK::CameraImageStorage::GetImageToProcess(cv::Mat& ImageDst) 
+void   CameraInterfaceHIK::CameraImageStorage::getImageToProcess(cv::Mat& ImageDst) 
 {
-
-    SwitchToNextFrame(); ImageDst = ImageToProcess.clone(); 
-    FrameProcessed++; qDebug() << DebugFilter2 << "[ FRAME PASSED ]" << FrameNumber << "[ PROCESSED ]" << FrameProcessed;
+    switchToNextFrame(); ImageDst = ImageToProcess.clone(); 
+    //FrameProcessed++; qDebug() << TAG_NAME.c_str() << "[ FRAME PASSED ]" << FrameNumber << "[ PROCESSED ]" << FrameProcessed;
 };
 
-bool CameraInterfaceHIK::CameraImageStorage::SwitchToNextFrame() 
+bool CameraInterfaceHIK::CameraImageStorage::switchToNextFrame() 
 {
    if(BufferToRead == BufferToWrite) return false;
    
@@ -306,4 +298,21 @@ bool CameraInterfaceHIK::CameraImageStorage::SwitchToNextFrame()
    BufferToRead++; if(BufferToRead == Buffers.end()) BufferToRead = Buffers.begin(); 
    
    return true;
+}
+
+void CameraInterfaceHIK::SetZoom(int Number)
+{
+                int size = 120; 
+    if(Number == 2) size = 200; 
+    if(Number == 3) size = 240; 
+    if(Number == 4) size = 360; 
+    if(Number == 5) size = 400; 
+
+    int X_ROI = 720/2 - size/2; X_ROI = X_ROI/4; X_ROI = X_ROI*4; 
+    int Y_ROI = 540/2 - size/2; Y_ROI = Y_ROI/4; Y_ROI = Y_ROI*4; 
+
+    int RIGHT  = X_ROI + size;
+    int BOTTOM = Y_ROI + size;
+
+    CameraInterface->SetCameraRegion(X_ROI,Y_ROI,size,size);
 }

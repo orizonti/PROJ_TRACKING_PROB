@@ -44,33 +44,36 @@ class ImageSourceInterface: public QObject
     Q_OBJECT
     public:
     ImageSourceInterface(QObject* parent = 0);
-    virtual QImage&  GetImageToDisplay() = 0;
-    virtual cv::Mat& GetImageToProcess() = 0;
+    virtual QImage&  getImageToDisplay() = 0;
+    virtual cv::Mat& getImageToProcess() = 0;
 
-    virtual void GetImageToDisplay(QImage& ImageDst) = 0;
-    virtual void GetImageToProcess(cv::Mat& ImageDst) = 0;
+    virtual void getImageToDisplay(QImage& ImageDst) = 0;
+    virtual void getImageToProcess(cv::Mat& ImageDst) = 0;
 
-    virtual const std::vector<QPair<int,int>>& GetPoints() = 0;  
-    virtual const std::vector<QRect>& GetRects() = 0;  
-    virtual const QString& GetInfo() = 0;  
+    virtual const std::vector<QPair<int,int>>& getPoints() = 0;  
+    virtual const std::vector<QRect>& getRects() = 0;  
+    virtual const QString& getInfo() = 0;  
 
-    virtual bool SwitchToNextFrame() {return false; };
-    virtual void SkipFrames() {};
+    virtual bool switchToNextFrame() { return false; };
+    virtual void skipFrames() {};
 
-    virtual int GetAvailableFrames() { return 0;};
-    virtual bool isFrameAvailable() { return GetAvailableFrames() > 0;};
+    virtual int getAvailableFrames() { return 0;};
+    virtual bool isFrameAvailable()  { return getAvailableFrames() > 0;};
 
-    virtual std::pair<int,int> GetImageSize() { return std::pair<int,int>(720,540);};
-    virtual std::pair<float,float> GetFramePeriod() { return std::pair<float,float>(0,0);};  //PERIOD GET, PERIOD PROCESS
+    virtual std::pair<int,int>     getImageSize()  { return std::pair<int,int>(720,540);};
+    virtual               int      getImageDepth() { return CV_8UC1;};
+    virtual std::pair<float,float> getFramePeriod(){ return std::pair<float,float>(0,0);};  //PERIOD GET, PERIOD PROCESS
 
-    virtual std::shared_ptr<ImageSourceInterface> GetImageSourceChannel() {return std::shared_ptr<ImageSourceInterface>(this);};
+    virtual std::shared_ptr<ImageSourceInterface> getImageSourceChannel() {return std::shared_ptr<ImageSourceInterface>(this);};
+
+    void adjustImageReceiver(cv::Mat& receiver);
     
     FramePeriodMeasure FrameMeasureInput;
     FramePeriodMeasure FrameMeasureProcess;
 
     signals:
-    void SignalNewImage(const cv::Mat&);
-    void SignalNewImage(const QImage&);
-    void SignalNewImage();
+    void signalNewImage(const cv::Mat&);
+    void signalNewImage(const QImage&);
+    void signalNewImage();
 
 };

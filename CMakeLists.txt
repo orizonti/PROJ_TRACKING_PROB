@@ -35,11 +35,12 @@ endif()
         set(CV_VERSION ${CV_NAME} CACHE INTERNAL "${CV_VERSION}")
         set(OPENCV_LIB_DIR "${LIBRARY_DIR}/IMAGE_PROCESSING/OPENCV/${CV_VERSION}/" CACHE INTERNAL "${OPENCV_LIB_DIR}")
 
-        set(QT_LIB_DIR "${LIBRARY_DIR}/Qt653" CACHE INTERNAL "${QT_LIB_DIR}")
-        if(EXISTS "${LIBRARY_DIR}/Qt653/6.5.3/${COMPILER}/lib")
-        set(QT_LIB_DIR "${LIBRARY_DIR}/Qt653/6.5.3/${COMPILER}" CACHE INTERNAL "${QT_LIB_DIR}")
-        endif()
+        set(HIK_LIB_DIR "${LIBRARY_DIR}/CAMERA_LIBRARY/HIKROBOT/" CACHE INTERNAL "${OPENCV_LIB_DIR}")
 
+        set(QT_LIB_DIR "${LIBRARY_DIR}/Qt683" CACHE INTERNAL "${QT_LIB_DIR}")
+        if(EXISTS "${LIBRARY_DIR}/Qt683/6.8.3/${COMPILER}/lib")
+        set(QT_LIB_DIR "${LIBRARY_DIR}/Qt683/6.8.3/${COMPILER}" CACHE INTERNAL "${QT_LIB_DIR}")
+        endif()
 
 message("=============================================")
 message("SET QT     LIBRARY - ${QT_LIB_DIR}")
@@ -55,19 +56,15 @@ function(LINK_QT_LIBS PROJECT_NAME)
         target_link_libraries(${PROJECT_NAME} Qt6::Network)
         target_link_libraries(${PROJECT_NAME} Qt6::Core)
         target_link_libraries(${PROJECT_NAME} Qt6::PrintSupport)
+        target_link_libraries(${PROJECT_NAME} Qt6::SerialBus)
+
+        if($ENV{USER} MATCHES "broms")
+        target_link_libraries(${PROJECT_NAME} Qt6::Quick)
+        target_link_libraries(${PROJECT_NAME} Qt6::Graphs)
+        target_link_libraries(${PROJECT_NAME} Qt6::QuickWidgets)
+        endif()
+
         message("[ LINK ] QT WIDGETS NETWORK CORE PRINT_SUPPORT")
-endfunction()
-
-function(LINK_ARAVIS_AARCH64 PROJECT_NAME)
-        include_directories("/usr/local/include/aravis-0.8")
-        include_directories("/usr/include/glib-2.0")
-        include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
-
-        #target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libglib-2.0.so)
-        #target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libgobject-2.0.so)
-        #target_link_libraries(ImageProcProject /usr/local/lib/aarch64-linux-gnu/libaravis-0.8.so)
-        #target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libusb-1.0.so)
-        message("[ LINK ] ARAVIS AARCH64")
 endfunction()
 
 function(INCLUDE_ARAVIS_HEADERS PROJECT_NAME)
@@ -76,19 +73,32 @@ function(INCLUDE_ARAVIS_HEADERS PROJECT_NAME)
         include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
 endfunction()
 
+function(LINK_ARAVIS_AARCH64 PROJECT_NAME)
+        include_directories("/usr/local/include/aravis-0.8")
+        include_directories("/usr/include/glib-2.0")
+        include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
+
+        target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libglib-2.0.so)
+        target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libgobject-2.0.so)
+        target_link_libraries(ImageProcProject /usr/local/lib/aarch64-linux-gnu/libaravis-0.8.so)
+        target_link_libraries(ImageProcProject /usr/lib/aarch64-linux-gnu/libusb-1.0.so)
+        message("[ LINK ] ARAVIS AARCH64")
+endfunction()
+
 function(LINK_ARAVIS_X86 PROJECT_NAME)
         include_directories("/usr/local/include/aravis-0.8")
         include_directories("/usr/include/glib-2.0")
         include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
 
-        #target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libglib-2.0.so)
-        #target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libgobject-2.0.so)
-        #target_link_libraries(ImageProcProject /usr/local/lib/x86_64-linux-gnu/libaravis-0.8.so)
+        target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libglib-2.0.so)
+        target_link_libraries(ImageProcProject /lib/x86_64-linux-gnu/libgobject-2.0.so)
+        target_link_libraries(ImageProcProject /usr/local/lib/x86_64-linux-gnu/libaravis-0.8.so)
         message("[ LINK ] ARAVIS X86")
 endfunction()
 
 function(LINK_TORCH PROJECT_NAME)
         target_link_libraries(ImageProcProject ${TORCH_PROCESS_MODULE})
+
         if (WIN32)
         target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch_cpu.lib")
         target_link_libraries(ImageProcProject "${PYTORCH_DIR}/lib/torch.lib")
@@ -104,11 +114,6 @@ function(LINK_TORCH PROJECT_NAME)
         include_directories("${PYTORCH_DIR}/include")
         include_directories("${PYTORCH_DIR}/include/torch/csrc/api/include")
 
-        #link_directories("${LIBRARY_DIR}/NN_LIBRARY/libtorch/lib")
-        #target_link_libraries(ImageProcProject "/home/broms/PROGRAM_LIBRARY/NN_LIBRARY/libtorch/lib/libtorch_cpu.so")
-        #target_link_libraries(ImageProcProject "/home/broms/PROGRAM_LIBRARY/NN_LIBRARY/libtorch/lib/libtorch.so")
-        #target_link_libraries(ImageProcProject "/home/broms/PROGRAM_LIBRARY/NN_LIBRARY/libtorch/lib/libc10.so")
-
         #====================SUBPROJECTS=============================
         #add_subdirectory(PYTORCH_PROCESSING)
         if( UNIX )
@@ -123,10 +128,6 @@ function(LINK_TORCH PROJECT_NAME)
         message("[ LINK ] TORCH")
 endfunction()
 
-set(HIK_LIB_DIR "/home/broms/LIBRARY/CAMERA_LIBRARY/HIKROBOT/lib/64/")
-link_directories(${HIK_LIB_DIR})
-message("LINK LIBS: ${HIK_LIB_DIR}")
-
 function(LINK_HIK_VISION PROJECT_NAME)
 
         target_link_libraries(ImageProcProject libMvCameraControl.so)
@@ -134,7 +135,7 @@ function(LINK_HIK_VISION PROJECT_NAME)
         target_link_libraries(ImageProcProject libMvSDKVersion.so)
         target_link_libraries(ImageProcProject libMediaProcess.so)
 
-        include_directories("/home/broms/LIBRARY/CAMERA_LIBRARY/HIKROBOT/include")
+        include_directories("/home/$ENV{USER}/LIBRARY/CAMERA_LIBRARY/HIKROBOT/include")
 message("[ LINK ] HIK CAMERA")
 
 endfunction()
@@ -161,6 +162,7 @@ endfunction()
 function(INCLUDE_PROJECT_DIRS)
         include_directories("./gui_sources")
         include_directories("./gui_sources/GRAPHICS_WINDOW")
+        include_directories("./gui_sources/GRAPHICS_WINDOW_GRAPH")
         include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING") 
         include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING/TRACKER_ROBUST") 
         include_directories("${PROJECT_SOURCE_DIR}/CV_AIM_IMITATION")
@@ -174,11 +176,12 @@ function(INCLUDE_PROJECT_DIRS)
         include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/EMBEDED_RING_BUFFER") 
         include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/GENERIC_MESSAGES") 
         include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/TRANSMISSION_MODULES") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/RING_BUFFER_ADAPTERS") 
         message("[ INCLUDE ] PROJECT DIRS")
 endfunction()
 
 function(INCLUDE_STANDART_DIRS)
-include_directories("/usr/include/c++/11")
+include_directories("/usr/include/c++/12")
 #include_directories("/home/orangepi/LIBRARY/LIB_STD_INCLUDE/")
 #include_directories("/home/orangepi/LIBRARY/LIB_STD/")
 #include_directories("${LIBRARY_DIR}/COMMON_LIBRARRY/boost_1_68_0/boost_1_68_0")
@@ -187,10 +190,6 @@ include_directories("/usr/include/c++/11")
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/Eigen")
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/")
 endfunction()
-
-#===========================================================
-
-
 
 
 #===========================================================
@@ -226,10 +225,9 @@ list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_main_window.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_output_image_display.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_output_text_display.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/qcustomplot.cpp")
-list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_scanator_control.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_aiming_control.cpp")
-list(APPEND GUI_SOURCES_LIST "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp")
-list(APPEND GUI_SOURCES_LIST "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.ui")
+#list(APPEND GUI_SOURCES_LIST "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp")
+#list(APPEND GUI_SOURCES_LIST "./gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.ui")
 
         set(IMAGE_PROCESSING_SOURCES "")
 list(APPEND IMAGE_PROCESSING_SOURCES "./CV_IMAGE_PROCESSING/image_processing_node.cpp")
@@ -244,10 +242,9 @@ list(APPEND IMAGE_PROCESSING_SOURCES "./CV_IMAGE_PROCESSING/optimization_thresho
 list(APPEND IMAGE_PROCESSING_SOURCES "./CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp")
 
         set(TRANSMISSION_MODULE_SOURCES "")
-list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/DATA_STRUCTURES/message_command_structures.cpp")
-list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/DATA_STRUCTURES/engine_type_register.cpp")
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp")
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp")
 
         set(UTILITIES_SOURCES "")
 list(APPEND UTILITIES_SOURCES "./UTILITES/debug_output_filter.cpp")
@@ -264,27 +261,40 @@ list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/widget_sinus_source.c
 list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/widget_sinus_source.ui")
 
          set(DEVICE_CONTROL_SOURCES "")
-list(APPEND DEVICE_CONTROL_SOURCES "./DEVICES/scanator_control_class.cpp")
 list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_hik.cpp")
 #list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/camera_interface_class.cpp")
 
 #=========================FIND LIBRARIES=====================
+        message("USER: $ENV{USER}")
+        message("=============================================")
+        CHECK_SET_LIB_PATH("/home/$ENV{USER}/LIBRARY"  "gcc_64" "libtorch" "opencv412")
+        message("=============================================")
 
-        message("=============================================")
-        #CHECK_SET_LIB_PATH("/home/orangepi/LIBRARY"  "gcc_64" "libtorch" "opencv411")
-        #CHECK_SET_LIB_PATH("/home/broms/LIBRARY"     "gcc_64" "libtorch" "opencv411")
-        #CHECK_SET_LIB_PATH("D:/LIBRARY" "msvc2019_64" "libtorch113" "opencv411")
-        CHECK_SET_LIB_PATH("/home/broms/LIBRARY" "gcc_64" "libtorch" "opencv412")
-        message("=============================================")
+        link_directories("${HIK_LIB_DIR}/lib/aarch64")
+        message("LINK LIBS: ${HIK_LIB_DIR}/lib/aarch64")
 
         list(APPEND CMAKE_PREFIX_PATH ${QT_LIB_DIR})
         list(APPEND CMAKE_PREFIX_PATH ${OPENCV_LIB_DIR})
         list(APPEND CMAKE_PREFIX_PATH ${PYTORCH_DIR})
 
-        find_package(Qt6 COMPONENTS Widgets Network Core PrintSupport REQUIRED)
+        if($ENV{USER} MATCHES "broms")
+        find_package(Qt6 COMPONENTS Widgets Network Core PrintSupport Quick Graphs QuickWidgets REQUIRED)
+        endif()
+
+        if($ENV{USER} MATCHES "orangepi")
+        find_package(Qt6 COMPONENTS Widgets Network Core PrintSupport SerialBus REQUIRED)
+        endif()
+
         find_package(OpenCV REQUIRED )
         #find_package(Torch REQUIRED)
 
+
+find_package(PkgConfig REQUIRED)
+pkg_search_module(gstreamer REQUIRED IMPORTED_TARGET gstreamer-1.0>=1.4)
+pkg_search_module(gstreamer-sdp REQUIRED IMPORTED_TARGET gstreamer-sdp-1.0>=1.4)
+pkg_search_module(gstreamer-app REQUIRED IMPORTED_TARGET gstreamer-app-1.0>=1.4)
+pkg_search_module(gstreamer-video REQUIRED IMPORTED_TARGET gstreamer-video-1.0>=1.4)
+pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-server-1.0>=1.4)
 #=============================================================
         INCLUDE_PROJECT_DIRS()
         INCLUDE_STANDART_DIRS()
@@ -292,11 +302,16 @@ list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_hik.cpp"
         add_executable (ImageProcProject
                 "main.cpp"
                 "controller_process_class.cpp"
+                "stream_video_rtsp.cpp"
 
                 "./AIMING_MODULES/aiming_class.cpp"
                 "./AIMING_MODULES/pid_class.cpp"
                 "./AIMING_MODULES/rotate_vector_class.cpp"
-                "./ROTATE_OPTIMIZATION/rotation_find_executor.cpp"
+                "./DEVICES/device_rotary_interface.cpp"
+                #"./ROTATE_OPTIMIZATION/rotation_find_executor.cpp"
+                
+                #"gui_sources/GRAPHICS_WINDOW_GRAPH/widget_line_graph.cpp"
+                #"gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp"
 
                 ${GUI_FILES_LIST}
                 ${GUI_SOURCES_LIST}
@@ -307,15 +322,25 @@ list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_hik.cpp"
                 ${DEVICE_CONTROL_SOURCES}
                 )
 
+        target_link_libraries(ImageProcProject
+                      PkgConfig::gstreamer
+                      PkgConfig::gstreamer-sdp
+                      PkgConfig::gstreamer-app
+                      PkgConfig::gstreamer-rtsp-server
+                      PkgConfig::gstreamer-video)
+
         message("=============================================")
         LINK_QT_LIBS(ImageProcProject)
-        LINK_TORCH(ImageProcProject)
-        LINK_HIK_VISION(ImageProcProject)
+
+        if($ENV{USER} MATCHES "broms")
+        #LINK_TORCH(ImageProcProject)
         LINK_ROTATE_OPTIMIZATION(ImageProcProject)
+        endif()
+        LINK_HIK_VISION(ImageProcProject)
         #LINK_ONNX(ImageProcProject)
         #LINK_ARAVIS_AARCH64(ImageProcProject)
-        #LINK_ARAVIS_X86(ImageProcProject)
         INCLUDE_ARAVIS_HEADERS(ImageProcProject)
+        #LINK_ARAVIS_X86(ImageProcProject)
         message("=============================================")
         message("OPENCV LIBS "${OpenCV_LIBS})
 #==========================================================

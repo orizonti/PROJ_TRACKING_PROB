@@ -1652,7 +1652,7 @@ QDialogButtonBox QPushButton {
        <number>1</number>
       </property>
       <item>
-       <widget class="QPushButton" name="butROI100_100">
+       <widget class="QPushButton" name="butZoom1">
         <property name="minimumSize">
          <size>
           <width>65</width>
@@ -1677,7 +1677,7 @@ QDialogButtonBox QPushButton {
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="butROI200_200">
+       <widget class="QPushButton" name="butZoom2">
         <property name="minimumSize">
          <size>
           <width>65</width>
@@ -1702,7 +1702,7 @@ QDialogButtonBox QPushButton {
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="butROI300_300">
+       <widget class="QPushButton" name="butZoom3">
         <property name="minimumSize">
          <size>
           <width>65</width>
@@ -1727,7 +1727,7 @@ QDialogButtonBox QPushButton {
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="butROI400_400">
+       <widget class="QPushButton" name="butZoom4">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -1758,7 +1758,7 @@ QDialogButtonBox QPushButton {
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="butROI500_500">
+       <widget class="QPushButton" name="butZoom5">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>

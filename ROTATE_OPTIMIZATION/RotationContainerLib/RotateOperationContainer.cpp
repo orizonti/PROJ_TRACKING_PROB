@@ -10,17 +10,17 @@ static char* TAG = "[ ROTATION ]";
 TestDataVectorsContainer::TestDataVectorsContainer()
 {
 	TestCoordVectorInput.resize(TEST_DATA_COUNT+1);
-	TestCoordVectorInput[0] = QPair<double,double>(0,0);
+	TestCoordVectorInput[0] = QPair<float,float>(0,0);
 	int NumberPoints = TestCoordVectorInput.size()-1;
 	int CurrentPoint = 0;
 	int Radius = 25;
 	RotateVectorClass rotation;
-	QPair<double,double> Point;
+	QPair<float,float> Point;
 
-	auto GenerateCircle = [rotation,NumberPoints,CurrentPoint,Radius]() mutable -> QPair<double,double>
+	auto GenerateCircle = [rotation,NumberPoints,CurrentPoint,Radius]() mutable -> QPair<float,float>
 	{
         double current_angle = CurrentPoint*2*M_PI/NumberPoints;
-		QPair<double,double> Point; Point.first = Radius*std::cos(current_angle); 
+		QPair<float,float> Point; Point.first = Radius*std::cos(current_angle); 
 									Point.second = Radius*std::sin(current_angle);
 		CurrentPoint++;
 		              return Point;
@@ -35,9 +35,9 @@ void TestDataVectorsContainer::reset()
 { 
 	CurrentTestCoord = TestCoordVectorInput.begin(); 
 }
-const QPair<double,double>& AccumulateDataFilter::GetOutput() { return LastInputFirst; }
+const QPair<float,float>& AccumulateDataFilter::getOutput() { return LastInputFirst; }
 
-void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
+void AccumulateDataFilter::setInput(const QPair<float,float>& Coord)
 {
 	InputCoord = Coord;
 	if(WaitInputCoord != ZeroCoord)
@@ -93,7 +93,7 @@ void AccumulateDataFilter::SetInput(const QPair<double,double>& Coord)
 	if(accumulate_counter == avarage_window_size) flag_filter_open = true;
 }
 
-void AccumulateDataFilter::WaitCoord(QPair<double,double> coord)
+void AccumulateDataFilter::WaitCoord(QPair<float,float> coord)
 {
   //qDebug()<< TAG << "FILTER WAIT NEW COORD - " << coord.first << coord.second;
   WaitInputCoord = coord;	
@@ -102,15 +102,15 @@ void AccumulateDataFilter::WaitCoord(QPair<double,double> coord)
   pass_counter = 0;
 }
 
-AccumulateDataFilter& operator>>(QPair<double, double> coord, AccumulateDataFilter& Filter)
+AccumulateDataFilter& operator>>(QPair<float,float> coord, AccumulateDataFilter& Filter)
 {
-	Filter.SetInput(coord); return Filter;
+	Filter.setInput(coord); return Filter;
 }
 
 std::pair<double,double> AccumulateDataFilter::GetFirstOutput()
 {
 	auto output_coord = std::make_pair(AvarageOutputFirst.first,AvarageOutputFirst.second);
-	AvarageOutputFirst = QPair<double,double>(0,0);
+	AvarageOutputFirst = QPair<float,float>(0,0);
   	return output_coord;
 }
 
@@ -119,7 +119,7 @@ std::pair<double,double> AccumulateDataFilter::GetSecondOutput()
 	flag_filter_open = false;  // close filter when two output coords is passed
 	pass_counter++;
 	auto output_coord = std::make_pair(AvarageOutputSecond.first,AvarageOutputSecond.second);
-	AvarageOutputSecond = QPair<double,double>(0,0);
+	AvarageOutputSecond = QPair<float,float>(0,0);
 	return output_coord;
 }
 
@@ -129,7 +129,7 @@ RotateDataMeasureEngine& operator>>(std::pair<double,double> coord, RotateDataMe
   MeasureEngine.CurrentMeasureCoordAbs.second = coord.second;
 	return MeasureEngine;
 }
-//RotateDataMeasureEngine& operator>>(QPair<double, double> coord, RotateDataMeasureEngine& MeasureEngine)
+//RotateDataMeasureEngine& operator>>(QPair<float,float> coord, RotateDataMeasureEngine& MeasureEngine)
 //{
 //  MeasureEngine.CurrentMeasureCoordAbs = coord; return MeasureEngine;
 //}
@@ -144,7 +144,7 @@ void operator>>(AccumulateDataFilter& Filter, RotateOperationContainer& RotateCo
 {
 	if (Filter.flag_filter_open)
 	{
-		if(Filter.WaitInputCoord == QPair<double,double>(0,0))
+		if(Filter.WaitInputCoord == QPair<float,float>(0,0))
 		{
 			Filter.pass_counter++; Filter.flag_filter_open = false;
 			return;
@@ -157,7 +157,7 @@ void operator>>(AccumulateDataFilter& Filter, RotateOperationContainer& RotateCo
 
 void RotateDataMeasureEngine::SwitchToNextTestCoord() { DataFilter.WaitCoord(DataVectors.GetTestCoord()); }
 
-QPair<double, double> TestDataVectorsContainer::GetTestCoord()
+QPair<float,float> TestDataVectorsContainer::GetTestCoord()
 {
 		auto LastCoord = *CurrentTestCoord;
 		CurrentTestCoord++; if (CurrentTestCoord == TestCoordVectorInput.end()) { CurrentTestCoord = TestCoordVectorInput.begin();};
@@ -171,13 +171,13 @@ void AccumulateDataFilter::reset()
 	accumulate_counter = 0;
 	pass_counter = 0;
 
-	LastInputFirst = QPair<double,double>(0,0);
+	LastInputFirst = QPair<float,float>(0,0);
 	WaitInputCoord = LastInputFirst;
 
 	AvarageOutputFirst = LastInputFirst;
 	AvarageOutputSecond = LastInputFirst;
-	OutputFirstCenter = QPair<double,double>(0,0);
-	OutputSecondCenter = QPair<double,double>(0,0);
+	OutputFirstCenter = QPair<float,float>(0,0);
+	OutputSecondCenter = QPair<float,float>(0,0);
 }
 
 RotateDataMeasureEngine::RotateDataMeasureEngine() 
@@ -202,7 +202,7 @@ if(Operation.first == z_axis)
 
 
 
-bool AccumulateDataFilter::CheckCoordMatch(QPair<double, double> Coord,QPair<double,double> AimCoord)
+bool AccumulateDataFilter::CheckCoordMatch(QPair<float,float> Coord,QPair<float,float> AimCoord)
 {
 		double diff_x = Coord.first - AimCoord.first;
 		double diff_y = Coord.second - AimCoord.second;
@@ -542,7 +542,7 @@ void RotateOperationContainer::AppendInputData(pair<double,double> test_coord)
 }
 
 
-void RotateOperationContainer::SetInput(const QPair<double,double>& Coord)
+void RotateOperationContainer::setInput(const QPair<float,float>& Coord)
 {
 		 InputCoord[0] = Coord.first;
 		 InputCoord[1] = Coord.second;
@@ -560,13 +560,13 @@ void RotateOperationContainer::SetInput(const QPair<double,double>& Coord)
 		 if( is_rotation_inverse) OutputCoord = OutputCoord/system_transform_scale;
 }
 
-const QPair<double, double>& RotateOperationContainer::GetOutput()
+const QPair<float,float>& RotateOperationContainer::getOutput()
 {
-	PassCoordClass<double>::OutputCoord = QPair<double, double>(this->OutputCoord.data_ptr<float>()[0], this->OutputCoord.data_ptr<float>()[1]);
-	return PassCoordClass<double>::OutputCoord;
+	PassCoordClass<float>::OutputCoord = QPair<float,float>(this->OutputCoord.data_ptr<float>()[0], this->OutputCoord.data_ptr<float>()[1]);
+	return PassCoordClass<float>::OutputCoord;
 }
 
-std::vector<float> RotateOperationContainer::GetOutputVector() 
+std::vector<float> RotateOperationContainer::getOutputVector() 
 {
     return OutputCoordVector;
 }
@@ -578,7 +578,7 @@ void RotateOperationContainer::Inverse()
 	is_rotation_inverse = !is_rotation_inverse;
 }
 
-double RotateOperationContainer::CalcVirtualZComponent(QPair<double,double> InputCoord)
+double RotateOperationContainer::CalcVirtualZComponent(QPair<float,float> InputCoord)
 {
 
 	torch::Tensor InputCoordTensor = torch::tensor({InputCoord.first,InputCoord.second}, torch::TensorOptions().dtype(torch::kFloat32)).t();

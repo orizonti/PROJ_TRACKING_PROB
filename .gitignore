@@ -13,4 +13,5 @@ cmake-build-release/
 build/
 build_debug/
 CMakeFiles/
+/MvSdkLog
 

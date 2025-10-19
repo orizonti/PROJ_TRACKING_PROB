@@ -6,41 +6,48 @@
 #include <QSharedPointer>
 
 #include "AIM_IMAGE_IMITATION/sinus_generator_class.h"
-#include "scanator_control_class.h"
 #include "AIM_IMAGE_IMITATION/imitator_image_aim.h"
 //#include "CAMERA_INTERFACE/camera_interface_class.h"
 #include "CAMERA_INTERFACE/interface_camera_hik.h"
 #include "aiming_class.h"
-#include "WindowLaserControl.h"
-#include "rotation_find_executor.h"
+//#include "rotation_find_executor.h"
 
 #include "CV_IMAGE_PROCESSING/tracker_centroid.h"
 #include "CV_IMAGE_PROCESSING/tracker_template.h"
 
+#include "engine_udp_interface.h"
+#include "engine_can_interface.h"
+#include "message_command_structures.h"
+#include "device_rotary_interface.h"
+
+
 enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibration}; 
 
+class VideoStreamRTSP;
 class ProcessControllerClass : public QObject
 {
     Q_OBJECT
 public:
       ~ProcessControllerClass();
-QString TAG_NAME{"[CONTROLLER]"};
+std::string TAG_NAME = QString("[ %1 ] ").arg("CONTROLLER").toStdString();
 static ProcessControllerClass* GetInstance(QObject* parent = nullptr);
 
 static std::shared_ptr<CameraInterfaceHIK> DeviceCamera;
-//static std::shared_ptr<CameraInterfaceAravis> DeviceCamera;
 
-static std::shared_ptr<ImageTrackerCentroid>  ModuleImageProc;
-static std::shared_ptr<ImageTrackerCentroid>  ModuleImageProc2;
-static std::shared_ptr<ImageTrackerCentroidGPU>  ModuleImageProc3;
-static std::shared_ptr<AimImageImitatorClass> ModuleImitatorImage;
+static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc;
+static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc2;
+static std::shared_ptr<ImageTrackerCentroidGPU> ModuleImageProc3;
+static std::shared_ptr<AimImageImitatorClass>   ModuleImitatorImage;
 
-static std::shared_ptr<ScanatorControlClass>       DeviceScanator;
+//static std::shared_ptr<DeviceRotaryInterface<CANConnectionEngine,int,int> > DeviceScanator;
+//static std::shared_ptr<DeviceRotaryInterface<CANConnectionEngine,int,int> > DeviceRotary;
 
-static std::shared_ptr<AimingClass>                ModuleAiming1;
-static std::shared_ptr<AimingClass>                ModuleAiming2;
+static std::shared_ptr<DeviceRotaryGenericInterface> DeviceScanator;
+static std::shared_ptr<DeviceRotaryGenericInterface> DeviceRotary;
 
-static std::shared_ptr<RotationFindProcessClass>  ProcessFindRotation;
+static std::shared_ptr<AimingClass>          ModuleAiming1;
+static std::shared_ptr<AimingClass>          ModuleAiming2;
+static std::shared_ptr<VideoStreamRTSP>      ModuleVideoOutput;
 
 
     ProcessControllerClass(QObject* parrent = 0);
@@ -52,7 +59,6 @@ void StopAllProcess();
 void DeleteModulesLinks();
 
 private:
-
     static ProcessControllerClass* ProcessControllerInstance;
 
 QThread ThreadProcess;
@@ -67,6 +73,7 @@ void SlotSetProcessCamera(bool OnOff);
 void SlotSetProcessImitation(bool OnOff);
 void SlotSetProcessAiming(bool OnOff);
 void SlotSetProcessAiming2(bool OnOff);
+void SlotStartProcessRTSP(bool OnOff);
 
 
 signals:

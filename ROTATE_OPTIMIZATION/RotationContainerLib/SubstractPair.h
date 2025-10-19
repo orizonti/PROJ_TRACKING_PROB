@@ -6,7 +6,7 @@
 
 template <class Type>
 
-class Substract : public PassCoordClass<double>
+class Substract : public PassCoordClass<float>
 {
 public:
 	QPair<Type, Type> CoordFirst;
@@ -15,11 +15,11 @@ public:
 
 	int InputCount = 0;
 
-	 const QPair<double, double>& GetOutput()
+	 const QPair<float,float>& getOutput()
 	 {
 		 return CoordOutput;
 	 }
-	 void SetInput(const QPair<double,double>& Coord)
+	 void setInput(const QPair<float,float>& Coord)
 	 {
 		 
 			if (InputCount == 0)
@@ -41,19 +41,19 @@ public:
 
 
 template <class Type>
-class SummVec : public PassCoordClass<double>
+class SummVec : public PassCoordClass<float>
 {
 public:
 	QPair<Type, Type> CoordOutput;
 
-	 const QPair<double, double>& GetOutput()
+	 const QPair<float,float>& getOutput()
 	 {
 		 QPair<Type, Type> Return = CoordOutput;
 		CoordOutput.first = 0;
 		CoordOutput.second = 0;
 		return Return;
 	 }
-	 void SetInput(const QPair<double,double>& Coord)
+	 void setInput(const QPair<float,float>& Coord)
 	 {
 		 
 		CoordOutput.first += Coord.first;
@@ -63,14 +63,14 @@ public:
 	friend SummVec<Type>& operator<<(SummVec<Type>& SubObj,QPair<Type, Type> Coord)
     {
 
-		SubObj.SetInput(Coord);
+		SubObj.setInput(Coord);
 			return SubObj;
 
     }
-	friend SummVec<Type>& operator<<( SummVec<Type>& SubObj,PassCoordClass<double>& Sender)
+	friend SummVec<Type>& operator<<( SummVec<Type>& SubObj,PassCoordClass<float>& Sender)
     {
 
-		SubObj.SetInput(Sender.GetOutput());
+		SubObj.setInput(Sender.getOutput());
 			return SubObj;
 
     }

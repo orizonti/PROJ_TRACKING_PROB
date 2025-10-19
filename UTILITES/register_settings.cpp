@@ -56,9 +56,9 @@ void SettingsRegister::LoadSettings()
 
     result = TryLoadSettings(SettingsRegister::GetString("FILE_PORTS"),"PORTS");
 
-  AppendSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(720/2 - 60,540/2 -60 + 2));
-  AppendSettings("CAMERA_IMAGE_SIZE", 120.0);
-  AppendSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(120.0,120.0));
+  AppendSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(720/2 -80,540/2 -80));
+  AppendSettings("CAMERA_IMAGE_SIZE", 160.0);
+  AppendSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(160.0,160.0));
 
 
   //SCANATOR +-10V -> +-14 degree

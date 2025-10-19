@@ -23,6 +23,9 @@ public:
 
 private:
 Ui::WidgetCameraControl *ui;
+
+signals:
+void SignalStartStream(bool);
 };
 
 #endif // CAMERA_WIDGET_H

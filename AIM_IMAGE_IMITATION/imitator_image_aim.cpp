@@ -8,17 +8,12 @@ std::pair<int,int> AimImageImitatorClass::SizeAimBoundry{420-40,420-40}; // MAY 
 AimImageImitatorClass::AimImageImitatorClass(QObject* parent) : ImageSourceInterface(parent)
 {
 
-//QString AimImagePath = "D:/DATA/UFO.png"; 
-//QString BlotchImagePath = "D:/DATA/blotch.png"; 
+ auto user = SettingsRegister::GetString("USER");
+ auto path = QString("/home/%1/DATA/UFO.png").arg(user);
+ auto path2 = QString("/home/%1/DATA/blotch.png").arg(user);
 
-QString AimImagePath = "/home/broms/DATA/UFO.png"; 
-QString BlotchImagePath = "/home/broms/DATA/blotch.png"; 
-
-//QString AimImagePath = "/home/orangepi/DATA/UFO.png"; 
-//QString BlotchImagePath = "/home/orangepi/DATA/blotch.png"; 
-
-ImageTestObject = cv::imread(AimImagePath.toStdString(),cv::IMREAD_GRAYSCALE );
-BlotchObject = cv::imread(BlotchImagePath.toStdString(),cv::IMREAD_GRAYSCALE );
+ImageTestObject = cv::imread(path.toStdString(),cv::IMREAD_GRAYSCALE );
+BlotchObject = cv::imread(path2.toStdString(),cv::IMREAD_GRAYSCALE );
 
 SizeImage = std::pair<int,int>(400,400);
 SizeAimBoundry = std::pair<int,int>(SizeImage.first - 40, SizeImage.second - 40);
@@ -38,7 +33,7 @@ ThinningTimePeriod = QTime::currentTime();
 
 CoordsImage.resize(1);
 RectsImage.resize(1);
-CoordsImage[0] = QPair<double,double>(0,0);
+CoordsImage[0] = QPair<float,float>(0,0);
 RectsImage[0] = QRect(1,1,4,4);
 }
 
@@ -65,13 +60,13 @@ void AimImageImitatorClass::GenerateAimImage()
     {
     ImageToProcess = OutputImage.clone();
     ThinningTimePeriod = QTime::currentTime();
-    emit SignalNewImage();
+    emit signalNewImage();
     FLAG_FRAME_AVAILABLE = true;
     }
 
 }
 
-void AimImageImitatorClass::GetImageToDisplayColor(QImage& ImageDst)
+void AimImageImitatorClass::getImageToDisplayColor(QImage& ImageDst)
 {
   if(ImageDst.width() != OutputImage.cols || ImageDst.height() != OutputImage.rows) 
      ImageDst = QImage(OutputImage.cols,OutputImage.rows,QImage::Format_ARGB32);
@@ -116,22 +111,22 @@ void AimImageImitatorClass::SlotSetAimPos(int PosX, int PosY)
     GenerateAimImage();
 }
 
-QImage& AimImageImitatorClass::GetImageToDisplay() { return ImageToDisplay; }
-cv::Mat& AimImageImitatorClass::GetImageToProcess() { FLAG_FRAME_AVAILABLE = false; return ImageToProcess; }
-QString& AimImageImitatorClass::GetInfo()  { return INFO_STRING; }
+QImage& AimImageImitatorClass::getImageToDisplay() { return ImageToDisplay; }
+cv::Mat& AimImageImitatorClass::getImageToProcess() { FLAG_FRAME_AVAILABLE = false; return ImageToProcess; }
+QString& AimImageImitatorClass::getInfo()  { return INFO_STRING; }
 
 AimImageImitatorClass::~AimImageImitatorClass()
 {
- qDebug() << "STOP AND DEINIT CAMERA";
+ qDebug() << TAG_NAME.c_str() << "STOP AND DEINIT CAMERA";
 }
 
-std::vector<QPair<int,int>>& AimImageImitatorClass::GetPoints()  
+std::vector<QPair<int,int>>& AimImageImitatorClass::getPoints()  
 {
   CoordsImage[0].first = AIM_RECT.x + AIM_RECT.width/2; 
   CoordsImage[0].second = AIM_RECT.y + AIM_RECT.height/2; 
   return CoordsImage;
 }
-std::vector<QRect>& AimImageImitatorClass::GetRects()  
+std::vector<QRect>& AimImageImitatorClass::getRects()  
 {
    RectsImage[0].setRect(AIM_RECT.x, AIM_RECT.y,  AIM_RECT.width,  AIM_RECT.height );
    return RectsImage;

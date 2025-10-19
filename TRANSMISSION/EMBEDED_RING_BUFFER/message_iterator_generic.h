@@ -1,9 +1,9 @@
-#ifndef MESSAGE_ITERATOR_GENERIC_H
-#define MESSAGE_ITERATOR_GENERIC_H
+#ifndef MessageIteratorGeneric_H
+#define MessageIteratorGeneric_H
 #include <cstdint>
 #include <cstring>
 #include <QDebug>
-#include <message_struct_generic.h>
+#include "message_struct_generic.h"
 
 
 
@@ -18,16 +18,16 @@ public:
     MessageIteratorGenericBase(uint8_t* STORAGE, std::size_t ChunkSize, std::size_t NumberChunks);
 	struct MessagesRange
 	{
-		uint8_t* endMessageBuffer;
+		uint8_t* EndMessageBuffer;
 		uint8_t* LastMessage;
 	};
 
 public:
-	virtual void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived) = 0;
+	virtual void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived) = 0;
 	MessageIteratorGenericBase<H> operator++(int);
 
-	MessageStructGeneric<void*,H>* GetMessagePtr();
-	MessageStructGeneric<void*,H>& operator*();
+	MessageGeneric<void*,H>* GetMessagePtr();
+	MessageGeneric<void*,H>& operator*();
 
 	bool IsHeaderValid();
 
@@ -42,6 +42,7 @@ public:
 	H&  GetHeader(uint8_t* PtrHeader);
 
 	int  StepsTo(const MessageIteratorGenericBase<H>& It) { return It.MessageNumber - MessageNumber;}; 
+	int  BytesTo(const MessageIteratorGenericBase<H>& It) { return It.PtrMessageBegin - PtrMessageBegin;}; 
 
 	void operator=(const MessageIteratorGenericBase& Message);
 	bool operator==(MessageIteratorGenericBase& Message);
@@ -54,10 +55,10 @@ public:
 	protected:
 	uint8_t* PtrMessageBegin;
 	uint8_t* PtrMessageBeginPrevious;
-	uint8_t* PtrDataend = 0;
+	uint8_t* PtrDataEnd = 0;
 
 	uint8_t* PtrBufferBegin;
-	uint8_t* PtrBufferend;
+	uint8_t* PtrBufferEnd;
 
 	uint8_t  BufferChunkSize = 100;
 	uint8_t  MessageDataSize = 25;
@@ -70,7 +71,7 @@ public:
 template<typename H>
 MessageIteratorGenericBase<H>::MessageIteratorGenericBase()
 {
-	PtrBufferBegin = 0; PtrBufferend = 0; PtrMessageBegin = 0; PtrDataend = 0;
+	PtrBufferBegin = 0; PtrBufferEnd = 0; PtrMessageBegin = 0; PtrDataEnd = 0;
 }
 
 template<typename H>
@@ -80,23 +81,27 @@ MessageIteratorGenericBase<H>::MessageIteratorGenericBase(uint8_t* STORAGE, std:
 	qDebug() << "CREATE FIXED ITERATOR SIZE: " << ChunkSize << NumberChunks;
 	qDebug() << "=================================";
 	BufferChunkSize = ChunkSize;
-	PtrBufferBegin = STORAGE; PtrBufferend = STORAGE + NumberChunks*ChunkSize;
-	PtrMessageBegin = PtrBufferBegin; PtrDataend = PtrMessageBegin;
+	PtrBufferBegin = STORAGE; PtrBufferEnd = STORAGE + NumberChunks*ChunkSize;
+	PtrMessageBegin = PtrBufferBegin; PtrDataEnd = PtrMessageBegin;
 
-	RangeLimits.endMessageBuffer = PtrBufferend;
+	RangeLimits.EndMessageBuffer = PtrBufferEnd;
 	RangeLimits.LastMessage = PtrMessageBegin; 
 }
+
+
+
+
 
 
 template<typename H>
 void MessageIteratorGenericBase<H>::operator=(const MessageIteratorGenericBase<H>& Message)
 {
 	PtrMessageBegin = Message.PtrMessageBegin; 
-	     PtrDataend = Message.PtrDataend;
+	     PtrDataEnd = Message.PtrDataEnd;
 	 PtrBufferBegin = Message.PtrBufferBegin;
- 	   PtrBufferend = Message.PtrBufferend;
+ 	   PtrBufferEnd = Message.PtrBufferEnd;
 	   BufferChunkSize = Message.BufferChunkSize;
-	   RangeLimits.endMessageBuffer = Message.RangeLimits.endMessageBuffer;
+	   RangeLimits.EndMessageBuffer = Message.RangeLimits.EndMessageBuffer;
 	   RangeLimits.LastMessage      = Message.RangeLimits.LastMessage;
 }
 
@@ -123,20 +128,20 @@ template<typename H> int MessageIteratorGenericBase<H>::MessageSize()
 						  return Header.DATA_SIZE + sizeof(H);
 };
 
-template<typename H> int MessageIteratorGenericBase<H>::DataAvailable()   { return PtrDataend - PtrMessageBegin; }
+template<typename H> int MessageIteratorGenericBase<H>::DataAvailable()   { return PtrDataEnd - PtrMessageBegin; }
 
 template<typename H> void MessageIteratorGenericBase<H>::ResetIterator()  
-{ PtrMessageBegin = PtrBufferBegin; PtrDataend = PtrBufferBegin; }
+{ PtrMessageBegin = PtrBufferBegin; PtrDataEnd = PtrBufferBegin; }
 
 
 template<typename H> 
-MessageStructGeneric<void*,H>& MessageIteratorGenericBase<H>::operator*() 
+MessageGeneric<void*,H>& MessageIteratorGenericBase<H>::operator*() 
 { 
     //qDebug() << " TAKE MESSAGE PTR: " << (PtrMessageBegin - PtrBufferBegin);
-	return *reinterpret_cast<MessageStructGeneric<void*,H>* >(PtrMessageBegin); 
+	return *reinterpret_cast<MessageGeneric<void*,H>* >(PtrMessageBegin); 
 }
 template<typename H> 
-MessageStructGeneric<void*,H>* MessageIteratorGenericBase<H>::GetMessagePtr() { return reinterpret_cast<MessageStructGeneric<void*,H>* >(PtrMessageBegin); }
+MessageGeneric<void*,H>* MessageIteratorGenericBase<H>::GetMessagePtr() { return reinterpret_cast<MessageGeneric<void*,H>* >(PtrMessageBegin); }
 
 
 template<typename H>
@@ -152,7 +157,7 @@ void MessageIteratorGenericBase<H>::SwitchToNext()
 
     this->MessageNumber++;   this->PtrMessageBegin += this->BufferChunkSize; 
 
- if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) 
+ if(this->PtrMessageBegin == this->RangeLimits.EndMessageBuffer) 
     this->PtrMessageBegin =  this->PtrBufferBegin; 
 }
 
@@ -174,23 +179,24 @@ public:
 	};
 
 public:
-	void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived);
+	void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived) override;
     MessageIteratorGeneric<H,Mode> operator++(int) { this->SwitchToNext(); return* this; };
 };
 
 
     //===============================================================================================
 	template<typename H, IteratorMode Mode>
-	void MessageIteratorGeneric<H,Mode>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived)
+	void MessageIteratorGeneric<H,Mode>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)
 	{
 	if(BytesCountReceived < this->BufferChunkSize) return;
 
+	qDebug() << "MESSAGE LOAD DATA: " << BytesCountReceived;
 	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->BufferChunkSize); this->MessageNumber++;
-				this->PtrMessageBegin += this->BufferChunkSize; 
+				      this->PtrMessageBegin += this->BufferChunkSize; 
 
-								this->RangeLimits.LastMessage = this->PtrMessageBegin; 
-	if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) //RESET TO BEGIN
-	   this->PtrMessageBegin  = this->PtrBufferBegin; 
+								              this->RangeLimits.LastMessage = this->PtrMessageBegin; 
+	if(this->PtrMessageBegin == this->RangeLimits.EndMessageBuffer) //RESET TO BEGIN
+		 this->PtrMessageBegin  = this->PtrBufferBegin; 
 
 	LoadData(DataSourceBuffer + this->BufferChunkSize, BytesCountReceived - this->BufferChunkSize);
 	}
@@ -208,25 +214,23 @@ public:
 	};
 
 public:
-	void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived);
+	void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived);
 
     MessageIteratorGeneric<H,IteratorMode::Chunked> operator++(int) { this->SwitchToNext(); return* this; };
 };
 
     //===============================================================================================
 	template<typename H>
-	void MessageIteratorGeneric<H,IteratorMode::Chunked>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived)
+	void MessageIteratorGeneric<H,IteratorMode::Chunked>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)
 	{
 	if(!this->GetHeader(DataSourceBuffer).isValid()) return;
 
 														this->MessageDataSize = this->MessageSize(DataSourceBuffer);
-													 if(this->MessageDataSize > this->BufferChunkSize) return;
-
 	std::memcpy(this->PtrMessageBegin,DataSourceBuffer, this->MessageDataSize); this->MessageNumber++;
 				this->PtrMessageBegin += this->BufferChunkSize; 
 
 								this->RangeLimits.LastMessage = this->PtrMessageBegin; 
-	if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) //RESET TO BEGIN
+	if(this->PtrMessageBegin == this->RangeLimits.EndMessageBuffer) //RESET TO BEGIN
 		this->PtrMessageBegin  = this->PtrBufferBegin; 
 	}
     //===============================================================================================
@@ -243,7 +247,7 @@ public:
 	};
 
 public:
-	void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived);
+	void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived);
 
     MessageIteratorGeneric<H,IteratorMode::ChunkedContinous> operator++(int) { this->SwitchToNext(); return* this; };
 };
@@ -251,7 +255,7 @@ public:
 
     //===============================================================================================
 	template<typename H>
-	void MessageIteratorGeneric<H,IteratorMode::ChunkedContinous>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived)
+	void MessageIteratorGeneric<H,IteratorMode::ChunkedContinous>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)
 	{
 	auto& PtrMessage = this->PtrMessageBegin;
 	int MessageBytesAvailable = this->DataAvailable();
@@ -262,16 +266,16 @@ public:
 	if(BytesCountReceived <= sizeof(H))  
 	{ 
 		//qDebug() << "LOAD PART HEADER: " << BytesCountReceived;
-		std::memcpy(this->PtrDataend,DataSourceBuffer, BytesCountReceived); 
-					this->PtrDataend += BytesCountReceived; return;
+		std::memcpy(this->PtrDataEnd,DataSourceBuffer, BytesCountReceived); 
+					this->PtrDataEnd += BytesCountReceived; return;
 	}
 
 	if(MessageBytesAvailable < sizeof(H) && MessageBytesAvailable != 0) 
 	{
 		//qDebug() << "LOAD REMAIN FROM HEADER: " << sizeof(H) - MessageBytesAvailable;
 		BytesToLoad = (sizeof(H) - MessageBytesAvailable); 
-		std::memcpy(this->PtrDataend,DataSourceBuffer, BytesToLoad);
-					this->PtrDataend += BytesToLoad; 
+		std::memcpy(this->PtrDataEnd,DataSourceBuffer, BytesToLoad);
+					this->PtrDataEnd += BytesToLoad; 
 
 					DataSourceBuffer += BytesToLoad;
 					BytesCountReceived -= BytesToLoad;
@@ -288,31 +292,31 @@ public:
 		this->MessageNumber++;                                
 									this->PtrMessageBegin += this->BufferChunkSize;
 	this->RangeLimits.LastMessage = this->PtrMessageBegin;
-				 this->PtrDataend = this->PtrMessageBegin; return;
+				 this->PtrDataEnd = this->PtrMessageBegin; return;
 	}
 
 	//qDebug() << "WAIT MESSAGE SIZE: " << this->MessageSize(DataSourceBuffer) << this->MessageSize(PtrMessage);
 	if(BytesToLoad > BytesCountReceived ) 
 	{ 
 		//qDebug() << "LOAD PART MESSAGE: " << BytesCountReceived;
-		std::memcpy(this->PtrDataend,DataSourceBuffer, BytesCountReceived); 
-					this->PtrDataend += BytesCountReceived; 
+		std::memcpy(this->PtrDataEnd,DataSourceBuffer, BytesCountReceived); 
+					this->PtrDataEnd += BytesCountReceived; 
 					return; //WE DIDNT GET FULL MESSAGE HERE
 	}
 
 	if(BytesToLoad <= BytesCountReceived)
 	{
 		//qDebug() << "LOAD FULL MESSAGE: " << BytesToLoad;
-		std::memcpy(this->PtrDataend,DataSourceBuffer, BytesToLoad); 
+		std::memcpy(this->PtrDataEnd,DataSourceBuffer, BytesToLoad); 
 
 		this->MessageNumber++;                                
 		qDebug() << "LOAD FULL MESSAGE: " << this->MessageNumber;
 									this->PtrMessageBegin += this->BufferChunkSize;
 	this->RangeLimits.LastMessage = this->PtrMessageBegin;
-				 this->PtrDataend = this->PtrMessageBegin;
+				 this->PtrDataEnd = this->PtrMessageBegin;
 	}
 
-	if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) //RESET TO BEGIN
+	if(this->PtrMessageBegin == this->RangeLimits.EndMessageBuffer) //RESET TO BEGIN
 	{
         qDebug() << "RESET TO BEGIN";
 		this->PtrMessageBegin  = this->PtrBufferBegin; 
@@ -335,26 +339,26 @@ public:
 	};
 
 public:
-	void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived);
+	void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived) override;
 
     MessageIteratorGeneric<H,IteratorMode::Continous> operator++(int); 
 protected:
 
     void MoveDataToBegin();
-	bool IsMemoryatEnd();
+	bool IsMemoryAtEnd();
 	int MemoryAvailable();
 	int DataAvailable();
 	uint8_t* PtrMessageBeginPrevious; 
 };
 
-    template<typename H> bool MessageIteratorGeneric<H,IteratorMode::Continous>::IsMemoryatEnd() 
-	{ return (this->PtrBufferend - this->PtrMessageBegin) < 2*this->BufferChunkSize; }
+    template<typename H> bool MessageIteratorGeneric<H,IteratorMode::Continous>::IsMemoryAtEnd() 
+	{ return (this->PtrBufferEnd - this->PtrMessageBegin) < 2*this->BufferChunkSize; }
 
     template<typename H> int MessageIteratorGeneric<H,IteratorMode::Continous>::MemoryAvailable()
-	{ return (this->PtrBufferend - this->PtrMessageBegin) - 2*this->BufferChunkSize; }
+	{ return (this->PtrBufferEnd - this->PtrMessageBegin) - 2*this->BufferChunkSize; }
 
     template<typename H> int MessageIteratorGeneric<H,IteratorMode::Continous>::DataAvailable()  
-	{ return std::abs(this->PtrDataend - this->PtrMessageBegin); }
+	{ return std::abs(this->PtrDataEnd - this->PtrMessageBegin); }
 
     template<typename H>
     MessageIteratorGeneric<H,IteratorMode::Continous> MessageIteratorGeneric<H, IteratorMode::Continous>::operator++(int) 
@@ -365,7 +369,7 @@ protected:
     
         this->MessageNumber++;
         this->PtrMessageBegin += sizeof(H) + Header.DATA_SIZE; 
-     if(this->PtrMessageBegin == this->RangeLimits.endMessageBuffer) 
+     if(this->PtrMessageBegin == this->RangeLimits.EndMessageBuffer) 
         this->PtrMessageBegin =  this->PtrBufferBegin; 
     
      return* this;
@@ -375,16 +379,16 @@ protected:
     void MessageIteratorGeneric<H,IteratorMode::Continous>::MoveDataToBegin()
     {
     	                                               uint8_t DataRemain = this->DataAvailable();
-    	            this->PtrDataend = this->PtrBufferBegin  + DataRemain;
+    	            this->PtrDataEnd = this->PtrBufferBegin  + DataRemain;
     	std::memcpy(this->PtrBufferBegin,this->PtrMessageBegin,DataRemain); 
     	            this->PtrMessageBegin = this->PtrBufferBegin;
     }
 
     //===============================================================================================
 	template<typename H>
-	void MessageIteratorGeneric<H,IteratorMode::Continous>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived)
+	void MessageIteratorGeneric<H,IteratorMode::Continous>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)
 	{
-	std::memcpy(this->PtrDataend,DataSourceBuffer,BytesCountReceived); this->PtrDataend += BytesCountReceived;
+	std::memcpy(this->PtrDataEnd,DataSourceBuffer,BytesCountReceived); this->PtrDataEnd += BytesCountReceived;
 
 		while(DataAvailable() >=this->MessageSize())
 			{
@@ -394,9 +398,9 @@ protected:
 				this->PtrMessageBegin += this->MessageSize(); this->RangeLimits.LastMessage = this->PtrMessageBegin;
 				this->MessageNumber++;
 
-				if(IsMemoryatEnd()) 
+				if(IsMemoryAtEnd()) 
 				{
-					this->RangeLimits.endMessageBuffer = this->PtrMessageBegin;
+					this->RangeLimits.EndMessageBuffer = this->PtrMessageBegin;
 					MoveDataToBegin();
 				} 
 				if(DataAvailable() < sizeof(H)) return;
@@ -405,5 +409,5 @@ protected:
 	}
 //====================================================================================================
 
-#endif //MESSAGE_ITERATOR_GENERIC_H
+#endif //MessageIteratorGeneric_H
 

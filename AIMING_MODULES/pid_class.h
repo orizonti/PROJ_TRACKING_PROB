@@ -8,7 +8,7 @@
 #include <QTime>
 
 
-class PIDClass : public PassCoordClass<double>
+class PIDClass : public PassCoordClass<float>
 {
 public:
 	PIDClass();
@@ -16,24 +16,24 @@ public:
 
 	StateEnumBlock StateBlock = StateEnumBlock::StateBlockDisabled;
 	
-	QPair<double, double> CalcVelocityToengine(QPair<double, double> CoordError);
-	QPair<double, double> CalcStep(QPair<double, double> CoordError);
-	const QPair<double, double>& GetOutput();
-	QPair<double, double> GetLastCoordError() { return this->CoordAimingError;};
+	QPair<float,float> CalcVelocityToengine(QPair<float,float> CoordError);
+	QPair<float,float> CalcStep(QPair<float,float> CoordError);
+	const QPair<float,float>& getOutput();
+	QPair<float,float> GetLastCoordError() { return this->CoordAimingError;};
 	void ResetPID();
-	void SetInput(const QPair<double,double>& Coord);
+	void setInput(const QPair<float,float>& Coord);
 	void SetPIDParam(PIDParamStruct Param);
 	void SetFrameRate(double Rate);
 	double StepPeriodThreshold = 0.01;
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> TimeFromLastCommand;
 	PIDParamStruct PIDParam;
-	QPair<double, double> ErrorsSumm;
+	QPair<float,float> ErrorsSumm;
 private:
     //double MaxAccelAxis1 = 20*4.84/1000000;
     //double MaxAccelAxis2 = 20*4.84/1000000;
-	QPair<double, double> PIDControlOutput;
-	QPair<double, double> CoordAimingError;
+	QPair<float,float> PIDControlOutput;
+	QPair<float,float> CoordAimingError;
     //QTime timeAiming;
 };
 #endif //PIDCLASS_H

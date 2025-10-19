@@ -104,7 +104,7 @@ cv::Rect ContoursProcessorClass::GetMaxContourRect()
   return ContourRects[NumberMaxContour];
 }
 
-QPair<double,double> ContoursProcessorClass::GetCentroid(const cv::Mat& Image)
+QPair<float,float> ContoursProcessorClass::GetCentroid(const cv::Mat& Image)
 {
 		double sum_x = 0.0, sum_y = 0.0, sum = 0.0;
 
@@ -119,7 +119,7 @@ QPair<double,double> ContoursProcessorClass::GetCentroid(const cv::Mat& Image)
 			}
 		}
 
-    return QPair<double,double>(sum_x/sum,sum_y/sum);
+    return QPair<float,float>(sum_x/sum,sum_y/sum);
 }
 
 void ContoursProcessorClass::CalcContoursStatistic()

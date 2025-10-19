@@ -30,7 +30,7 @@ SinusGeneratorClass::~SinusGeneratorClass()
 {
 }
 
-void SinusGeneratorClass::SetInput(const QPair<double,double>& Coord) { }
+void SinusGeneratorClass::setInput(const QPair<float,float>& Coord) { }
 void SinusGeneratorClass::SlotSetFrequency(double Freq1, double Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360/Freq1;}
 void SinusGeneratorClass::SlotSetAmplitude(double Ampl1, double Ampl2) { Amplitude.first = Ampl1*60*5; 
                                                                          Amplitude.second = Ampl2*60*5; }
@@ -59,7 +59,7 @@ void SinusGeneratorClass::SlotCalculateValue()
     //if(BlockOutput1) CurrentOutput.first  = 0;
     //if(BlockOutput2) CurrentOutput.second = 0;
 
-    PassCoordClass<double>::PassCoord();
+    PassCoordClass<float>::passCoord();
 
     if(FLAG_ENABLE_NOIZE)
     {

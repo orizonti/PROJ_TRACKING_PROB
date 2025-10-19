@@ -7,7 +7,7 @@
 #include "widget_adjustable.h"
 
 
-class PlotGraphicsInterface : public QObject, public PassCoordClass<double>
+class PlotGraphicsInterface : public QObject, public PassCoordClass<float>
 {
 	Q_OBJECT
 public:
@@ -35,10 +35,10 @@ public:
 
     void SetTimeScale(double StepMilli, double LimitMilli) { TimePos = 0; TimeStep = StepMilli; TimeLimit = LimitMilli; }
 
-  friend void operator>>(QPair<double,double> Point, PlotGraphicsInterface& Graph); 
+  friend void operator>>(QPair<float,float> Point, PlotGraphicsInterface& Graph); 
   void DisplayPair(double pos,double pos2);
 
-	void SetInput(const QPair<double, double>& Coord) 
+	void setInput(const QPair<float,float>& Coord) 
   {
     OutputCoord = Coord;
     DisplayPair(Coord.first, Coord.second);
@@ -58,7 +58,7 @@ public:
 
 public slots:
 
-  void SlotDisplayCoord(QPair<double,double> Point);
+  void SlotDisplayCoord(QPair<float,float> Point);
 
   void SlotDisplayTimeSeries();
   void SlotDisplayTimePairSeries();
@@ -161,7 +161,7 @@ void PlotGraphicsInterface::DisplaySeriesPairGeneric(const std::vector<INPUT_TYP
 }
 
 
-class WidgetGraphisPlot : public WidgetAdjustable, public PassCoordClass<double> 
+class WidgetGraphisPlot : public WidgetAdjustable, public PassCoordClass<float> 
 {
 	Q_OBJECT
 

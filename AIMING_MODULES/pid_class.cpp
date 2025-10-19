@@ -4,24 +4,24 @@
 
 PIDClass::PIDClass()
 {
-	this->CoordAimingError = QPair<double, double>(-10000, -10000);
+	this->CoordAimingError = QPair<float,float>(-10000, -10000);
 	this->StateBlock = StateBlockAtWork;
-	this->ErrorsSumm = QPair<double, double>(0, 0);
+	this->ErrorsSumm = QPair<float,float>(0, 0);
 
 	TimeFromLastCommand = std::chrono::high_resolution_clock::now();
-	PIDControlOutput = QPair<double, double>(0, 0);
+	PIDControlOutput = QPair<float,float>(0, 0);
 }
 PIDClass::~PIDClass() { }
 
 
 void PIDClass::ResetPID()
 {
-	this->ErrorsSumm = QPair<double, double>(0, 0);
-    this->PIDControlOutput = QPair<double, double>(0, 0);
-    this->CoordAimingError = QPair<double, double>(0, 0);
+	this->ErrorsSumm = QPair<float,float>(0, 0);
+    this->PIDControlOutput = QPair<float,float>(0, 0);
+    this->CoordAimingError = QPair<float,float>(0, 0);
 }
 
-QPair<double, double> PIDClass::CalcVelocityToengine(QPair<double, double> CoordError)
+QPair<float,float> PIDClass::CalcVelocityToengine(QPair<float,float> CoordError)
 {
 
 	if(CoordError.first == CoordAimingError.first && CoordError.second == CoordAimingError.second) return  this->PIDControlOutput;
@@ -52,14 +52,14 @@ QPair<double, double> PIDClass::CalcVelocityToengine(QPair<double, double> Coord
 
 }
 
-void PIDClass::SetInput(const QPair<double,double>& Coord)
+void PIDClass::setInput(const QPair<float,float>& Coord)
 {
 	auto CoordNew = Coord;
 	CoordNew.second = Coord.first; CoordNew.first = Coord.second; 
 	this->CalcVelocityToengine(CoordNew);
 }
 
-const QPair<double, double>& PIDClass::GetOutput()                 { return PIDControlOutput; }
+const QPair<float,float>& PIDClass::getOutput()                 { return PIDControlOutput; }
                  void PIDClass::SetPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->ResetPID(); }
                  void PIDClass::SetFrameRate(double Rate)         { StepPeriodThreshold = 2.0/Rate; }
 

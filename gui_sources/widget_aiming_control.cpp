@@ -48,12 +48,12 @@ void WidgetAimingControl::LinkToModule(std::shared_ptr<AimingClass> Module)
 				if (checked)
 				{
               		ui.checkWorkBlock->setText(QString::fromLocal8Bit("Работа"));
-					Module->SetBlockEnabled(true);
+					Module->SetModuleEnabled(true);
 				}
 				else
 				{
               		ui.checkWorkBlock->setText(QString::fromLocal8Bit("Отключено"));
-					Module->SetBlockEnabled(false);
+					Module->SetModuleEnabled(false);
 				}
 			});
 
@@ -97,7 +97,7 @@ void WidgetAimingControl::LinkToModule(std::shared_ptr<AimingClass> Module)
             Module->SetGain(0,ui.spinGain1->value());
             Module->SetGain(1,ui.spinGain2->value());
             auto values = ui.linePosCorrection->text().split(":");
-            Module->SetAimingCorrection(QPair<double,double>(values[0].toInt(), values[1].toInt()));
+            Module->SetAimingCorrection(QPair<float,float>(values[0].toInt(), values[1].toInt()));
         });
 
         connect(ui.butReset, &QPushButton::clicked,

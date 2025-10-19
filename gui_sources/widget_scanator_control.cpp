@@ -23,11 +23,11 @@ void WidgetScanatorControl::LinkToDevice(std::shared_ptr<ScanatorControlClass> E
 	ButtonsMoveLine.append(ui->butMoveDown);
 	ButtonsMoveLine.append(ui->butMoveUp);
 	
-	QVector<QPair<double,double>> StepVectors;
-    StepVectors.append(QPair<double,double>(-5,0 ));
-    StepVectors.append(QPair<double,double>( 5,0 ));
-    StepVectors.append(QPair<double,double>( 0,5));
-    StepVectors.append(QPair<double,double>( 0,-5));
+	QVector<QPair<float,float>> StepVectors;
+    StepVectors.append(QPair<float,float>(-5,0 ));
+    StepVectors.append(QPair<float,float>( 5,0 ));
+    StepVectors.append(QPair<float,float>( 0,5));
+    StepVectors.append(QPair<float,float>( 0,-5));
 
 	for (int n = 1; n <= 4; n++)
 	{

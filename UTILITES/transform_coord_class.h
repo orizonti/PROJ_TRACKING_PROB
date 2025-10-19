@@ -6,7 +6,7 @@
 #include <functional>
 
 
-class  TransformCoordClass : public PassCoordClass<double>
+class  TransformCoordClass : public PassCoordClass<float>
 {
 public:
     TransformCoordClass() {};
@@ -14,12 +14,12 @@ public:
 	{
 		SetParam(ScaleParam, OffsetParam, Saturation);
 	}
-	std::function<void(QPair<double,double>)> TransformCoord;
+	std::function<void(QPair<float,float>)> TransformCoord;
 
-    const QPair<double, double>& GetOutput() { return Output; }
-    void SetInput(const QPair<double,double>& Coord) { TransformCoord(Coord); }
+    const QPair<float,float>& getOutput() { return Output; }
+    void setInput(const QPair<float,float>& Coord) { TransformCoord(Coord); }
 
-	QPair<double, double> Output;
+	QPair<float,float> Output;
 
 	double Scale = 1;
 	double Offset = 0;
@@ -29,7 +29,7 @@ public:
 	{
 	Scale = ScaleParam;
 	Offset = OffsetParam;
-	TransformCoord = [this](QPair<double,double> CoordError)
+	TransformCoord = [this](QPair<float,float> CoordError)
 	{
 		Output.first = CoordError.first * Scale  + Offset;  
 		Output.second = CoordError.second * Scale + Offset; 

@@ -1,80 +1,41 @@
-#ifndef MESSAGE_STRUCT_ENGINE_H
-#define MESSAGE_STRUCT_ENGINE_H
+#ifndef MessageGeneric_H
+#define MessageGeneric_H
 
 #include <QDataStream>
 #include <QIODevice>
 
 #include <algorithm>
 #include <set>
-#include "message_command_structures.h"
 #include "engine_type_register.h"
 
-//==========================================================
-
-
 template<typename T, typename H>
-class MessageStructGeneric
+class MessageGeneric
 {
   public:
-    MessageStructGeneric();
+    MessageGeneric();
 	public:
     H HEADER;
     T DATA; 
 
   public:
 
-  friend void operator>>(QDataStream& stream, MessageStructGeneric<T,H>& Message);
-  friend void operator<<(QDataStream& stream, MessageStructGeneric<T,H>& Message);
-  //template<typename M, typename P> friend void operator<<(QDataStream& stream, MessageStructGeneric<M,P>& Message);
-  QByteArray toByteArray();
-     QString toString();
 	      bool isMessasge() { return (HEADER.isValid()); };
-         int GetSize()    { return this->toByteArray().size(); };
+         int GetSize()    { return HEADER.DATA_SIZE + sizeof(H);};
          int GetSizeFromHeader(){ return HEADER.DATA_SIZE + sizeof(H);};
   static int GetSizeStatic() {return sizeof(T) + sizeof(uint8_t) + sizeof(H);};
 
-         MessageStructGeneric<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageStructGeneric<void*,H>*>(this);  }
+  MessageGeneric<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageGeneric<void*,H>*>(this);  }
 
 };
 
 template<typename T,typename H> 
-MessageStructGeneric<T,H>::MessageStructGeneric()
+MessageGeneric<T,H>::MessageGeneric()
 { 
   HEADER.DATA_SIZE = sizeof(T);
   HEADER.MESSAGE_IDENT = TypeRegister<T>::GetTypeID();
-  qDebug() << "CREATE MESSAGE: " << HEADER.MESSAGE_IDENT << "SIZE: " << HEADER.DATA_SIZE;
 };
 
 
-template<typename T,typename H> QString MessageStructGeneric<T,H>::toString() { return QString("VAL: %1").arg(DATA); }
-template<typename T, typename H>
-QByteArray MessageStructGeneric<T,H>::toByteArray()
-{
-QByteArray  RawData;
-QDataStream out_stream(&RawData, QIODevice::ReadWrite);
-            out_stream.setByteOrder(QDataStream::LittleEndian);
-            out_stream.setFloatingPointPrecision(QDataStream::SinglePrecision);
-out_stream << this->HEADER;
-out_stream.writeRawData(reinterpret_cast<char*>(&DATA), sizeof(T));
-return RawData;
-};
+//==========================================================
 
-
-
-template<typename T, typename H>
-void operator>>(QDataStream& stream, MessageStructGeneric<T,H>& Message)
-{
-  //const std::type_info& ti = typeid(T);
-  //qDebug() << "COMMAND REC: " << ti.name();
-  stream >> Message.HEADER; 
-  stream.readRawData(reinterpret_cast<char*>(&Message.DATA), sizeof(Message.DATA));
-}
-
-template<typename M, typename H> void operator<<(QDataStream& stream, MessageStructGeneric<M,H>& Message)
-{
-  stream << Message.HEADER; 
-  stream.writeRawData(reinterpret_cast<char*>(&Message.DATA), sizeof(Message.DATA));
-}
-
-
-#endif // MESSAGE_STRUCT_enGINE_H
+#endif // MessageGeneric_H

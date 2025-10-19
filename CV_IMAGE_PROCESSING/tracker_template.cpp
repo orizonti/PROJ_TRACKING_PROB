@@ -18,8 +18,8 @@ void ImageTrackerTemplate::SlotProcessImage()
                              FrameMeasureInput++;
                              FrameMeasureProcess++;
   MutexImageAccess.lock();
-                    ImageInput = SourceImage->GetImageToProcess().clone(); 
-                              if(SourceImage->GetAvailableFrames() > 2) SkipFrames();
+                    ImageInput = SourceImage->getImageToProcess().clone(); 
+                              if(SourceImage->getAvailableFrames() > 2) skipFrames();
   MutexImageAccess.unlock();
   ImageProcessing = ImageInput;
   FrameMeasureProcess++;
@@ -33,7 +33,7 @@ void ImageTrackerTemplate::SlotProcessImage()
 void ImageTrackerTemplate::FindObject()
 {
   ImageFinder.SlotProcessImage(ImageProcessing);
-  CoordsObject[0] = ImageFinder.GetOutput();
+  CoordsObject[0] = ImageFinder.getOutput();
   CoordsObject[0] >> TrackHoldDetector;
 
   RectsObject[0] = cv::Rect(CoordsObject[0].first , 
@@ -64,7 +64,7 @@ void ImageTrackerTemplate::ProcessInput()
                                        << CoordsObject[0].second << FrameMeasureProcess.printPeriod() << info;
                                        //<< "IS TRACK HOLD" << NodeTracker.isTrackHold();
 
-  emit ImageSourceInterface::SignalNewImage(); PassCoord(); 
+  emit ImageSourceInterface::signalNewImage(); passCoord(); 
 
 }
 

@@ -6,19 +6,19 @@
 
 
 class SinusGeneratorClass :
-	public QObject, public PassCoordClass<double>
+	public QObject, public PassCoordClass<float>
 {
 	Q_OBJECT
 public:
 	SinusGeneratorClass(QObject* Obj = 0);
 	~SinusGeneratorClass();
 
-	QString TAG_NAME{"[ SIN_GEN ]"};
+	std::string TAG_NAME{"[ SIN_GEN ]"};
 
 	void DisplayControlWindow();
 	void DisplayControlWindow(QGraphicsScene* Scene);
-	PassCoordClass<double>* LinkedReceiver = 0;
-	void LinkToDevice(PassCoordClass<double>& Receiver) { LinkedReceiver = &Receiver;}
+	PassCoordClass<float>* LinkedReceiver = 0;
+	void LinkToDevice(PassCoordClass<float>& Receiver) { LinkedReceiver = &Receiver;}
 	void SetTimerPeriod(int Period) { TimerPeriod = Period;};
 	void MoveGeneratorToThread(QThread* Thread);
 
@@ -32,21 +32,21 @@ public:
 	bool BlockOutput2 = false;
 
     int Offset = 0;
-	QPair<double, double> CurrentOutput;
+	QPair<float,float> CurrentOutput;
 
-	QPair<double, double> Amplitude = QPair<double,double>(60*60,60*60);
-	//QPair<double, double> Amplitude = QPair<double,double>(3000,3000);
+	QPair<float,float> Amplitude = QPair<float,float>(60*60,60*60);
+	//QPair<float,float> Amplitude = QPair<float,float>(3000,3000);
 
-	QPair<double, double> Freq = QPair<double,double>(1,1);
-    QPair<double, double> Noize = QPair<double,double>(0,0);
+	QPair<float,float> Freq = QPair<float,float>(1,1);
+    QPair<float,float> Noize = QPair<float,float>(0,0);
                    double AmplitudeNoize = 3;
 
     bool FLAG_ENABLE_NOIZE = false;
 
 	QTimer TimerGenerateSinus;
 
-	void SetInput(const QPair<double,double>& Coord);
-	const QPair<double,double>& GetOutput() { return CurrentOutput;};
+	void setInput(const QPair<float,float>& Coord);
+	const QPair<float,float>& getOutput() { return CurrentOutput;};
 
 	public slots:
 	void SlotSetFrequency(double Freq1, double Freq2);

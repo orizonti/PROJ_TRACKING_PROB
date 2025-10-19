@@ -96,9 +96,9 @@ void CameraInterfaceAravis::PutNewFrameToStorage(ArvBuffer* buffer)
 			//			                    TimePoint = TimePointNew;
 			//Counter++; if(Counter % 50 == 0) qDebug() << " CAMERA PERIOD: " << Duration.count();
 
-			emit SignalNewImage(); 
+			emit signalNewImage(); 
 
-			//if(NumberFrameToProcess > 3) SkipFrames();
+			//if(NumberFrameToProcess > 3) skipFrames();
 
 }
 
@@ -109,18 +109,18 @@ void CameraInterfaceAravis::SetFrequency(int Frequency)
 	//qDebug() << TAG_NAME << "FREQUENCY: " << Frequency << "BASE: " << BaseFrequency << "DEVIDER: " << FrequencyDevider;
 };
 
-QImage& CameraInterfaceAravis::GetImageToDisplay() 
+QImage& CameraInterfaceAravis::getImageToDisplay() 
 { 
 	return ImageToDisplay; 
 }
 
-cv::Mat& CameraInterfaceAravis::GetImageToProcess()                  {SwitchToNextFrame(); return ImageToProcess; }
-void     CameraInterfaceAravis::GetImageToProcess(cv::Mat& ImageDst) {SwitchToNextFrame(); ImageDst = ImageToProcess.clone(); };
+cv::Mat& CameraInterfaceAravis::getImageToProcess()                  {switchToNextFrame(); return ImageToProcess; }
+void     CameraInterfaceAravis::getImageToProcess(cv::Mat& ImageDst) {switchToNextFrame(); ImageDst = ImageToProcess.clone(); };
 
-//cv::Mat& CameraInterfaceAravis::GetImageToProcess()                  {    return ImageToProcess; }
-//void     CameraInterfaceAravis::GetImageToProcess(cv::Mat& ImageDst) {ImageDst = ImageToProcess.clone(); };
+//cv::Mat& CameraInterfaceAravis::getImageToProcess()                  {    return ImageToProcess; }
+//void     CameraInterfaceAravis::getImageToProcess(cv::Mat& ImageDst) {ImageDst = ImageToProcess.clone(); };
 
-bool CameraInterfaceAravis::SwitchToNextFrame() 
+bool CameraInterfaceAravis::switchToNextFrame() 
 {
 	if(NumberFrameToProcess <= 0 || BufferToRead == BufferToWrite) return false;
 
@@ -131,7 +131,7 @@ bool CameraInterfaceAravis::SwitchToNextFrame()
 	return true;
 }
 
-void CameraInterfaceAravis::SkipFrames()
+void CameraInterfaceAravis::skipFrames()
 {
 	qDebug() << TAG_NAME << "SKIP FRAMES: " << NumberFrameToProcess;
 	while(NumberFrameToProcess != 0)
@@ -245,15 +245,16 @@ void CameraInterfaceAravis::DeinitCamera()
 
 }
 
-void CameraInterfaceAravis::StartCameraStream ()
+void CameraInterfaceAravis::StartCameraStream (bool OnOff)
 {
-    qDebug() << TAG_NAME << "START CAMERA STREAM";
+	if(OnOff)
+	{
        FLAG_CAMERA_WORK = true;
     if(FLAG_CAMERA_CONNECTED) arv_camera_start_acquisition (camera, &error);
-}
-
-void CameraInterfaceAravis::StopCameraStream()
-{
+	}
+	else 
+	{
+	
     if(!FLAG_CAMERA_CONNECTED) return;
     if(!FLAG_CAMERA_WORK     ) return;
 
@@ -261,7 +262,7 @@ void CameraInterfaceAravis::StopCameraStream()
     arv_camera_stop_acquisition (camera, &error);
 
     FLAG_CAMERA_WORK = false;
-
+	}
 }
 
 void CameraInterfaceAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
@@ -273,14 +274,9 @@ void CameraInterfaceAravis::SetCameraRegion(int x, int y, int width, int height 
 	GetCurrentCameraRegion();
 }
 
-void CameraInterfaceAravis::SetCameraRegion(std::pair<int,int> Pos, std::pair<int,int> Size)
-{
-   SetCameraRegion(Pos.first, Pos.second, Size.first, Size.second);
-}
-
 void CameraInterfaceAravis::GetCurrentCameraRegion() { arv_camera_get_region (camera, &ImagePos.first, &ImagePos.second, &SizeImage.first, &SizeImage.second, NULL); }
 
-std::vector<QPair<int,int>>& CameraInterfaceAravis::GetPoints()  
+std::vector<QPair<int,int>>& CameraInterfaceAravis::getPoints()  
 {
 		if(CameraPoints.empty()) CameraPoints.resize(2);
 		   CameraPoints[0].first  = ImagePos.first; 
@@ -289,13 +285,13 @@ std::vector<QPair<int,int>>& CameraInterfaceAravis::GetPoints()
 	return CameraPoints;
 }
 
-std::vector<QRect>& CameraInterfaceAravis::GetRects()  
+std::vector<QRect>& CameraInterfaceAravis::getRects()  
 {
      CameraRects[0].setRect(ImagePos.first ,ImagePos.second, SizeImage.first,SizeImage.second); 
      CameraRects[1] = CameraRects[0]; 
 	return CameraRects;
 }
-QString& CameraInterfaceAravis::GetInfo()  { return CAMERA_INFO; }
+QString& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }
 
 			//if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) 
 			//{
@@ -303,3 +299,8 @@ QString& CameraInterfaceAravis::GetInfo()  { return CAMERA_INFO; }
 			//return;
 			//}
 	        //buffer = arv_stream_pop_buffer(callback_data.stream);
+
+void CameraInterfaceAravis::SetZoom(int Number) 
+{
+
+}

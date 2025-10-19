@@ -1,32 +1,32 @@
-#ifndef PassCoordClass<double>_H
-#define PassCoordClass<double>_H
+#ifndef PassCoordClass<float>_H
+#define PassCoordClass<float>_H
 
 #include <QPair>
 
 std::pair<double, double> operator+(const std::pair<double, double>& x, const std::pair<double, double>& y);
 std::pair<double, double> operator-(const std::pair<double, double>& x, const std::pair<double, double>& y);
-QPair<double, double> operator+(const QPair<double, double>& x, const QPair<double, double>& y);
-QPair<double, double> operator-(const QPair<double, double>& x, const QPair<double, double>& y);
-QPair<double, double> operator*(const QPair<double, double>& x, double Scale);
-QPair<double, double> operator+(const QPair<double, double>& x, double addition);
-//QPair<double, double> operator/(const QPair<double, double>& x, double Scale);
-void operator+=(QPair<double, double>& x, const QPair<double, double>& y);
-void operator-=(QPair<double, double>& x, const QPair<double, double>& y);
+QPair<float,float> operator+(const QPair<float,float>& x, const QPair<float,float>& y);
+QPair<float,float> operator-(const QPair<float,float>& x, const QPair<float,float>& y);
+QPair<float,float> operator*(const QPair<float,float>& x, double Scale);
+QPair<float,float> operator+(const QPair<float,float>& x, double addition);
+//QPair<float,float> operator/(const QPair<float,float>& x, double Scale);
+void operator+=(QPair<float,float>& x, const QPair<float,float>& y);
+void operator-=(QPair<float,float>& x, const QPair<float,float>& y);
 
 
-class PassCoordClass<double>
+class PassCoordClass<float>
 {
 public:
-	PassCoordClass<double>* Link = 0;
+	PassCoordClass<float>* Link = 0;
 
-	virtual const QPair<double, double>& GetOutput() = 0;
-	virtual void SetInput(const QPair<double,double>& Coord) = 0;
-	void SetLink(PassCoordClass<double>* NewLink);
+	virtual const QPair<float,float>& getOutput() = 0;
+	virtual void setInput(const QPair<float,float>& Coord) = 0;
+	void setLink(PassCoordClass<float>* NewLink);
 	
-	friend QPair<double,double>& operator >>(PassCoordClass<double>& Sender, QPair<double, double>& Coord);
-    friend PassCoordClass<double>& operator >>(PassCoordClass<double>& Sender, PassCoordClass<double>& Reciever);
-	friend PassCoordClass<double>& operator >>(QPair<double,double> Coord, PassCoordClass<double>& Reciever);
-	friend std::pair<double,double>& operator >>(PassCoordClass<double>& Sender, std::pair<double,double>& Coord);
-	friend PassCoordClass<double>& operator >>(std::pair<double, double> Coord, PassCoordClass<double>& Reciever);
+	friend QPair<float,float>& operator >>(PassCoordClass<float>& Sender, QPair<float,float>& Coord);
+    friend PassCoordClass<float>& operator >>(PassCoordClass<float>& Sender, PassCoordClass<float>& Reciever);
+	friend PassCoordClass<float>& operator >>(QPair<float,float> Coord, PassCoordClass<float>& Reciever);
+	friend std::pair<double,double>& operator >>(PassCoordClass<float>& Sender, std::pair<double,double>& Coord);
+	friend PassCoordClass<float>& operator >>(std::pair<double, double> Coord, PassCoordClass<float>& Reciever);
 };
-#endif //PassCoordClass<double>_H
+#endif //PassCoordClass<float>_H

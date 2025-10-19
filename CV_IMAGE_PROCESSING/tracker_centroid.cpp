@@ -3,6 +3,7 @@
 
 #include "glib.h"
 #include "gmodule.h"
+#include "image_processing_node.h"
 #include "interface_pass_coord.h"
 #include <memory>
 #include <opencv2/core.hpp>
@@ -17,14 +18,12 @@
 #include "tracker_centroid.h"
 
 #include "debug_output_filter.h"
+#include "state_block_enum.h"
 
 
 ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcessing(parent)
 {
   qRegisterMetaType<const cv::Mat&>();
-  //std::cout << cv::getBuildInformation() << std::endl;
-  QObject::connect(&timerDisplay,SIGNAL(timeout()),this, SLOT(SlotDisplayProcessingImage()));
-
 
     //==================================================================
     cv::Mat kernel1 = (cv::Mat_<double>(3,3) << 0, 0, 0, 
@@ -56,13 +55,10 @@ ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcess
                         cv::Size( 2*erosion_size + 1, 2*erosion_size+1 ),
                         cv::Point( erosion_size, erosion_size ) );
 
-
     FilterErosion = [element,this](cv::Mat& Image, cv::Mat& ImageOutput)
     { 
     erode( Image, ImageOutput, element );
     };
-    //==================================================================
-
 
     //==================================================================
 
@@ -89,14 +85,11 @@ ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcess
       for(auto& Node: NodesList) Node(Image);
       CalcCentroid(Image); 
     };
-    //==================================================================
-
-    qDebug() << TAG_NAME << "ROI SIZE: " << ROI_SIZE;
 }
 
 ImageTrackerCentroid::~ImageTrackerCentroid()
 {
- qDebug() << TAG_NAME << "[ DELETE ]";
+ qDebug() << TAG_NAME.c_str() << "[ DELETE ]";
 }
 
 bool ImageTrackerCentroid::CheckCentroid() 
@@ -157,7 +150,7 @@ bool ImageTrackerCentroid::CalcCentroid(cv::Mat& Image)
 }
 
 
-QPair<double,double> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
+QPair<float,float> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 {
 		double sum_x = 0.0, sum_y = 0.0, sum = 0.0;
 
@@ -172,7 +165,7 @@ QPair<double,double> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 			}
 		}
 
-    return QPair<double,double>(sum_x/sum,sum_y/sum);
+    return QPair<float,float>(sum_x/sum,sum_y/sum);
 }
 
 
@@ -220,7 +213,7 @@ void ImageTrackerCentroid::FindObjectCentroid(cv::Mat& Image)
   cv::medianBlur(Image,ImageInputTemp,7);
    cv::threshold(Image,Image,Threshold,256,cv::THRESH_BINARY);
 
-  FilterBlotch.FilterImage(Image, Image); 
+  //FilterBlotch.FilterImage(Image, Image); 
               CalcCentroid(Image); 
 
                              CoordsObject[0] >> StatisticCoord; 
@@ -237,19 +230,19 @@ void ImageTrackerCentroid::FindObjectCentroid(cv::Mat& Image)
                                            StatisticDispersion.GetAvarageValue() >> TrackingDetector(0.9);
 
    FLAG_TRACK_MODE = TrackingDetector.isSignal(); if(FLAG_TRACK_MODE) Threshold *= 1.1;
-                                                  if(FLAG_TRACK_MODE) SourceImage->SkipFrames();
+                                                  if(FLAG_TRACK_MODE) SourceImage->skipFrames();
                                                   if(FLAG_TRACK_MODE) this->SetHighFrequencyProcessing();
    //qDebug() << Filter3 << "THRESHOLD"
 }
 
 void ImageTrackerCentroid::SlotProcessImage()
 {
-            if( SourceImage == nullptr) return;
-            if(!SourceImage->isFrameAvailable()) return;
+          if(  SourceImage == nullptr || 
+              !SourceImage->isFrameAvailable()) return;
                                                                     FrameMeasureInput++;
   MutexImageAccess.lock();
-  ImageInput = SourceImage->GetImageToProcess().clone(); 
-            if(SourceImage->GetAvailableFrames() > 2) SourceImage->SkipFrames();
+  ImageInput = SourceImage->getImageToProcess().clone(); 
+            if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
   ImageProcessing = ImageInput;
 
                                                                     FrameMeasureProcess++; 
@@ -263,9 +256,9 @@ void ImageTrackerCentroid::SlotProcessImage()
 
   MutexImageAccess.unlock();
 
-  emit ImageSourceInterface::SignalNewImage();
+  emit ImageSourceInterface::signalNewImage();
 
-  if(FLAG_OBJECT_HOLD ) PassCoord(); 
+  if(FLAG_OBJECT_HOLD ) passCoord(); 
 
 
 }
@@ -301,11 +294,7 @@ void ImageTrackerCentroid::CalcThreshold()
 ImageTrackerCentroidGPU::ImageTrackerCentroidGPU(QObject* parent) : ImageTrackerCentroid(parent)
 {
   qRegisterMetaType<const cv::Mat&>();
-  QObject::connect(&timerDisplay,SIGNAL(timeout()),this, SLOT(SlotDisplayProcessingImage()));
-
   info = "GPU";
-
-
     //==================================================================
     //
     cv::Mat TempMat = (cv::Mat_<double>(3,3) << 0, 0, 0, 
@@ -393,7 +382,7 @@ void ImageTrackerCentroidGPU::FindObjectCentroidGPU(cv::Mat& Image)
 
        FLAG_TRACK_MODE = TrackHoldDetector.isTrackHold(); 
     if(FLAG_TRACK_MODE) Threshold *= 1.1;
-    if(FLAG_TRACK_MODE) SourceImage->SkipFrames();
+    if(FLAG_TRACK_MODE) SourceImage->skipFrames();
     if(FLAG_TRACK_MODE) this->SetHighFrequencyProcessing();
 
 }
@@ -443,8 +432,8 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
                              if(!SourceImage->isFrameAvailable()) return;
                              FrameMeasureInput++;
   MutexImageAccess.lock();
-                    ImageInput = SourceImage->GetImageToProcess().clone(); 
-                              if(SourceImage->GetAvailableFrames() > 2) SourceImage->SkipFrames();
+                    ImageInput = SourceImage->getImageToProcess().clone(); 
+                              if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
   MutexImageAccess.unlock();
   ImageProcessing = ImageInput;
 
@@ -457,15 +446,15 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
   qDebug() << OutputFilter::Filter(30) << FrameMeasureProcess.printPeriod() << info;
 
 
-  emit ImageSourceInterface::SignalNewImage();
+  emit ImageSourceInterface::signalNewImage();
 
-  if(FLAG_OBJECT_HOLD ) PassCoord(); 
+  if(FLAG_OBJECT_HOLD ) passCoord(); 
 
 }
 
 ImageTrackerCentroidGPU::~ImageTrackerCentroidGPU()
 {
- qDebug() << TAG_NAME << "[ DELETE ]" << info;
+ qDebug() << TAG_NAME.c_str() << "[ DELETE ]" << info;
 }
 
 //==============================================================================================

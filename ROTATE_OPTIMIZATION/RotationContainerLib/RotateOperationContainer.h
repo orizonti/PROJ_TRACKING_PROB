@@ -20,23 +20,23 @@ class TestDataVectorsContainer
 {
 public:
 	TestDataVectorsContainer();
-	vector<QPair<double,double>> TestCoordVectorInput;
-	QPair<double, double> GetTestCoord();
-	std::vector<QPair<double, double>>::iterator CurrentTestCoord;
+	vector<QPair<float,float>> TestCoordVectorInput;
+	QPair<float,float> GetTestCoord();
+	std::vector<QPair<float,float>>::iterator CurrentTestCoord;
 	void reset();
 };
 
 
-class AccumulateDataFilter : public PassCoordClass<double>
+class AccumulateDataFilter : public PassCoordClass<float>
 {
 public:
 	AccumulateDataFilter();
-	void SetInput(const QPair<double,double>& Coord) override;
-	const QPair<double, double>& GetOutput() override;
+	void setInput(const QPair<float,float>& Coord) override;
+	const QPair<float,float>& getOutput() override;
 	std::pair<double,double> GetFirstOutput();
 	std::pair<double,double> GetSecondOutput();
-	void WaitCoord(QPair<double,double> coord);
-	bool CheckCoordMatch(QPair<double, double> Coord,QPair<double,double> AimCoord);
+	void WaitCoord(QPair<float,float> coord);
+	bool CheckCoordMatch(QPair<float,float> Coord,QPair<float,float> AimCoord);
 	void reset();
 
 	bool flag_filter_open = false;
@@ -45,18 +45,18 @@ public:
 	int channel_counter = 1;
 	int pass_counter = 0;
 
-	QPair<double,double> ZeroCoord = QPair<double,double>(0,0);
-    QPair<double,double> InputCoord;
-	QPair<double,double>  LastInputFirst;
-	QPair<double,double>  WaitInputCoord;
+	QPair<float,float> ZeroCoord = QPair<float,float>(0,0);
+  QPair<float,float> InputCoord;
+	QPair<float,float> LastInputFirst;
+	QPair<float,float> WaitInputCoord;
 
-	QPair<double,double> AvarageOutputFirst;
-	QPair<double,double> AvarageOutputSecond;
-	QPair<double,double> OutputFirstCenter = QPair<double,double>(0,0);
-	QPair<double,double> OutputSecondCenter = QPair<double,double>(0,0);
+	QPair<float,float> AvarageOutputFirst;
+	QPair<float,float> AvarageOutputSecond;
+	QPair<float,float> OutputFirstCenter = QPair<float,float>(0,0);
+	QPair<float,float> OutputSecondCenter = QPair<float,float>(0,0);
 
 	friend void operator>>(AccumulateDataFilter& Filter, RotateOperationContainer& RotateContainer);
-    friend AccumulateDataFilter& operator>>(QPair<double, double> coord, AccumulateDataFilter& Filter);
+    friend AccumulateDataFilter& operator>>(QPair<float,float> coord, AccumulateDataFilter& Filter);
 };
 
 class RotateDataMeasureEngine 
@@ -66,18 +66,18 @@ public:
 	TestDataVectorsContainer DataVectors;
 	AccumulateDataFilter DataFilter;
 	void SwitchToNextTestCoord();
-	QPair<double,double> CurrentMeasureCoordAbs;
-	QPair<double,double> CurrentRelativeCoord;
+	QPair<float,float> CurrentMeasureCoordAbs;
+	QPair<float,float> CurrentRelativeCoord;
 	void Reset();
-	QPair<double,double>& GetWaitInputCoord() { return DataFilter.WaitInputCoord;};
+	QPair<float,float>& GetWaitInputCoord() { return DataFilter.WaitInputCoord;};
 	void SetWindowSize(int Size) { DataFilter.avarage_window_size  = Size;};
 
-	friend RotateDataMeasureEngine& operator>>(QPair<double,double> coord, RotateDataMeasureEngine& MeasureEngine);
+	friend RotateDataMeasureEngine& operator>>(QPair<float,float> coord, RotateDataMeasureEngine& MeasureEngine);
 	friend RotateDataMeasureEngine& operator>>(std::pair<double,double> coord, RotateDataMeasureEngine& MeasureEngine);
 	friend void operator>>(RotateDataMeasureEngine& MeasureEngine, RotateOperationContainer& RotateContainer);
 };
 
-class RotateOperationContainer : public PassCoordClass<double>
+class RotateOperationContainer : public PassCoordClass<float>
 {
 public:
 	RotateOperationContainer();
@@ -94,11 +94,11 @@ public:
     bool IsDataFull() { return output_to_optimize_rotation.size() == TEST_DATA_COUNT; } ;
 
     void SetRotateMatrix(torch::Tensor RotateMatrix);
-	void SetInput(const QPair<double,double>& Coord) override;
-	const QPair<double,double>& GetOutput() override;
-	std::vector<float> GetOutputVector();
+	void setInput(const QPair<float,float>& Coord) override;
+	const QPair<float,float>& getOutput() override;
+	std::vector<float> getOutputVector();
 	void Inverse();
-	double CalcVirtualZComponent(QPair<double,double> InputCoord);
+	double CalcVirtualZComponent(QPair<float,float> InputCoord);
     double CalcTransformationScale(vector<pair<double,double>> test_input, vector<pair<double,double>> test_output);
 
 	void AppendOperation(pair<RotateAxis,double> Operation);

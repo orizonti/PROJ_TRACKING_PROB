@@ -68,7 +68,8 @@ public:
     explicit AimImageImitatorClass(QObject* parent = 0);
     ~AimImageImitatorClass();
 
-	std::string TAG_NAME{"[ IMAGE_IMIT ]"};
+    std::string TAG_NAME = QString("[ %1 ] ").arg("IMAGE_IMITATOR").toStdString();
+
 	    QString INFO_STRING{"[ NO DATA ]"};
 
     cv::Mat ImageProc;
@@ -87,19 +88,19 @@ public:
 
 QTime ThinningTimePeriod;
 
-QImage& GetImageToDisplay();
-cv::Mat& GetImageToProcess();
+QImage& getImageToDisplay();
+cv::Mat& getImageToProcess();
 
 bool FLAG_FRAME_AVAILABLE = false;
-void GetImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};
-//void GetImageToDisplay(QImage& ImageDst) { GetImageToDisplayColor(ImageDst);};
-void GetImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};
-void GetImageToDisplayColor(QImage& ImageDst);
+void getImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};
+//void getImageToDisplay(QImage& ImageDst) { getImageToDisplayColor(ImageDst);};
+void getImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};
+void getImageToDisplayColor(QImage& ImageDst);
 
 bool isFrameAvailable() override { return FLAG_FRAME_AVAILABLE;};
-std::vector<QPair<int,int>>& GetPoints()override ;  
-std::vector<QRect>&          GetRects() override ;  
-QString&                     GetInfo()  override ;  
+std::vector<QPair<int,int>>& getPoints()override ;  
+std::vector<QRect>&          getRects() override ;  
+QString&                     getInfo()  override ;  
 //==================================================
 std::vector<QPair<int,int>> CoordsImage;
 std::vector<QRect>          RectsImage;

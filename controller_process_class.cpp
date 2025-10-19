@@ -3,29 +3,31 @@
 #include "debug_output_filter.h"
 #include "interface_image_source.h"
 #include "interface_pass_coord.h"
-#include "rotation_find_executor.h"
 #include "state_block_enum.h"
 #include "thread_operation_nodes.h"
 
+#undef signals
+#include "stream_video_rtsp.h"
+#define signals Q_SIGNALS
 using namespace std;
 
 ProcessControllerClass* ProcessControllerClass::ProcessControllerInstance = nullptr;
-shared_ptr<ImageTrackerCentroid>          ProcessControllerClass::ModuleImageProc;
-shared_ptr<ImageTrackerCentroid>          ProcessControllerClass::ModuleImageProc2;
-shared_ptr<ImageTrackerCentroidGPU>          ProcessControllerClass::ModuleImageProc3;
+shared_ptr<ImageTrackerCentroid>    ProcessControllerClass::ModuleImageProc;
+shared_ptr<ImageTrackerCentroid>    ProcessControllerClass::ModuleImageProc2;
+shared_ptr<ImageTrackerCentroidGPU> ProcessControllerClass::ModuleImageProc3;
 
 //shared_ptr<CameraInterfaceAravis> ProcessControllerClass::DeviceCamera;
-shared_ptr<CameraInterfaceHIK> ProcessControllerClass::DeviceCamera;
+shared_ptr<CameraInterfaceHIK>     ProcessControllerClass::DeviceCamera;
 
-shared_ptr<AimImageImitatorClass>      ProcessControllerClass::ModuleImitatorImage;
+shared_ptr<AimImageImitatorClass>  ProcessControllerClass::ModuleImitatorImage;
 
+shared_ptr<AimingClass>          ProcessControllerClass::ModuleAiming1;
+shared_ptr<AimingClass>          ProcessControllerClass::ModuleAiming2;
 
-shared_ptr<AimingClass>                ProcessControllerClass::ModuleAiming1;
-shared_ptr<AimingClass>                ProcessControllerClass::ModuleAiming2;
+shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceScanator;
+shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceRotary;
 
-shared_ptr<ScanatorControlClass>       ProcessControllerClass::DeviceScanator;
-
-shared_ptr<RotationFindProcessClass>  ProcessControllerClass::ProcessFindRotation;
+shared_ptr<VideoStreamRTSP>      ProcessControllerClass::ModuleVideoOutput;
 
 
 ProcessControllerClass* ProcessControllerClass::GetInstance(QObject* parent)
@@ -36,27 +38,27 @@ ProcessControllerClass* ProcessControllerClass::GetInstance(QObject* parent)
 
 ProcessControllerClass::ProcessControllerClass(QObject* parrent): QObject(parrent)
 {
-qDebug() << "[ CREATE PROCESS CONTROLLER ]";
+qDebug() << Qt::endl;
+qDebug() << TAG_NAME.c_str() << "[ CREATE PROCESS CONTROLLER ]";
 
 ModuleImageProc     = make_shared<ImageTrackerCentroid>();
 ModuleImageProc2    = make_shared<ImageTrackerCentroid>();
 ModuleImageProc3    = make_shared<ImageTrackerCentroidGPU>();
 
 //DeviceCamera        = make_shared<CameraInterfaceAravis>();
+//DeviceScanator      = make_shared<ScanatorControlClass>();
+
+ModuleImitatorImage = make_shared<AimImageImitatorClass>();
+ModuleImitatorImage = make_shared<AimImageImitatorClass>();
+ModuleAiming1       = make_shared<AimingClass>();
+ModuleAiming2       = make_shared<AimingClass>();
+
 DeviceCamera        = make_shared<CameraInterfaceHIK>();
-DeviceScanator      = make_shared<ScanatorControlClass>();
+ModuleVideoOutput   = make_shared<VideoStreamRTSP>();
 
-ModuleImitatorImage = make_shared<AimImageImitatorClass>();
-ModuleImitatorImage = make_shared<AimImageImitatorClass>();
-ModuleAiming1    = make_shared<AimingClass>();
-ModuleAiming2    = make_shared<AimingClass>();
-
-ProcessFindRotation  = make_shared<RotationFindProcessClass>();
-
-//DeviceCamera        = make_shared<CameraInterfaceHIK>();
- //DeviceCamera->moveToThread(&ThreadCamera);
+ //DeviceCamera->moveToThread(&ThreadProcess);
  //ThreadCamera.start();
- //ThreadCamera.setPriority(QThread::HighPriority);
+ //ThreadCamera.setPriority(QThread::TimeCriticalPriority);
 
  //DeviceCamera->moveToThread(&ThreadProcess);
  ModuleImageProc->moveToThread(&ThreadProcess);
@@ -71,18 +73,21 @@ ProcessFindRotation  = make_shared<RotationFindProcessClass>();
  //ThreadProcess2.start();
  //ThreadProcess2.setPriority(QThread::HighPriority);
 
-// SlotSetProcessCamera(true);
+   SlotSetProcessCamera(true);
 // SlotSetProcessImitation(true);
-   SlotSetProcessAiming(true);
+// SlotSetProcessAiming(true);
 
- QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get(), SLOT(SlotDeinitCamera()), Qt::QueuedConnection);
+ //QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get()   , SLOT(SlotDeinitCamera())  , Qt::QueuedConnection);
  QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
+
+qDebug() << TAG_NAME.c_str() << "[ CREATE PROCESS CONTROLLER END]";
+qDebug() << Qt::endl;
 
 }
 
 ProcessControllerClass::~ProcessControllerClass()
 {
-  qDebug() << "DELETE PROCESS CONTROLLER" << QThread::currentThread();
+  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER" << QThread::currentThread();
   emit SignalProcessEnd(); QThread::sleep(2);
 
   ThreadProcess.quit(); ThreadProcess.deleteLater();
@@ -90,13 +95,13 @@ ProcessControllerClass::~ProcessControllerClass()
 
                            QThread::sleep(2);
 
-  qDebug() << "DELETE PROCESS CONTROLLER END";
+  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER END";
+  qDebug() << Qt::endl;
 }
 
 
 void ProcessControllerClass::StopAllProcess()
 {
-   if(ProcessFindRotation->isEnabled()) ProcessFindRotation->StopProcess();
 }
 
 void ProcessControllerClass::DeleteModulesLinks()
@@ -113,12 +118,14 @@ void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)
    ModuleAiming1->SetAimingRegim(AimingLoop);
    ModuleAiming2->SetAimingRegim(AimingLoop);
 
-   ModuleAiming1->SetAimingCorrection(QPair<double,double>(63,71)); //SET CENTER WHEN AIMING DIRECT
+   ModuleAiming1->SetAimingCorrection(QPair<float,float>(63,71)); //SET CENTER WHEN AIMING DIRECT
 
    ModuleImageProc->SetImageParam(2*2*255,50*50*255,6);
 
    DeviceCamera | ModuleImageProc  | ModuleAiming1 | DeviceScanator;                     
-   //ModuleImitatorImage | ModuleImageProc;
+
+     ModuleAiming1->SetModuleEnabled(true);
+   ModuleImageProc->SetModuleEnabled(false);
 
 }
 
@@ -126,7 +133,7 @@ void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)
 {
    if(!OnOff) return; DeleteModulesLinks(); StopAllProcess();
 
-   ModuleAiming1->SetAimingRegim(AimingDirect); ModuleAiming1->SetAimingCorrection(QPair<double,double>(-13,-2));
+   ModuleAiming1->SetAimingRegim(AimingDirect); ModuleAiming1->SetAimingCorrection(QPair<float,float>(-13,-2));
    ModuleAiming2->SetAimingRegim(AimingLoop);
 
    ModuleImageProc2->SetSlaveMode(ModuleImageProc.get());
@@ -143,6 +150,11 @@ void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)
 void ProcessControllerClass::SlotSetProcessCamera(bool OnOff)
 {
    DeviceCamera | ModuleImageProc;  
+}
+
+void ProcessControllerClass::SlotStartProcessRTSP(bool OnOff)
+{
+   ModuleVideoOutput->linkToSource(DeviceCamera.get());
 }
 
 void ProcessControllerClass::SlotSetProcessImitation(bool OnOff)

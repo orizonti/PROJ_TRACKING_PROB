@@ -22,10 +22,10 @@ public:
 //	void Reset();
 //	void CopyRotation(const RotateOperationContainer& CopyContainer);
 //  void SetRotateMatrix(torch::Tensor RotateMatrix);
-//	void SetInput(const QPair<double,double>& Coord) override;
-//	const QPair<double,double>& GetOutput() override;
+//	void setInput(const QPair<float,float>& Coord) override;
+//	const QPair<float,float>& getOutput() override;
 //	void Inverse();
-//	double CalcVirtualZComponent(QPair<double,double> InputCoord);
+//	double CalcVirtualZComponent(QPair<float,float> InputCoord);
 //	void AppendOperation(pair<RotateAxis,double> Operation);
 //	void AppendInputData(pair<double,double> test_coord);
 //	bool IsDataFull(){output_to_optimize_rotation.size() == CALIBRATION_COUNT;};

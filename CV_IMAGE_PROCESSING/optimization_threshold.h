@@ -14,7 +14,7 @@
 
 //class ContoursProcessorClass;
 
-template<typename T = double>
+template<typename T = float>
 class ValueSpongeShift : public PassValueClass<T>
 {
   public:

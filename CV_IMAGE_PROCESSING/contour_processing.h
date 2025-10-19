@@ -25,7 +25,7 @@ class ContoursProcessorClass
     cv::Rect GetMostStableContour();
     double GetMinimumContourDispersion();
 
-    QPair<double,double> GetCentroid(const cv::Mat& Image); 
+    QPair<float,float> GetCentroid(const cv::Mat& Image); 
     int NumberMaxContour = 0;
 
     std::vector<std::vector<cv::Point>> Contours;

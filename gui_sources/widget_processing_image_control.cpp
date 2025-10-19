@@ -33,6 +33,12 @@ void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<ModuleImageProce
   {
     emit SignalResetProcessing();
   });
+
+  connect(ui->pushButton,&QPushButton::toggled,[this, ControlInterface](bool StartStop)
+  {
+    emit ControlInterface->SetModuleEnabled(StartStop);
+  });
+  
   connect(this, SIGNAL(SignalResetProcessing()), ControlInterface.get(), SLOT(SlotResetProcessing()), Qt::QueuedConnection);
 
 }

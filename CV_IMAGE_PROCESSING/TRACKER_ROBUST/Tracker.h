@@ -22,10 +22,10 @@ public:
 
    bool isTrackHold() { return follow_flag; };
 
-   QPair<double,double> ObjectPos{0.0,0.0};
-   QPair<double,double> ObjectRect{0.0,0.0};
+   QPair<float,float> ObjectPos{0.0,0.0};
+   QPair<float,float> ObjectRect{0.0,0.0};
 
-   QPair<double,double> GetObjectPos() 
+   QPair<float,float> GetObjectPos() 
    { 
      ObjectPos.first = bbox.x + bbox.width/2;
     ObjectPos.second = bbox.y + bbox.height/2;
@@ -55,7 +55,7 @@ private:
 };
 
 
-//class PassCoords
+//class passCoords
 //{
 //public:
 //	std::vector<int> coords = { 0, 0 };

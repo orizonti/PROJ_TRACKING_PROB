@@ -1,7 +1,7 @@
-#ifndef RING_BUFFER_Dense_H
-#define RING_BUFFER_Dense_H
+#ifndef RING_BUFFER_DENSE_H
+#define RING_BUFFER_DENSE_H
 
-#include "message_struct_generic.h"
+#include "message_struct_generic_ext.h"
 #include <cstring>
 #include "engine_type_register.h"
 
@@ -28,15 +28,15 @@ public:
   };
   
   MessagesRange RangeLimits;
-  uint32_t Messagenumber = 0;
+  uint32_t MessageNumber = 0;
   
   private:
   uint8_t* PtrMessageBegin;
   uint8_t* PtrMessageBeginPrevious;
-  uint8_t* PtrDataend = 0;
+  uint8_t* PtrDataEnd = 0;
   
   uint8_t* PtrBufferBegin;
-  uint8_t* PtrBufferend;
+  uint8_t* PtrBufferEnd;
   
   uint8_t  WaitDataAmount;
 
@@ -44,10 +44,10 @@ public:
   void PrintIterator();
   
   bool IsHeaderValid();
-  bool IsMemoryatEnd();
+  bool IsMemoryAtEnd();
   void MoveDataToBegin();
   
-  int  StepsTo(const MessageIteratorDense<H>& It) { return It.Messagenumber - Messagenumber;}; 
+  int  StepsTo(const MessageIteratorDense<H>& It) { return It.MessageNumber - MessageNumber;}; 
   
   void ResetIterator();
   
@@ -57,8 +57,8 @@ public:
   H&  GetHeader();
   H&  GetHeader(uint8_t* PtrHeader);
   
-  MessageStructGeneric<void*,H>* GetMessagePtr();
-  MessageStructGeneric<void*,H>& operator*();
+  MessageStruct<void*,H>* GetMessagePtr();
+  MessageStruct<void*,H>& operator*();
   
   MessageIteratorDense<H> operator++(int);
   
@@ -67,7 +67,7 @@ public:
   bool operator==(MessageIteratorDense& Message);
   bool operator!=(MessageIteratorDense& Message);
   
-  void LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived);
+  void LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived);
   
   int MAX_MESSAGE_SIZE = 50;
 };
@@ -76,19 +76,19 @@ public:
 template<typename H>
 MessageIteratorDense<H>::MessageIteratorDense()
 {
-	PtrBufferBegin = 0; PtrBufferend = 0; PtrMessageBegin = 0; PtrDataend = 0;
+	PtrBufferBegin = 0; PtrBufferEnd = 0; PtrMessageBegin = 0; PtrDataEnd = 0;
 	MAX_MESSAGE_SIZE = TypeRegister<>::GetMaxTypeSize() + sizeof(H);
 }
 
 template<typename H>
 MessageIteratorDense<H>::MessageIteratorDense(uint8_t* STORAGE, std::size_t Size)
 {
-	PtrBufferBegin = STORAGE; PtrBufferend = STORAGE + Size;
-	PtrMessageBegin = PtrBufferBegin; PtrDataend = PtrMessageBegin;
-	RangeLimits.EndMessageBuffer = PtrBufferend;
-	RangeLimits.LastMessage = PtrBufferend;
+	PtrBufferBegin = STORAGE; PtrBufferEnd = STORAGE + Size;
+	PtrMessageBegin = PtrBufferBegin; PtrDataEnd = PtrMessageBegin;
+	RangeLimits.EndMessageBuffer = PtrBufferEnd;
+	RangeLimits.LastMessage = PtrBufferEnd;
 	MAX_MESSAGE_SIZE = TypeRegister<>::GetMaxTypeSize() + sizeof(H);
-	qDebug() << "ITERATOR Dense MAX MESSAGE SIZE: " << MAX_MESSAGE_SIZE;
+	qDebug() << "ITERATOR DENSE MAX MESSAGE SIZE: " << MAX_MESSAGE_SIZE;
 }
 
 
@@ -99,7 +99,7 @@ MessageIteratorDense<H> MessageIteratorDense<H>::operator++(int)
 
  auto& Header = GetHeader(); if(!Header.isValid()) { ResetIterator(); return *this;};
 
- Messagenumber++;
+ MessageNumber++;
  PtrMessageBegin += sizeof(H) + Header.DATA_SIZE; 
 
  if(PtrMessageBegin == RangeLimits.EndMessageBuffer) 
@@ -112,15 +112,15 @@ template<typename H>
 void MessageIteratorDense<H>::MoveDataToBegin()
 {
 	uint8_t DataRemain = DataAvailable();
-	PtrDataend = PtrBufferBegin + DataRemain;
+	PtrDataEnd = PtrBufferBegin + DataRemain;
 	std::memcpy(PtrBufferBegin,PtrMessageBegin,DataRemain); 
 	PtrMessageBegin = PtrBufferBegin;
 }
 
 template<typename H>
-void MessageIteratorDense<H>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesCountReceived)
+void MessageIteratorDense<H>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)
 {
-	std::memcpy(PtrDataend,DataSourceBuffer,BytesCountReceived); PtrDataend += BytesCountReceived;
+	std::memcpy(PtrDataEnd,DataSourceBuffer,BytesCountReceived); PtrDataEnd += BytesCountReceived;
 
   while(DataAvailable() >= MessageSize())
 	{
@@ -129,9 +129,9 @@ void MessageIteratorDense<H>::LoadData(uint8_t* DataSourceBuffer, uint8_t BytesC
         qDebug()<< "ADD MESSAGE SIZE: " << MessageSize();
 		PtrMessageBeginPrevious = PtrMessageBegin; 
 		PtrMessageBegin += MessageSize(); RangeLimits.LastMessage = PtrMessageBegin;
-	    Messagenumber++;
+	    MessageNumber++;
 
-		if(IsMemoryatEnd()) 
+		if(IsMemoryAtEnd()) 
 		{
 			RangeLimits.EndMessageBuffer = PtrMessageBegin;
 			MoveDataToBegin();
@@ -147,9 +147,9 @@ template<typename H>
 void MessageIteratorDense<H>::operator=(const MessageIteratorDense<H>& Message)
 {
 	PtrMessageBegin = Message.PtrMessageBegin; 
-	     PtrDataend = Message.PtrDataend;
+	     PtrDataEnd = Message.PtrDataEnd;
 	 PtrBufferBegin = Message.PtrBufferBegin;
- 	   PtrBufferend = Message.PtrBufferend;
+ 	   PtrBufferEnd = Message.PtrBufferEnd;
 	   RangeLimits.EndMessageBuffer = Message.RangeLimits.EndMessageBuffer;
 	   RangeLimits.LastMessage      = Message.RangeLimits.LastMessage;
 }
@@ -171,17 +171,17 @@ template<typename H> int MessageIteratorDense<H>::MessageSize()
 						  return Header.DATA_SIZE + sizeof(H);
 };
 
-template<typename H> bool MessageIteratorDense<H>::IsMemoryatEnd()  { return (PtrBufferend - PtrMessageBegin) < 2*MAX_MESSAGE_SIZE; }
-template<typename H> int MessageIteratorDense<H>::MemoryAvailable() { return (PtrBufferend - PtrMessageBegin) - 2*MAX_MESSAGE_SIZE; }
-template<typename H> int MessageIteratorDense<H>::DataAvailable()   { return std::abs(PtrDataend - PtrMessageBegin); }
+template<typename H> bool MessageIteratorDense<H>::IsMemoryAtEnd()  { return (PtrBufferEnd - PtrMessageBegin) < 2*MAX_MESSAGE_SIZE; }
+template<typename H> int MessageIteratorDense<H>::MemoryAvailable() { return (PtrBufferEnd - PtrMessageBegin) - 2*MAX_MESSAGE_SIZE; }
+template<typename H> int MessageIteratorDense<H>::DataAvailable()   { return std::abs(PtrDataEnd - PtrMessageBegin); }
 
-template<typename H> void MessageIteratorDense<H>::ResetIterator()  { PtrMessageBegin = PtrBufferBegin; PtrDataend = PtrBufferBegin; }
+template<typename H> void MessageIteratorDense<H>::ResetIterator()  { PtrMessageBegin = PtrBufferBegin; PtrDataEnd = PtrBufferBegin; }
 
 
 template<typename H> 
-MessageStructGeneric<void*,H>& MessageIteratorDense<H>::operator*() { return *reinterpret_cast<MessageStructGeneric<void*,H>* >(PtrMessageBegin); }
+MessageStruct<void*,H>& MessageIteratorDense<H>::operator*() { return *reinterpret_cast<MessageStruct<void*,H>* >(PtrMessageBegin); }
 template<typename H> 
-MessageStructGeneric<void*,H>* MessageIteratorDense<H>::GetMessagePtr() { return reinterpret_cast<MessageStructGeneric<void*,H>* >(PtrMessageBegin); }
+MessageStruct<void*,H>* MessageIteratorDense<H>::GetMessagePtr() { return reinterpret_cast<MessageStruct<void*,H>* >(PtrMessageBegin); }
 
 
 template<typename H>
@@ -192,23 +192,23 @@ qDebug() << "HEADER: " << IsHeaderValid() << "BEGIN: " << PtrMessageBegin << "BE
 //====================================================================================================================
 
 template< typename H, std::size_t S_M, std::size_t N_M> 
-class RingBufferDense
+class engine_ring_buffer_dense
 {
     public:
-    RingBufferDense();
-    ~RingBufferDense();
+    engine_ring_buffer_dense();
+    ~engine_ring_buffer_dense();
   uint8_t* DATA;
 	std::size_t  BufferSize = S_M*N_M;
 
 	MessageIteratorDense<H> MessagePointer;
 	MessageIteratorDense<H> IncommingPointer;
 
-  MessageStructGeneric<void*,H>* CurrentMessage = 0;
+  MessageStruct<void*,H>* CurrentMessage = 0;
 
     bool isMessageAvailable();
     void AppendData(uint8_t* Data, uint8_t Size);
-    MessageStructGeneric<void*,H>* TakeMessagePtr();
-	  MessageStructGeneric<void*,H>& TakeMessage();
+    MessageStruct<void*,H>* TakeMessagePtr();
+	  MessageStruct<void*,H>& TakeMessage();
 
     int CountMessagesInStore() { return MESSAGE_COUNTER;}
     int MESSAGE_COUNTER = 0;
@@ -218,7 +218,7 @@ class RingBufferDense
 };
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-RingBufferDense<H,S_M,N_M>::RingBufferDense()
+engine_ring_buffer_dense<H,S_M,N_M>::engine_ring_buffer_dense()
 {
   DATA = new uint8_t[S_M*N_M]; 
   MessagePointer = MessageIteratorDense<H>(DATA,S_M*N_M);  
@@ -232,48 +232,48 @@ RingBufferDense<H,S_M,N_M>::RingBufferDense()
 }
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-RingBufferDense<H,S_M,N_M>::~RingBufferDense() { delete DATA; }
+engine_ring_buffer_dense<H,S_M,N_M>::~engine_ring_buffer_dense() { delete DATA; }
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-void RingBufferDense<H,S_M,N_M>::AppendData(uint8_t* Data, uint8_t Size)
+void engine_ring_buffer_dense<H,S_M,N_M>::AppendData(uint8_t* Data, uint8_t Size)
 {
    IncommingPointer.LoadData(Data, Size); 
    MessagePointer.RangeLimits = IncommingPointer.RangeLimits;
    MESSAGE_COUNTER = MessagePointer.StepsTo(IncommingPointer);
 
    qDebug() << "MESSAGE IN STORE: " << MESSAGE_COUNTER << "PASSED: " 
-            << IncommingPointer.Messagenumber << "PROC: " 
-            << MessagePointer.Messagenumber;
+            << IncommingPointer.MessageNumber << "PROC: " 
+            << MessagePointer.MessageNumber;
 
    if(MESSAGE_COUNTER > 12) MessagePointer++;
 }
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-MessageStructGeneric<void*,H>* RingBufferDense<H,S_M,N_M>::TakeMessagePtr()
+MessageStruct<void*,H>* engine_ring_buffer_dense<H,S_M,N_M>::TakeMessagePtr()
 {
   CurrentMessage = MessagePointer.GetMessagePtr(); if(!isMessageAvailable()) return CurrentMessage;
 
   MessagePointer++; MESSAGE_COUNTER  = MessagePointer.StepsTo(IncommingPointer); 
   
-  if(IncommingPointer.Messagenumber > 10000) { IncommingPointer.Messagenumber -= MessagePointer.Messagenumber; MessagePointer.Messagenumber = 0;}
+  if(IncommingPointer.MessageNumber > 10000) { IncommingPointer.MessageNumber -= MessagePointer.MessageNumber; MessagePointer.MessageNumber = 0;}
   return CurrentMessage;
 }
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-MessageStructGeneric<void*,H>& RingBufferDense<H,S_M,N_M>::TakeMessage()
+MessageStruct<void*,H>& engine_ring_buffer_dense<H,S_M,N_M>::TakeMessage()
 {
   auto& Message = *MessagePointer; CurrentMessage = &Message; if(!isMessageAvailable()) return Message;
 
   MessagePointer++; MESSAGE_COUNTER  = MessagePointer.StepsTo(IncommingPointer); 
 
-  if(IncommingPointer.Messagenumber > 10000) { IncommingPointer.Messagenumber -= MessagePointer.Messagenumber; MessagePointer.Messagenumber = 0;}
+  if(IncommingPointer.MessageNumber > 10000) { IncommingPointer.MessageNumber -= MessagePointer.MessageNumber; MessagePointer.MessageNumber = 0;}
   return Message;
 }
 
 template<typename H, std::size_t S_M, std::size_t N_M>
-bool RingBufferDense<H,S_M,N_M>::isMessageAvailable()
+bool engine_ring_buffer_dense<H,S_M,N_M>::isMessageAvailable()
 {
   return MessagePointer.StepsTo(IncommingPointer) > 0;
 }
 
-#endif //RING_BUFFER_Dense_H
+#endif //RING_BUFFER_DENSE_H

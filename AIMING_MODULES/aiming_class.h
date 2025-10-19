@@ -21,17 +21,17 @@ class TimeIntegratorClass : public PassCoordClass<T>
 	QPair<T,T> CoordIntegral;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> LastTimePoint;
-	double StepPeriod = 0;
-  void Reset() { CoordIntegral = QPair<double,double>(0,0); StepPeriod = 0;}
+	float StepPeriod = 0;
+  void Reset() { CoordIntegral = QPair<float,float>(0,0); StepPeriod = 0;}
 
-	void SetInput(const QPair<T,T>& Coord) override
+	void setInput(const QPair<T,T>& Coord) override
 	{
 	auto TimePoint = std::chrono::high_resolution_clock::now();
-	    StepPeriod = std::chrono::duration<double>((TimePoint - LastTimePoint)).count(); 
+	    StepPeriod = std::chrono::duration<float>((TimePoint - LastTimePoint)).count(); 
 
 	LastTimePoint = TimePoint; if(StepPeriod*1000 > 20) return;
 
-    PassCoordClass<double>::OutputCoord = PassCoordClass<double>::OutputCoord + Coord*StepPeriod;
+    PassCoordClass<float>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
 	}
 
 };
@@ -40,8 +40,8 @@ template<typename T>
 class IntegratorClass : public PassCoordClass<T>
 {
 	public:
-	void SetInput(const QPair<double,double>& Coord) override 
-  { PassCoordClass<T>::OutputCoord = PassCoordClass<double>::OutputCoord + Coord; }
+	void setInput(const QPair<float,float>& Coord) override 
+  { PassCoordClass<T>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord; }
 };
 
 template<typename T>
@@ -59,7 +59,7 @@ class SignalRegister : public PassCoordClass<T>
   std::vector<QPair<T,T>>::iterator End;
   bool FlagRegisterFilled = false;
 
-	void SetInput(const QPair<double,double>& Coord) override 
+	void setInput(const QPair<float,float>& Coord) override 
   { 
     *CurrentPos = Coord; CurrentPos++; if(CurrentPos == End) { CurrentPos = Register.begin(); FlagRegisterFilled = true; }
   }
@@ -71,17 +71,17 @@ class SignalPortAdapter : public QObject
 Q_OBJECT
 public:
     SignalPortAdapter(){};
-    SignalPortAdapter(PassCoordClass<double>* Port){ LinkToPort(Port);};
-    PassCoordClass<double>* SetCoordPort = 0;
-    void LinkToPort(PassCoordClass<double>* Port) { SetCoordPort = Port;};
+    SignalPortAdapter(PassCoordClass<float>* Port){ LinkToPort(Port);};
+    PassCoordClass<float>* SetCoordPort = 0;
+    void LinkToPort(PassCoordClass<float>* Port) { SetCoordPort = Port;};
 
 public slots: 
-void SlotSetCoord(QPair<double,double> Coord) { if(SetCoordPort != 0) Coord >> *SetCoordPort; }
+void SlotSetCoord(QPair<float,float> Coord) { if(SetCoordPort != 0) Coord >> *SetCoordPort; }
 
 };
 
 
-class AimingParamOptimizator: public PassCoordClass<double>
+class AimingParamOptimizator: public PassCoordClass<float>
 {
   public:
   AimingParamOptimizator();
@@ -90,8 +90,8 @@ class AimingParamOptimizator: public PassCoordClass<double>
 
   int BestPIDParamNumber = 0;
   std::vector<PIDParamStruct> PIDParamTable;
-  StatisticGroup<double> PIDParamGroupStat = StatisticGroup(10,200);
-  StatisticNode<double> CurrentStatistic = StatisticNode<double>(200);
+  StatisticGroup<float> PIDParamGroupStat = StatisticGroup(10,200);
+  StatisticNode<float> CurrentStatistic = StatisticNode<float>(200);
   PIDParamStruct BestPIDParam;
 
   int LimitDispersionCounter = 0;
@@ -100,22 +100,22 @@ class AimingParamOptimizator: public PassCoordClass<double>
   bool FLAG_CONTROL_PARAM_REGIM = false;
   bool FLAG_REGISTRATION_REGIM = true;
 
-  void SetInput(const QPair<double,double>& Coord);
-  const QPair<double,double>& GetOutput() { return CurrentStatistic.NodeCoord.GetDispersionCoord(); }
+  void setInput(const QPair<float,float>& Coord);
+  const QPair<float,float>& getOutput() { return CurrentStatistic.NodeCoord.GetDispersionCoord(); }
   void AppendPIDParam(PIDParamStruct PIDParam);
   void Reset();
 };
 
 
 
-class AimingClass : public PassCoordClass<double>
+class AimingClass : public PassCoordClass<float>
   {
   public:
       
   AimingClass();
   ~AimingClass();
   
-  std::string TAG_NAME{"[ AIMING ]"};
+  std::string TAG_NAME = QString("[ %1 ] ").arg("AIMING").toStdString();
   
   int NumberChannel = 0;
   static int ModuleCounter;
@@ -123,50 +123,50 @@ class AimingClass : public PassCoordClass<double>
   StateEnumBlock StateBlock  = StateEnumBlock::StateBlockDisabled;
   TypeEnumAiming AimingState = AimingDirect;
   
-  std::vector<double> GainList{0.10,
+  std::vector<float> GainList{0.2,
                                1.0,
-                               1.4,
-                               70};
+                               1.0,
+                               80};
 
-  double GetAbsError();
+  float GetAbsError();
   void   Reset();
   
-  RotateVectorClass Rotation;
+  RotateVectorClass<float> Rotation;
 
-  CoordInversionAxisNode<double> AxisInversion{0};
-  StatisticValue<double> StatValue{100};
+  CoordInversionAxisNode<float> AxisInversion{0};
+  StatisticValue<float> StatValue{100};
 
-  SubstractNode<double> Substract;
-  SumNode<double> Sum;
+  SubstractNode<float> Substract;
+  SumNode<float> Sum;
 
-  CoordPassFilter<double> PassFilter{30};
+  CoordPassFilter<float> PassFilter{30};
   
-  const QPair<double, double>& GetOutput();
-  const QPair<double, double>& GetAimPosition();  //AIM POSITION IS SET MANUAL OR FROM CAMERA 
-  const QPair<double, double>& GetBeamPosition(); //BEAM POSITION IS SET FROM CAMERA 
-  const QPair<double, double>& GetAimingError(); 
+  const QPair<float, float>& getOutput();
+  const QPair<float, float>& GetAimPosition();  //AIM POSITION IS SET MANUAL OR FROM CAMERA 
+  const QPair<float, float>& GetBeamPosition(); //BEAM POSITION IS SET FROM CAMERA 
+  const QPair<float, float>& GetAimingError(); 
   
-  void SetBlockEnabled(bool OnOff); 
+  void SetModuleEnabled(bool OnOff); 
   
-  void SetInput           (const QPair<double,double>& Coord);
+  void setInput           (const QPair<float,float>& Coord);
 
   //========================================================
-  void SetAimingPosition  (const QPair<double, double>& Coord);
-  void SetAimingCorrection(const QPair<double, double>& Coord);
-  void MoveAimingCorrection (const QPair<double, double>& Velocity);
-  void SetOutputCorrection(const QPair<double, double>& Coord);
+  void SetAimingPosition  (const QPair<float, float>& Coord);
+  void SetAimingCorrection(const QPair<float, float>& Coord);
+  void MoveAimingCorrection (const QPair<float, float>& Velocity);
+  void SetOutputCorrection(const QPair<float, float>& Coord);
 
   void SetPIDParamFromTable(int Number);
   void SetPIDParam(PIDParamStruct param);
   void SetAimingRegim(TypeEnumAiming Aiming);
-  void SetGain(int Number, double Gain);
+  void SetGain(int Number, float Gain);
   //========================================================
   
   void LoadPIDParam(QString SettingsFile);
   void LoadSettings();
   
   bool isAimingFault();
-  void PrintPassCoords(QPair<double,double> Coord);
+  void PrintpassCoords(QPair<float,float> Coord);
 
   void ProcessLoop1();
   void ProcessLoop2();
@@ -198,29 +198,29 @@ class AimingClass : public PassCoordClass<double>
   PIDClass ModulePID;
   
   AimingParamOptimizator AimingOptimizator;
-  StatisticNode<double> AimingStatistic;
-  StatisticNode<double> FaultStatistic;
+  StatisticNode<float> AimingStatistic;
+  StatisticNode<float> FaultStatistic;
   
   std::vector<PIDParamStruct> PIDParamTable;
   int PIDParamNumber = 0;
   
   //DESIERED COORDS THAT GET FROM CAMERA OR SET MANUAL
-  QPair<double, double> CoordNullPosition {0.0,0.0}; 
-  QPair<double, double> CoordAim          {200.0,200.0}; 
-  QPair<double, double> CoordSpot         {200.0,200.0}; 
-  QPair<double, double> CenterPoint       {200.0,200.0}; 
-  QPair<double, double> CoordAimCorrection{0.0,0.0}; 
-  QPair<double, double> CoordOutputCorrection{0.0,0.0}; 
-  QPair<double, double> CoordCorrectCalib{0.0,0.0}; 
-  QPair<double, double> CoordBeamPos      {0.0,0.0}; 
-  QPair<double, double> ZeroCoord      {0.0,0.0}; 
+  QPair<float, float> CoordNullPosition {0.0,0.0}; 
+  QPair<float, float> CoordAim          {60.0,60.0}; 
+  QPair<float, float> CoordSpot         {60.0,60.0}; 
+  QPair<float, float> CenterPoint       {60.0,60.0}; 
+  QPair<float, float> CoordAimCorrection{0.0,0.0}; 
+  QPair<float, float> CoordOutputCorrection{0.0,0.0}; 
+  QPair<float, float> CoordCorrectCalib{0.0,0.0}; 
+  QPair<float, float> CoordBeamPos      {0.0,0.0}; 
+  QPair<float, float> ZeroCoord      {0.0,0.0}; 
   
   //PROCESSING COORDS DURING AIMING
-  QPair<double, double> CoordAimingError    {0.0,0.0};
-  QPair<double, double> CoordAimingErrorDisp{0.0,0.0};
-  QPair<double, double> VectorVelocityOutput{0.0,0.0};
-  QPair<double, double> VectorAccelOutput   {0.0,0.0};
-  QPair<double, double> VectorOutput        {0.0,0.0};
+  QPair<float, float> CoordAimingError    {0.0,0.0};
+  QPair<float, float> CoordAimingErrorDisp{0.0,0.0};
+  QPair<float, float> VectorVelocityOutput{0.0,0.0};
+  QPair<float, float> VectorAccelOutput   {0.0,0.0};
+  QPair<float, float> VectorOutput        {0.0,0.0};
   //==========================================
   
   TransformCoordClass PixToRadian;
@@ -228,9 +228,9 @@ class AimingClass : public PassCoordClass<double>
   TransformCoordClass Gain{10};
   TransformCoordClass Saturation{1,0,5000};
 
-  TimeIntegratorClass<double> Integrator;
-  TimeIntegratorClass<double> IntegratorInput;
-  TimeIntegratorClass<double> IntegratorInputSignal;
+  TimeIntegratorClass<float> Integrator;
+  TimeIntegratorClass<float> IntegratorInput;
+  TimeIntegratorClass<float> IntegratorInputSignal;
 };
 
 class AimingWatcherClass: public QObject
@@ -251,9 +251,9 @@ class AimingWatcherClass: public QObject
     emit SignalCoord1(ModuleWathing->GetAimingError());
   }
   signals:
-  void SignalCoord1(QPair<double,double> Coord);
-  void SignalCoord2(QPair<double,double> Coord);
-  void SignalCoord3(QPair<double,double> Coord);
+  void SignalCoord1(QPair<float,float> Coord);
+  void SignalCoord2(QPair<float,float> Coord);
+  void SignalCoord3(QPair<float,float> Coord);
 
 };
 

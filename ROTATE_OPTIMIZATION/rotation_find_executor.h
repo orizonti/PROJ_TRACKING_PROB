@@ -17,7 +17,7 @@ public:
     std::string TAG_NAME{"[ROT FIND]"};
 
     RotationFindProcessClass(QObject* parrent = 0);
-    RotationFindProcessClass(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,QObject* parrent = 0);
+    RotationFindProcessClass(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot,QObject* parrent = 0);
 
 	RotateOperationContainer RotationContainer;
 	TransformCoordClass InputTransform{1,0};
@@ -25,13 +25,13 @@ public:
 
 	QTimer timerStepper;
 
-    std::shared_ptr<PassCoordClass<double>> BaseObject = nullptr;
-	std::shared_ptr<PassCoordClass<double>> RotationObject = nullptr;
-	std::shared_ptr<PassCoordClass<double>> MiddleObject = nullptr;
+    std::shared_ptr<PassCoordClass<float>> BaseObject = nullptr;
+	std::shared_ptr<PassCoordClass<float>> RotationObject = nullptr;
+	std::shared_ptr<PassCoordClass<float>> MiddleObject = nullptr;
 	int StepNumber = 0;
 
-    void SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot);
-    void SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,std::shared_ptr<PassCoordClass<double>> Middle);
+    void SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot);
+    void SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot,std::shared_ptr<PassCoordClass<float>> Middle);
 
 	void StopProcess();
 	void StartProcess();

@@ -80,12 +80,12 @@ void PlotGraphicsInterface::SlotDisplayTimePairSeries()
   GraphicsDisplay->replot();
 }
 
-void PlotGraphicsInterface::SlotDisplayCoord(QPair<double,double> Point)
+void PlotGraphicsInterface::SlotDisplayCoord(QPair<float,float> Point)
 {
 	DisplayPair(Point.first, Point.second);
 }
 
-void operator>>(QPair<double,double> Point, PlotGraphicsInterface& Graph) 
+void operator>>(QPair<float,float> Point, PlotGraphicsInterface& Graph) 
 {
  Graph.DisplayPair(Point.first,Point.second);
 }

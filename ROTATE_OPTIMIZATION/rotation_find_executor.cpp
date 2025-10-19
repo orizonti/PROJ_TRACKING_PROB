@@ -9,19 +9,19 @@ RotationFindProcessClass::RotationFindProcessClass(QObject* parrent)
   qDebug() << "[ CREATE ROTATION EXECUTOR EMPTY]";
 }
 
-RotationFindProcessClass::RotationFindProcessClass(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,QObject* parrent) : QObject(parrent)
+RotationFindProcessClass::RotationFindProcessClass(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot,QObject* parrent) : QObject(parrent)
 {
   BaseObject = Base;
 	RotationObject = Rot;
 }
 
-void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot)
+void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot)
 {
   BaseObject = Base;
 	RotationObject = Rot;
 }
 
-void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<double>> Base, std::shared_ptr<PassCoordClass<double>> Rot,std::shared_ptr<PassCoordClass<double>> Middle)
+void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, std::shared_ptr<PassCoordClass<float>> Rot,std::shared_ptr<PassCoordClass<float>> Middle)
 {
   BaseObject = Base;
 	RotationObject = Rot;
@@ -49,8 +49,8 @@ void RotationFindProcessClass::SlotStartRotationFind(bool StartStop)
 
 void RotationFindProcessClass::SlotMakeStep()
 {
-	auto CoordBase = BaseObject->GetOutput();     
-	auto CoordRot  = RotationObject->GetOutput();
+	auto CoordBase = BaseObject->getOutput();     
+	auto CoordRot  = RotationObject->getOutput();
 
 	auto AimCoord = RotationContainer.MeasureFilter.GetWaitInputCoord();
        AimCoord >> *BaseObject;
@@ -62,7 +62,7 @@ void RotationFindProcessClass::SlotMakeStep()
 
   if(!RotationContainer.IsDataFull()) return;
 
-  StopProcess(); QPair<double,double>(0,0) >> *BaseObject;
+  StopProcess(); QPair<float,float>(0,0) >> *BaseObject;
 
   QTimer::singleShot(2000,[this]()
   {
