@@ -23,12 +23,12 @@
 class CANTestMessage;
 class CANDelayMeasure;
 
-class CANConnectionEngine : public ConnectionInterface
+class CANEngineInterface : public ConnectionInterface
 {
     Q_OBJECT
 public:
-  explicit CANConnectionEngine(QObject *parent = nullptr);
-          ~CANConnectionEngine();
+  explicit CANEngineInterface(QString Device, QObject *parent = nullptr);
+          ~CANEngineInterface();
 
 public:
 
@@ -48,8 +48,8 @@ public:
   //void linkTo(std::shared_ptr<DispatcherType> Dispatcher) { DispatcherLinked = Dispatcher; }  
 
 public slots:
-  void slotSendMessage(const QByteArray& ArrayCommand, uint8_t IDDevice = 0);
-  void slotSendMessage(const char* DataCommand, int size, uint8_t IDDevice = 0);
+  void slotSendMessage(const QByteArray& ArrayCommand, uint16_t IDDevice = 0);
+  void slotSendMessage(const char* DataCommand, int size, uint16_t IDDevice = 0);
 
   void slotCheckConnection();
   void slotCloseConnection(){};
@@ -72,8 +72,8 @@ class CANTestMessage: public QObject
   CANTestMessage(QObject* parent = nullptr) : QObject(parent) 
   { connect(&timerSendTest,&QTimer::timeout, this, &CANTestMessage::slotSendTest); };
 
-  void linkTo(CANConnectionEngine* device) { deviceCAN = device; };
-  CANConnectionEngine* deviceCAN = nullptr;
+  void linkTo(CANEngineInterface* device) { deviceCAN = device; };
+  CANEngineInterface* deviceCAN = nullptr;
 
   QTimer timerSendTest;
   CommandSetPosScanator Command;
@@ -95,9 +95,9 @@ class CANDelayMeasure: public CANTestMessage
   std::chrono::time_point<std::chrono::high_resolution_clock> timeEnd;
   std::chrono::microseconds Delay;
 
-  void linkTo(CANConnectionEngine* device) 
+  void linkTo(CANEngineInterface* device) 
   { 
-    connect(device,&CANConnectionEngine::signalMessageAvailable, this, &CANDelayMeasure::slotMessageReceived); 
+    connect(device,&CANEngineInterface::signalMessageAvailable, this, &CANDelayMeasure::slotMessageReceived); 
     deviceCAN = device; 
   };
   void slotSendTest() override 

@@ -3,6 +3,7 @@
 #include "debug_output_filter.h"
 #include "interface_image_source.h"
 #include "interface_pass_coord.h"
+#include "message_header_generic.h"
 #include "state_block_enum.h"
 #include "thread_operation_nodes.h"
 
@@ -19,15 +20,20 @@ shared_ptr<ImageTrackerCentroidGPU> ProcessControllerClass::ModuleImageProc3;
 //shared_ptr<CameraInterfaceAravis> ProcessControllerClass::DeviceCamera;
 shared_ptr<CameraInterfaceHIK>     ProcessControllerClass::DeviceCamera;
 
+shared_ptr<DeviceTypeLaserPower>   ProcessControllerClass::DeviceLaserPower;
+shared_ptr<DeviceTypeLaserPointer> ProcessControllerClass::DeviceLaserPointer;
+
 shared_ptr<AimImageImitatorClass>  ProcessControllerClass::ModuleImitatorImage;
 
 shared_ptr<AimingClass>          ProcessControllerClass::ModuleAiming1;
 shared_ptr<AimingClass>          ProcessControllerClass::ModuleAiming2;
 
-shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceScanator;
-shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceRotary;
+shared_ptr<DeviceRotaryInterface> ProcessControllerClass::DeviceRotary;
 
 shared_ptr<VideoStreamRTSP>      ProcessControllerClass::ModuleVideoOutput;
+
+std::shared_ptr<UDPEngineInterface> ProcessControllerClass::ConnectionUDP;
+std::shared_ptr<CANEngineInterface> ProcessControllerClass::ConnectionCAN;
 
 
 ProcessControllerClass* ProcessControllerClass::GetInstance(QObject* parent)
@@ -35,6 +41,9 @@ ProcessControllerClass* ProcessControllerClass::GetInstance(QObject* parent)
     if(ProcessControllerInstance == nullptr) ProcessControllerInstance = new ProcessControllerClass(parent);
                                       return ProcessControllerInstance;
 }
+
+
+using MessageType = MessageGeneric<void*, MESSAGE_HEADER_GENERIC>;
 
 ProcessControllerClass::ProcessControllerClass(QObject* parrent): QObject(parrent)
 {
@@ -45,8 +54,13 @@ ModuleImageProc     = make_shared<ImageTrackerCentroid>();
 ModuleImageProc2    = make_shared<ImageTrackerCentroid>();
 ModuleImageProc3    = make_shared<ImageTrackerCentroidGPU>();
 
-//DeviceCamera        = make_shared<CameraInterfaceAravis>();
-//DeviceScanator      = make_shared<ScanatorControlClass>();
+
+ConnectionUDP        = make_shared<UDPEngineInterface>("192.168.0.36",2323,"192.168.0.59",2525);
+ConnectionCAN        = make_shared<CANEngineInterface>("can0");
+
+DeviceRotary        = make_shared<DeviceRotaryControl<CANEngineInterface,CommandSetPosRotary,CommandSetPosRotary> >(ConnectionCAN);
+DeviceLaserPointer  = make_shared<DeviceTypeLaserPointer>(ConnectionCAN);
+DeviceLaserPower    = make_shared<DeviceTypeLaserPower  >(ConnectionCAN);
 
 ModuleImitatorImage = make_shared<AimImageImitatorClass>();
 ModuleImitatorImage = make_shared<AimImageImitatorClass>();
@@ -55,6 +69,38 @@ ModuleAiming2       = make_shared<AimingClass>();
 
 DeviceCamera        = make_shared<CameraInterfaceHIK>();
 ModuleVideoOutput   = make_shared<VideoStreamRTSP>();
+
+ConnectionUDP->Dispatcher->AppendCallback<CommandSetPosScanator>( [this](MessageType& message)
+                  {
+                     auto command = UDPEngineInterface::DispatcherType::ExtractData<CommandSetPosScanator>(&message);
+                     this->DeviceRotary->moveToPos(command->toPair());
+                  }
+                  );
+
+ConnectionUDP->Dispatcher->AppendCallback<CommandSetPosRotary>( [this](MessageType& message)
+                  {
+                     auto command = UDPEngineInterface::DispatcherType::ExtractData<CommandSetPosRotary>(&message);
+                     this->DeviceRotary->moveToPos(command->toPair());
+                  }
+                  );
+
+ConnectionUDP->Dispatcher->AppendCallback<CommandDeviceLaserPower>( [this](MessageType& message)
+                  {
+                     auto command = UDPEngineInterface::DispatcherType::ExtractData<CommandDeviceLaserPower>(&message);
+                     DeviceLaserPower->transmitCommand(*command);
+                     qDebug() << "COMMAND LASER: " << Qt::hex << command->Command;
+                  }
+                  );
+
+
+ConnectionUDP->Dispatcher->AppendCallback<CommandDeviceLaserPointer>( [this](MessageType& message)
+                  {
+                     auto command = UDPEngineInterface::DispatcherType::ExtractData<CommandDeviceLaserPointer>(&message);
+                     DeviceLaserPointer->transmitCommand(*command);
+                     qDebug() << "COMMAND LASER: " << Qt::hex << command->Command;
+                  }
+                  );
+
 
  //DeviceCamera->moveToThread(&ThreadProcess);
  //ThreadCamera.start();
@@ -73,7 +119,7 @@ ModuleVideoOutput   = make_shared<VideoStreamRTSP>();
  //ThreadProcess2.start();
  //ThreadProcess2.setPriority(QThread::HighPriority);
 
-   SlotSetProcessCamera(true);
+// SlotSetProcessCamera(true);
 // SlotSetProcessImitation(true);
 // SlotSetProcessAiming(true);
 
@@ -122,7 +168,7 @@ void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)
 
    ModuleImageProc->SetImageParam(2*2*255,50*50*255,6);
 
-   DeviceCamera | ModuleImageProc  | ModuleAiming1 | DeviceScanator;                     
+   DeviceCamera | ModuleImageProc  | ModuleAiming1 | DeviceRotary;                     
 
      ModuleAiming1->SetModuleEnabled(true);
    ModuleImageProc->SetModuleEnabled(false);
@@ -141,9 +187,9 @@ void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)
    ModuleImageProc2->SetThreshold(120);
 
      DeviceCamera | ModuleImageProc  | ModuleAiming2->PortSetAiming;
-     DeviceCamera | ModuleImageProc2 | ModuleAiming2 | DeviceScanator;
+     DeviceCamera | ModuleImageProc2 | ModuleAiming2 | DeviceRotary;
 
-     DeviceCamera | ModuleImageProc | ModuleAiming1 | DeviceScanator;
+     DeviceCamera | ModuleImageProc | ModuleAiming1 | DeviceRotary;
 
 }
 

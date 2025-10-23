@@ -18,8 +18,8 @@ public:
     explicit WidgetScanatorControl(QWidget* parent = 0);
     WidgetScanatorControl(QString Modulename, QWidget* parent = 0);
 
-    void LinkToDevice(std::shared_ptr<DeviceRotaryGenericInterface> EngineModule);
-                      std::shared_ptr<DeviceRotaryGenericInterface> ScanatorDevice;
+    void LinkToDevice(std::shared_ptr<DeviceRotaryInterface> EngineModule);
+                      std::shared_ptr<DeviceRotaryInterface> ScanatorDevice;
 
     QTimer timerUpdateState;
 

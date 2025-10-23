@@ -1,32 +1,32 @@
 #include "engine_can_interface.h"
 
+#include "message_command_id.h"
+#include "debug_output_filter.h"
 
-CANConnectionEngine::CANConnectionEngine(QObject *parent) : ConnectionInterface(parent)
+CANEngineInterface::CANEngineInterface(QString Device, QObject *parent) : ConnectionInterface(parent)
 {
 
   QString errorString;
-  device = QCanBus::instance()->createDevice( QStringLiteral("socketcan"), QStringLiteral("can0"), &errorString);
+  device = QCanBus::instance()->createDevice( QStringLiteral("socketcan"), Device, &errorString);
 
   if (!device)                  { qDebug() << "[ CAN DEVICE NOT OPEN ] " << errorString; return; }
-       device->connectDevice(); { qDebug() << "[ CAN0 DEVICE OPENED ] "; }
+       device->connectDevice(); { qDebug() << "[ " << Device << "DEVICE OPENED ] "; }
 
-  QObject::connect(device,&QCanBusDevice::framesReceived, this, &CANConnectionEngine::slotReadData);
+  QObject::connect(device,&QCanBusDevice::framesReceived, this, &CANEngineInterface::slotReadData);
 
-  //qDebug() << "SET BITRATE: 500000";
-  //device->setConfigurationParameter( QCanBusDevice::BitRateKey, 500000);
 
-  engineSendTest = new CANTestMessage; engineSendTest->linkTo(this);
+      engineSendTest = new CANTestMessage ; engineSendTest->linkTo(this);
   engineDelayMeasure = new CANDelayMeasure; engineDelayMeasure->linkTo(this);
 
   qDebug() << "==========================";
 }
 
-//void CANConnectionEngine::listenTo(QString IDDeviceStr, int IDDevice)
+//void CANEngineInterface::listenTo(QString IDDeviceStr, int IDDevice)
 //{
 //  DispatcherType<CommandDevice<0>>::appendCall([](CommandDevice<0> Command){}, TypeRegister<CommandDevice<0>>::GetTypeID());
 //}
 
-void CANConnectionEngine::printAvailableDevices()
+void CANEngineInterface::printAvailableDevices()
 {
 
   QString errorString;
@@ -36,12 +36,12 @@ void CANConnectionEngine::printAvailableDevices()
   for(auto dev: devices) qDebug() << "[ AVAILABLE DEVICE ] " << dev.name();
 }
 
-CANConnectionEngine::~CANConnectionEngine() 
+CANEngineInterface::~CANEngineInterface() 
 { 
 }
 
 
-void CANConnectionEngine::slotReadData()
+void CANEngineInterface::slotReadData()
 {
     while (device->framesAvailable()) 
     {
@@ -50,15 +50,23 @@ void CANConnectionEngine::slotReadData()
                                                    QString data;
         if (frame.frameType() == QCanBusFrame::ErrorFrame) data = device->interpretErrorFrame(frame);
 
-            //data = QString::fromLatin1(frame.payload().toHex(' ').toUpper());
         qDebug() << "[ GET FRAME ]" << frame.frameId() << frame.payload().toHex();
+
         switch(frame.frameId())
         {
-          case CommandDispatcherGeneric<10>::ID: 
-               CommandDispatcherGeneric<10>::dispatchCommand(frame.payload());
+          case TypeRegister<MessageDeviceController>::TYPE_ID: 
+               CommandDispatcherGeneric<TypeRegister<MessageDeviceController>::TYPE_ID>::dispatchCommand(frame.payload());
             return; 
-          case CommandDispatcherGeneric<20>::ID: 
-               CommandDispatcherGeneric<20>::dispatchCommand(frame.payload());
+          case TypeRegister<MessageDeviceLaserPower>::TYPE_ID: 
+               CommandDispatcherGeneric<TypeRegister<MessageDeviceLaserPower>::TYPE_ID>::dispatchCommand(frame.payload());
+            return; 
+
+          case TypeRegister<MessageDeviceLaserPointer>::TYPE_ID: 
+               CommandDispatcherGeneric<TypeRegister<MessageDeviceLaserPointer>::TYPE_ID>::dispatchCommand(frame.payload());
+            return; 
+
+          case TypeRegister<MessageDeviceFocusator>::TYPE_ID: 
+               CommandDispatcherGeneric<TypeRegister<MessageDeviceFocusator>::TYPE_ID>::dispatchCommand(frame.payload());
             return; 
           break;
         }
@@ -68,9 +76,9 @@ void CANConnectionEngine::slotReadData()
 }
 
 
-void CANConnectionEngine::slotSendMessage(const QByteArray& message, uint8_t IDDevice)
+void CANEngineInterface::slotSendMessage(const QByteArray& message, uint16_t IDDevice)
 {
-    qDebug() << "[ CAN ] SEND: " << message.toHex(); 
+    qDebug() << OutputFilter::Filter(100) << "[ CAN ] SEND: " << QString(message.toHex()); 
 
     QCanBusFrame frame = QCanBusFrame(IDDevice, message);
                  frame.setFrameType(QCanBusFrame::DataFrame);
@@ -78,7 +86,7 @@ void CANConnectionEngine::slotSendMessage(const QByteArray& message, uint8_t IDD
     device->writeFrame(frame);
 }
 
-void CANConnectionEngine::slotSendMessage(const char* DataCommand, int size, uint8_t IDDevice)
+void CANEngineInterface::slotSendMessage(const char* DataCommand, int size, uint16_t IDDevice)
 {
   QByteArray message(DataCommand,size);
 
@@ -91,17 +99,13 @@ void CANConnectionEngine::slotSendMessage(const char* DataCommand, int size, uin
 
 
 
-bool CANConnectionEngine::isConnected()
+bool CANEngineInterface::isConnected()
 {
     return true;
 }
 
-
-
-void CANConnectionEngine::slotCheckConnection()
+void CANEngineInterface::slotCheckConnection()
 {
-
 }
 
-
-bool CANConnectionEngine::isMessageAvailable() { return false;}
+bool CANEngineInterface::isMessageAvailable() { return false;}

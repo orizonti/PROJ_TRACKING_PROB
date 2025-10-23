@@ -18,9 +18,26 @@ struct CommandDevice
 };
 
 using CommandDeviceController   = CommandDevice<0>;
-using CommandDeviceLaserPower   = CommandDevice<1>;
-using CommandDeviceLaserPointer = CommandDevice<2>;
-using CommandDeviceFocusator    = CommandDevice<3>;
+
+template<int NUM_DEV>
+struct CommandDeviceRedux
+{
+  public:
+  uint8_t Command = 0;
+  uint8_t Param = 0;
+
+  uint8_t Reserv1 = 0;
+  uint8_t Reserv2 = 0;
+  uint8_t Reserv3 = 0;
+  uint8_t Reserv4 = 0;
+  uint8_t Reserv5 = 0;
+  uint8_t Reserv6 = 0;
+  void clearStruct() { std::memset(this,0,sizeof(CommandDeviceRedux)); }
+};
+
+using CommandDeviceLaserPower   = CommandDeviceRedux<0>;
+using CommandDeviceLaserPointer = CommandDeviceRedux<1>;
+using CommandDeviceFocusator    = CommandDeviceRedux<2>;
 
 template<int NUM_DEV>
 struct MessageDevice
@@ -46,6 +63,7 @@ struct CommandSetPos
    void clearStruct() { std::memset(this,0,sizeof(CommandSetPos)); }
    template<typename T>
    void operator=(const QPair<T,T>& Pos) { Param1 = Pos.first; Param2 = Pos.second; };
+   QPair<int,int> toPair() { return QPair<int,int>(Param1,Param2); }
 };
 using CommandSetPosRotary   = CommandSetPos<0>;
 using CommandSetPosScanator = CommandSetPos<1>;

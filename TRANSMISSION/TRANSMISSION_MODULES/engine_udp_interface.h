@@ -15,6 +15,7 @@
 
 #include "engine_ring_buffer_generic.h"
 #include "message_command_structures.h"
+#include "message_dispatcher_generic.h"
 
 //class ConnectionInterface : public QObject
 //{
@@ -39,6 +40,9 @@ class UDPEngineInterface : public ConnectionInterface
 {
     Q_OBJECT
 public:
+    using RingBufferType = RingBufferGeneric<MESSAGE_HEADER_GENERIC,sizeof(MessageDevice<0>),4,IteratorMode::Continous>; 
+    using DispatcherType = MessageDispatcher<MESSAGE_HEADER_GENERIC,RingBufferType>;
+
     explicit UDPEngineInterface(QString IPDevice, int Port,QString IPListen, int PortLocal, QObject *parent = nullptr);
              UDPEngineInterface(QString IPDevice, int Port,QHostAddress::SpecialAddress IPListen, int PortLocal, QObject *parent = nullptr);
     ~UDPEngineInterface();
@@ -52,8 +56,8 @@ public:
     int DataCounter = 0;
 
 public slots:
-  void slotSendMessage(const QByteArray& ArrayCommand, uint8_t Param = 0) override;
-  void slotSendMessage(const char* DataCommand, int size, uint8_t Param = 0) override;
+  void slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param = 0) override;
+  void slotSendMessage(const char* DataCommand, int size, uint16_t Param = 0) override;
 
   void slotCheckConnection() override;
   void slotCloseConnection() override;
@@ -70,8 +74,8 @@ public:
         int PortRemote = 7575;
         int PortLocal  = 7575;
        bool Connected  = false;
-
-RingBufferGeneric<MESSAGE_HEADER_GENERIC,sizeof(MessageDevice<0>), 4,IteratorMode::Continous>* RingBuffer = nullptr;
+RingBufferType* RingBuffer = nullptr;
+DispatcherType* Dispatcher = nullptr;
 
 signals:
 void SignalDeviceConnected();

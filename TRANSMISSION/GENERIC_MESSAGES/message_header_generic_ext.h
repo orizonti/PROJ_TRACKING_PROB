@@ -25,22 +25,20 @@ class MESSAGE_HEADER_EXT : public MESSAGE_HEADER_GENERIC
     friend QDataStream& operator<<(QDataStream& stream, MESSAGE_HEADER_EXT& Head)
     {
       stream << Head.HEADER;
-      stream << Head.MESSAGE_TYPE;
       stream << Head.MESSAGE_IDENT;
-      stream << Head.MESSAGE_NUMBER;
       stream << Head.DATA_SIZE;
       stream << Head.DATA_SIZE2;
+      stream << Head.MESSAGE_NUMBER;
       return stream;
     }
 
     friend QDataStream& operator>>(QDataStream& stream, MESSAGE_HEADER_EXT& Head)
     {
       stream >> Head.HEADER;
-      stream >> Head.MESSAGE_TYPE;
       stream >> Head.MESSAGE_IDENT;
-      stream >> Head.MESSAGE_NUMBER;
       stream >> Head.DATA_SIZE;
       stream >> Head.DATA_SIZE2;
+      stream >> Head.MESSAGE_NUMBER;
       return stream;
     }
 };

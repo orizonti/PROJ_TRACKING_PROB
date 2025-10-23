@@ -5,14 +5,15 @@
 #include "message_struct_generic.h"
 #include "engine_type_register.h"
 #include "message_header_generic.h"
-
+#include "message_command_id.h"
 
 template<typename H, typename RingBufferType>
 class MessageDispatcher 
 {
 public:
     MessageDispatcher() { CallList.resize(30); std::fill(CallList.begin(), CallList.end(), nullptr);}
-    using MessageCall   = std::function<void (MessageGeneric<void*, H>&)>;
+    using MessageType   = MessageGeneric<void*, H>;
+    using MessageCall   = std::function<void (MessageType&)>;
 
     void DispatchNextMessage(RingBufferType& RingBuffer);
 
@@ -26,9 +27,9 @@ public:
     template<typename T>
     void AppendCallback(const MessageCall& Call)
     {
-       if(CallList.size() < TypeRegister<>::TypeCount)
+       if(CallList.size() < TypeRegister<>::GetTypeMax())
        {
-          auto List = CallList; CallList.resize(TypeRegister<>::TypeCount+2); 
+          auto List = CallList; CallList.resize(TypeRegister<>::GetTypeMax()); 
                       CallList.insert(CallList.begin(), List.begin(), List.end());
        }
        CallList[TypeRegister<T>::ID()] = Call;
@@ -58,7 +59,7 @@ void MessageDispatcher<H,RingBufferType>::DispatchNextMessage(RingBufferType& Ri
                 Message.HEADER.MESSAGE_IDENT  <= CallList.size())
        CallList[Message.HEADER.MESSAGE_IDENT](Message);
     else
-    qDebug() << "CALLBACK NOT REGISTERED TO MESSAGE:" << Message.HEADER.MESSAGE_IDENT;
+    qDebug() << "CALLBACK NOT REGISTERED TO MESSAGE:" << Qt::hex << Message.HEADER.MESSAGE_IDENT;
 
 
     if(RingBuffer.isMessageAvailable()) DispatchNextMessage(RingBuffer);

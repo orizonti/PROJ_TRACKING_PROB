@@ -16,8 +16,8 @@ class ConnectionInterface : public QObject
   virtual void tryConnectConstantly(QString address, int Port) = 0;
 
   public slots:
-  virtual void slotSendMessage(const QByteArray& ArrayCommand, uint8_t Param = 0) = 0;
-  virtual void slotSendMessage(const char* DataCommand, int size, uint8_t Param = 0) = 0 ;
+  virtual void slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param = 0) = 0;
+  virtual void slotSendMessage(const char* DataCommand, int size, uint16_t Param = 0) = 0 ;
 
   virtual void slotCheckConnection() = 0;
   virtual void slotCloseConnection() = 0;

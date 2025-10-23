@@ -22,7 +22,7 @@ class DynamicModule: public QObject
 {
   Q_OBJECT
   public:
-  explicit DynamicModule(DeviceRotaryGenericInterface* DeviceRotary) 
+  explicit DynamicModule(DeviceRotaryInterface* DeviceRotary) 
   { 
     Device = DeviceRotary; QObject::connect(&timerMove, &QTimer::timeout, this, &DynamicModule::slotMove); 
   }
@@ -32,23 +32,23 @@ class DynamicModule: public QObject
   void slotMove() { Device->moveOnStep(Device->getVelocity()); }
   private:
   QTimer timerMove;
-  DeviceRotaryGenericInterface* Device = nullptr;
+  DeviceRotaryInterface* Device = nullptr;
 };
 
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-class DeviceRotaryInterface : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceRotaryGenericInterface
+class DeviceRotaryControl : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceRotaryInterface
 {
 public:
   using DEVICE_BASE_TYPE = DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>; 
-  DeviceRotaryInterface(T_CONNECTION* Connection, QString Name = "[ DEVICE ]");
+  explicit DeviceRotaryControl(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]");
 
 	QString TAG_NAME{"[ ROTARY ]"};
 
-	~DeviceRotaryInterface() { qDebug() << TAG_NAME << "DELETE"; }
+	~DeviceRotaryControl() { qDebug() << TAG_NAME << "DELETE"; }
 
-	QPair<int, int> LimitDown{-10000,-10000};
-	QPair<int, int> LimitUp  { 10000, 10000};
+	QPair<int, int> LimitDown{0,0};
+	QPair<int, int> LimitUp  {50000, 50000};
 	QPair<int, int> Range{LimitUp - LimitDown};
 	QPair<int, int> RangeOffset {0,0};
 
@@ -86,7 +86,7 @@ public:
   void loadSettings();
 
 
-std::shared_ptr<PortAdapter<DeviceRotaryGenericInterface>> PortMoveRelative = nullptr;
+std::shared_ptr<PortAdapter<DeviceRotaryInterface>> PortMoveRelative = nullptr;
 
 private:
 	RotateVectorClass<int>   RotAxis;
@@ -94,25 +94,24 @@ private:
 };
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceRotaryInterface(T_CONNECTION* Connection, QString Name): 
+DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceRotaryControl(std::shared_ptr<T_CONNECTION> Connection, QString Name): 
 DeviceGenericInterface<T_CONNECTION,T_COMMAND, T_MESSAGE>(Connection, Name)
 {
-
 	setToNull();
 
-  PortMoveRelative = std::make_shared<PortAdapter<DeviceRotaryGenericInterface>>();
-  PortMoveRelative->LinkAdapter(this, &DeviceRotaryGenericInterface::moveToPosRelative, 
-                                      &DeviceRotaryGenericInterface::getPos);
+  PortMoveRelative = std::make_shared<PortAdapter<DeviceRotaryInterface>>();
+  PortMoveRelative->LinkAdapter(this, &DeviceRotaryInterface::moveToPosRelative, 
+                                      &DeviceRotaryInterface::getPos);
   PortMoveRelative | *this; // LINK INTEGRATOR TO moveToPos, EMULATE MOVE WITH VELOCTIY
 }
 
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-bool DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::isAtLimit() { return checkRangeOffset(Position); }
+bool DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::isAtLimit() { return checkRangeOffset(Position); }
 
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull() 
+void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull() 
 { 
                                    Position = PositionNull; 
   DEVICE_BASE_TYPE::Command.DATA = Position;
@@ -120,7 +119,7 @@ void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull()
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-bool DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::checkRangeOffset(QPair<int, int> Pos)
+bool DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::checkRangeOffset(QPair<int, int> Pos)
 {
      RangeOffset = abs_pair(Pos - LimitDown) + abs_pair(LimitUp - Pos);
   if(RangeOffset.second > Range.second || RangeOffset.first  > Range.first ) return true;
@@ -128,7 +127,7 @@ bool DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::checkRangeOffset(Q
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPair<int, int>& Step)
+void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPair<int, int>& Step)
 {
                          PositionTarget = Position + Step;
   RangeOffset = abs_pair(PositionTarget - LimitDown) + abs_pair(LimitUp - PositionTarget);
@@ -138,12 +137,13 @@ void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const Q
 
                                    Position = PositionTarget;
   DEVICE_BASE_TYPE::Command.DATA = Position;
-  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage(DEVICE_BASE_TYPE::Command.toByteArray()); 
+  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
+                                                              sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<int, int>& Pos)
+void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<int, int>& Pos)
 {
                          PositionTarget = Pos;
   RangeOffset = abs_pair(PositionTarget - LimitDown) + abs_pair(LimitUp - PositionTarget);
@@ -151,13 +151,18 @@ void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QP
   if(RangeOffset.first >Range.first ) PositionTarget.first =Pos.first <0 ?LimitDown.first  :LimitUp.first; 
   if(RangeOffset.second>Range.second) PositionTarget.second=Pos.second<0 ?LimitDown.second :LimitUp.second;
 
+
                                    Position = PositionTarget;
   DEVICE_BASE_TYPE::Command.DATA = Position;
-  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage(DEVICE_BASE_TYPE::Command.toByteArray()); 
+
+   qDebug() << OutputFilter::Filter(100) << "[ GET COMMAND SET POS SCANATOR ]" << Position.first 
+                                                                               << Position.second;
+  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
+                                                              sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<int, int>& PosRelative) 
+void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<int, int>& PosRelative) 
 {
                                      auto PositionAbs = Position + PosRelative;
                          PositionTarget = PositionAbs;
@@ -167,12 +172,13 @@ void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(
   if(RangeOffset.second>Range.second) PositionTarget.second= PositionAbs.second<0 ?LimitDown.second :LimitUp.second;
 
   DEVICE_BASE_TYPE::Command.DATA = PositionTarget;
-  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage(DEVICE_BASE_TYPE::Command.toByteArray()); 
+  DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
+                                                              sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()
+void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()
 {
   //auto RotateParamCamEng = SettingsRegister::GetString(QString("ROTATE_CAM_ENG"));
   //auto RotateParamEngCam = SettingsRegister::GetString(QString("ROTATE_ENG_CAM"));
@@ -180,7 +186,7 @@ void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-QPair<int,int> DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::getLimits(int axis)
+QPair<int,int> DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::getLimits(int axis)
 {
    QPair<int,int> Limits(LimitDown.first, LimitUp.first);
     if(axis == 1) Limits = QPair<int,int>(LimitDown.second, LimitUp.second);
@@ -188,12 +194,12 @@ QPair<int,int> DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::getLimit
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParam(uint8_t ID, uint16_t Value) 
+void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParam(uint8_t ID, uint16_t Value) 
 {
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2) 
+void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2) 
 {
     DEVICE_BASE_TYPE::Command.DATA.Param1 = Value1;
     DEVICE_BASE_TYPE::Command.DATA.Param2 = Value2;
@@ -201,7 +207,7 @@ void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16
 }
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) 
+void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) 
 {
     DEVICE_BASE_TYPE::Command.DATA.Param1 = Value1;
     DEVICE_BASE_TYPE::Command.DATA.Param2 = Value2;

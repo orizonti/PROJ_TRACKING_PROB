@@ -8,7 +8,8 @@ std::pair<int,int> AimImageImitatorClass::SizeAimBoundry{420-40,420-40}; // MAY 
 AimImageImitatorClass::AimImageImitatorClass(QObject* parent) : ImageSourceInterface(parent)
 {
 
- auto user = SettingsRegister::GetString("USER");
+ //auto user = SettingsRegister::GetString("USER");
+ auto user = "orangepi";
  auto path = QString("/home/%1/DATA/UFO.png").arg(user);
  auto path2 = QString("/home/%1/DATA/blotch.png").arg(user);
 

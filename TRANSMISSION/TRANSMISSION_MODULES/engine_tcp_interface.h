@@ -38,8 +38,8 @@ public:
   void tryConnectConstantly(QString Address, int Port) override;
 
 public slots:
-  void slotSendMessage(const QByteArray& Command, uint8_t Param = 0) override;
-  void slotSendMessage(const char* DataCommand, int size, uint8_t Param = 0) override;
+  void slotSendMessage(const QByteArray& Command, uint16_t Param = 0) override;
+  void slotSendMessage(const char* DataCommand, int size, uint16_t Param = 0) override;
 
   void slotCheckConnection() override;
   void slotCloseConnection() override;

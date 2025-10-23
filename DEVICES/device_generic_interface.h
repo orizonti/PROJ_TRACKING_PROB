@@ -12,7 +12,7 @@ template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
 class DeviceGenericInterface 
 {
 public:
-    DeviceGenericInterface(T_CONNECTION* Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) 
+    DeviceGenericInterface(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) 
 	{ 
 		ConnectionDevice = Connection;
 		init();
@@ -22,11 +22,13 @@ public:
 	~DeviceGenericInterface() {};
 
 	virtual void setParam (uint8_t ID, uint16_t Value) = 0; 
+	virtual void setParam (uint8_t ID, bool OnOff) {if(OnOff) setParam(ID,uint16_t(1)); else setParam(ID,uint16_t(0)); } 
 	virtual void setParams(uint16_t Value1, uint16_t Value2) = 0;
 	virtual void setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) = 0; 
 
-    void sendCommand() { ConnectionDevice->slotSendMessage(Command.toByteArray());};
-	void sendCommand(T_COMMAND commandDevice) { Command = commandDevice;  ConnectionDevice->SlotSendCommand(Command.toByteArray());};
+  void sendCommand() { ConnectionDevice->slotSendMessage(Command.toByteArray());};//GENERIC MESSAGE [HEADER DATA]
+	void sendCommand(T_COMMAND commandDevice) { Command.DATA = commandDevice;  
+                                              ConnectionDevice->slotSendMessage((char*)(&Command.DATA), sizeof(T_COMMAND),TypeRegister<T_COMMAND>::TYPE_ID);};
 
     virtual void putMessage(T_MESSAGE Message) = 0;
 	void init()
@@ -40,11 +42,11 @@ public:
 	}
 	
 protected:
-    T_CONNECTION* ConnectionDevice = nullptr;
+    std::shared_ptr<T_CONNECTION> ConnectionDevice = nullptr;
     MessageGenericExt<T_COMMAND,MESSAGE_HEADER_EXT> Command;
 };
 
-class DeviceLaserGenericInterface
+class DeviceLaserInterface
 {
 	public:
 	virtual void setEnable(bool OnOff) = 0;
@@ -53,7 +55,7 @@ class DeviceLaserGenericInterface
 	virtual void setPower(uint16_t Value) = 0;
 };
 
-class DeviceFocusGenericInterface
+class DeviceFocusInterface
 {
 	public:
 	virtual void setEnable(bool OnOff) = 0;
@@ -61,7 +63,7 @@ class DeviceFocusGenericInterface
 	virtual uint16_t getDistance() = 0;
 };
 
-class DeviceRotaryGenericInterface: public PassCoordClass<float>
+class DeviceRotaryInterface: public PassCoordClass<float>
 {
 	public:
 	virtual void moveOnStep(const QPair<int, int>& Pos) = 0;

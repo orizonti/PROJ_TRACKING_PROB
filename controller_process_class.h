@@ -19,9 +19,12 @@
 #include "engine_can_interface.h"
 #include "message_command_structures.h"
 #include "device_rotary_interface.h"
-
+#include "device_laser_interface.h"
 
 enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibration}; 
+
+using DeviceTypeLaserPointer = DeviceLaserControl<CANEngineInterface, CommandDeviceLaserPointer, MessageDeviceLaserPointer>;
+using DeviceTypeLaserPower   = DeviceLaserControl<CANEngineInterface, CommandDeviceLaserPower, MessageDeviceLaserPower>;
 
 class VideoStreamRTSP;
 class ProcessControllerClass : public QObject
@@ -34,21 +37,22 @@ static ProcessControllerClass* GetInstance(QObject* parent = nullptr);
 
 static std::shared_ptr<CameraInterfaceHIK> DeviceCamera;
 
+static std::shared_ptr<DeviceTypeLaserPower>   DeviceLaserPower;
+static std::shared_ptr<DeviceTypeLaserPointer> DeviceLaserPointer;
+
 static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc;
 static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc2;
 static std::shared_ptr<ImageTrackerCentroidGPU> ModuleImageProc3;
 static std::shared_ptr<AimImageImitatorClass>   ModuleImitatorImage;
 
-//static std::shared_ptr<DeviceRotaryInterface<CANConnectionEngine,int,int> > DeviceScanator;
-//static std::shared_ptr<DeviceRotaryInterface<CANConnectionEngine,int,int> > DeviceRotary;
-
-static std::shared_ptr<DeviceRotaryGenericInterface> DeviceScanator;
-static std::shared_ptr<DeviceRotaryGenericInterface> DeviceRotary;
+static std::shared_ptr<DeviceRotaryInterface> DeviceRotary;
 
 static std::shared_ptr<AimingClass>          ModuleAiming1;
 static std::shared_ptr<AimingClass>          ModuleAiming2;
 static std::shared_ptr<VideoStreamRTSP>      ModuleVideoOutput;
 
+static std::shared_ptr<UDPEngineInterface> ConnectionUDP;
+static std::shared_ptr<CANEngineInterface> ConnectionCAN;
 
     ProcessControllerClass(QObject* parrent = 0);
     ProcessControllerClass(const ProcessControllerClass& Copy) = delete;

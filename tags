@@ -261,10 +261,10 @@ BuffersArv	CAMERA_INTERFACE/camera_interface_class.h	/^    std::vector<ArvBuffer
 BytesTo	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^	int  BytesTo(const MessageIteratorGenericBase<H>& It) { return It.PtrMessageBegin - PtrMessageBegin;}; $/;"	f	class:IteratorMode::MessageIteratorGenericBase
 CALC_BY_LUMEN	CV_IMAGE_PROCESSING/optimization_threshold.h	/^enum class PROCESS_METHOD { PARALLEL_BY_DISPERSION, CALC_BY_LUMEN, RUNAWAY_FROM_DISPERSION};$/;"	m	class:PROCESS_METHOD
 CAMERA_WIDGET_H	gui_sources/widget_camera_control.h	2;"	d
-CANConnectionEngine	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^CANConnectionEngine::CANConnectionEngine(QObject *parent) : ConnectionInterface(parent)$/;"	f	class:CANConnectionEngine
-CANConnectionEngine	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^class CANConnectionEngine : public ConnectionInterface$/;"	c
 CANDelayMeasure	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANDelayMeasure(QObject* parent = nullptr) : CANTestMessage(parent) {};$/;"	f	class:CANDelayMeasure
 CANDelayMeasure	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^class CANDelayMeasure: public CANTestMessage$/;"	c
+CANEngineInterface	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^CANEngineInterface::CANEngineInterface(QString Device, QObject *parent) : ConnectionInterface(parent)$/;"	f	class:CANEngineInterface
+CANEngineInterface	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^class CANEngineInterface : public ConnectionInterface$/;"	c
 CANTestMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANTestMessage(QObject* parent = nullptr) : QObject(parent) $/;"	f	class:CANTestMessage
 CANTestMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^class CANTestMessage: public QObject$/;"	c
 CAN_ENGINE_INTERFACE_H	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	2;"	d
@@ -272,6 +272,7 @@ CMAKE_BINARY_DIR	Makefile	/^CMAKE_BINARY_DIR = \/home\/orangepi\/DEVELOPMENT\/PR
 CMAKE_COMMAND	Makefile	/^CMAKE_COMMAND = \/usr\/bin\/cmake$/;"	m
 CMAKE_SOURCE_DIR	Makefile	/^CMAKE_SOURCE_DIR = \/home\/orangepi\/DEVELOPMENT\/PROJECTS\/CURRENT\/TRACKING_PROB_RTSP$/;"	m
 CN	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^      CN     = (1 << 1),$/;"	e	enum:cv::tracking::TrackerKCF::MODE
+COMMAND_ID_H	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	2;"	d
 COMMONHEADERS_H	include/CommonHeaders.h	2;"	d
 COMMON_CAMERA_CONTROL_INTERFACE_H	CAMERA_INTERFACE/camera_control_interface.h	2;"	d
 COMPILER_ID	CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c	109;"	d	file:
@@ -977,11 +978,13 @@ ColorList	gui_sources/widget_output_image_display.h	/^  QVector<QColor> ColorLis
 Command	DEVICES/device_generic_interface.h	/^    MessageGenericExt<T_COMMAND,MESSAGE_HEADER_EXT> Command;$/;"	m	class:DeviceGenericInterface
 Command	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t  Command     = 0xA1;$/;"	m	struct:CommandCalibration
 Command	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint16_t Command = 0;$/;"	m	struct:CommandDevice
+Command	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Command = 0;$/;"	m	struct:CommandDeviceRedux
 Command	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CommandSetPosScanator Command;$/;"	m	class:CANTestMessage
 CommandCalibration	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandCalibration$/;"	s
 CommandCheckConnection	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandCheckConnection  { uint8_t Connect  = 0xC5; uint8_t Connect2 = 0xC6; };$/;"	s
 CommandCloseConnection	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandCloseConnection  { uint8_t Close1   = 0xC6; uint8_t Close2   = 0xC6; };$/;"	s
 CommandDevice	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandDevice$/;"	s
+CommandDeviceRedux	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandDeviceRedux$/;"	s
 CommandDispatcherGeneric	TRANSMISSION/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^class CommandDispatcherGeneric$/;"	c
 CommandSetPos	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandSetPos$/;"	s
 CommandSetSpeed	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct CommandSetSpeed$/;"	s
@@ -996,9 +999,13 @@ Connect2	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^struct Comm
 ConnectNode	gui_sources/widget_scene_node_interface.cpp	/^LinkLine* WidgetSceneNodeInterface::ConnectNode(int sourcePortNode ,WidgetSceneNodeInterface* Node, int destPortNode)$/;"	f	class:WidgetSceneNodeInterface
 Connected	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^       bool Connected  = false;$/;"	m	class:UDPEngineInterface
 ConnectedToDevice	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    bool ConnectedToDevice = false;$/;"	m	class:LaserControlClass
-ConnectionDevice	DEVICES/device_generic_interface.h	/^    T_CONNECTION* ConnectionDevice = nullptr;$/;"	m	class:DeviceGenericInterface
+ConnectionCAN	controller_process_class.cpp	/^std::shared_ptr<CANEngineInterface> ProcessControllerClass::ConnectionCAN;$/;"	m	class:ProcessControllerClass	file:
+ConnectionCAN	controller_process_class.h	/^static std::shared_ptr<CANEngineInterface> ConnectionCAN;$/;"	m	class:ProcessControllerClass
+ConnectionDevice	DEVICES/device_generic_interface.h	/^    std::shared_ptr<T_CONNECTION> ConnectionDevice = nullptr;$/;"	m	class:DeviceGenericInterface
 ConnectionInterface	TRANSMISSION/TRANSMISSION_MODULES/connection_interface.h	/^  ConnectionInterface(QObject* parent = nullptr) : QObject(parent) {}; $/;"	f	class:ConnectionInterface
 ConnectionInterface	TRANSMISSION/TRANSMISSION_MODULES/connection_interface.h	/^class ConnectionInterface : public QObject$/;"	c
+ConnectionUDP	controller_process_class.cpp	/^std::shared_ptr<UDPEngineInterface> ProcessControllerClass::ConnectionUDP;$/;"	m	class:ProcessControllerClass	file:
+ConnectionUDP	controller_process_class.h	/^static std::shared_ptr<UDPEngineInterface> ConnectionUDP;$/;"	m	class:ProcessControllerClass
 Continous	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	m	class:IteratorMode
 ContinousLoad	UTILITES/thread_operation_nodes.h	/^  bool ContinousLoad = false;$/;"	m	class:ValueStorage
 ContinousMode	UTILITES/thread_operation_nodes.h	/^  bool ContinousMode = true;$/;"	m	class:CoordStorage
@@ -1015,7 +1022,6 @@ ControlCommandLaser	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^  
 ControlCommandLaser	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^struct ControlCommandLaser$/;"	s
 ControlData	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    ControlCommandLaser ControlData;$/;"	m	class:LaserControlClass
 ControlWindow	DEVICES/device_focus_ranger_interface.h	/^    WidgetFocusRangerControl* ControlWindow;$/;"	m	class:DeviceFocusRangerInterface
-ControlWindow	DEVICES/device_laser_interface.h	/^                             WidgetLaserControl* ControlWindow  = nullptr;$/;"	m	class:DeviceLaserInterface
 ControursProcessors	CV_IMAGE_PROCESSING/optimization_threshold.h	/^  std::vector<ContoursProcessorClass> ControursProcessors;$/;"	m	class:ThresholdFindingParallelDispersion
 ConvertInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^torch::Tensor RotateOperationContainer::ConvertInput(torch::Tensor& Input)$/;"	f	class:RotateOperationContainer
 ConvertInputCoord	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^pair<torch::Tensor,torch::Tensor> RotateOperationContainer::ConvertInputCoord(vector<pair<double,double>> test_input ,vector<pair<double,double>> test_output, bool z_signs_inverse)$/;"	f	class:RotateOperationContainer
@@ -1107,7 +1113,7 @@ DATA	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	/^    T DATA; $/
 DATATHREADSPROCESSING_H	UTILITES/thread_operation_nodes.h	2;"	d
 DATA_AVAILABLE	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^    int DATA_AVAILABLE = 0;$/;"	m	class:RingBufferGeneric
 DATA_PASSED	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^    int DATA_PASSED = 0;$/;"	m	class:RingBufferGeneric
-DATA_SIZE	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t DATA_SIZE = 1; $/;"	m	class:MESSAGE_HEADER_GENERIC
+DATA_SIZE	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t DATA_SIZE  = 1; $/;"	m	class:MESSAGE_HEADER_GENERIC
 DATA_SIZE2	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t DATA_SIZE2 = 1; $/;"	m	class:MESSAGE_HEADER_GENERIC
 DEBUGOUTPUTFILTER_H	UTILITES/debug_output_filter.h	2;"	d
 DEC	CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c	656;"	d	file:
@@ -1137,27 +1143,29 @@ DeleteModulesLinks	controller_process_class.cpp	/^void ProcessControllerClass::D
 DestroyBufferInfo	CAMERA_INTERFACE/camera_interface_class.cpp	/^void DestroyBufferInfo ( gpointer data)$/;"	f
 DeviationAvarage	UTILITES/engine_statistics.h	/^	T DeviationAvarage = 0;$/;"	m	class:StatisticCoord
 DeviationMax	UTILITES/engine_statistics.h	/^	T DeviationMax = 0;$/;"	m	class:StatisticCoord
-Device	DEVICES/device_rotary_interface.h	/^  DeviceRotaryGenericInterface* Device = nullptr;$/;"	m	class:DynamicModule
+Device	DEVICES/device_rotary_interface.h	/^  DeviceRotaryInterface* Device = nullptr;$/;"	m	class:DynamicModule
 DeviceCamera	controller_process_class.cpp	/^shared_ptr<CameraInterfaceHIK>     ProcessControllerClass::DeviceCamera;$/;"	m	class:ProcessControllerClass	file:
 DeviceCamera	controller_process_class.h	/^static std::shared_ptr<CameraInterfaceHIK> DeviceCamera;$/;"	m	class:ProcessControllerClass
-DeviceFocusGenericInterface	DEVICES/device_generic_interface.h	/^class DeviceFocusGenericInterface$/;"	c
+DeviceFocusInterface	DEVICES/device_generic_interface.h	/^class DeviceFocusInterface$/;"	c
 DeviceFocusRangerInterface	DEVICES/device_focus_ranger_interface.h	/^    explicit DeviceFocusRangerInterface(T_CONNECTION* Connection, QString Name) :$/;"	f	class:DeviceFocusRangerInterface
 DeviceFocusRangerInterface	DEVICES/device_focus_ranger_interface.h	/^class DeviceFocusRangerInterface : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceFocusGenericInterface$/;"	c
-DeviceGenericInterface	DEVICES/device_generic_interface.h	/^    DeviceGenericInterface(T_CONNECTION* Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) $/;"	f	class:DeviceGenericInterface
+DeviceGenericInterface	DEVICES/device_generic_interface.h	/^    DeviceGenericInterface(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) $/;"	f	class:DeviceGenericInterface
 DeviceGenericInterface	DEVICES/device_generic_interface.h	/^class DeviceGenericInterface $/;"	c
 DeviceID	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   uint8_t DeviceID = 0;$/;"	m	struct:MessageDevice
 DeviceID	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint16_t DeviceID = 0;$/;"	m	struct:CommandDevice
 DeviceInterface	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    TCPControlInterface* DeviceInterface;$/;"	m	class:LaserControlClass
-DeviceLaserGenericInterface	DEVICES/device_generic_interface.h	/^class DeviceLaserGenericInterface$/;"	c
-DeviceLaserInterface	DEVICES/device_laser_interface.h	/^DeviceLaserInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceLaserInterface(T_CONNECTION* Connection, QString Name): $/;"	f	class:DeviceLaserInterface
-DeviceLaserInterface	DEVICES/device_laser_interface.h	/^class DeviceLaserInterface : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceLaserGenericInterface$/;"	c
-DeviceRotary	controller_process_class.cpp	/^shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceRotary;$/;"	m	class:ProcessControllerClass	file:
-DeviceRotary	controller_process_class.h	/^static std::shared_ptr<DeviceRotaryGenericInterface> DeviceRotary;$/;"	m	class:ProcessControllerClass
-DeviceRotaryGenericInterface	DEVICES/device_generic_interface.h	/^class DeviceRotaryGenericInterface: public PassCoordClass<float>$/;"	c
-DeviceRotaryInterface	DEVICES/device_rotary_interface.h	/^DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceRotaryInterface(T_CONNECTION* Connection, QString Name): $/;"	f	class:DeviceRotaryInterface
-DeviceRotaryInterface	DEVICES/device_rotary_interface.h	/^class DeviceRotaryInterface : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceRotaryGenericInterface$/;"	c
-DeviceScanator	controller_process_class.cpp	/^shared_ptr<DeviceRotaryGenericInterface> ProcessControllerClass::DeviceScanator;$/;"	m	class:ProcessControllerClass	file:
-DeviceScanator	controller_process_class.h	/^static std::shared_ptr<DeviceRotaryGenericInterface> DeviceScanator;$/;"	m	class:ProcessControllerClass
+DeviceLaserControl	DEVICES/device_laser_interface.h	/^DeviceLaserControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceLaserControl(std::shared_ptr<T_CONNECTION> Connection, QString Name): $/;"	f	class:DeviceLaserControl
+DeviceLaserControl	DEVICES/device_laser_interface.h	/^class DeviceLaserControl : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceLaserInterface$/;"	c
+DeviceLaserInterface	DEVICES/device_generic_interface.h	/^class DeviceLaserInterface$/;"	c
+DeviceLaserPointer	controller_process_class.cpp	/^shared_ptr<DeviceTypeLaserPointer> ProcessControllerClass::DeviceLaserPointer;$/;"	m	class:ProcessControllerClass	file:
+DeviceLaserPointer	controller_process_class.h	/^static std::shared_ptr<DeviceTypeLaserPointer> DeviceLaserPointer;$/;"	m	class:ProcessControllerClass
+DeviceLaserPower	controller_process_class.cpp	/^shared_ptr<DeviceTypeLaserPower>   ProcessControllerClass::DeviceLaserPower;$/;"	m	class:ProcessControllerClass	file:
+DeviceLaserPower	controller_process_class.h	/^static std::shared_ptr<DeviceTypeLaserPower>   DeviceLaserPower;$/;"	m	class:ProcessControllerClass
+DeviceRotary	controller_process_class.cpp	/^shared_ptr<DeviceRotaryInterface> ProcessControllerClass::DeviceRotary;$/;"	m	class:ProcessControllerClass	file:
+DeviceRotary	controller_process_class.h	/^static std::shared_ptr<DeviceRotaryInterface> DeviceRotary;$/;"	m	class:ProcessControllerClass
+DeviceRotaryControl	DEVICES/device_rotary_interface.h	/^DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::DeviceRotaryControl(std::shared_ptr<T_CONNECTION> Connection, QString Name): $/;"	f	class:DeviceRotaryControl
+DeviceRotaryControl	DEVICES/device_rotary_interface.h	/^class DeviceRotaryControl : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceRotaryInterface$/;"	c
+DeviceRotaryInterface	DEVICES/device_generic_interface.h	/^class DeviceRotaryInterface: public PassCoordClass<float>$/;"	c
 Diff	UTILITES/thread_operation_nodes.h	/^  T Diff;$/;"	m	class:ValueDifference
 DiffParam	AIMING_MODULES/pid_param_struct.h	/^	double DiffParam;$/;"	m	class:PIDParamStruct
 Direction	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    int Direction = 0;$/;"	m	class:ManualAimControl
@@ -1165,6 +1173,7 @@ Disable	CV_IMAGE_PROCESSING/optimization_threshold.h	/^  void Disable(){ DISABLE
 DispatchNextMessage	TRANSMISSION/RING_BUFFER_ADAPTERS/message_dispatcher_app.h	/^void MessageDispatcherClass::DispatchNextMessage(RingBufferType& RingBuffer)$/;"	f	class:MessageDispatcherClass
 DispatchNextMessage	TRANSMISSION/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^void MessageDispatcher<H,RingBufferType>::DispatchNextMessage(RingBufferType& RingBuffer)$/;"	f	class:MessageDispatcher
 Dispatcher	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^    DispatcherType* Dispatcher = nullptr;$/;"	m	class:TCPConnectionEngine
+Dispatcher	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^DispatcherType* Dispatcher = nullptr;$/;"	m	class:UDPEngineInterface
 DispersionThreshold	UTILITES/thread_operation_nodes.h	/^     int DispersionThreshold = 20; $/;"	m	class:TrackHoldDetectorNode
 DisplayCriticalMessage	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::DisplayCriticalMessage(QString Message) {}$/;"	f	class:WidgetMainWindow
 DisplayImage	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImageDisplay::DisplayImage(QImage Image)$/;"	f	class:WidgetOutputImageDisplay
@@ -1188,7 +1197,7 @@ Duration	COMMON/interface_image_source.h	/^    std::chrono::duration<double> Dur
 Duty	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    quint16 Duty = 20;$/;"	m	struct:ControlCommandLaser
 DynamicAimControl	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^class DynamicAimControl : public AimControlInterface$/;"	c
 DynamicControl	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    DynamicAimControl DynamicControl;$/;"	m	class:AimImageImitatorClass
-DynamicModule	DEVICES/device_rotary_interface.h	/^  explicit DynamicModule(DeviceRotaryGenericInterface* DeviceRotary) $/;"	f	class:DynamicModule
+DynamicModule	DEVICES/device_rotary_interface.h	/^  explicit DynamicModule(DeviceRotaryInterface* DeviceRotary) $/;"	f	class:DynamicModule
 DynamicModule	DEVICES/device_rotary_interface.h	/^class DynamicModule: public QObject$/;"	c
 ENGINE_UDP_INTERFACE_H	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	2;"	d
 EQUALS	Makefile	/^EQUALS = =$/;"	m
@@ -1349,7 +1358,7 @@ GroupImages	CV_IMAGE_PROCESSING/optimization_threshold.h	/^  std::vector<cv::Mat
 GroupSpan	UTILITES/thread_operation_nodes.h	/^  double GroupSpan = LimitValue\/GroupCount;$/;"	m	class:ValueCategorizer
 GroupStatistics	CV_IMAGE_PROCESSING/optimization_threshold.h	/^  std::vector<StatisticNode<double>> GroupStatistics;$/;"	m	class:ThresholdFindingParallelDispersion
 GroupThreshold	CV_IMAGE_PROCESSING/optimization_threshold.h	/^  std::vector<int> GroupThreshold;$/;"	m	class:ThresholdFindingParallelDispersion
-HEADER	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t HEADER = 0x8220; $/;"	m	class:MESSAGE_HEADER_GENERIC
+HEADER	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t HEADER        = 0x8220; $/;"	m	class:MESSAGE_HEADER_GENERIC
 HEADER	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic.h	/^    H HEADER;$/;"	m	class:MessageGeneric
 HEADER	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	/^    H HEADER;$/;"	m	class:MessageGenericExt
 HEADER1	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    quint8 HEADER1 = 0xF1;$/;"	m	struct:HEADERStruct
@@ -1366,37 +1375,37 @@ HideLinks	gui_sources/widget_scene_node_interface.cpp	/^void WidgetSceneNodeInte
 HideNodes	gui_sources/widget_scene_node_interface.cpp	/^void WidgetSceneNodeInterface::HideNodes() { for(auto Node: PortNodes) Node->hide(); }$/;"	f	class:WidgetSceneNodeInterface
 Hierarchy	CV_IMAGE_PROCESSING/contour_processing.h	/^    std::vector<cv::Vec4i>  Hierarchy;$/;"	m	class:ContoursProcessorClass
 ID	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^      constexpr static int ID() { return 0; };$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandCalibration       >::ID() { return 11;}; int ID11 = TypeRegister<CommandSetPosScanator   >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandCheckConnection   >::ID() { return 24;}; int ID14 = TypeRegister<CommandCheckConnection  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandCloseConnection   >::ID() { return 25;}; int ID15 = TypeRegister<CommandCloseConnection  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceController  >::ID() { return 3; }; int ID3 = TypeRegister<CommandDeviceController  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceFocusator   >::ID() { return 6; }; int ID6 = TypeRegister<CommandDeviceFocusator   >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceLaserPointer>::ID() { return 5; }; int ID5 = TypeRegister<CommandDeviceLaserPointer>::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceLaserPower  >::ID() { return 4; }; int ID4 = TypeRegister<CommandDeviceLaserPower  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandSetPosRotary      >::ID() { return 2; }; int ID2 = TypeRegister<CommandSetPosRotary      >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<CommandSetPosScanator    >::ID() { return 1; }; int ID1 = TypeRegister<CommandSetPosScanator    >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceController  >::ID() { return 7; }; int ID7 = TypeRegister<MessageDeviceController  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceFocusator   >::ID() { return 10;}; int ID10 = TypeRegister<CommandSetPosScanator   >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceLaserPointer>::ID() { return 9; }; int ID9 = TypeRegister<MessageDeviceLaserPointer>::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceLaserPower  >::ID() { return 8; }; int ID8 = TypeRegister<MessageDeviceLaserPower  >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessagePositionState<0>  >::ID() { return 12;}; int ID12 = TypeRegister<MessagePositionState<0> >::RegisterType();$/;"	f	class:TypeRegister
-ID	main.cpp	/^template<> constexpr int TypeRegister<MessagePositionState<1>  >::ID() { return 20;}; int ID13 = TypeRegister<MessagePositionState<1> >::RegisterType();$/;"	f	class:TypeRegister
-ID1	main.cpp	/^template<> constexpr int TypeRegister<CommandSetPosScanator    >::ID() { return 1; }; int ID1 = TypeRegister<CommandSetPosScanator    >::RegisterType();$/;"	v
-ID10	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceFocusator   >::ID() { return 10;}; int ID10 = TypeRegister<CommandSetPosScanator   >::RegisterType();$/;"	v
-ID11	main.cpp	/^template<> constexpr int TypeRegister<CommandCalibration       >::ID() { return 11;}; int ID11 = TypeRegister<CommandSetPosScanator   >::RegisterType();$/;"	v
-ID12	main.cpp	/^template<> constexpr int TypeRegister<MessagePositionState<0>  >::ID() { return 12;}; int ID12 = TypeRegister<MessagePositionState<0> >::RegisterType();$/;"	v
-ID13	main.cpp	/^template<> constexpr int TypeRegister<MessagePositionState<1>  >::ID() { return 20;}; int ID13 = TypeRegister<MessagePositionState<1> >::RegisterType();$/;"	v
-ID14	main.cpp	/^template<> constexpr int TypeRegister<CommandCheckConnection   >::ID() { return 24;}; int ID14 = TypeRegister<CommandCheckConnection  >::RegisterType();$/;"	v
-ID15	main.cpp	/^template<> constexpr int TypeRegister<CommandCloseConnection   >::ID() { return 25;}; int ID15 = TypeRegister<CommandCloseConnection  >::RegisterType();$/;"	v
-ID2	main.cpp	/^template<> constexpr int TypeRegister<CommandSetPosRotary      >::ID() { return 2; }; int ID2 = TypeRegister<CommandSetPosRotary      >::RegisterType();$/;"	v
-ID3	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceController  >::ID() { return 3; }; int ID3 = TypeRegister<CommandDeviceController  >::RegisterType();$/;"	v
-ID4	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceLaserPower  >::ID() { return 4; }; int ID4 = TypeRegister<CommandDeviceLaserPower  >::RegisterType();$/;"	v
-ID5	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceLaserPointer>::ID() { return 5; }; int ID5 = TypeRegister<CommandDeviceLaserPointer>::RegisterType();$/;"	v
-ID6	main.cpp	/^template<> constexpr int TypeRegister<CommandDeviceFocusator   >::ID() { return 6; }; int ID6 = TypeRegister<CommandDeviceFocusator   >::RegisterType();$/;"	v
-ID7	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceController  >::ID() { return 7; }; int ID7 = TypeRegister<MessageDeviceController  >::RegisterType();$/;"	v
-ID8	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceLaserPower  >::ID() { return 8; }; int ID8 = TypeRegister<MessageDeviceLaserPower  >::RegisterType();$/;"	v
-ID9	main.cpp	/^template<> constexpr int TypeRegister<MessageDeviceLaserPointer>::ID() { return 9; }; int ID9 = TypeRegister<MessageDeviceLaserPointer>::RegisterType();$/;"	v
-ID_PARAM_KEY	DEVICES/device_laser_interface.h	/^	std::map<uint8_t, std::map<uint8_t,uint8_t>> ID_PARAM_KEY; \/\/GET COMMAND CODE FROM [COMMAND_ID PARAM]$/;"	m	class:DeviceLaserInterface
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandCalibration       >::ID() { return 3;}; $/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandCheckConnection   >::ID() { return 7;}; $/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandCloseConnection   >::ID() { return 9;}; $/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandDeviceController  >::ID() { return 4; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandDeviceFocusator   >::ID() { return 0x130; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandDeviceLaserPointer>::ID() { return 0x120; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandDeviceLaserPower  >::ID() { return 0x110; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandSetPosRotary      >::ID() { return 2; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<CommandSetPosScanator    >::ID() { return 1; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessageDeviceController  >::ID() { return 8; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessageDeviceFocusator   >::ID() { return 0x230;}; $/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessageDeviceLaserPointer>::ID() { return 0x210; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessageDeviceLaserPower  >::ID() { return 0x220; };$/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessagePositionState<0>  >::ID() { return 5;}; $/;"	f	class:TypeRegister
+ID	TRANSMISSION/DATA_STRUCTURES/message_command_id.h	/^template<> constexpr int TypeRegister<MessagePositionState<1>  >::ID() { return 6;}; $/;"	f	class:TypeRegister
+ID1	main.cpp	/^int ID1 =  TypeRegister<CommandSetPosScanator    >::RegisterType();$/;"	v
+ID10	main.cpp	/^int ID10 = TypeRegister<CommandSetPosScanator    >::RegisterType();$/;"	v
+ID11	main.cpp	/^int ID11 = TypeRegister<CommandSetPosScanator    >::RegisterType();$/;"	v
+ID12	main.cpp	/^int ID12 = TypeRegister<MessagePositionState<0>  >::RegisterType();$/;"	v
+ID13	main.cpp	/^int ID13 = TypeRegister<MessagePositionState<1>  >::RegisterType();$/;"	v
+ID14	main.cpp	/^int ID14 = TypeRegister<CommandCheckConnection   >::RegisterType();$/;"	v
+ID15	main.cpp	/^int ID15 = TypeRegister<CommandCloseConnection   >::RegisterType();$/;"	v
+ID2	main.cpp	/^int ID2 =  TypeRegister<CommandSetPosRotary      >::RegisterType();$/;"	v
+ID3	main.cpp	/^int ID3 =  TypeRegister<CommandDeviceController  >::RegisterType();$/;"	v
+ID4	main.cpp	/^int ID4 =  TypeRegister<CommandDeviceLaserPower  >::RegisterType();$/;"	v
+ID5	main.cpp	/^int ID5 =  TypeRegister<CommandDeviceLaserPointer>::RegisterType();$/;"	v
+ID6	main.cpp	/^int ID6 =  TypeRegister<CommandDeviceFocusator   >::RegisterType();$/;"	v
+ID7	main.cpp	/^int ID7 =  TypeRegister<MessageDeviceController  >::RegisterType();$/;"	v
+ID8	main.cpp	/^int ID8 =  TypeRegister<MessageDeviceLaserPower  >::RegisterType();$/;"	v
+ID9	main.cpp	/^int ID9 =  TypeRegister<MessageDeviceLaserPointer>::RegisterType();$/;"	v
+ID_PARAM_KEY	DEVICES/device_laser_interface.h	/^	std::map<uint8_t, std::map<uint8_t,uint8_t>> ID_PARAM_KEY; \/\/GET COMMAND CODE FROM [COMMAND_ID PARAM]$/;"	m	class:DeviceLaserControl
 ID_VOID_MAIN	CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c	6;"	d	file:
 ID_VOID_MAIN	build/CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c	6;"	d	file:
 IMAGE_ESTIMATORS_H	CV_IMAGE_PROCESSING/image_estimations.h	2;"	d
@@ -1404,7 +1413,7 @@ IMAGE_FINDER_H	CV_IMAGE_PROCESSING/image_finder.h	2;"	d
 IMAGE_PROCESSING_WIDGET_H	gui_sources/widget_processing_image_control.h	2;"	d
 IMAGE_PROC_NODE_H	CV_IMAGE_PROCESSING/image_processing_node.h	2;"	d
 IMITATOR_WIDGET_H	gui_sources/widget_imitator_control.h	2;"	d
-IMITATOR_WORK	main.cpp	38;"	d	file:
+IMITATOR_WORK	main.cpp	39;"	d	file:
 IPLocal	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^    QString IPLocal = "127.0.0.1";$/;"	m	class:TCPConnectionEngine
 IPRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^    QString IPRemote = "127.0.0.1";$/;"	m	class:TCPConnectionEngine
 IPRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    QString IPRemote;$/;"	m	class:UDPEngineInterface
@@ -1514,26 +1523,26 @@ IsROIValid	CV_IMAGE_PROCESSING/image_processing_node.cpp	/^bool ModuleImageProce
 IsStatisticsLoaded	UTILITES/engine_statistics.h	/^    bool IsStatisticsLoaded() { return Statistics[Statistics.size()-1].IsCoordLoaded();};$/;"	f	class:StatisticGroup
 IsValueLoaded	UTILITES/engine_statistics.h	/^	 bool IsValueLoaded() { return NodeValue.isLoaded();}$/;"	f	class:StatisticNode
 IteratorMode	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^enum class IteratorMode {Chunked = 0, ChunkedFixed = 1, ChunkedContinous = 2, Continous = 3};$/;"	c
-KEY_MODULE	DEVICES/device_laser_interface.h	/^    std::map<uint8_t, uint8_t> KEY_MODULE;       \/\/GET NUMBER MODULE FROM COMMAND CODE$/;"	m	class:DeviceLaserInterface
-KEY_MODULE_PARAM	DEVICES/device_laser_interface.h	/^    std::map<uint8_t, uint8_t> KEY_MODULE_PARAM; \/\/KEY PARAM VALUE FROM COMMAND CODE$/;"	m	class:DeviceLaserInterface
+KEY_MODULE	DEVICES/device_laser_interface.h	/^    std::map<uint8_t, uint8_t> KEY_MODULE;       \/\/GET NUMBER MODULE FROM COMMAND CODE$/;"	m	class:DeviceLaserControl
+KEY_MODULE_PARAM	DEVICES/device_laser_interface.h	/^    std::map<uint8_t, uint8_t> KEY_MODULE_PARAM; \/\/KEY PARAM VALUE FROM COMMAND CODE$/;"	m	class:DeviceLaserControl
 KF	CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^	cv::KalmanFilter KF = cv::KalmanFilter(4, 2, 0);$/;"	m	class:TrackerFirst
 KLPInterfaceBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, RecieveErrorBlock, LasersBlock, engineControlBlock, RemoteControlBlock, KLPInterfaceBlock, MainContoller, CalmanFilterBlock, PIDBlock,CoordData$/;"	e	enum:TypeEnumBlock
 LABELIMAGE_H	gui_sources/labelimage.h	2;"	d
-LASER_BEAM_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	114;"	d
-LASER_BEAM_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	113;"	d
-LASER_CHECK	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	108;"	d
+LASER_BEAM_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	132;"	d
+LASER_BEAM_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	131;"	d
+LASER_CHECK	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	126;"	d
 LASER_CONTROL_CLASS_H	DEVICES/device_laser_interface.h	2;"	d
 LASER_DATASTRUCTURES_H	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	2;"	d
-LASER_FAULT	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	118;"	d
-LASER_MODULE	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	120;"	d
-LASER_MODULE_BEAM	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	121;"	d
-LASER_MODULE_PILOT	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	122;"	d
-LASER_MODULE_POWER	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	123;"	d
-LASER_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	110;"	d
-LASER_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	109;"	d
-LASER_PILOT_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	116;"	d
-LASER_PILOT_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	115;"	d
-LASER_SET_POWER	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	112;"	d
+LASER_FAULT	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	136;"	d
+LASER_MODULE	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	138;"	d
+LASER_MODULE_BEAM	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	139;"	d
+LASER_MODULE_PILOT	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	140;"	d
+LASER_MODULE_POWER	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	141;"	d
+LASER_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	128;"	d
+LASER_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	127;"	d
+LASER_PILOT_OFF	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	134;"	d
+LASER_PILOT_ON	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	133;"	d
+LASER_SET_POWER	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	130;"	d
 LINKLINE_H	gui_sources/link_line.h	2;"	d
 LabelBlockName	build/ImageProcProject_autogen/include/ui_widget_output_text_display.h	/^    QLabel *LabelBlockName;$/;"	m	class:Ui_OutputTextDisplay
 LabelData	gui_sources/qcustomplot.h	/^  struct LabelData$/;"	s	class:QCPLabelPainterPrivate
@@ -1614,11 +1623,10 @@ MESSAGE_HEADER_EXT	TRANSMISSION/GENERIC_MESSAGES/message_header_generic_ext.h	/^
 MESSAGE_HEADER_GENERIC	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^class MESSAGE_HEADER_GENERIC$/;"	c
 MESSAGE_HEADER_GENERIC_EXT_H	TRANSMISSION/GENERIC_MESSAGES/message_header_generic_ext.h	2;"	d
 MESSAGE_HEADER_GENERIC_H	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	2;"	d
-MESSAGE_IDENT	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint8_t  MESSAGE_IDENT = 1; $/;"	m	class:MESSAGE_HEADER_GENERIC
+MESSAGE_IDENT	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint16_t MESSAGE_IDENT = 1; $/;"	m	class:MESSAGE_HEADER_GENERIC
 MESSAGE_NUMBER	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint32_t MESSAGE_NUMBER = 0x0; $/;"	m	class:MESSAGE_HEADER_GENERIC
 MESSAGE_PROCESSOR_H	TRANSMISSION/RING_BUFFER_ADAPTERS/message_dispatcher_app.h	2;"	d
 MESSAGE_STRUCT_ENGINE_H	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	2;"	d
-MESSAGE_TYPE	TRANSMISSION/GENERIC_MESSAGES/message_header_generic.h	/^    uint8_t  MESSAGE_TYPE  = 0xF1; $/;"	m	class:MESSAGE_HEADER_GENERIC
 MIN_MESSAGE_SIZE	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^    int MIN_MESSAGE_SIZE = S_M\/2;$/;"	m	class:engine_ring_buffer_dense
 MIN_MESSAGE_SIZE	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^    int MIN_MESSAGE_SIZE = M_S;$/;"	m	class:RingBufferGeneric
 MODE	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^    enum MODE {$/;"	g	class:cv::tracking::TrackerKCF
@@ -1929,9 +1937,10 @@ PLATFORM_ID	build/CMakeFiles/3.22.1/CompilerIdCXX/CMakeCXXCompilerId.cpp	509;"	d
 PROCESS_CONTROLLER_H	controller_process_class.h	2;"	d
 PROCESS_CONTROLLER_WIDGET_H	gui_sources/widget_process_controller.h	2;"	d
 PROCESS_METHOD	CV_IMAGE_PROCESSING/optimization_threshold.h	/^enum class PROCESS_METHOD { PARALLEL_BY_DISPERSION, CALC_BY_LUMEN, RUNAWAY_FROM_DISPERSION};$/;"	c
-PROJECT_TEST_CAN	main.cpp	45;"	d	file:
+PROJECT_EDGE_PROCESS	main.cpp	42;"	d	file:
 PainterMode	gui_sources/qcustomplot.h	/^  enum PainterMode { pmDefault       = 0x00   \/\/\/< <tt>0x00<\/tt> Default mode for painting on screen devices$/;"	g	class:QCPPainter
 Param	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint16_t Param = 0;$/;"	m	struct:CommandDevice
+Param	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Param = 0;$/;"	m	struct:CommandDeviceRedux
 Param1	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t Param1;$/;"	m	struct:MessagePositionState
 Param1	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   int16_t Param1 = 0;$/;"	m	struct:CommandSetSpeed
 Param1	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   int16_t Param1 = 0;$/;"	m	struct:MessageMoveState
@@ -1982,7 +1991,7 @@ PortCorrectionOutput	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapt
 PortLocal	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^        int PortLocal = 2325;$/;"	m	class:TCPConnectionEngine
 PortLocal	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^        int PortLocal  = 7575;$/;"	m	class:UDPEngineInterface
 PortMoveAiming	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortMoveAiming = nullptr;$/;"	m	class:AimingClass
-PortMoveRelative	DEVICES/device_rotary_interface.h	/^std::shared_ptr<PortAdapter<DeviceRotaryGenericInterface>> PortMoveRelative = nullptr;$/;"	m	class:DeviceRotaryInterface
+PortMoveRelative	DEVICES/device_rotary_interface.h	/^std::shared_ptr<PortAdapter<DeviceRotaryInterface>> PortMoveRelative = nullptr;$/;"	m	class:DeviceRotaryControl
 PortNodes	gui_sources/widget_scene_node_interface.h	/^    std::vector<Node*> PortNodes;$/;"	m	class:WidgetSceneNodeInterface
 PortRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^        int PortRemote = 2325;$/;"	m	class:TCPConnectionEngine
 PortRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^        int PortRemote = 7575;$/;"	m	class:UDPEngineInterface
@@ -2587,6 +2596,12 @@ Register	AIMING_MODULES/aiming_class.h	/^  std::vector<QPair<T,T>> Register;$/;"
 RegisterType	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^      static int RegisterType()  $/;"	f	class:TypeRegister
 RemoteControlBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, RecieveErrorBlock, LasersBlock, engineControlBlock, RemoteControlBlock, KLPInterfaceBlock, MainContoller, CalmanFilterBlock, PIDBlock,CoordData$/;"	e	enum:TypeEnumBlock
 Requires_Grad	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	bool Requires_Grad = false;$/;"	m	class:RotateOperationContainer
+Reserv1	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv1 = 0;$/;"	m	struct:CommandDeviceRedux
+Reserv2	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv2 = 0;$/;"	m	struct:CommandDeviceRedux
+Reserv3	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv3 = 0;$/;"	m	struct:CommandDeviceRedux
+Reserv4	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv4 = 0;$/;"	m	struct:CommandDeviceRedux
+Reserv5	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv5 = 0;$/;"	m	struct:CommandDeviceRedux
+Reserv6	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Reserv6 = 0;$/;"	m	struct:CommandDeviceRedux
 Reserve3	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t  Reserve3      = 1;$/;"	m	struct:CommandCalibration
 Reset	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::Reset()$/;"	f	class:AimingClass
 Reset	AIMING_MODULES/aiming_class.cpp	/^void AimingParamOptimizator::Reset()$/;"	f	class:AimingParamOptimizator
@@ -2610,10 +2625,10 @@ ResetIterator	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^temp
 ResetPID	AIMING_MODULES/pid_class.cpp	/^void PIDClass::ResetPID()$/;"	f	class:PIDClass
 ResolutionUnit	gui_sources/qcustomplot.h	/^enum ResolutionUnit { ruDotsPerMeter       \/\/\/< Resolution is given in dots per meter (dpm)$/;"	g	namespace:QCP
 RingBuffer	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^    BufferType* RingBuffer = nullptr;$/;"	m	class:TCPConnectionEngine
-RingBuffer	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^RingBufferGeneric<MESSAGE_HEADER_GENERIC,sizeof(MessageDevice<0>), 4,IteratorMode::Continous>* RingBuffer = nullptr;$/;"	m	class:UDPEngineInterface
+RingBuffer	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^RingBufferType* RingBuffer = nullptr;$/;"	m	class:UDPEngineInterface
 RingBufferGeneric	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^RingBufferGeneric<H,M_S,M_N,I_T>::RingBufferGeneric()$/;"	f	class:RingBufferGeneric
 RingBufferGeneric	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^class RingBufferGeneric$/;"	c
-RotAxis	DEVICES/device_rotary_interface.h	/^	RotateVectorClass<int>   RotAxis;$/;"	m	class:DeviceRotaryInterface
+RotAxis	DEVICES/device_rotary_interface.h	/^	RotateVectorClass<int>   RotAxis;$/;"	m	class:DeviceRotaryControl
 RotateAxis	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^enum RotateAxis {x_axis = 0, y_axis = 1, z_axis = 2};$/;"	g
 RotateAxisenum	AIMING_MODULES/rotate_vector_class.h	/^enum RotateAxisenum { X_AXIS = 0, Y_AXIS= 1 , Z_AXIS = 2};$/;"	g
 RotateDataMeasureEngine	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^RotateDataMeasureEngine::RotateDataMeasureEngine() $/;"	f	class:RotateDataMeasureEngine
@@ -2761,7 +2776,7 @@ ScaleOutput	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	TransformCoordClass S
 ScaleStrategy	gui_sources/qcustomplot.h	/^  enum ScaleStrategy { ssNone      \/\/\/< Modifications are not allowed, the specified tick step is absolutely fixed. This might cause a high tick density and overlapping labels if the axis range is zoomed out.$/;"	g	class:QCPAxisTickerFixed
 ScaleType	gui_sources/qcustomplot.h	/^  enum ScaleType { stLinear       \/\/\/< Linear scaling$/;"	g	class:QCPAxis
 ScaleType	gui_sources/qcustomplot.h	/^  enum ScaleType { stLinear       \/\/\/< Linear scaling$/;"	g	class:QCPPolarAxisRadial
-ScanatorDevice	gui_sources/widget_scanator_control.h	/^                      std::shared_ptr<DeviceRotaryGenericInterface> ScanatorDevice;$/;"	m	class:WidgetScanatorControl
+ScanatorDevice	gui_sources/widget_scanator_control.h	/^                      std::shared_ptr<DeviceRotaryInterface> ScanatorDevice;$/;"	m	class:WidgetScanatorControl
 ScatterProperty	gui_sources/qcustomplot.h	/^  enum ScatterProperty { spNone  = 0x00  \/\/\/< <tt>0x00<\/tt> None$/;"	g	class:QCPScatterStyle
 ScatterShape	gui_sources/qcustomplot.h	/^  enum ScatterShape { ssNone       \/\/\/< no scatter symbols are drawn (e.g. in QCPGraph, data only represented with lines)$/;"	g	class:QCPScatterStyle
 Scene	gui_sources/widget_main_window.h	/^	QGraphicsScene* Scene;$/;"	m	class:WidgetMainWindow
@@ -4140,7 +4155,7 @@ chartStyle	gui_sources/qcustomplot.h	/^  ChartStyle chartStyle() const { return 
 cheb_attenuation	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW float cheb_attenuation;$/;"	m	struct:cv::tracking::TrackerCSRT::Params
 checkChannel1	build/ImageProcProject_autogen/include/ui_widget_sinus_source.h	/^    QPushButton *checkChannel1;$/;"	m	class:Ui_WidgetSinusSource
 checkChannel2	build/ImageProcProject_autogen/include/ui_widget_sinus_source.h	/^    QPushButton *checkChannel2;$/;"	m	class:Ui_WidgetSinusSource
-checkRangeOffset	DEVICES/device_rotary_interface.h	/^bool DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::checkRangeOffset(QPair<int, int> Pos)$/;"	f	class:DeviceRotaryInterface
+checkRangeOffset	DEVICES/device_rotary_interface.h	/^bool DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::checkRangeOffset(QPair<int, int> Pos)$/;"	f	class:DeviceRotaryControl
 checkWorkBlock	build/ImageProcProject_autogen/include/ui_widget_aiming_control.h	/^    QPushButton *checkWorkBlock;$/;"	m	class:Ui_WidgetAimingControl
 checkWorkBlock	build/ImageProcProject_autogen/include/ui_widget_sinus_source.h	/^    QPushButton *checkWorkBlock;$/;"	m	class:Ui_WidgetSinusSource
 children	gui_sources/qcustomplot.h	/^  QList<QCPLayerable*> children() const { return mChildren; }$/;"	f	class:QCPLayer
@@ -4168,6 +4183,7 @@ clearPlottables	gui_sources/qcustomplot.cpp	/^int QCustomPlot::clearPlottables()
 clearStruct	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   void clearStruct() { std::memset(this,0,sizeof(CommandSetPos)); }$/;"	f	struct:CommandSetPos
 clearStruct	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   void clearStruct() { std::memset(this,0,sizeof(CommandSetSpeed)); }$/;"	f	struct:CommandSetSpeed
 clearStruct	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  void clearStruct() { std::memset(this,0,sizeof(CommandDevice)); }$/;"	f	struct:CommandDevice
+clearStruct	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^  void clearStruct() { std::memset(this,0,sizeof(CommandDeviceRedux)); }$/;"	f	struct:CommandDeviceRedux
 clicked	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^void QCPTextElement::clicked(QMouseEvent * _t1)$/;"	f	class:QCPTextElement
 clipAxisRect	gui_sources/qcustomplot.cpp	/^QCPAxisRect *QCPAbstractItem::clipAxisRect() const$/;"	f	class:QCPAbstractItem
 clipRect	gui_sources/qcustomplot.cpp	/^QRect QCPAbstractItem::clipRect() const$/;"	f	class:QCPAbstractItem
@@ -4195,7 +4211,7 @@ commonMargin	gui_sources/qcustomplot.cpp	/^int QCPMarginGroup::commonMargin(QCP:
 compress_feature	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW bool compress_feature;        \/\/!<  activate the pca method to compress the features$/;"	m	struct:cv::tracking::TrackerKCF::Params
 compressed_size	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW int compressed_size;          \/\/!<  feature size after compression$/;"	m	struct:cv::tracking::TrackerKCF::Params
 connectBars	gui_sources/qcustomplot.cpp	/^void QCPBars::connectBars(QCPBars *lower, QCPBars *upper)$/;"	f	class:QCPBars
-connectTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void connectTo(QString IDDeviceStr, int IDDevice = 0) {};$/;"	f	class:CANConnectionEngine
+connectTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void connectTo(QString IDDeviceStr, int IDDevice = 0) {};$/;"	f	class:CANEngineInterface
 connectTo	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::connectTo(QString address, int Port)$/;"	f	class:TCPConnectionEngine
 connectTo	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::connectTo(QString IPDevice, int Port) $/;"	f	class:UDPEngineInterface
 const	CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c	10;"	d	file:
@@ -4312,12 +4328,10 @@ destPoint	gui_sources/link_line.h	/^    QPointF destPoint;$/;"	m	class:LinkLine
 destPort	gui_sources/link_line.h	/^    Node* destPort;$/;"	m	class:LinkLine
 destPortNode	gui_sources/link_line.cpp	/^Node* LinkLine::destPortNode() const { return destPort; }$/;"	f	class:LinkLine
 detect_thresh	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW float detect_thresh;         \/\/!<  detection confidence threshold$/;"	m	struct:cv::tracking::TrackerKCF::Params
-device	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  QCanBusDevice *device = nullptr;$/;"	m	class:CANConnectionEngine
-deviceCAN	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANConnectionEngine* deviceCAN = nullptr;$/;"	m	class:CANTestMessage
+device	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  QCanBusDevice *device = nullptr;$/;"	m	class:CANEngineInterface
+deviceCAN	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANEngineInterface* deviceCAN = nullptr;$/;"	m	class:CANTestMessage
 devicePixelRatio	gui_sources/qcustomplot.h	/^  double devicePixelRatio() const { return mDevicePixelRatio; }$/;"	f	class:QCPAbstractPaintBuffer
 dispatchCommand	TRANSMISSION/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^   static void dispatchCommand(const QByteArray& Command) $/;"	f	class:CommandDispatcherGeneric
-dispatchCommand	main.cpp	/^template<> void CommandDispatcherGeneric<TypeRegister<CommandDevice<0>>::ID()>::dispatchCommand(const QByteArray& Command) $/;"	f	class:CommandDispatcherGeneric
-dispatchCommand	main.cpp	/^template<> void CommandDispatcherGeneric<TypeRegister<CommandSetPosRotary>::ID()>::dispatchCommand(const QByteArray& Command) $/;"	f	class:CommandDispatcherGeneric
 distance	UTILITES/thread_operation_nodes.h	/^  double distance = 0;$/;"	m	class:CoordDetector
 distanceSquaredToLine	gui_sources/qcustomplot.cpp	/^double QCPVector2D::distanceSquaredToLine(const QCPVector2D &start, const QCPVector2D &end) const$/;"	f	class:QCPVector2D
 distanceSquaredToLine	gui_sources/qcustomplot.cpp	/^double QCPVector2D::distanceSquaredToLine(const QLineF &line) const$/;"	f	class:QCPVector2D
@@ -4431,8 +4445,8 @@ endDir	gui_sources/qcustomplot.h	/^  QCPItemPosition * const endDir;$/;"	m	class
 endSelection	gui_sources/qcustomplot.cpp	/^void QCPSelectionRect::endSelection(QMouseEvent *event)$/;"	f	class:QCPSelectionRect
 enforceType	gui_sources/qcustomplot.cpp	/^void QCPDataSelection::enforceType(QCP::SelectionType type)$/;"	f	class:QCPDataSelection
 engineControlBlock	COMMON/type_block_enum.h	/^	ImageProcBlock, ChillControlBlock, WeatherControlBlock, CamerasControlBlock, AimingBlock, RecieveErrorBlock, LasersBlock, engineControlBlock, RemoteControlBlock, KLPInterfaceBlock, MainContoller, CalmanFilterBlock, PIDBlock,CoordData$/;"	e	enum:TypeEnumBlock
-engineDelayMeasure	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANDelayMeasure* engineDelayMeasure = nullptr;$/;"	m	class:CANConnectionEngine
-engineSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANTestMessage * engineSendTest = nullptr;$/;"	m	class:CANConnectionEngine
+engineDelayMeasure	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANDelayMeasure* engineDelayMeasure = nullptr;$/;"	m	class:CANEngineInterface
+engineSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  CANTestMessage * engineSendTest = nullptr;$/;"	m	class:CANEngineInterface
 engine_ring_buffer_dense	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^class engine_ring_buffer_dense$/;"	c
 engine_ring_buffer_dense	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^engine_ring_buffer_dense<H,S_M,N_M>::engine_ring_buffer_dense()$/;"	f	class:engine_ring_buffer_dense
 epAllowCosmetic	gui_sources/qcustomplot.h	/^                 ,epAllowCosmetic \/\/\/< Cosmetic pens are exported normally (e.g. in PDF exports, cosmetic pens always appear as 1 pixel on screen, independent of viewer zoom level)$/;"	e	enum:QCP::ExportPen
@@ -4576,7 +4590,7 @@ getLabelColor	gui_sources/qcustomplot.cpp	/^QColor QCPPolarAxisRadial::getLabelC
 getLabelFont	gui_sources/qcustomplot.cpp	/^QFont QCPAxis::getLabelFont() const$/;"	f	class:QCPAxis
 getLabelFont	gui_sources/qcustomplot.cpp	/^QFont QCPPolarAxisAngular::getLabelFont() const$/;"	f	class:QCPPolarAxisAngular
 getLabelFont	gui_sources/qcustomplot.cpp	/^QFont QCPPolarAxisRadial::getLabelFont() const$/;"	f	class:QCPPolarAxisRadial
-getLimits	DEVICES/device_rotary_interface.h	/^QPair<int,int> DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::getLimits(int axis)$/;"	f	class:DeviceRotaryInterface
+getLimits	DEVICES/device_rotary_interface.h	/^QPair<int,int> DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::getLimits(int axis)$/;"	f	class:DeviceRotaryControl
 getLines	gui_sources/qcustomplot.cpp	/^void QCPGraph::getLines(QVector<QPointF> *lines, const QCPDataRange &dataRange) const$/;"	f	class:QCPGraph
 getLines	gui_sources/qcustomplot.cpp	/^void QCPPolarGraph::getLines(QVector<QPointF> *lines, const QCPDataRange &dataRange) const$/;"	f	class:QCPPolarGraph
 getMantissa	gui_sources/qcustomplot.cpp	/^double QCPAxisTicker::getMantissa(double input, double *magnitude) const$/;"	f	class:QCPAxisTicker
@@ -4598,7 +4612,7 @@ getOutput	AIMING_MODULES/rotate_vector_class.h	/^const QPair<T, T>& RotateVector
 getOutput	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	const QPair<float,float>& getOutput() { return CurrentOutput;};$/;"	f	class:SinusGeneratorClass
 getOutput	COMMON/interface_pass_coord.h	/^	virtual const QPair<V, V>& getOutput() { return OutputCoord;};$/;"	f	class:PassCoordClass
 getOutput	COMMON/interface_pass_coord.h	/^    const QPair<float,float>& getOutput() { if(OutputFunction != nullptr) PassCoordClass<float>::OutputCoord = OutputFunction(*Receiver); $/;"	f	class:PortAdapter
-getOutput	DEVICES/device_generic_interface.h	/^	const QPair<float, float>& getOutput() {OutputCoord = getPos(); return PassCoordClass<float>::OutputCoord;};$/;"	f	class:DeviceRotaryGenericInterface
+getOutput	DEVICES/device_generic_interface.h	/^	const QPair<float, float>& getOutput() {OutputCoord = getPos(); return PassCoordClass<float>::OutputCoord;};$/;"	f	class:DeviceRotaryInterface
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^const QPair<float,float>& AccumulateDataFilter::getOutput() { return LastInputFirst; }$/;"	f	class:AccumulateDataFilter
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^const QPair<float,float>& RotateOperationContainer::getOutput()$/;"	f	class:RotateOperationContainer
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/SubstractPair.h	/^	 const QPair<float,float>& getOutput()$/;"	f	class:Substract
@@ -4627,7 +4641,7 @@ getPixelWidth	gui_sources/qcustomplot.cpp	/^void QCPBars::getPixelWidth(double k
 getPoints	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^std::vector<QPair<int,int>>& AimImageImitatorClass::getPoints()  $/;"	f	class:AimImageImitatorClass
 getPoints	CAMERA_INTERFACE/camera_interface_class.cpp	/^std::vector<QPair<int,int>>& CameraInterfaceAravis::getPoints()  $/;"	f	class:CameraInterfaceAravis
 getPoints	CV_IMAGE_PROCESSING/image_processing_node.cpp	/^std::vector<QPair<int,int>>& ModuleImageProcessing::getPoints()  $/;"	f	class:ModuleImageProcessing
-getPos	DEVICES/device_rotary_interface.h	/^	const QPair<int,int>& getPos()      { return Position;} ;$/;"	f	class:DeviceRotaryInterface
+getPos	DEVICES/device_rotary_interface.h	/^	const QPair<int,int>& getPos()      { return Position;} ;$/;"	f	class:DeviceRotaryControl
 getQuartileBox	gui_sources/qcustomplot.cpp	/^QRectF QCPStatisticalBox::getQuartileBox(QCPStatisticalBoxDataContainer::const_iterator it) const$/;"	f	class:QCPStatisticalBox
 getRectClippedLine	gui_sources/qcustomplot.cpp	/^QLineF QCPItemLine::getRectClippedLine(const QCPVector2D &start, const QCPVector2D &end, const QRect &rect) const$/;"	f	class:QCPItemLine
 getRectClippedStraightLine	gui_sources/qcustomplot.cpp	/^QLineF QCPItemStraightLine::getRectClippedStraightLine(const QCPVector2D &base, const QCPVector2D &vec, const QRect &rect) const$/;"	f	class:QCPItemStraightLine
@@ -4640,7 +4654,7 @@ getScatters	gui_sources/qcustomplot.cpp	/^void QCPGraph::getScatters(QVector<QPo
 getScatters	gui_sources/qcustomplot.cpp	/^void QCPPolarGraph::getScatters(QVector<QPointF> *scatters, const QCPDataRange &dataRange) const$/;"	f	class:QCPPolarGraph
 getSectionSizes	gui_sources/qcustomplot.cpp	/^QVector<int> QCPLayout::getSectionSizes(QVector<int> maxSizes, QVector<int> minSizes, QVector<double> stretchFactors, int totalSize) const$/;"	f	class:QCPLayout
 getStackedBaseValue	gui_sources/qcustomplot.cpp	/^double QCPBars::getStackedBaseValue(double key, bool positive) const$/;"	f	class:QCPBars
-getState	DEVICES/device_laser_interface.h	/^	bool getState() { return messageState.Param1 == 0 ? false : true; }$/;"	f	class:DeviceLaserInterface
+getState	DEVICES/device_laser_interface.h	/^	bool getState() { return messageState.Param1 == 0 ? false : true; }$/;"	f	class:DeviceLaserControl
 getSubTickCount	gui_sources/qcustomplot.cpp	/^int QCPAxisTicker::getSubTickCount(double tickStep)$/;"	f	class:QCPAxisTicker
 getSubTickCount	gui_sources/qcustomplot.cpp	/^int QCPAxisTickerDateTime::getSubTickCount(double tickStep)$/;"	f	class:QCPAxisTickerDateTime
 getSubTickCount	gui_sources/qcustomplot.cpp	/^int QCPAxisTickerLog::getSubTickCount(double tickStep)$/;"	f	class:QCPAxisTickerLog
@@ -4687,7 +4701,7 @@ getValueRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPFinancial::getValueRange
 getValueRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPGraph::getValueRange(bool &foundRange, QCP::SignDomain inSignDomain, const QCPRange &inKeyRange) const$/;"	f	class:QCPGraph
 getValueRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPPolarGraph::getValueRange(bool &foundRange, QCP::SignDomain inSignDomain, const QCPRange &inKeyRange) const$/;"	f	class:QCPPolarGraph
 getValueRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPStatisticalBox::getValueRange(bool &foundRange, QCP::SignDomain inSignDomain, const QCPRange &inKeyRange) const$/;"	f	class:QCPStatisticalBox
-getVelocity	DEVICES/device_rotary_interface.h	/^	const QPair<int,int>& getVelocity() { return Velocity;};$/;"	f	class:DeviceRotaryInterface
+getVelocity	DEVICES/device_rotary_interface.h	/^	const QPair<int,int>& getVelocity() { return Velocity;};$/;"	f	class:DeviceRotaryControl
 getVisibleDataBounds	gui_sources/qcustomplot.cpp	/^void QCPBars::getVisibleDataBounds(QCPBarsDataContainer::const_iterator &begin, QCPBarsDataContainer::const_iterator &end) const$/;"	f	class:QCPBars
 getVisibleDataBounds	gui_sources/qcustomplot.cpp	/^void QCPErrorBars::getVisibleDataBounds(QCPErrorBarsDataContainer::const_iterator &begin, QCPErrorBarsDataContainer::const_iterator &end, const QCPDataRange &rangeRestriction) const$/;"	f	class:QCPErrorBars
 getVisibleDataBounds	gui_sources/qcustomplot.cpp	/^void QCPFinancial::getVisibleDataBounds(QCPFinancialDataContainer::const_iterator &begin, QCPFinancialDataContainer::const_iterator &end) const$/;"	f	class:QCPFinancial
@@ -4878,9 +4892,9 @@ ipFree	gui_sources/qcustomplot.h	/^  enum InsetPlacement { ipFree            \/\
 isActive	gui_sources/qcustomplot.h	/^  bool isActive() const { return mActive; }$/;"	f	class:QCPSelectionRect
 isAimingFault	AIMING_MODULES/aiming_class.cpp	/^bool AimingClass::isAimingFault()$/;"	f	class:AimingClass
 isAimingFaultStatistic	AIMING_MODULES/aiming_class.cpp	/^bool AimingParamOptimizator::isAimingFaultStatistic()$/;"	f	class:AimingParamOptimizator
-isAtLimit	DEVICES/device_rotary_interface.h	/^bool DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::isAtLimit() { return checkRangeOffset(Position); }$/;"	f	class:DeviceRotaryInterface
+isAtLimit	DEVICES/device_rotary_interface.h	/^bool DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::isAtLimit() { return checkRangeOffset(Position); }$/;"	f	class:DeviceRotaryControl
 isClosed	UTILITES/debug_output_filter.h	/^  bool isClosed() { return (Counter < Peak) ^ FlagInverse;}$/;"	f	class:BlockCounterClass
-isConnected	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^bool CANConnectionEngine::isConnected()$/;"	f	class:CANConnectionEngine
+isConnected	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^bool CANEngineInterface::isConnected()$/;"	f	class:CANEngineInterface
 isConnected	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^bool TCPConnectionEngine::isConnected()$/;"	f	class:TCPConnectionEngine
 isConnected	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^bool UDPEngineInterface::isConnected() { return Connected;}$/;"	f	class:UDPEngineInterface
 isCoordDetected	UTILITES/thread_operation_nodes.h	/^  bool isCoordDetected = false;$/;"	m	class:CoordDetector
@@ -4906,8 +4920,8 @@ isLoaded	UTILITES/thread_operation_nodes.h	/^  bool isLoaded()  { return Current
 isLoaded	UTILITES/thread_operation_nodes.h	/^  bool isLoaded() { return CurrentInputCoord = Coords.end();}$/;"	f	class:CoordStorage
 isMessageAvailable	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^bool engine_ring_buffer_dense<H,S_M,N_M>::isMessageAvailable()$/;"	f	class:engine_ring_buffer_dense
 isMessageAvailable	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_generic.h	/^bool RingBufferGeneric<H,M_S,M_N,I_T>::isMessageAvailable()$/;"	f	class:RingBufferGeneric
-isMessageAvailable	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^bool CANConnectionEngine::isMessageAvailable() { return false;}$/;"	f	class:CANConnectionEngine
-isMessageAvailable	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^bool TCPConnectionEngine::isMessageAvailable() { return RingBuffer->isMessageAvailable(); }/;"	f	class:TCPConnectionEngine
+isMessageAvailable	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^bool CANEngineInterface::isMessageAvailable() { return false;}$/;"	f	class:CANEngineInterface
+isMessageAvailable	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^bool TCPConnectionEngine::isMessageAvailable() { return RingBuffer->isMessageAvailable(); }$/;"	f	class:TCPConnectionEngine
 isMessageAvailable	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^bool UDPEngineInterface::isMessageAvailable() { return RingBuffer->isMessageAvailable(); }$/;"	f	class:UDPEngineInterface
 isMessasge	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic.h	/^	      bool isMessasge() { return (HEADER.isValid()); };$/;"	f	class:MessageGeneric
 isMessasge	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	/^	      bool isMessasge() { return (HEADER.isValid()); };$/;"	f	class:MessageGenericExt
@@ -5040,15 +5054,14 @@ linePosCorrection	build/ImageProcProject_autogen/include/ui_widget_aiming_contro
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPCurve
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPGraph
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPPolarGraph
-linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANConnectionEngine* device) $/;"	f	class:CANDelayMeasure
-linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANConnectionEngine* device) { deviceCAN = device; };$/;"	f	class:CANTestMessage
+linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANEngineInterface* device) $/;"	f	class:CANDelayMeasure
+linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANEngineInterface* device) { deviceCAN = device; };$/;"	f	class:CANTestMessage
 linkToControlWindow	DEVICES/device_focus_ranger_interface.h	/^    void linkToControlWindow(WidgetFocusRangerControl* Window ){ ControlWindow = Window;};$/;"	f	class:DeviceFocusRangerInterface
-linkToControlWindow	DEVICES/device_laser_interface.h	/^	void linkToControlWindow(WidgetLaserControl* ControlWindow ) {};$/;"	f	class:DeviceLaserInterface
 linkToSource	stream_video_rtsp.cpp	/^void VideoStreamRTSP::linkToSource(ImageSourceInterface* Source)$/;"	f	class:VideoStreamRTSP
 linux	build/ImageProcProject_autogen/moc_predefs.h	305;"	d
 listMessages	build/ImageProcProject_autogen/include/ui_widget_output_text_display.h	/^    QListWidget *listMessages;$/;"	m	class:Ui_OutputTextDisplay
-listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void  listenTo(QHostAddress::SpecialAddress IPDevice, int Port) {};$/;"	f	class:CANConnectionEngine
-listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void  listenTo(QString IDDeviceStr, int IDDevice = 0) {};$/;"	f	class:CANConnectionEngine
+listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void  listenTo(QHostAddress::SpecialAddress IPDevice, int Port) {};$/;"	f	class:CANEngineInterface
+listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void  listenTo(QString IDDeviceStr, int IDDevice = 0) {};$/;"	f	class:CANEngineInterface
 listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::listenTo(QHostAddress::SpecialAddress address, int Port)$/;"	f	class:TCPConnectionEngine
 listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::listenTo(QString address, int Port)$/;"	f	class:TCPConnectionEngine
 listenTo	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void  UDPEngineInterface::listenTo(QHostAddress::SpecialAddress IPHost, int Port)$/;"	f	class:UDPEngineInterface
@@ -5060,8 +5073,8 @@ lmRotated	gui_sources/qcustomplot.h	/^                   ,lmRotated \/\/\/< $/;"
 lmUpright	gui_sources/qcustomplot.h	/^  enum LabelMode { lmUpright   \/\/\/< $/;"	e	enum:QCPPolarAxisAngular::LabelMode
 lmUpright	gui_sources/qcustomplot.h	/^  enum LabelMode { lmUpright   \/\/\/< $/;"	e	enum:QCPPolarAxisRadial::LabelMode
 loadPreset	gui_sources/qcustomplot.cpp	/^void QCPColorGradient::loadPreset(GradientPreset preset)$/;"	f	class:QCPColorGradient
-loadSettings	DEVICES/device_laser_interface.h	/^    void loadSettings(){};$/;"	f	class:DeviceLaserInterface
-loadSettings	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()$/;"	f	class:DeviceRotaryInterface
+loadSettings	DEVICES/device_laser_interface.h	/^  void loadSettings(){};$/;"	f	class:DeviceLaserControl
+loadSettings	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()$/;"	f	class:DeviceRotaryControl
 logBase	gui_sources/qcustomplot.h	/^  double logBase() const { return mLogBase; }$/;"	f	class:QCPAxisTickerLog
 loop	stream_video_rtsp.h	/^            GMainLoop *loop   = nullptr;$/;"	m	class:VideoStreamRTSP
 low	gui_sources/qcustomplot.h	/^  double key, open, high, low, close;$/;"	m	class:QCPFinancialData
@@ -5706,7 +5719,7 @@ menu	build/ImageProcProject_autogen/include/ui_widget_main_window.h	/^    QMenu 
 menu_2	build/ImageProcProject_autogen/include/ui_widget_main_window.h	/^    QMenu *menu_2;$/;"	m	class:Ui_WidgetMainWindow
 menubar	build/ImageProcProject_autogen/include/ui_widget_main_window.h	/^    QMenuBar *menubar;$/;"	m	class:Ui_WidgetMainWindow
 messageState	DEVICES/device_focus_ranger_interface.h	/^    T_MESSAGE messageState;$/;"	m	class:DeviceFocusRangerInterface
-messageState	DEVICES/device_laser_interface.h	/^    T_MESSAGE messageState;$/;"	m	class:DeviceLaserInterface
+messageState	DEVICES/device_laser_interface.h	/^  T_MESSAGE messageState;$/;"	m	class:DeviceLaserControl
 metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^const QMetaObject *LabelImage::metaObject() const$/;"	f	class:LabelImage
 metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^const QMetaObject *LinkLine::metaObject() const$/;"	f	class:LinkLine
 metaObject	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^const QMetaObject *QCPAbstractItem::metaObject() const$/;"	f	class:QCPAbstractItem
@@ -5780,8 +5793,8 @@ metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	
 metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^const QMetaObject *ManualAimControl::metaObject() const$/;"	f	class:ManualAimControl
 metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^const QMetaObject *SinusGeneratorClass::metaObject() const$/;"	f	class:SinusGeneratorClass
 metaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^const QMetaObject *WidgetSinusSource::metaObject() const$/;"	f	class:WidgetSinusSource
-metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^const QMetaObject *CANConnectionEngine::metaObject() const$/;"	f	class:CANConnectionEngine
 metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^const QMetaObject *CANDelayMeasure::metaObject() const$/;"	f	class:CANDelayMeasure
+metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^const QMetaObject *CANEngineInterface::metaObject() const$/;"	f	class:CANEngineInterface
 metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^const QMetaObject *CANTestMessage::metaObject() const$/;"	f	class:CANTestMessage
 metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^const QMetaObject *TCPConnectionEngine::metaObject() const$/;"	f	class:TCPConnectionEngine
 metaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^const QMetaObject *UDPEngineInterface::metaObject() const$/;"	f	class:UDPEngineInterface
@@ -5842,14 +5855,14 @@ moveAbove	gui_sources/qcustomplot.cpp	/^void QCPBars::moveAbove(QCPBars *bars)$/
 moveBelow	gui_sources/qcustomplot.cpp	/^void QCPBars::moveBelow(QCPBars *bars)$/;"	f	class:QCPBars
 moveEvent	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::moveEvent(QMoveEvent* event)$/;"	f	class:WidgetProcessingImage
 moveLayer	gui_sources/qcustomplot.cpp	/^bool QCustomPlot::moveLayer(QCPLayer *layer, QCPLayer *otherLayer, QCustomPlot::LayerInsertMode insertMode)$/;"	f	class:QCustomPlot
-moveOnStep	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPair<int, int>& Step)$/;"	f	class:DeviceRotaryInterface
+moveOnStep	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPair<int, int>& Step)$/;"	f	class:DeviceRotaryControl
 moveRange	gui_sources/qcustomplot.cpp	/^void QCPAxis::moveRange(double diff)$/;"	f	class:QCPAxis
 moveRange	gui_sources/qcustomplot.cpp	/^void QCPPolarAxisAngular::moveRange(double diff)$/;"	f	class:QCPPolarAxisAngular
 moveRange	gui_sources/qcustomplot.cpp	/^void QCPPolarAxisRadial::moveRange(double diff)$/;"	f	class:QCPPolarAxisRadial
 moveSelection	gui_sources/qcustomplot.cpp	/^void QCPSelectionRect::moveSelection(QMouseEvent *event)$/;"	f	class:QCPSelectionRect
 moveToLayer	gui_sources/qcustomplot.cpp	/^bool QCPLayerable::moveToLayer(QCPLayer *layer, bool prepend)$/;"	f	class:QCPLayerable
-moveToPos	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<int, int>& Pos)$/;"	f	class:DeviceRotaryInterface
-moveToPosRelative	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<int, int>& PosRelative) $/;"	f	class:DeviceRotaryInterface
+moveToPos	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<int, int>& Pos)$/;"	f	class:DeviceRotaryControl
+moveToPosRelative	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<int, int>& PosRelative) $/;"	f	class:DeviceRotaryControl
 msAll	gui_sources/qcustomplot.h	/^                  ,msAll     = 0xFF \/\/\/< <tt>0xFF<\/tt> all margins$/;"	e	enum:QCP::MarginSide
 msBottom	gui_sources/qcustomplot.h	/^                  ,msBottom  = 0x08 \/\/\/< <tt>0x08<\/tt> bottom margin$/;"	e	enum:QCP::MarginSide
 msLeft	gui_sources/qcustomplot.h	/^enum MarginSide { msLeft     = 0x01 \/\/\/< <tt>0x01<\/tt> left margin$/;"	e	enum:QCP::MarginSide
@@ -6162,16 +6175,16 @@ override	CV_IMAGE_PROCESSING/tracker_centroid.h	/^   void SlotResetProcessing() 
 override	CV_IMAGE_PROCESSING/tracker_template.h	/^   void SlotProcessImage() override;$/;"	m	class:ImageTrackerTemplate
 override	CV_IMAGE_PROCESSING/tracker_template.h	/^   void SlotProcessImage(const cv::Mat& Image) override;$/;"	m	class:ImageTrackerTemplate
 override	CV_IMAGE_PROCESSING/tracker_template.h	/^   void SlotResetProcessing() override;$/;"	m	class:ImageTrackerTemplate
-override	DEVICES/device_laser_interface.h	/^	void setParam(uint8_t ID, uint16_t Value) override;$/;"	m	class:DeviceLaserInterface
-override	DEVICES/device_laser_interface.h	/^    void putMessage(T_MESSAGE Message) override; $/;"	m	class:DeviceLaserInterface
-override	DEVICES/device_rotary_interface.h	/^	          bool checkRangeOffset(QPair<int,int> Pos) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	QPair<int,int> getLimits(int axis) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void moveOnStep(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void moveToPos(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void moveToPosRelative(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void setParam(uint8_t ID, uint16_t Value) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void setParams(uint16_t Value1, uint16_t Value2) override;$/;"	m	class:DeviceRotaryInterface
-override	DEVICES/device_rotary_interface.h	/^	void setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) override; $/;"	m	class:DeviceRotaryInterface
+override	DEVICES/device_laser_interface.h	/^	void setParam(uint8_t ID, uint16_t Value) override;$/;"	m	class:DeviceLaserControl
+override	DEVICES/device_laser_interface.h	/^  void putMessage(T_MESSAGE Message) override; $/;"	m	class:DeviceLaserControl
+override	DEVICES/device_rotary_interface.h	/^	          bool checkRangeOffset(QPair<int,int> Pos) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	QPair<int,int> getLimits(int axis) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void moveOnStep(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void moveToPos(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void moveToPosRelative(const QPair<int, int>& Pos) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void setParam(uint8_t ID, uint16_t Value) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void setParams(uint16_t Value1, uint16_t Value2) override;$/;"	m	class:DeviceRotaryControl
+override	DEVICES/device_rotary_interface.h	/^	void setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) override; $/;"	m	class:DeviceRotaryControl
 override	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	const QPair<float,float>& getOutput() override;$/;"	m	class:AccumulateDataFilter
 override	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	const QPair<float,float>& getOutput() override;$/;"	m	class:RotateOperationContainer
 override	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	void setInput(const QPair<float,float>& Coord) override;$/;"	m	class:AccumulateDataFilter
@@ -6184,8 +6197,8 @@ override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void  list
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void connectTo(QString IPDevice, int Port) override;$/;"	m	class:TCPConnectionEngine
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotCheckConnection() override;$/;"	m	class:TCPConnectionEngine
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotCloseConnection() override;$/;"	m	class:TCPConnectionEngine
-override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotSendMessage(const QByteArray& Command, uint8_t Param = 0) override;$/;"	m	class:TCPConnectionEngine
-override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotSendMessage(const char* DataCommand, int size, uint8_t Param = 0) override;$/;"	m	class:TCPConnectionEngine
+override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotSendMessage(const QByteArray& Command, uint16_t Param = 0) override;$/;"	m	class:TCPConnectionEngine
+override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void slotSendMessage(const char* DataCommand, int size, uint16_t Param = 0) override;$/;"	m	class:TCPConnectionEngine
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^  void tryConnectConstantly(QString Address, int Port) override;$/;"	m	class:TCPConnectionEngine
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    bool isConnected() override;$/;"	m	class:UDPEngineInterface
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    bool isMessageAvailable() override;$/;"	m	class:UDPEngineInterface
@@ -6195,8 +6208,8 @@ override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    void con
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^    void tryConnectConstantly(QString Address, int Port) override;$/;"	m	class:UDPEngineInterface
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotCheckConnection() override;$/;"	m	class:UDPEngineInterface
 override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotCloseConnection() override;$/;"	m	class:UDPEngineInterface
-override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotSendMessage(const QByteArray& ArrayCommand, uint8_t Param = 0) override;$/;"	m	class:UDPEngineInterface
-override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotSendMessage(const char* DataCommand, int size, uint8_t Param = 0) override;$/;"	m	class:UDPEngineInterface
+override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param = 0) override;$/;"	m	class:UDPEngineInterface
+override	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^  void slotSendMessage(const char* DataCommand, int size, uint16_t Param = 0) override;$/;"	m	class:UDPEngineInterface
 override	UTILITES/engine_statistics.h	/^	void SetValue(T Input) override;$/;"	m	class:StatisticValue
 override	UTILITES/thread_operation_nodes.h	/^      void SetValue(T InputValue) override;$/;"	m	class:ValueCategorizer
 override	UTILITES/thread_operation_nodes.h	/^    void SetValue(T NewValue) override;$/;"	m	class:EndReceiver
@@ -6316,7 +6329,7 @@ positions	gui_sources/qcustomplot.h	/^  QList<QCPItemPosition*> positions() cons
 preallocateGrow	gui_sources/qcustomplot.h	/^void QCPDataContainer<DataType>::preallocateGrow(int minimumPreallocSize)$/;"	f	class:QCPDataContainer
 predict	CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp	/^void TrackerFirst::predict()$/;"	f	class:TrackerFirst
 predicted_coords	CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^	cv::Point predicted_coords;$/;"	m	class:TrackerFirst
-printAvailableDevices	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANConnectionEngine::printAvailableDevices()$/;"	f	class:CANConnectionEngine
+printAvailableDevices	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::printAvailableDevices()$/;"	f	class:CANEngineInterface
 printPeriod	COMMON/interface_image_source.h	/^    QString printPeriod()$/;"	f	class:FramePeriodMeasure
 printRegisteredTypes	main.cpp	/^void printRegisteredTypes()$/;"	f
 processPointSelection	gui_sources/qcustomplot.cpp	/^void QCustomPlot::processPointSelection(QMouseEvent *event)$/;"	f	class:QCustomPlot
@@ -6330,7 +6343,7 @@ ptPlotCoords	gui_sources/qcustomplot.h	/^                      ,ptPlotCoords    
 ptViewportRatio	gui_sources/qcustomplot.h	/^                      ,ptViewportRatio  \/\/\/< Static positioning given by a fraction of the viewport size. For example, if you call setCoords(0, 0), the position will be at the top$/;"	e	enum:QCPItemPosition::PositionType
 pushButton	build/ImageProcProject_autogen/include/ui_widget_processing_image_control.h	/^    QPushButton *pushButton;$/;"	m	class:Ui_WidgetProcessingImageControl
 putMessage	DEVICES/device_focus_ranger_interface.h	/^        void putMessage(T_MESSAGE Message) { messageState = Message;};$/;"	f	class:DeviceFocusRangerInterface
-putMessage	DEVICES/device_laser_interface.h	/^void DeviceLaserInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::putMessage(T_MESSAGE message)$/;"	f	class:DeviceLaserInterface
+putMessage	DEVICES/device_laser_interface.h	/^void DeviceLaserControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::putMessage(T_MESSAGE message)$/;"	f	class:DeviceLaserControl
 qCleanupResources_pictures	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^int QT_RCC_MANGLE_NAMESPACE(qCleanupResources_pictures)()$/;"	f
 qInitResources_pictures	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^int QT_RCC_MANGLE_NAMESPACE(qInitResources_pictures)()$/;"	f
 qcpLessThanSortKey	gui_sources/qcustomplot.h	/^inline bool qcpLessThanSortKey(const DataType &a, const DataType &b) { return a.sortKey() < b.sortKey(); }$/;"	f
@@ -6387,13 +6400,13 @@ qt_meta_data_ZN17QCPStatisticalBoxE	build/ImageProcProject_autogen/7RAEHFKGBG/mo
 qt_meta_data_ZN17SignalPortAdapterE	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN17SignalPortAdapterE[] = {$/;"	v	file:
 qt_meta_data_ZN17WidgetSinusSourceE	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN17WidgetSinusSourceE[] = {$/;"	v	file:
 qt_meta_data_ZN18AimingWatcherClassE	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18AimingWatcherClassE[] = {$/;"	v	file:
+qt_meta_data_ZN18CANEngineInterfaceE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18CANEngineInterfaceE[] = {$/;"	v	file:
 qt_meta_data_ZN18CameraInterfaceHIKE	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hik.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18CameraInterfaceHIKE[] = {$/;"	v	file:
 qt_meta_data_ZN18QCPAxisTickerFixedE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18QCPAxisTickerFixedE[] = {$/;"	v	file:
 qt_meta_data_ZN18QCPPolarAxisRadialE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18QCPPolarAxisRadialE[] = {$/;"	v	file:
 qt_meta_data_ZN18QCPPolarLegendItemE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18QCPPolarLegendItemE[] = {$/;"	v	file:
 qt_meta_data_ZN18UDPEngineInterfaceE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN18UDPEngineInterfaceE[] = {$/;"	v	file:
 qt_meta_data_ZN19AimControlInterfaceE	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN19AimControlInterfaceE[] = {$/;"	v	file:
-qt_meta_data_ZN19CANConnectionEngineE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN19CANConnectionEngineE[] = {$/;"	v	file:
 qt_meta_data_ZN19ImageTemplateFinderE	build/ImageProcProject_autogen/F4UU7PBV5P/moc_image_finder.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN19ImageTemplateFinderE[] = {$/;"	v	file:
 qt_meta_data_ZN19QCPItemStraightLineE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN19QCPItemStraightLineE[] = {$/;"	v	file:
 qt_meta_data_ZN19QCPPolarAxisAngularE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN19QCPPolarAxisAngularE[] = {$/;"	v	file:
@@ -6486,13 +6499,13 @@ qt_meta_stringdata_ZN17QCPStatisticalBoxE	build/ImageProcProject_autogen/7RAEHFK
 qt_meta_stringdata_ZN17SignalPortAdapterE	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^static constexpr auto qt_meta_stringdata_ZN17SignalPortAdapterE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN17WidgetSinusSourceE	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^static constexpr auto qt_meta_stringdata_ZN17WidgetSinusSourceE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18AimingWatcherClassE	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^static constexpr auto qt_meta_stringdata_ZN18AimingWatcherClassE = QtMocHelpers::stringData($/;"	v	file:
+qt_meta_stringdata_ZN18CANEngineInterfaceE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^static constexpr auto qt_meta_stringdata_ZN18CANEngineInterfaceE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18CameraInterfaceHIKE	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hik.cpp	/^static constexpr auto qt_meta_stringdata_ZN18CameraInterfaceHIKE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18QCPAxisTickerFixedE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN18QCPAxisTickerFixedE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18QCPPolarAxisRadialE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN18QCPPolarAxisRadialE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18QCPPolarLegendItemE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN18QCPPolarLegendItemE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN18UDPEngineInterfaceE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^static constexpr auto qt_meta_stringdata_ZN18UDPEngineInterfaceE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN19AimControlInterfaceE	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^static constexpr auto qt_meta_stringdata_ZN19AimControlInterfaceE = QtMocHelpers::stringData($/;"	v	file:
-qt_meta_stringdata_ZN19CANConnectionEngineE	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^static constexpr auto qt_meta_stringdata_ZN19CANConnectionEngineE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN19ImageTemplateFinderE	build/ImageProcProject_autogen/F4UU7PBV5P/moc_image_finder.cpp	/^static constexpr auto qt_meta_stringdata_ZN19ImageTemplateFinderE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN19QCPItemStraightLineE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN19QCPItemStraightLineE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN19QCPPolarAxisAngularE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN19QCPPolarAxisAngularE = QtMocHelpers::stringData($/;"	v	file:
@@ -6582,13 +6595,13 @@ qt_meta_tag_ZN17QCPStatisticalBoxE_t	build/ImageProcProject_autogen/7RAEHFKGBG/m
 qt_meta_tag_ZN17SignalPortAdapterE_t	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^struct qt_meta_tag_ZN17SignalPortAdapterE_t {};$/;"	s	namespace:__anon16	file:
 qt_meta_tag_ZN17WidgetSinusSourceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^struct qt_meta_tag_ZN17WidgetSinusSourceE_t {};$/;"	s	namespace:__anon92	file:
 qt_meta_tag_ZN18AimingWatcherClassE_t	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^struct qt_meta_tag_ZN18AimingWatcherClassE_t {};$/;"	s	namespace:__anon17	file:
+qt_meta_tag_ZN18CANEngineInterfaceE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^struct qt_meta_tag_ZN18CANEngineInterfaceE_t {};$/;"	s	namespace:__anon7	file:
 qt_meta_tag_ZN18CameraInterfaceHIKE_t	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hik.cpp	/^struct qt_meta_tag_ZN18CameraInterfaceHIKE_t {};$/;"	s	namespace:__anon1	file:
 qt_meta_tag_ZN18QCPAxisTickerFixedE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPAxisTickerFixedE_t {};$/;"	s	namespace:__anon39	file:
 qt_meta_tag_ZN18QCPPolarAxisRadialE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarAxisRadialE_t {};$/;"	s	namespace:__anon76	file:
 qt_meta_tag_ZN18QCPPolarLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarLegendItemE_t {};$/;"	s	namespace:__anon79	file:
 qt_meta_tag_ZN18UDPEngineInterfaceE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^struct qt_meta_tag_ZN18UDPEngineInterfaceE_t {};$/;"	s	namespace:__anon6	file:
 qt_meta_tag_ZN19AimControlInterfaceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN19AimControlInterfaceE_t {};$/;"	s	namespace:__anon94	file:
-qt_meta_tag_ZN19CANConnectionEngineE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^struct qt_meta_tag_ZN19CANConnectionEngineE_t {};$/;"	s	namespace:__anon7	file:
 qt_meta_tag_ZN19ImageTemplateFinderE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_image_finder.cpp	/^struct qt_meta_tag_ZN19ImageTemplateFinderE_t {};$/;"	s	namespace:__anon15	file:
 qt_meta_tag_ZN19QCPItemStraightLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPItemStraightLineE_t {};$/;"	s	namespace:__anon67	file:
 qt_meta_tag_ZN19QCPPolarAxisAngularE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPPolarAxisAngularE_t {};$/;"	s	namespace:__anon77	file:
@@ -6702,8 +6715,8 @@ qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp
 qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^int ManualAimControl::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ManualAimControl
 qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^int SinusGeneratorClass::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SinusGeneratorClass
 qt_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^int WidgetSinusSource::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:WidgetSinusSource
-qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^int CANConnectionEngine::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANConnectionEngine
 qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^int CANDelayMeasure::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANDelayMeasure
+qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^int CANEngineInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANEngineInterface
 qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^int CANTestMessage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANTestMessage
 qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^int TCPConnectionEngine::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:TCPConnectionEngine
 qt_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^int UDPEngineInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:UDPEngineInterface
@@ -6784,8 +6797,8 @@ qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp
 qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void *ManualAimControl::qt_metacast(const char *_clname)$/;"	f	class:ManualAimControl
 qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^void *SinusGeneratorClass::qt_metacast(const char *_clname)$/;"	f	class:SinusGeneratorClass
 qt_metacast	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^void *WidgetSinusSource::qt_metacast(const char *_clname)$/;"	f	class:WidgetSinusSource
-qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void *CANConnectionEngine::qt_metacast(const char *_clname)$/;"	f	class:CANConnectionEngine
 qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void *CANDelayMeasure::qt_metacast(const char *_clname)$/;"	f	class:CANDelayMeasure
+qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void *CANEngineInterface::qt_metacast(const char *_clname)$/;"	f	class:CANEngineInterface
 qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void *CANTestMessage::qt_metacast(const char *_clname)$/;"	f	class:CANTestMessage
 qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^void *TCPConnectionEngine::qt_metacast(const char *_clname)$/;"	f	class:TCPConnectionEngine
 qt_metacast	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^void *UDPEngineInterface::qt_metacast(const char *_clname)$/;"	f	class:UDPEngineInterface
@@ -6869,8 +6882,8 @@ qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_
 qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^void ManualAimControl::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ManualAimControl
 qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^void SinusGeneratorClass::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SinusGeneratorClass
 qt_static_metacall	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^void WidgetSinusSource::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:WidgetSinusSource
-qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANConnectionEngine::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANConnectionEngine
 qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANDelayMeasure::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANDelayMeasure
+qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANEngineInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANEngineInterface
 qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANTestMessage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:CANTestMessage
 qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^void TCPConnectionEngine::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:TCPConnectionEngine
 qt_static_metacall	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^void UDPEngineInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:UDPEngineInterface
@@ -7204,8 +7217,8 @@ selectionHitBox	gui_sources/qcustomplot.cpp	/^QRectF QCPFinancial::selectionHitB
 selectionRect	gui_sources/qcustomplot.h	/^  QCPSelectionRect *selectionRect() const { return mSelectionRect; }$/;"	f	class:QCustomPlot
 selectionRectMode	gui_sources/qcustomplot.h	/^  QCP::SelectionRectMode selectionRectMode() const { return mSelectionRectMode; }$/;"	f	class:QCustomPlot
 selectionTolerance	gui_sources/qcustomplot.h	/^  int selectionTolerance() const { return mSelectionTolerance; }$/;"	f	class:QCustomPlot
-sendCommand	DEVICES/device_generic_interface.h	/^	void sendCommand(T_COMMAND commandDevice) { Command = commandDevice;  ConnectionDevice->SlotSendCommand(Command.toByteArray());};$/;"	f	class:DeviceGenericInterface
-sendCommand	DEVICES/device_generic_interface.h	/^    void sendCommand() { ConnectionDevice->slotSendMessage(Command.toByteArray());};$/;"	f	class:DeviceGenericInterface
+sendCommand	DEVICES/device_generic_interface.h	/^	void sendCommand(T_COMMAND commandDevice) { Command.DATA = commandDevice;  $/;"	f	class:DeviceGenericInterface
+sendCommand	DEVICES/device_generic_interface.h	/^  void sendCommand() { ConnectionDevice->slotSendMessage(Command.toByteArray());};\/\/GENERIC MESSAGE [HEADER DATA]$/;"	f	class:DeviceGenericInterface
 server	stream_video_rtsp.h	/^        GstRTSPServer *server = nullptr;$/;"	m	class:VideoStreamRTSP
 set	gui_sources/qcustomplot.h	/^void QCPDataContainer<DataType>::set(const QCPDataContainer<DataType> &data)$/;"	f	class:QCPDataContainer
 set	gui_sources/qcustomplot.h	/^void QCPDataContainer<DataType>::set(const QVector<DataType> &data, bool alreadySorted)$/;"	f	class:QCPDataContainer
@@ -7358,7 +7371,7 @@ setInput	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClas
 setInput	COMMON/interface_pass_coord.h	/^	virtual void setInput(const QPair<V, V>& Coord) {OutputCoord = Coord;};$/;"	f	class:PassCoordClass
 setInput	COMMON/interface_pass_coord.h	/^    void setInput(const QPair<float,float>& coord) { if(InputFunction != nullptr) InputFunction(*Receiver,coord);};$/;"	f	class:PortAdapter
 setInput	CV_IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)$/;"	f	class:ModuleImageProcessing
-setInput	DEVICES/device_generic_interface.h	/^	void setInput(const QPair<float, float>& Coord) { moveToPos(Coord);};$/;"	f	class:DeviceRotaryGenericInterface
+setInput	DEVICES/device_generic_interface.h	/^	void setInput(const QPair<float, float>& Coord) { moveToPos(Coord);};$/;"	f	class:DeviceRotaryInterface
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void AccumulateDataFilter::setInput(const QPair<float,float>& Coord)$/;"	f	class:AccumulateDataFilter
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::setInput(const QPair<float,float>& Coord)$/;"	f	class:RotateOperationContainer
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/SubstractPair.h	/^	 void setInput(const QPair<float,float>& Coord)$/;"	f	class:Substract
@@ -7443,10 +7456,11 @@ setOutlierStyle	gui_sources/qcustomplot.cpp	/^void QCPStatisticalBox::setOutlier
 setPadding	gui_sources/qcustomplot.cpp	/^void QCPAxis::setPadding(int padding)$/;"	f	class:QCPAxis
 setPadding	gui_sources/qcustomplot.cpp	/^void QCPItemText::setPadding(const QMargins &padding)$/;"	f	class:QCPItemText
 setPadding	gui_sources/qcustomplot.cpp	/^void QCPLabelPainterPrivate::setPadding(int padding)$/;"	f	class:QCPLabelPainterPrivate
-setParam	DEVICES/device_laser_interface.h	/^void DeviceLaserInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::setParam(uint8_t ID, uint16_t Value)$/;"	f	class:DeviceLaserInterface
-setParam	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParam(uint8_t ID, uint16_t Value) $/;"	f	class:DeviceRotaryInterface
-setParams	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2) $/;"	f	class:DeviceRotaryInterface
-setParams	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) $/;"	f	class:DeviceRotaryInterface
+setParam	DEVICES/device_generic_interface.h	/^	virtual void setParam (uint8_t ID, bool OnOff) {if(OnOff) setParam(ID,uint16_t(1)); else setParam(ID,uint16_t(0)); } $/;"	f	class:DeviceGenericInterface
+setParam	DEVICES/device_laser_interface.h	/^void DeviceLaserControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::setParam(uint8_t ID, uint16_t Value)$/;"	f	class:DeviceLaserControl
+setParam	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParam(uint8_t ID, uint16_t Value) $/;"	f	class:DeviceRotaryControl
+setParams	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2) $/;"	f	class:DeviceRotaryControl
+setParams	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION, T_COMMAND, T_MESSAGE>::setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) $/;"	f	class:DeviceRotaryControl
 setParentAnchor	gui_sources/qcustomplot.cpp	/^bool QCPItemPosition::setParentAnchor(QCPItemAnchor *parentAnchor, bool keepPixelPosition)$/;"	f	class:QCPItemPosition
 setParentAnchorX	gui_sources/qcustomplot.cpp	/^bool QCPItemPosition::setParentAnchorX(QCPItemAnchor *parentAnchor, bool keepPixelPosition)$/;"	f	class:QCPItemPosition
 setParentAnchorY	gui_sources/qcustomplot.cpp	/^bool QCPItemPosition::setParentAnchorY(QCPItemAnchor *parentAnchor, bool keepPixelPosition)$/;"	f	class:QCPItemPosition
@@ -7698,7 +7712,7 @@ setTicks	gui_sources/qcustomplot.cpp	/^void QCPPolarAxisRadial::setTicks(bool sh
 setTightBoundary	gui_sources/qcustomplot.cpp	/^void QCPColorMap::setTightBoundary(bool enabled)$/;"	f	class:QCPColorMap
 setTimeFormat	gui_sources/qcustomplot.cpp	/^void QCPAxisTickerTime::setTimeFormat(const QString &format)$/;"	f	class:QCPAxisTickerTime
 setTimeZone	gui_sources/qcustomplot.cpp	/^void QCPAxisTickerDateTime::setTimeZone(const QTimeZone &zone)$/;"	f	class:QCPAxisTickerDateTime
-setToNull	DEVICES/device_rotary_interface.h	/^void DeviceRotaryInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull() $/;"	f	class:DeviceRotaryInterface
+setToNull	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull() $/;"	f	class:DeviceRotaryControl
 setTwoColored	gui_sources/qcustomplot.cpp	/^void QCPFinancial::setTwoColored(bool twoColored)$/;"	f	class:QCPFinancial
 setType	gui_sources/qcustomplot.cpp	/^void QCPColorScale::setType(QCPAxis::AxisType type)$/;"	f	class:QCPColorScale
 setType	gui_sources/qcustomplot.cpp	/^void QCPItemPosition::setType(QCPItemPosition::PositionType type)$/;"	f	class:QCPItemPosition
@@ -7761,7 +7775,7 @@ shape	gui_sources/qcustomplot.h	/^  ScatterShape shape() const { return mShape; 
 side	gui_sources/qcustomplot.h	/^    AnchorSide side;$/;"	m	struct:QCPLabelPainterPrivate::LabelData
 sigma	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW float sigma;                 \/\/!<  gaussian kernel bandwidth$/;"	m	struct:cv::tracking::TrackerKCF::Params
 signalDeviceConnected	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^void TCPConnectionEngine::signalDeviceConnected()$/;"	f	class:TCPConnectionEngine
-signalMessageAvailable	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANConnectionEngine::signalMessageAvailable()$/;"	f	class:CANConnectionEngine
+signalMessageAvailable	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^void CANEngineInterface::signalMessageAvailable()$/;"	f	class:CANEngineInterface
 signalMessageAvailable	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^void TCPConnectionEngine::signalMessageAvailable()$/;"	f	class:TCPConnectionEngine
 signalMessageAvailable	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^void UDPEngineInterface::signalMessageAvailable()$/;"	f	class:UDPEngineInterface
 signalNewImage	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hik.cpp	/^void CameraInterfaceHIK::signalNewImage()$/;"	f	class:CameraInterfaceHIK
@@ -7772,8 +7786,8 @@ signalNewImage	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_sou
 signalNewImage	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void ImageSourceInterface::signalNewImage(const cv::Mat & _t1)$/;"	f	class:ImageSourceInterface
 signals	CAMERA_INTERFACE/camera_interface_class.h	16;"	d
 signals	CAMERA_INTERFACE/camera_interface_class.h	22;"	d
-signals	controller_process_class.cpp	11;"	d	file:
-signals	controller_process_class.cpp	9;"	d	file:
+signals	controller_process_class.cpp	10;"	d	file:
+signals	controller_process_class.cpp	12;"	d	file:
 simplify	gui_sources/qcustomplot.cpp	/^void QCPDataSelection::simplify()$/;"	f	class:QCPDataSelection
 simplify	gui_sources/qcustomplot.cpp	/^void QCPLayout::simplify()$/;"	f	class:QCPLayout
 simplify	gui_sources/qcustomplot.cpp	/^void QCPLayoutGrid::simplify()$/;"	f	class:QCPLayoutGrid
@@ -7796,25 +7810,25 @@ skipFrames	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAra
 skipFrames	CAMERA_INTERFACE/interface_camera_hik.cpp	/^void CameraInterfaceHIK::CameraImageStorage::skipFrames()$/;"	f	class:CameraInterfaceHIK::CameraImageStorage
 skipFrames	COMMON/interface_image_source.h	/^    virtual void skipFrames() {};$/;"	f	class:ImageSourceInterface
 slotAcceptConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotAcceptConnection()$/;"	f	class:TCPConnectionEngine
-slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANConnectionEngine::slotCheckConnection()$/;"	f	class:CANConnectionEngine
+slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotCheckConnection()$/;"	f	class:CANEngineInterface
 slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotCheckConnection() { }$/;"	f	class:TCPConnectionEngine
 slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotCheckConnection()$/;"	f	class:UDPEngineInterface
-slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotCloseConnection(){};$/;"	f	class:CANConnectionEngine
+slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotCloseConnection(){};$/;"	f	class:CANEngineInterface
 slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotCloseConnection()$/;"	f	class:TCPConnectionEngine
 slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotCloseConnection()$/;"	f	class:UDPEngineInterface
 slotConnectedToHost	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotConnectedToHost()$/;"	f	class:TCPConnectionEngine
 slotConnectionAttempt	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotConnectionAttempt()$/;"	f	class:TCPConnectionEngine
 slotMessageReceived	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotMessageReceived()$/;"	f	class:CANDelayMeasure
 slotMove	DEVICES/device_rotary_interface.h	/^  void slotMove() { Device->moveOnStep(Device->getVelocity()); }$/;"	f	class:DynamicModule
-slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANConnectionEngine::slotReadData()$/;"	f	class:CANConnectionEngine
+slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotReadData()$/;"	f	class:CANEngineInterface
 slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotReadData()$/;"	f	class:TCPConnectionEngine
 slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotReadData()$/;"	f	class:UDPEngineInterface
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANConnectionEngine::slotSendMessage(const QByteArray& message, uint8_t IDDevice)$/;"	f	class:CANConnectionEngine
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANConnectionEngine::slotSendMessage(const char* DataCommand, int size, uint8_t IDDevice)$/;"	f	class:CANConnectionEngine
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotSendMessage(const QByteArray& Command, uint8_t Param)$/;"	f	class:TCPConnectionEngine
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotSendMessage(const char* DataCommand, int size, uint8_t Param)$/;"	f	class:TCPConnectionEngine
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const QByteArray& ArrayCommand, uint8_t Param)$/;"	f	class:UDPEngineInterface
-slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const char* DataCommand, int size, uint8_t Param)$/;"	f	class:UDPEngineInterface
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotSendMessage(const QByteArray& message, uint16_t IDDevice)$/;"	f	class:CANEngineInterface
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotSendMessage(const char* DataCommand, int size, uint16_t IDDevice)$/;"	f	class:CANEngineInterface
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotSendMessage(const QByteArray& Command, uint16_t Param)$/;"	f	class:TCPConnectionEngine
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotSendMessage(const char* DataCommand, int size, uint16_t Param)$/;"	f	class:TCPConnectionEngine
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param)$/;"	f	class:UDPEngineInterface
+slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const char* DataCommand, int size, uint16_t Param)$/;"	f	class:UDPEngineInterface
 slotSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  virtual void slotSendTest(){ deviceCAN->slotSendMessage(message, TypeRegister<CommandSetPosScanator>::GetTypeID()); }$/;"	f	class:CANTestMessage
 slotStartSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotStartSendTest(bool OnOff) {if(deviceCAN == nullptr) return; if(OnOff) timerSendTest.start(1000); else timerSendTest.stop(); }$/;"	f	class:CANTestMessage
 slots	PYTORCH_PROCESSING/TorchProcessing.h	2;"	d
@@ -8005,8 +8019,8 @@ staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_ai
 staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT const QMetaObject ManualAimControl::staticMetaObject = { {$/;"	m	class:ManualAimControl	file:
 staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^Q_CONSTINIT const QMetaObject SinusGeneratorClass::staticMetaObject = { {$/;"	m	class:SinusGeneratorClass	file:
 staticMetaObject	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^Q_CONSTINIT const QMetaObject WidgetSinusSource::staticMetaObject = { {$/;"	m	class:WidgetSinusSource	file:
-staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT const QMetaObject CANConnectionEngine::staticMetaObject = { {$/;"	m	class:CANConnectionEngine	file:
 staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT const QMetaObject CANDelayMeasure::staticMetaObject = { {$/;"	m	class:CANDelayMeasure	file:
+staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT const QMetaObject CANEngineInterface::staticMetaObject = { {$/;"	m	class:CANEngineInterface	file:
 staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^Q_CONSTINIT const QMetaObject CANTestMessage::staticMetaObject = { {$/;"	m	class:CANTestMessage	file:
 staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^Q_CONSTINIT const QMetaObject TCPConnectionEngine::staticMetaObject = { {$/;"	m	class:TCPConnectionEngine	file:
 staticMetaObject	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^Q_CONSTINIT const QMetaObject UDPEngineInterface::staticMetaObject = { {$/;"	m	class:UDPEngineInterface	file:
@@ -8160,6 +8174,7 @@ toByteArray	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	/^QByteAr
 toGenericMessage	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic.h	/^  MessageGeneric<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageGeneric<void*,H>*>(this);  }$/;"	f	class:MessageGeneric
 toGenericMessage	TRANSMISSION/GENERIC_MESSAGES/message_struct_generic_ext.h	/^         MessageGenericExt<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageGenericExt<void*,H>*>(this);  }$/;"	f	class:MessageGenericExt
 toPainter	gui_sources/qcustomplot.cpp	/^void QCustomPlot::toPainter(QCPPainter *painter, int width, int height)$/;"	f	class:QCustomPlot
+toPair	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^   QPair<int,int> toPair() { return QPair<int,int>(Param1,Param2); }$/;"	f	struct:CommandSetPos
 toPixmap	gui_sources/qcustomplot.cpp	/^QPixmap QCustomPlot::toPixmap(int width, int height, double scale)$/;"	f	class:QCustomPlot
 toPoint	gui_sources/qcustomplot.h	/^  QPoint toPoint() const { return QPoint(int(mX), int(mY)); }$/;"	f	class:QCPVector2D
 toPointF	gui_sources/qcustomplot.h	/^  QPointF toPointF() const { return QPointF(mX, mY); }$/;"	f	class:QCPVector2D
@@ -8191,8 +8206,9 @@ tracker	CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^	cv::Ptr<cv::TrackerKCF> 
 tracking	CV_IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^inline namespace tracking {$/;"	n	namespace:cv
 transform	gui_sources/qcustomplot.h	/^    QTransform transform; \/\/ the transform about the label anchor which is at (0, 0). Does not contain final absolute x\/y positioning on the plot\/axis$/;"	m	struct:QCPLabelPainterPrivate::LabelData
 transformationMode	gui_sources/qcustomplot.h	/^  Qt::TransformationMode transformationMode() const { return mTransformationMode; }$/;"	f	class:QCPItemPixmap
+transmitCommand	DEVICES/device_laser_interface.h	/^void DeviceLaserControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::transmitCommand(T_COMMAND Command)$/;"	f	class:DeviceLaserControl
 trimTicks	gui_sources/qcustomplot.cpp	/^void QCPAxisTicker::trimTicks(const QCPRange &range, QVector<double> &ticks, bool keepOneOutlier) const$/;"	f	class:QCPAxisTicker
-tryConnectConstantly	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void tryConnectConstantly(QString address, int Port) {};$/;"	f	class:CANConnectionEngine
+tryConnectConstantly	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void tryConnectConstantly(QString address, int Port) {};$/;"	f	class:CANEngineInterface
 tryConnectConstantly	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::tryConnectConstantly(QString Address, int Port)$/;"	f	class:TCPConnectionEngine
 tryConnectConstantly	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::tryConnectConstantly(QString Address, int Port)$/;"	f	class:UDPEngineInterface
 tsCircle	gui_sources/qcustomplot.h	/^                     ,tsCircle     \/\/\/< A circle$/;"	e	enum:QCPItemTracer::TracerStyle
@@ -8356,15 +8372,15 @@ zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRec
 zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRect, const QList<QCPAxis*> &affectedAxes)$/;"	f	class:QCPAxisRect
 ~AimImageImitatorClass	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^AimImageImitatorClass::~AimImageImitatorClass()$/;"	f	class:AimImageImitatorClass
 ~AimingClass	AIMING_MODULES/aiming_class.cpp	/^AimingClass::~AimingClass() $/;"	f	class:AimingClass
-~CANConnectionEngine	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^CANConnectionEngine::~CANConnectionEngine() $/;"	f	class:CANConnectionEngine
+~CANEngineInterface	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^CANEngineInterface::~CANEngineInterface() $/;"	f	class:CANEngineInterface
 ~CameraImageStorage	CAMERA_INTERFACE/interface_camera_hik.h	/^            ~CameraImageStorage() {DeinitStorage(); };$/;"	f	class:CameraInterfaceHIK::CameraImageStorage
 ~CameraInterfaceAravis	CAMERA_INTERFACE/camera_interface_class.cpp	/^CameraInterfaceAravis::~CameraInterfaceAravis()$/;"	f	class:CameraInterfaceAravis
 ~CameraInterfaceHIK	CAMERA_INTERFACE/interface_camera_hik.cpp	/^CameraInterfaceHIK::~CameraInterfaceHIK()$/;"	f	class:CameraInterfaceHIK
 ~ContoursProcessorClass	CV_IMAGE_PROCESSING/contour_processing.h	/^    ~ContoursProcessorClass() {};$/;"	f	class:ContoursProcessorClass
 ~DeviceFocusRangerInterface	DEVICES/device_focus_ranger_interface.h	/^        	~DeviceFocusRangerInterface(){};$/;"	f	class:DeviceFocusRangerInterface
 ~DeviceGenericInterface	DEVICES/device_generic_interface.h	/^	~DeviceGenericInterface() {};$/;"	f	class:DeviceGenericInterface
-~DeviceLaserInterface	DEVICES/device_laser_interface.h	/^DeviceLaserInterface<T_CONNECTION,T_COMMAND,T_MESSAGE>::~DeviceLaserInterface() { qDebug() << TAG_NAME << "DELETE"; }$/;"	f	class:DeviceLaserInterface
-~DeviceRotaryInterface	DEVICES/device_rotary_interface.h	/^	~DeviceRotaryInterface() { qDebug() << TAG_NAME << "DELETE"; }$/;"	f	class:DeviceRotaryInterface
+~DeviceLaserControl	DEVICES/device_laser_interface.h	/^DeviceLaserControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::~DeviceLaserControl() { qDebug() << TAG_NAME << "DELETE"; }$/;"	f	class:DeviceLaserControl
+~DeviceRotaryControl	DEVICES/device_rotary_interface.h	/^	~DeviceRotaryControl() { qDebug() << TAG_NAME << "DELETE"; }$/;"	f	class:DeviceRotaryControl
 ~GraphPointsLineInterface	gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp	/^GraphPointsLineInterface::~GraphPointsLineInterface()$/;"	f	class:GraphPointsLineInterface
 ~ImageTemplateFinder	CV_IMAGE_PROCESSING/image_finder.cpp	/^ImageTemplateFinder::~ImageTemplateFinder()$/;"	f	class:ImageTemplateFinder
 ~ImageTrackerCentroid	CV_IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroid::~ImageTrackerCentroid()$/;"	f	class:ImageTrackerCentroid

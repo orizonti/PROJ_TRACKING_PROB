@@ -7,13 +7,16 @@
 UDPEngineInterface::UDPEngineInterface(QString IPDevice, int Port, QString IPListen, int PortLocal, QObject *parent)
     : ConnectionInterface{parent}
 {
-
-    qDebug() << "[ UDP CONNECTION ]" << IPDevice << Port << IPListen << PortLocal;
     connectTo(IPDevice, Port); 
     listenTo(IPListen, PortLocal);
 
     RingBuffer = new std::remove_reference<decltype((*RingBuffer))>::type;
-    QObject::connect(Socket,SIGNAL(readyRead()),this,SLOT(SlotReadData()));
+    Dispatcher = new DispatcherType;
+
+    QObject::connect(Socket,SIGNAL(readyRead()),this,SLOT(slotReadData()));
+
+    qDebug() << "[ UDP CONNECTION ]   SEND TO:" << IPDevice << Port ;
+    qDebug() << "[ UDP CONNECTION ] LISTEN TO:" << IPListen << PortLocal;
 }
 
 UDPEngineInterface::UDPEngineInterface(QString IPDevice, int Port,QHostAddress::SpecialAddress IPListen, int PortLocal, QObject *parent)
@@ -21,10 +24,12 @@ UDPEngineInterface::UDPEngineInterface(QString IPDevice, int Port,QHostAddress::
 {
     connectTo(IPDevice, Port); 
     listenTo(IPListen, PortLocal);
-    qDebug() << "[ UDP CONNECTION ]" << IPDevice << Port << IPListen << PortLocal;
 
     RingBuffer = new std::remove_reference<decltype((*RingBuffer))>::type;
-    QObject::connect(Socket,SIGNAL(readyRead()),this,SLOT(SlotReadData()));
+    QObject::connect(Socket,SIGNAL(readyRead()),this,SLOT(slotReadData()));
+
+    qDebug() << "[ UDP CONNECTION ]   SEND TO:" << IPDevice << Port ;
+    qDebug() << "[ UDP CONNECTION ] LISTEN TO:" << IPListen << PortLocal;
 }
 
 void UDPEngineInterface::connectTo(QString IPDevice, int Port) 
@@ -64,24 +69,23 @@ void UDPEngineInterface::slotReadData()
    if(Socket->bytesAvailable() < RingBuffer->MIN_MESSAGE_SIZE) return;
 
       auto Datagram = Socket->receiveDatagram();
-      DataCounter += Datagram.data().size();
-      //qDebug() << "READ DATA : " << DataCounter;
+      DataCounter += Datagram.data().size();             //qDebug() << "READ DATA : " << DataCounter;
 
       RingBuffer->AppendData((uint8_t*)Datagram.data().data(), Datagram.data().size());
 
-   if(RingBuffer->isMessageAvailable()) emit signalMessageAvailable();
+   if(Socket->bytesAvailable() > 24) slotReadData(); else *RingBuffer | *Dispatcher;
 
-   if(Socket->bytesAvailable() > 24) slotReadData();
+   //if(RingBuffer->isMessageAvailable()) emit signalMessageAvailable();
 }
 
 
-void UDPEngineInterface::slotSendMessage(const QByteArray& ArrayCommand, uint8_t Param)
+void UDPEngineInterface::slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param)
 {
  Socket->writeDatagram(ArrayCommand,QHostAddress(IPRemote),PortRemote); 
  //Socket->waitForBytesWritten(5);
 }
 
-void UDPEngineInterface::slotSendMessage(const char* DataCommand, int size, uint8_t Param)
+void UDPEngineInterface::slotSendMessage(const char* DataCommand, int size, uint16_t Param)
 {
     Socket->writeDatagram(DataCommand,size,QHostAddress(IPRemote), PortRemote);
 }
