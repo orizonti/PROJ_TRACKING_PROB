@@ -17,6 +17,7 @@
 #include "message_header_generic_ext.h"
 #include "device_generic_interface.h"
 #include "debug_output_filter.h"
+#include "sinus_generator_class.h"
 
 class DynamicModule: public QObject
 {
@@ -27,12 +28,32 @@ class DynamicModule: public QObject
     Device = DeviceRotary; QObject::connect(&timerMove, &QTimer::timeout, this, &DynamicModule::slotMove); 
   }
 
-  void enableMove(bool OnOff) { if(OnOff && timerMove.isActive()) return; if(OnOff) timerMove.start(1); else timerMove.stop(); }
+  virtual void enableMove(bool OnOff) { if(OnOff && timerMove.isActive()) return; if(OnOff) timerMove.start(1); else timerMove.stop(); }
   public slots:
-  void slotMove() { Device->moveOnStep(Device->getVelocity()); }
-  private:
+  virtual void slotMove() { Device->moveOnStep(Device->getVelocity()); }
+  protected:
   QTimer timerMove;
   DeviceRotaryInterface* Device = nullptr;
+};
+
+class SinusMoveModule : public DynamicModule , public PassCoordClass<float>
+{
+  Q_OBJECT
+  public:
+  explicit SinusMoveModule(DeviceRotaryInterface* DeviceRotary) : DynamicModule(DeviceRotary) 
+  { 
+    SinusGenerator | *this;
+  }
+  SinusGeneratorClass SinusGenerator;
+  QPair<float,float> Position{0,0};
+
+  void enableMove(bool OnOff) { if(OnOff && SinusGenerator.isActive()) return; if(OnOff) SinusGenerator.slotStartGenerate(true); 
+                                                                                    else SinusGenerator.slotStartGenerate(false); }
+
+	void setInput(const QPair<float,float>& Coord) { Position = Coord; slotMove(); } 
+	const QPair<float,float>& getOutput() { return Position;};
+  public slots:
+  void slotMove() { Device->moveToPos(Position); }
 };
 
 
@@ -65,7 +86,9 @@ public:
 	void moveOnStep(const QPair<int, int>& Pos) override;
 	void moveWithVelocity(const QPair<int, int>& VelocityVector) override { Velocity = VelocityVector; ModuleMoveVelocity.enableMove(true); }
 	void      setVelocity(const QPair<int, int>& VelocityVector) override { Velocity = VelocityVector;};
-	void stopMove()  override { ModuleMoveVelocity.enableMove(false); }
+	void stopMove()  override { ModuleMoveVelocity.enableMove(false); ModuleMoveSinus.enableMove(false); }
+
+	void moveSinus(bool OnOff) { ModuleMoveSinus.enableMove(OnOff); } ;
 
 	          bool checkRangeOffset(QPair<int,int> Pos) override;
 	QPair<int,int> getLimits(int axis) override;
@@ -90,7 +113,8 @@ std::shared_ptr<PortAdapter<DeviceRotaryInterface>> PortMoveRelative = nullptr;
 
 private:
 	RotateVectorClass<int>   RotAxis;
-	DynamicModule ModuleMoveVelocity{this};
+	DynamicModule   ModuleMoveVelocity{this};
+	SinusMoveModule ModuleMoveSinus{this};
 };
 
 template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
@@ -100,7 +124,7 @@ DeviceGenericInterface<T_CONNECTION,T_COMMAND, T_MESSAGE>(Connection, Name)
 	setToNull();
 
   PortMoveRelative = std::make_shared<PortAdapter<DeviceRotaryInterface>>();
-  PortMoveRelative->LinkAdapter(this, &DeviceRotaryInterface::moveToPosRelative, 
+  PortMoveRelative->linkAdapter(this, &DeviceRotaryInterface::moveToPosRelative, 
                                       &DeviceRotaryInterface::getPos);
   PortMoveRelative | *this; // LINK INTEGRATOR TO moveToPos, EMULATE MOVE WITH VELOCTIY
 }
@@ -155,8 +179,8 @@ void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPai
                                    Position = PositionTarget;
   DEVICE_BASE_TYPE::Command.DATA = Position;
 
-   qDebug() << OutputFilter::Filter(100) << "[ GET COMMAND SET POS SCANATOR ]" << Position.first 
-                                                                               << Position.second;
+   //qDebug() << OutputFilter::Filter(4) << "[ GET COMMAND SET POS SCANATOR ]" << Position.first 
+   //                                                                            << Position.second;
   DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
                                                               sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 }

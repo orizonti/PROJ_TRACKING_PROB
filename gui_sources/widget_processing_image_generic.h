@@ -35,8 +35,8 @@ class WidgetMiniLabelsGroup : public WidgetAdjustable
 
     QVector<LabelImage*> Labels;
 public slots:
-    void SlotSetActiveChannel(int Number);
-    void SlotDisplayImage(const QImage& Image, int Channel);
+    void slotSetActiveChannel(int Number);
+    void slotDisplayImage(const QImage& Image, int Channel);
 signals: 
 void SignalChannelChanged(int);
 
@@ -86,24 +86,23 @@ QString strFreq;
 QString strPeriodProcess; 
 QString strDisplayData; 
 
-WidgetAdjustable* LinkedWidget = 0;
+WidgetAdjustable* LinkedWidget = nullptr;
 int NumberActiveChannel = -1;
+LabelImage* LabelImageAiming = nullptr;
 
 void AddMiniLabel();
 void moveEvent(QMoveEvent* event);
 
 signals:
-void SignalPosPressed(QPair<float,float>);
-void SignalChannelChanged(int);
+void signalChannelChanged(int);
 
 public  slots:
-void SlotDisplayImage();
-void SlotDisplayMiniLabels();
-void SlotDisplayImage(const QImage& Image);
-void SlotDisplayString(QString InfoString);
-void SlotStartPaintTrajectory(bool OnOff);
-void SlotPosPressed(int x, int y);
-void SlotSetActiveChannel(int Channel);
+void slotDisplayImage();
+void slotDisplayMiniLabels();
+void slotDisplayImage(const QImage& Image);
+void slotDisplayString(QString InfoString);
+void slotStartPaintTrajectory(bool OnOff);
+void slotSetActiveChannel(int Channel);
 
 private:
 Ui::WidgetProcessingImage *ui;

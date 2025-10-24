@@ -24,7 +24,7 @@ private:
 	Ui::WidgetAimingControl ui;
 
 public slots:
-    void SlotDisplayState();
+    void slotDisplayState();
 };
 
 #endif // AIMINGBLOCKWINDOW_H

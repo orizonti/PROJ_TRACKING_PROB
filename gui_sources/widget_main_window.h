@@ -88,7 +88,7 @@ public slots:
   void SlotConnectTwoWidgets(int NumberWidget1, int NumberWidget2);
   void SlotChangeInterfaceSize();
   void SlotChangeInterfaceType();
-  void SlotSetInterfaceSize(int GuiSize);
+  void slotSetInterfaceSize(int GuiSize);
   void SlotSaveWidgetsPosition();
   //==============================================
   

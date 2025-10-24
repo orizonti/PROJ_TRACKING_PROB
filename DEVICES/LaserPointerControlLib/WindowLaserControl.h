@@ -37,8 +37,8 @@ class LaserControlClass : public QObject
     bool ConnectedToDevice = false;
 
     public slots:
-    void SlotSetPower(int Power);
-    void SlotStartWork(bool enable);
+    void slotSetPower(int Power);
+    void slotStartWork(bool enable);
     void SlotLaserStateChanged(LaserStateStruct state);
 
     void SlotConnectDevice();

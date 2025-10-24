@@ -71,12 +71,15 @@ class SignalPortAdapter : public QObject
 Q_OBJECT
 public:
     SignalPortAdapter(){};
-    SignalPortAdapter(PassCoordClass<float>* Port){ LinkToPort(Port);};
+    SignalPortAdapter(PassCoordClass<float>* Port){ linkToPort(Port);};
     PassCoordClass<float>* SetCoordPort = 0;
-    void LinkToPort(PassCoordClass<float>* Port) { SetCoordPort = Port;};
+    void linkToPort(PassCoordClass<float>* Port) { SetCoordPort = Port;};
 
 public slots: 
-void SlotSetCoord(QPair<float,float> Coord) { if(SetCoordPort != 0) Coord >> *SetCoordPort; }
+void slotSetCoord(QPair<float,float> Coord) 
+{ 
+  if(SetCoordPort != 0) Coord >> *SetCoordPort; 
+}
 
 };
 
@@ -183,9 +186,9 @@ class AimingClass : public PassCoordClass<float>
   
   BlockCounterClass PassCounter = BlockCounterClass(200,true);
   
-  std::shared_ptr<PortAdapter<AimingClass>> PortSetAiming = nullptr;
+  std::shared_ptr<PortAdapter<AimingClass>> PortSetAiming  = nullptr;
   std::shared_ptr<PortAdapter<AimingClass>> PortMoveAiming = nullptr;
-  std::shared_ptr<PortAdapter<AimingClass>> PortCalibration = nullptr;
+  std::shared_ptr<PortAdapter<AimingClass>> PortCalibration= nullptr;
   std::shared_ptr<PortAdapter<AimingClass>> PortCorrection = nullptr;
   std::shared_ptr<PortAdapter<AimingClass>> PortCorrectionOutput = nullptr;
   

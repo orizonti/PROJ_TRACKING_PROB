@@ -24,19 +24,19 @@ AimingClass::AimingClass()
 {
   ModuleCounter++; NumberChannel = ModuleCounter;
 	//======================================================================
-  PortSetAiming = std::make_shared<PortAdapter<AimingClass>>();
-  PortMoveAiming = std::make_shared<PortAdapter<AimingClass>>();
+  PortSetAiming   = std::make_shared<PortAdapter<AimingClass>>();
+  PortMoveAiming  = std::make_shared<PortAdapter<AimingClass>>();
   PortCalibration = std::make_shared<PortAdapter<AimingClass>>();
-  PortCorrection = std::make_shared<PortAdapter<AimingClass>>();
+  PortCorrection  = std::make_shared<PortAdapter<AimingClass>>();
   PortCorrectionOutput = std::make_shared<PortAdapter<AimingClass>>();
 
-  PortSignalSetAiming.LinkToPort(PortSetAiming.get());
+  PortSignalSetAiming.linkToPort(PortSetAiming.get());
 
-  PortSetAiming->LinkAdapter(this,&AimingClass::SetAimingPosition,&AimingClass::GetAimPosition);
-  PortMoveAiming->LinkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetAimPosition);
-  PortCalibration->LinkAdapter(this,&AimingClass::SetAimingCorrection,&AimingClass::GetBeamPosition);
-  PortCorrection->LinkAdapter(this,&AimingClass::SetAimingCorrection,&AimingClass::GetAimingError);
-  PortCorrectionOutput->LinkAdapter(this,&AimingClass::SetOutputCorrection,&AimingClass::GetAimingError);
+         PortSetAiming->linkAdapter(this,&AimingClass::SetAimingPosition,   &AimingClass::GetAimPosition);
+        PortMoveAiming->linkAdapter(this,&AimingClass::MoveAimingCorrection,&AimingClass::GetAimPosition);
+       PortCalibration->linkAdapter(this,&AimingClass::SetAimingCorrection, &AimingClass::GetBeamPosition);
+        PortCorrection->linkAdapter(this,&AimingClass::SetAimingCorrection, &AimingClass::GetAimingError);
+  PortCorrectionOutput->linkAdapter(this,&AimingClass::SetOutputCorrection, &AimingClass::GetAimingError);
 
 	this->AimingSlowParam.Common = 1;
 	this->AimingSlowParam.RateParam = 500;
@@ -119,6 +119,7 @@ const QPair<float,float>& AimingClass::GetAimingError()
 
 void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       
 { 
+  qDebug() << "COORD AIM: " << Coord;
   CoordAim = Coord; //this->SetBlockEnabled(true);
 }
 void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection    = Coord; }

@@ -28,7 +28,7 @@ WidgetLineGraph::WidgetLineGraph(QWidget *parent): WidgetAdjustable(parent)
 
     QObject::connect(SinusGenerator, SIGNAL(SignalNewCoord(QPair<float,float>)),GraphPointsStorage, SLOT(SlotAddNewPoint(QPair<float,float>)));
     QObject::connect(SinusGenerator, SIGNAL(SignalNewCoord(QPair<float,float>)),GraphPointsStorage2, SLOT(SlotAddNewPoint(QPair<float,float>)));
-    QObject::connect(this, SIGNAL(StartGenerateSinus(bool)),SinusGenerator, SLOT(SlotStartGenerate(bool)),Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(StartGenerateSinus(bool)),SinusGenerator, SLOT(slotStartGenerate(bool)),Qt::QueuedConnection);
 
     emit StartGenerateSinus(true);
 

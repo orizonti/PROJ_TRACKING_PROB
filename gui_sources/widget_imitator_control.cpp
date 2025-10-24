@@ -15,10 +15,10 @@ void WidgetImageImitator::LinkToModule(std::shared_ptr<AimImageImitatorClass> Im
 }
 
 
-void WidgetImageImitator::on_butMoveRight_pressed(){if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim(-1,0,2); }
-void WidgetImageImitator::on_butMoveLeft_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim( 1,0,2); }
-void WidgetImageImitator::on_butMoveUp_pressed()   {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim(-1,1,2); }
-void WidgetImageImitator::on_butMoveDown_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim( 1,1,2); }
+void WidgetImageImitator::on_butMoveRight_pressed(){if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim(-1,0,2); }
+void WidgetImageImitator::on_butMoveLeft_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim( 1,0,2); }
+void WidgetImageImitator::on_butMoveUp_pressed()   {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim(-1,1,2); }
+void WidgetImageImitator::on_butMoveDown_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim( 1,1,2); }
 
 void WidgetImageImitator::on_butMoveRight_released(){if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }
 void WidgetImageImitator::on_butMoveLeft_released() {if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }

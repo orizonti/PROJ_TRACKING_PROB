@@ -33,7 +33,7 @@ public:
 signals:
 
 public  slots:
-  void SlotDisplayScanatorState();
+  void slotDisplayScanatorState();
 
 private:
 Ui::WidgetScanatorControl *ui;

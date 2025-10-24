@@ -58,10 +58,10 @@ public:
 
 public slots:
 
-  void SlotDisplayCoord(QPair<float,float> Point);
+  void slotDisplayCoord(QPair<float,float> Point);
 
-  void SlotDisplayTimeSeries();
-  void SlotDisplayTimePairSeries();
+  void slotDisplayTimeSeries();
+  void slotDisplayTimePairSeries();
 
   //void SetLabelAxisX(QString label_str);
 

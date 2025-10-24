@@ -101,7 +101,7 @@ void AimImageImitatorClass::SlotMoveAimPos(int XStep, int YStep)
     GenerateAimImage();
 }
 
-void AimImageImitatorClass::SlotSetAimPos(int PosX, int PosY)
+void AimImageImitatorClass::slotSetAimPos(int PosX, int PosY)
 {
     OutputImage(AIM_RECT) = cv::Scalar(0,0,0); // CLEAR OLD AIM IMAGE
     AIM_RECT.x = PosX - AIM_RECT.width/2; AIM_RECT.y = PosY - AIM_RECT.height/2;
@@ -161,11 +161,11 @@ void DynamicAimControl::SlotMoveAim()
     XCoordPos = (float)ImageSize.first/2  + (float)AimBoundry.first/4*sin(2*M_PI/360*XNumberPos/AimSpeed); 
     YCoordPos = (float)ImageSize.second/2 + (float)AimBoundry.second/4*sin(2*M_PI/360*YNumberPos/AimSpeed);
 
-    ImageImitator->SlotSetAimPos(XCoordPos, YCoordPos);
+    ImageImitator->slotSetAimPos(XCoordPos, YCoordPos);
 
 }
 
-void ManualAimControl::SlotStartMoveAim(int Dir, int MoveAxis, int MoveStep)
+void ManualAimControl::slotStartMoveAim(int Dir, int MoveAxis, int MoveStep)
 {
    Direction = Dir;
    Axis = MoveAxis;

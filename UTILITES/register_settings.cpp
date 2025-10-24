@@ -61,22 +61,6 @@ void SettingsRegister::LoadSettings()
   AppendSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(160.0,160.0));
 
 
-  //SCANATOR +-10V -> +-14 degree
-  float ANGLE_RANGE = 2*60*60;
-  float  VOLT_RANGE = 3;
-  float   DAC_RANGE = std::pow(2.0,12.0);
-  float   PIX_RANGE = 400;
-
-  float PIX_TO_ANGLE = ANGLE_RANGE/PIX_RANGE;
-  float ANGLE_TO_DAC = DAC_RANGE/ANGLE_RANGE;
-  //float PIX_TO_DAC   = DAC_RANGE*PIX_RANGE;
-  float PIX_TO_DAC   = DAC_RANGE/PIX_RANGE;
-
-  AppendSettings("GAIN_PIXEL_ANGLE",PIX_TO_ANGLE);
-  AppendSettings("GAIN_PIXEL_DAC"  ,PIX_TO_DAC);
-  AppendSettings("GAIN_ANGLE_DAC"  ,ANGLE_TO_DAC);
-  AppendSettings("DAC_OFFSET", 0);
-
   qDebug() << "============================";
   qDebug() << "[ LOADED RECORDS ]";
   PrintSettingsList();
@@ -102,3 +86,8 @@ bool SettingsRegister::TryLoadSettings(QString file, QString GROUP)
 void SettingsRegister::AppendSettings(QString key, QString setting)                { settings.emplace(key,setting); }
 void SettingsRegister::AppendSettings(QString key, float setting)                  { settings_values.emplace(key,setting); }
 void SettingsRegister::AppendSettings(QString key, std::pair<float,float> setting) { settings_pairs.emplace(key,setting); }
+
+void SettingsRegister::ResetSettings(QString key, QString setting)                { settings[key] = setting; }
+void SettingsRegister::ResetSettings(QString key, float setting)                  { settings_values[key] = setting; }
+void SettingsRegister::ResetSettings(QString key, std::pair<float,float> setting) { settings_pairs[key] = setting; }
+

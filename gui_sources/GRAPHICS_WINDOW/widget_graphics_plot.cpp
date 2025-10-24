@@ -66,13 +66,13 @@ void PlotGraphicsInterface::GenerateTimeSeries(double TimeStep, int length)
 
 //void Widget::SetLabelAxisX(QString label_str) { ui->GraphicsDisplay->xAxis->setLabel(label_str); }
 
-void PlotGraphicsInterface::SlotDisplayTimeSeries()
+void PlotGraphicsInterface::slotDisplayTimeSeries()
 {
   GraphicsDisplay->graph(0)->setData(TimeSeries,InputSeries1);
   GraphicsDisplay->replot();
 }
 
-void PlotGraphicsInterface::SlotDisplayTimePairSeries()
+void PlotGraphicsInterface::slotDisplayTimePairSeries()
 {
 
   GraphicsDisplay->graph(0)->setData(TimeSeries,InputSeries1);
@@ -80,7 +80,7 @@ void PlotGraphicsInterface::SlotDisplayTimePairSeries()
   GraphicsDisplay->replot();
 }
 
-void PlotGraphicsInterface::SlotDisplayCoord(QPair<float,float> Point)
+void PlotGraphicsInterface::slotDisplayCoord(QPair<float,float> Point)
 {
 	DisplayPair(Point.first, Point.second);
 }

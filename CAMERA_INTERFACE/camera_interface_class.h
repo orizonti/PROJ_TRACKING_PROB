@@ -103,9 +103,9 @@ class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlIn
     std::chrono::duration<double> Duration;
 
     public slots:
-    void SlotDisplayProcessImage();
-    void SlotSetFrequencyDevider(int param) { FrequencyDevider = param; };
-    void SlotSetHighFrequency();
+    void slotDisplayProcessImage();
+    void slotSetFrequencyDevider(int param) { FrequencyDevider = param; };
+    void slotSetHighFrequency();
 
     void SlotDeinitCamera(); 
 };

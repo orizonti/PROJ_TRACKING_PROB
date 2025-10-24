@@ -9,7 +9,7 @@
 
 SinusGeneratorClass::SinusGeneratorClass(QObject* Obj) : QObject(Obj)
 {
-	QObject::connect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(SlotCalculateValue()));
+	QObject::connect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(slotCalculateValue()));
 
     auto OutputGain = SettingsRegister::GetValue("GAIN_ANGLE_DAC");
     ScaleOutput = TransformCoordClass(1,0);
@@ -19,10 +19,10 @@ SinusGeneratorClass::SinusGeneratorClass(QObject* Obj) : QObject(Obj)
 
 void SinusGeneratorClass::MoveGeneratorToThread(QThread* Thread)
 {
-	QObject::disconnect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(SlotCalculateValue()));
+	QObject::disconnect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(slotCalculateValue()));
     this->moveToThread(Thread);
     TimerGenerateSinus.moveToThread(Thread);
-	QObject::connect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(SlotCalculateValue()));
+	QObject::connect(&this->TimerGenerateSinus, SIGNAL(timeout()), this, SLOT(slotCalculateValue()));
 }
 
 
@@ -31,12 +31,12 @@ SinusGeneratorClass::~SinusGeneratorClass()
 }
 
 void SinusGeneratorClass::setInput(const QPair<float,float>& Coord) { }
-void SinusGeneratorClass::SlotSetFrequency(double Freq1, double Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360/Freq1;}
-void SinusGeneratorClass::SlotSetAmplitude(double Ampl1, double Ampl2) { Amplitude.first = Ampl1*60*5; 
+void SinusGeneratorClass::slotSetFrequency(float Freq1, float Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360/Freq1;}
+void SinusGeneratorClass::slotSetAmplitude(float Ampl1, float Ampl2) { Amplitude.first = Ampl1*60*5; 
                                                                          Amplitude.second = Ampl2*60*5; }
-void SinusGeneratorClass::SlotSetAmplitudeNoize(double Ampl) { this->AmplitudeNoize = Ampl; }
+void SinusGeneratorClass::slotSetAmplitudeNoize(float Ampl) { this->AmplitudeNoize = Ampl; }
 
-void SinusGeneratorClass::SlotEnableChannel(bool Enable , int Channel)
+void SinusGeneratorClass::slotEnableChannel(bool Enable , int Channel)
 {
     qDebug() << "SINUS GEN ENABLE: " << Enable << Channel;
     if(Channel == 1) { BlockOutput1 = !Enable; return;} 
@@ -47,7 +47,7 @@ void SinusGeneratorClass::SlotEnableChannel(bool Enable , int Channel)
 
 
 
-void SinusGeneratorClass::SlotCalculateValue()
+void SinusGeneratorClass::slotCalculateValue()
 {
   COUNTER++; if(COUNTER > PERIOD) COUNTER = 0;
 
@@ -70,9 +70,9 @@ void SinusGeneratorClass::SlotCalculateValue()
     
 }
 
-void SinusGeneratorClass::SlotStartGenerate(bool StartStop)
+void SinusGeneratorClass::slotStartGenerate(bool StartStop)
 {
     qDebug() << "SINUS GENERATOR START GENERATE : " << StartStop;
-	if (StartStop) this->TimerGenerateSinus.start(50);
+	if (StartStop) this->TimerGenerateSinus.start(1);
 	else this->TimerGenerateSinus.stop();
 }

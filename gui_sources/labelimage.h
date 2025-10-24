@@ -10,9 +10,7 @@ class LabelImage : public AdjustableLabel
 public:
 	LabelImage(QWidget *parent = 0);
 	~LabelImage();
-	int X_Pressed = 0;
-	int Y_Pressed = 0;
-	std::pair<int,int> SizeImage;
+  QPair<float,float> PosPressed{0,0};
 
 protected:
 	void mousePressEvent(QMouseEvent * ev);
@@ -20,9 +18,7 @@ protected:
 
 
 signals:
-	void SignalPressedPos(int,int);
-	void SignalMovePos(int,int);
-	
+	void signalPosPressed(QPair<float,float>);
 };
 
 #endif // LABELIMAGE_H

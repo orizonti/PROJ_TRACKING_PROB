@@ -87,7 +87,7 @@ class PortAdapter : public PassCoordClass<float>
 {
 public:
     PortAdapter(){};
-    void LinkAdapter(T* LinkObject,std::function<void(T&,QPair<float,float>)> SetFunction, std::function<QPair<float,float>(T&)> GetFunction)
+    void linkAdapter(T* LinkObject,std::function<void(T&,QPair<float,float>)> SetFunction, std::function<QPair<float,float>(T&)> GetFunction)
     { InputFunction = SetFunction; OutputFunction = GetFunction; Receiver = LinkObject; };
 
     T* Receiver =  nullptr;

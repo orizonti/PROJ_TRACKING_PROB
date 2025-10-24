@@ -20,36 +20,36 @@ void WidgetSinusSource::LinkToModule(std::shared_ptr<SinusGeneratorClass> SinusG
 
 	QVector<QSpinBox*> Spins;
 
-    QObject::connect(this, SIGNAL(SignalStart(bool)), SinusGenerator.get(), SLOT(SlotStartGenerate(bool)), Qt::QueuedConnection);
+    QObject::connect(this, SIGNAL(SignalStart(bool)), SinusGenerator.get(), SLOT(slotStartGenerate(bool)), Qt::QueuedConnection);
 
 
     connect(ui.SpinAmp,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
     [this, SinusGenerator]()
     {
-        SinusGenerator->SlotSetAmplitude(ui.SpinAmp->value(), ui.SpinAmp->value());
+        SinusGenerator->slotSetAmplitude(ui.SpinAmp->value(), ui.SpinAmp->value());
     });
 
 	connect(ui.SpinFreq, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
 		[this, SinusGenerator]()
 	    {
-		SinusGenerator->SlotSetFrequency(ui.SpinFreq->value(), ui.SpinAmp->value());
+		SinusGenerator->slotSetFrequency(ui.SpinFreq->value(), ui.SpinAmp->value());
 		});
 
 
-	//SinusGenerator->SlotSetFrequency(ui.SpinFreqY->value(),ui.SpinFreq->value());
-    //SinusGenerator->SlotSetAmplitude(ui.SpinAmpY->value(),ui.SpinAmp->value());
+	//SinusGenerator->slotSetFrequency(ui.SpinFreqY->value(),ui.SpinFreq->value());
+    //SinusGenerator->slotSetAmplitude(ui.SpinAmpY->value(),ui.SpinAmp->value());
 
     //spinNoizeAmplitude
 
     connect(ui.checkChannel1, &QPushButton::toggled,
             [=](bool Checked)
             {
-                SinusGenerator->SlotEnableChannel(Checked,1);
+                SinusGenerator->slotEnableChannel(Checked,1);
             });
     connect(ui.checkChannel2, &QPushButton::toggled,
             [=](bool Checked)
             {
-                SinusGenerator->SlotEnableChannel(Checked,2);
+                SinusGenerator->slotEnableChannel(Checked,2);
             });
 
     connect(ui.checkWorkBlock, &QPushButton::toggled,

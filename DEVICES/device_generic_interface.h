@@ -72,6 +72,7 @@ class DeviceRotaryInterface: public PassCoordClass<float>
 	virtual void      setVelocity(const QPair<int, int>& Velocity) = 0;
 	virtual void moveWithVelocity(const QPair<int, int>& Velocity) = 0;
 	virtual void stopMove() = 0;
+	virtual void moveSinus(bool OnOff) = 0;
 
 	const QPair<float, float>& getOutput() {OutputCoord = getPos(); return PassCoordClass<float>::OutputCoord;};
 	void setInput(const QPair<float, float>& Coord) { moveToPos(Coord);};

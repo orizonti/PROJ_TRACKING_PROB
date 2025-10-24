@@ -39,7 +39,7 @@ public:
 private:
 
 public slots:
-void SlotStartRotationFind(bool StartStop);
+void slotStartRotationFind(bool StartStop);
 private slots:
 void SlotMakeStep();
 

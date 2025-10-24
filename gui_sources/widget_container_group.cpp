@@ -8,7 +8,7 @@ WidgetContainerGroup::WidgetContainerGroup(QWidget* parent) : WidgetAdjustable(p
 }
 
 
-void WidgetContainerGroup::SlotSetActiveChannel(int Channel)
+void WidgetContainerGroup::slotSetActiveChannel(int Channel)
 {
     if(Channel == NumberChannel) return;
     qDebug() << "[ WIDGET GROUP CHANNEL ]" << Channel;
@@ -43,6 +43,6 @@ void WidgetContainerGroup::AddWidget(WidgetAdjustable& Widget)
     ui->horizontalGroupBox->layout()->addWidget(button);
 
     int Channel = ++NumberChannel; ui->stackedWidget->setCurrentIndex(Channel);
-    QObject::connect(button, &QPushButton::toggled, [this, Channel](bool OnOff) { if(OnOff) SlotSetActiveChannel(Channel);});
+    QObject::connect(button, &QPushButton::toggled, [this, Channel](bool OnOff) { if(OnOff) slotSetActiveChannel(Channel);});
 }
 

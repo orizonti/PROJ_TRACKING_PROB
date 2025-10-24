@@ -14,7 +14,7 @@ void WidgetAdjustable::ChangeFont(int FontSize)
   this->resize(0,0);
 }
 
-void WidgetAdjustable::SlotSetWindowSize(int FontSize)
+void WidgetAdjustable::slotSetWindowSize(int FontSize)
 {
     ChangeFont(FontSize);
     QTimer::singleShot(10,this,&WidgetAdjustable::AdjustWindow);
@@ -38,7 +38,7 @@ void AdjustableLabel::ChangeFont(int FontSize)
   this->resize(0,0);
 }
 
-void AdjustableLabel::SlotSetWindowSize(int FontSize)
+void AdjustableLabel::slotSetWindowSize(int FontSize)
 {
     ChangeFont(FontSize);
     QTimer::singleShot(10,this,&AdjustableLabel::AdjustWindow);

@@ -191,10 +191,10 @@ AimingState	AIMING_MODULES/aiming_class.h	/^  TypeEnumAiming AimingState = Aimin
 AimingStatistic	AIMING_MODULES/aiming_class.h	/^  StatisticNode<float> AimingStatistic;$/;"	m	class:AimingClass
 AimingWatcherClass	AIMING_MODULES/aiming_class.h	/^class AimingWatcherClass: public QObject$/;"	c
 AimingWorkSlowParam	AIMING_MODULES/aiming_class.h	/^  PIDParamStruct AimingWorkSlowParam;$/;"	m	class:AimingClass
-Amplitude	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	QPair<float,float> Amplitude = QPair<float,float>(60*60,60*60);$/;"	m	class:SinusGeneratorClass
+Amplitude	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	QPair<float,float> Amplitude = QPair<float,float>(20000,20000);$/;"	m	class:SinusGeneratorClass
 Amplitude	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_t  Amplitude   = 1;$/;"	m	struct:CommandCalibration
 Amplitude	UTILITES/thread_operation_nodes.h	/^  double Amplitude = 2;$/;"	m	class:ValueRandomization
-AmplitudeNoize	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^                   double AmplitudeNoize = 3;$/;"	m	class:SinusGeneratorClass
+AmplitudeNoize	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^                   float AmplitudeNoize = 3;$/;"	m	class:SinusGeneratorClass
 AmplitudeNoize	UTILITES/thread_operation_nodes.h	/^  float AmplitudeNoize = 1; $/;"	m	class:CoordPassRandomizer
 AnchorIndex	gui_sources/qcustomplot.h	/^  enum AnchorIndex {aiCenter};$/;"	g	class:QCPItemBracket
 AnchorIndex	gui_sources/qcustomplot.h	/^  enum AnchorIndex {aiTop, aiTopRight, aiRight, aiBottom, aiBottomLeft, aiLeft};$/;"	g	class:QCPItemPixmap
@@ -1549,6 +1549,7 @@ LabelData	gui_sources/qcustomplot.h	/^  struct LabelData$/;"	s	class:QCPLabelPai
 LabelImage	build/ImageProcProject_autogen/include/ui_widget_output_image_display.h	/^    QLabel *LabelImage;$/;"	m	class:Ui_WidgetOutputImageDisplay
 LabelImage	gui_sources/labelimage.cpp	/^LabelImage::LabelImage(QWidget *parent)$/;"	f	class:LabelImage
 LabelImage	gui_sources/labelimage.h	/^class LabelImage : public AdjustableLabel$/;"	c
+LabelImageAiming	gui_sources/widget_processing_image_generic.h	/^LabelImage* LabelImageAiming = nullptr;$/;"	m	class:WidgetProcessingImage
 LabelMode	gui_sources/qcustomplot.h	/^  enum LabelMode { lmUpright   \/\/\/< $/;"	g	class:QCPPolarAxisAngular
 LabelMode	gui_sources/qcustomplot.h	/^  enum LabelMode { lmUpright   \/\/\/< $/;"	g	class:QCPPolarAxisRadial
 LabelSide	gui_sources/qcustomplot.h	/^  enum LabelSide { lsInside    \/\/\/< Tick labels will be displayed inside the axis rect and clipped to the inner axis rect$/;"	g	class:QCPAxis
@@ -1572,7 +1573,6 @@ LineStyle	gui_sources/qcustomplot.h	/^  enum LineStyle { lsNone        \/\/\/< d
 LineStyle	gui_sources/qcustomplot.h	/^  enum LineStyle { lsNone        \/\/\/< data points are not connected with any lines (e.g. data only represented$/;"	g	class:QCPPolarGraph
 LineStyle	gui_sources/qcustomplot.h	/^  enum LineStyle { lsNone  \/\/\/< No line is drawn between data points (e.g. only scatters)$/;"	g	class:QCPCurve
 Link	ROTATE_OPTIMIZATION/RotationContainerLib/PassTwoCoordClass.h	/^	PassCoordClass<float>* Link = 0;$/;"	m	class:PassCoordClass
-LinkAdapter	COMMON/interface_pass_coord.h	/^    void LinkAdapter(T* LinkObject,std::function<void(T&,QPair<float,float>)> SetFunction, std::function<QPair<float,float>(T&)> GetFunction)$/;"	f	class:PortAdapter
 LinkCount	gui_sources/link_line.cpp	/^int LinkLine::LinkCount = 0;$/;"	m	class:LinkLine	file:
 LinkCount	gui_sources/link_line.h	/^    static int LinkCount;$/;"	m	class:LinkLine
 LinkLine	gui_sources/link_line.cpp	/^LinkLine::LinkLine(WidgetSceneNodeInterface* sourcePortNode, WidgetSceneNodeInterface* destPortNode, int PortOutput, int PortIntput)$/;"	f	class:LinkLine
@@ -1593,11 +1593,10 @@ LinkToModule	gui_sources/widget_aiming_control.cpp	/^void WidgetAimingControl::L
 LinkToModule	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::LinkToModule(std::shared_ptr<AimImageImitatorClass> Imitator)$/;"	f	class:WidgetImageImitator
 LinkToModule	gui_sources/widget_processing_image_control.cpp	/^void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface)$/;"	f	class:WidgetProcessingImageControl
 LinkToModule	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)$/;"	f	class:WidgetProcessingImage
-LinkToPort	AIMING_MODULES/aiming_class.h	/^    void LinkToPort(PassCoordClass<float>* Port) { SetCoordPort = Port;};$/;"	f	class:SignalPortAdapter
 LinkedDetector	UTILITES/thread_operation_nodes.h	/^  ValueDetector<T>*  LinkedDetector = 0;$/;"	m	class:ValueDetector
 LinkedDetector	UTILITES/thread_operation_nodes.h	/^  ValueDetector<T>* LinkedDetector = 0;$/;"	m	class:ValuePassShutter
 LinkedReceiver	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	PassCoordClass<float>* LinkedReceiver = 0;$/;"	m	class:SinusGeneratorClass
-LinkedWidget	gui_sources/widget_processing_image_generic.h	/^WidgetAdjustable* LinkedWidget = 0;$/;"	m	class:WidgetProcessingImage
+LinkedWidget	gui_sources/widget_processing_image_generic.h	/^WidgetAdjustable* LinkedWidget = nullptr;$/;"	m	class:WidgetProcessingImage
 ListPoints	gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.h	/^    QLineSeries* ListPoints;$/;"	m	class:GraphPointsLineInterface
 LoadData	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^void MessageIteratorDense<H>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)$/;"	f	class:MessageIteratorDense
 LoadData	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^	void MessageIteratorGeneric<H,IteratorMode::Chunked>::LoadData(uint8_t* DataSourceBuffer, uint16_t BytesCountReceived)$/;"	f	class:IteratorMode::MessageIteratorGeneric
@@ -1738,7 +1737,7 @@ NodeType	TRANSMISSION/DATA_STRUCTURES/message_command_structures.h	/^    uint16_
 NodesLinked	COMMON/interface_pass_coord.h	/^	std::vector<PassCoordClass*> NodesLinked ;$/;"	m	class:PassCoordClass
 NodesLinked	COMMON/interface_pass_image.h	/^	std::vector<PassImageClass*> NodesLinked;$/;"	m	class:PassImageClass
 NodesLinked	COMMON/interface_pass_value.h	/^	std::vector<PassValueClass*> NodesLinked;$/;"	m	class:PassValueClass
-Noize	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^    QPair<float,float> Noize = QPair<float,float>(0,0);$/;"	m	class:SinusGeneratorClass
+Noize	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^  QPair<float,float> Noize = QPair<float,float>(0,0);$/;"	m	class:SinusGeneratorClass
 NopNode	UTILITES/thread_operation_nodes.h	/^  PassCoordNop<T> NopNode;$/;"	m	class:CoordAvaragePeriodicNode
 NopNode	UTILITES/thread_operation_nodes.h	/^  PassCoordNop<T> NopNode;$/;"	m	class:CoordPassFilter
 NopNode	UTILITES/thread_operation_nodes.h	/^  PassCoordNop<T> NopNode;$/;"	m	class:CoordPassShutter
@@ -1765,7 +1764,7 @@ OPTIMIZTION_THREDHOLD_H	CV_IMAGE_PROCESSING/optimization_threshold.h	2;"	d
 ObjectFindRect	gui_sources/widget_processing_image_generic.h	/^QRect  ObjectFindRect;$/;"	m	class:WidgetProcessingImage
 ObjectPosRect	gui_sources/widget_processing_image_generic.h	/^QRect  ObjectPosRect;$/;"	m	class:WidgetProcessingImage
 ObjectVelLine	gui_sources/widget_processing_image_generic.h	/^QLineF ObjectVelLine;$/;"	m	class:WidgetProcessingImage
-Offset	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^    int Offset = 0;$/;"	m	class:SinusGeneratorClass
+Offset	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^    int Offset = 20000;$/;"	m	class:SinusGeneratorClass
 Offset	UTILITES/transform_coord_class.h	/^	double Offset = 0;$/;"	m	class:TransformCoordClass
 OpenCL_Init	main.cpp	/^void OpenCL_Init()$/;"	f
 OptimizationThreshold	CV_IMAGE_PROCESSING/optimization_threshold.h	/^class OptimizationThreshold : public PassValueClass<double>$/;"	c
@@ -1985,7 +1984,7 @@ PlottingHint	gui_sources/qcustomplot.h	/^enum PlottingHint { phNone             
 PopCoord	UTILITES/thread_operation_nodes.h	/^  QPair<float,float> PopCoord() $/;"	f	class:CoordPopByInputNode
 PortAdapter	COMMON/interface_pass_coord.h	/^    PortAdapter(){};$/;"	f	class:PortAdapter
 PortAdapter	COMMON/interface_pass_coord.h	/^class PortAdapter : public PassCoordClass<float>$/;"	c
-PortCalibration	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortCalibration = nullptr;$/;"	m	class:AimingClass
+PortCalibration	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortCalibration= nullptr;$/;"	m	class:AimingClass
 PortCorrection	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortCorrection = nullptr;$/;"	m	class:AimingClass
 PortCorrectionOutput	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortCorrectionOutput = nullptr;$/;"	m	class:AimingClass
 PortLocal	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^        int PortLocal = 2325;$/;"	m	class:TCPConnectionEngine
@@ -1995,7 +1994,7 @@ PortMoveRelative	DEVICES/device_rotary_interface.h	/^std::shared_ptr<PortAdapter
 PortNodes	gui_sources/widget_scene_node_interface.h	/^    std::vector<Node*> PortNodes;$/;"	m	class:WidgetSceneNodeInterface
 PortRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^        int PortRemote = 2325;$/;"	m	class:TCPConnectionEngine
 PortRemote	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^        int PortRemote = 7575;$/;"	m	class:UDPEngineInterface
-PortSetAiming	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortSetAiming = nullptr;$/;"	m	class:AimingClass
+PortSetAiming	AIMING_MODULES/aiming_class.h	/^  std::shared_ptr<PortAdapter<AimingClass>> PortSetAiming  = nullptr;$/;"	m	class:AimingClass
 PortSignalSetAiming	AIMING_MODULES/aiming_class.h	/^  SignalPortAdapter PortSignalSetAiming;$/;"	m	class:AimingClass
 PositionType	gui_sources/qcustomplot.h	/^  enum PositionType { ptAbsolute        \/\/\/< Static positioning in pixels, starting from the top left corner of the viewport\/widget.$/;"	g	class:QCPItemPosition
 PrintContoursRect	CV_IMAGE_PROCESSING/contour_processing.cpp	/^void ContoursProcessorClass::PrintContoursRect(cv::Mat& OutputImage)$/;"	f	class:ContoursProcessorClass
@@ -2290,7 +2289,7 @@ Q_CONSTINIT	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.c
 Q_CONSTINIT	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	27;"	d	file:
 Q_CONSTINIT	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	27;"	d	file:
 Q_CONSTINIT	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	27;"	d	file:
-Q_CONSTINIT	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	27;"	d	file:
+Q_CONSTINIT	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	28;"	d	file:
 Q_DEBUG_H	ROTATE_OPTIMIZATION/RotationContainerLib/DebugStream.h	2;"	d
 Q_DECL_EXPORT	PYTORCH_PROCESSING/TorchProcessing_global.h	5;"	d
 Q_DECL_EXPORT	PYTORCH_PROCESSING/TorchProcessing_global.h	8;"	d
@@ -2623,6 +2622,9 @@ ResetColors	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImage
 ResetIterator	TRANSMISSION/EMBEDED_RING_BUFFER/engine_ring_buffer_dense.h	/^template<typename H> void MessageIteratorDense<H>::ResetIterator()  { PtrMessageBegin = PtrBufferBegin; PtrDataEnd = PtrBufferBegin; }$/;"	f	class:MessageIteratorDense
 ResetIterator	TRANSMISSION/EMBEDED_RING_BUFFER/message_iterator_generic.h	/^template<typename H> void MessageIteratorGenericBase<H>::ResetIterator()  $/;"	f	class:IteratorMode::MessageIteratorGenericBase
 ResetPID	AIMING_MODULES/pid_class.cpp	/^void PIDClass::ResetPID()$/;"	f	class:PIDClass
+ResetSettings	UTILITES/register_settings.cpp	/^void SettingsRegister::ResetSettings(QString key, QString setting)                { settings[key] = setting; }$/;"	f	class:SettingsRegister
+ResetSettings	UTILITES/register_settings.cpp	/^void SettingsRegister::ResetSettings(QString key, float setting)                  { settings_values[key] = setting; }$/;"	f	class:SettingsRegister
+ResetSettings	UTILITES/register_settings.cpp	/^void SettingsRegister::ResetSettings(QString key, std::pair<float,float> setting) { settings_pairs[key] = setting; }$/;"	f	class:SettingsRegister
 ResolutionUnit	gui_sources/qcustomplot.h	/^enum ResolutionUnit { ruDotsPerMeter       \/\/\/< Resolution is given in dots per meter (dpm)$/;"	g	namespace:QCP
 RingBuffer	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.h	/^    BufferType* RingBuffer = nullptr;$/;"	m	class:TCPConnectionEngine
 RingBuffer	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.h	/^RingBufferType* RingBuffer = nullptr;$/;"	m	class:UDPEngineInterface
@@ -2871,10 +2873,9 @@ SignalHideWidget	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable
 SignalLinkPressed	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^void LinkLine::SignalLinkPressed()$/;"	f	class:LinkLine
 SignalMovePos	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^void LabelImage::SignalMovePos(int _t1, int _t2)$/;"	f	class:LabelImage
 SignalPortAdapter	AIMING_MODULES/aiming_class.h	/^    SignalPortAdapter(){};$/;"	f	class:SignalPortAdapter
-SignalPortAdapter	AIMING_MODULES/aiming_class.h	/^    SignalPortAdapter(PassCoordClass<float>* Port){ LinkToPort(Port);};$/;"	f	class:SignalPortAdapter
+SignalPortAdapter	AIMING_MODULES/aiming_class.h	/^    SignalPortAdapter(PassCoordClass<float>* Port){ linkToPort(Port);};$/;"	f	class:SignalPortAdapter
 SignalPortAdapter	AIMING_MODULES/aiming_class.h	/^class SignalPortAdapter : public QObject$/;"	c
 SignalPosPressed	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SignalPosPressed(QPair<float,float> _t1)$/;"	f	class:WidgetProcessingImage
-SignalPressedPos	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^void LabelImage::SignalPressedPos(int _t1, int _t2)$/;"	f	class:LabelImage
 SignalProcessEnd	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^void ProcessControllerClass::SignalProcessEnd()$/;"	f	class:ProcessControllerClass
 SignalRegister	AIMING_MODULES/aiming_class.h	/^  SignalRegister(int Size)$/;"	f	class:SignalRegister
 SignalRegister	AIMING_MODULES/aiming_class.h	/^class SignalRegister : public PassCoordClass<T>$/;"	c
@@ -2884,9 +2885,12 @@ SignalStart	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cp
 SignalStartStream	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_camera_control.cpp	/^void WidgetCameraControl::SignalStartStream(bool _t1)$/;"	f	class:WidgetCameraControl
 SignalThreshold	UTILITES/thread_operation_nodes.h	/^  double SignalThreshold     = 0.9; $/;"	m	class:TrackHoldDetectorNode
 SignalWidgetPressed	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^void WidgetSceneNodeInterface::SignalWidgetPressed(int _t1)$/;"	f	class:WidgetSceneNodeInterface
+SinusGenerator	DEVICES/device_rotary_interface.h	/^  SinusGeneratorClass SinusGenerator;$/;"	m	class:SinusMoveModule
 SinusGenerator	gui_sources/GRAPHICS_WINDOW_GRAPH/widget_line_graph.h	/^    SinusGeneratorClass* SinusGenerator;$/;"	m	class:WidgetLineGraph
 SinusGeneratorClass	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^SinusGeneratorClass::SinusGeneratorClass(QObject* Obj) : QObject(Obj)$/;"	f	class:SinusGeneratorClass
 SinusGeneratorClass	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^class SinusGeneratorClass :$/;"	c
+SinusMoveModule	DEVICES/device_rotary_interface.h	/^  explicit SinusMoveModule(DeviceRotaryInterface* DeviceRotary) : DynamicModule(DeviceRotary) $/;"	f	class:SinusMoveModule
+SinusMoveModule	DEVICES/device_rotary_interface.h	/^class SinusMoveModule : public DynamicModule , public PassCoordClass<float>$/;"	c
 Size	UTILITES/engine_statistics.h	/^	int Size = 10;$/;"	m	class:StatisticCoord
 Size	UTILITES/engine_statistics.h	/^	int Size = 10;$/;"	m	class:StatisticValue
 SizeAimBoundry	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    static std::pair<int,int> SizeAimBoundry; \/\/ MAY BE CHANGED IN INIT$/;"	m	class:AimImageImitatorClass
@@ -2894,11 +2898,9 @@ SizeConstraintRect	gui_sources/qcustomplot.h	/^  enum SizeConstraintRect { scrIn
 SizeImage	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    static std::pair<int,int> SizeImage; \/\/ MAY BE CHANGED IN INIT$/;"	m	class:AimImageImitatorClass
 SizeImage	CAMERA_INTERFACE/interface_camera_hik.cpp	/^std::pair<int,int> CameraInterfaceHIK::CameraImageStorage::SizeImage;$/;"	m	class:CameraInterfaceHIK::CameraImageStorage	file:
 SizeImage	CAMERA_INTERFACE/interface_camera_hik.h	/^    static std::pair<int,int> SizeImage; $/;"	m	class:CameraInterfaceHIK::CameraImageStorage
-SizeImage	gui_sources/labelimage.h	/^	std::pair<int,int> SizeImage;$/;"	m	class:LabelImage
 SlotAddNewPoint	gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp	/^void GraphPointsLineInterface::SlotAddNewPoint(QPair<float,float> Coord)$/;"	f	class:GraphPointsLineInterface
 SlotAutoClear	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImageDisplay::SlotAutoClear() {}$/;"	f	class:WidgetOutputImageDisplay
 SlotAutoClear	gui_sources/widget_output_text_display.cpp	/^void WidgetOutputTextDisplay::SlotAutoClear() { ui.listMessages->clear(); }$/;"	f	class:WidgetOutputTextDisplay
-SlotCalculateValue	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotCalculateValue()$/;"	f	class:SinusGeneratorClass
 SlotChangeInterfaceSize	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotChangeInterfaceSize()$/;"	f	class:WidgetMainWindow
 SlotChangeInterfaceType	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotChangeInterfaceType()$/;"	f	class:WidgetMainWindow
 SlotClearSeries	gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp	/^void GraphPointsLineInterface::SlotClearSeries() { ListPoints->clear(); }$/;"	f	class:GraphPointsLineInterface
@@ -2906,25 +2908,12 @@ SlotCloseMainWindow	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::
 SlotConnectTwoWidgets	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotConnectTwoWidgets(int NumberWidget1, int NumberWidget2)$/;"	f	class:WidgetMainWindow
 SlotDeinitCamera	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAravis::SlotDeinitCamera() $/;"	f	class:CameraInterfaceAravis
 SlotDeinitMainWindow	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotDeinitMainWindow()$/;"	f	class:WidgetMainWindow
-SlotDisplayCoord	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::SlotDisplayCoord(QPair<float,float> Point)$/;"	f	class:PlotGraphicsInterface
-SlotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetMiniLabelsGroup::SlotDisplayImage(const QImage& Image, int Channel)$/;"	f	class:WidgetMiniLabelsGroup
-SlotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayImage()$/;"	f	class:WidgetProcessingImage
-SlotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayImage(const QImage& Image)$/;"	f	class:WidgetProcessingImage
-SlotDisplayMiniLabels	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayMiniLabels()$/;"	f	class:WidgetProcessingImage
-SlotDisplayProcessImage	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }$/;"	f	class:CameraInterfaceAravis
-SlotDisplayScanatorState	gui_sources/widget_scanator_control.cpp	/^void WidgetScanatorControl::SlotDisplayScanatorState()$/;"	f	class:WidgetScanatorControl
-SlotDisplayState	gui_sources/widget_aiming_control.cpp	/^void WidgetAimingControl::SlotDisplayState()$/;"	f	class:WidgetAimingControl
-SlotDisplayString	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotDisplayString(QString InfoString)$/;"	f	class:WidgetProcessingImage
-SlotDisplayTimePairSeries	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::SlotDisplayTimePairSeries()$/;"	f	class:PlotGraphicsInterface
-SlotDisplayTimeSeries	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::SlotDisplayTimeSeries()$/;"	f	class:PlotGraphicsInterface
-SlotEnableChannel	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotEnableChannel(bool Enable , int Channel)$/;"	f	class:SinusGeneratorClass
 SlotHideLinks	gui_sources/widget_scene_node_interface.cpp	/^void WidgetSceneNodeInterface::SlotHideLinks()  { HideNodes(); HideLinks();}$/;"	f	class:WidgetSceneNodeInterface
 SlotHideWidget	gui_sources/widget_scene_node_interface.cpp	/^void WidgetSceneNodeInterface::SlotHideWidget() { HideNodes(); HideLinks(); this->hide(); }$/;"	f	class:WidgetSceneNodeInterface
 SlotMakeStep	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::SlotMakeStep()$/;"	f	class:RotationFindProcessClass
 SlotMoveAim	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void DynamicAimControl::SlotMoveAim()$/;"	f	class:DynamicAimControl
 SlotMoveAim	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void ManualAimControl::SlotMoveAim()$/;"	f	class:ManualAimControl
 SlotMoveAimPos	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimImageImitatorClass::SlotMoveAimPos(int XStep, int YStep)$/;"	f	class:AimImageImitatorClass
-SlotPosPressed	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotPosPressed(int x, int y)$/;"	f	class:WidgetProcessingImage
 SlotPrintString	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImageDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputImageDisplay
 SlotPrintString	gui_sources/widget_output_text_display.cpp	/^void WidgetOutputTextDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputTextDisplay
 SlotProcessImage	CV_IMAGE_PROCESSING/image_finder.cpp	/^void ImageTemplateFinder::SlotProcessImage()$/;"	f	class:ImageTemplateFinder
@@ -2938,29 +2927,6 @@ SlotResetProcessing	CV_IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTracker
 SlotResetProcessing	CV_IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotResetProcessing()$/;"	f	class:ImageTrackerTemplate
 SlotSaveWidgetsPosition	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSaveWidgetsPosition()$/;"	f	class:WidgetMainWindow
 SlotSceneWidgetPressed	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSceneWidgetPressed(int NumberWidget)$/;"	f	class:WidgetMainWindow
-SlotSetActiveChannel	gui_sources/widget_container_group.cpp	/^void WidgetContainerGroup::SlotSetActiveChannel(int Channel)$/;"	f	class:WidgetContainerGroup
-SlotSetActiveChannel	gui_sources/widget_processing_image_generic.cpp	/^void WidgetMiniLabelsGroup::SlotSetActiveChannel(int Number)$/;"	f	class:WidgetMiniLabelsGroup
-SlotSetActiveChannel	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotSetActiveChannel(int Channel)$/;"	f	class:WidgetProcessingImage
-SlotSetAimPos	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimImageImitatorClass::SlotSetAimPos(int PosX, int PosY)$/;"	f	class:AimImageImitatorClass
-SlotSetAmplitude	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotSetAmplitude(double Ampl1, double Ampl2) { Amplitude.first = Ampl1*60*5; $/;"	f	class:SinusGeneratorClass
-SlotSetAmplitudeNoize	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotSetAmplitudeNoize(double Ampl) { this->AmplitudeNoize = Ampl; }$/;"	f	class:SinusGeneratorClass
-SlotSetCoord	AIMING_MODULES/aiming_class.h	/^void SlotSetCoord(QPair<float,float> Coord) { if(SetCoordPort != 0) Coord >> *SetCoordPort; }$/;"	f	class:SignalPortAdapter
-SlotSetFrequency	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotSetFrequency(double Freq1, double Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360\/Freq1;}$/;"	f	class:SinusGeneratorClass
-SlotSetFrequencyDevider	CAMERA_INTERFACE/camera_interface_class.h	/^    void SlotSetFrequencyDevider(int param) { FrequencyDevider = param; };$/;"	f	class:CameraInterfaceAravis
-SlotSetHighFrequency	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAravis::SlotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};$/;"	f	class:CameraInterfaceAravis
-SlotSetInterfaceSize	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSetInterfaceSize(int GuiSize)$/;"	f	class:WidgetMainWindow
-SlotSetProcessAiming	controller_process_class.cpp	/^void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)$/;"	f	class:ProcessControllerClass
-SlotSetProcessAiming2	controller_process_class.cpp	/^void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)$/;"	f	class:ProcessControllerClass
-SlotSetProcessCamera	controller_process_class.cpp	/^void ProcessControllerClass::SlotSetProcessCamera(bool OnOff)$/;"	f	class:ProcessControllerClass
-SlotSetProcessImitation	controller_process_class.cpp	/^void ProcessControllerClass::SlotSetProcessImitation(bool OnOff)$/;"	f	class:ProcessControllerClass
-SlotSetWindowSize	gui_sources/widget_adjustable.cpp	/^void AdjustableLabel::SlotSetWindowSize(int FontSize)$/;"	f	class:AdjustableLabel
-SlotSetWindowSize	gui_sources/widget_adjustable.cpp	/^void WidgetAdjustable::SlotSetWindowSize(int FontSize)$/;"	f	class:WidgetAdjustable
-SlotStartGenerate	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::SlotStartGenerate(bool StartStop)$/;"	f	class:SinusGeneratorClass
-SlotStartMoveAim	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void ManualAimControl::SlotStartMoveAim(int Dir, int MoveAxis, int MoveStep)$/;"	f	class:ManualAimControl
-SlotStartPaintTrajectory	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::SlotStartPaintTrajectory(bool OnOff)$/;"	f	class:WidgetProcessingImage
-SlotStartProcessRTSP	controller_process_class.cpp	/^void ProcessControllerClass::SlotStartProcessRTSP(bool OnOff)$/;"	f	class:ProcessControllerClass
-SlotStartRotationFind	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::SlotStartRotationFind(bool StartStop)$/;"	f	class:RotationFindProcessClass
-SlotStartWork	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^void SlotStartWork() { DynamicControl.StartMove(); }$/;"	f	class:AimImageImitatorClass
 SlotStopProcessing	CV_IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotStopProcessing()$/;"	f	class:ModuleImageProcessing
 SlotUpdateScene	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotUpdateScene()$/;"	f	class:WidgetMainWindow
 SlotWatchModule	AIMING_MODULES/aiming_class.h	/^  void SlotWatchModule()$/;"	f	class:AimingWatcherClass
@@ -3163,7 +3129,7 @@ TransformCoordClass	UTILITES/transform_coord_class.h	/^    TransformCoordClass(d
 TransformCoordClass	UTILITES/transform_coord_class.h	/^class  TransformCoordClass : public PassCoordClass<float>$/;"	c
 TryLoadSettings	UTILITES/register_settings.cpp	/^bool SettingsRegister::TryLoadSettings(QString file, QString GROUP)$/;"	f	class:SettingsRegister
 TwoPi	gui_sources/link_line.cpp	/^static double TwoPi = 2.0 * Pi;$/;"	v	file:
-Type	gui_sources/link_line.h	/^    enum { Type = UserType + 2 };$/;"	e	enum:LinkLine::__anon98
+Type	gui_sources/link_line.h	/^    enum { Type = UserType + 2 };$/;"	e	enum:LinkLine::__anon99
 TypeBlock	AIMING_MODULES/aiming_class.h	/^  TypeEnumBlock  TypeBlock   = TypeEnumBlock::AimingBlock;$/;"	m	class:AimingClass
 TypeCount	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^      static uint8_t TypeCount;$/;"	m	class:TypeRegister
 TypeCount	TRANSMISSION/DATA_STRUCTURES/engine_type_register.h	/^template<typename T> uint8_t TypeRegister<T>::TypeCount = 0;$/;"	m	class:TypeRegister
@@ -3335,13 +3301,11 @@ XMax	CV_IMAGE_PROCESSING/image_estimations.cpp	/^float GeometryDistortionImage::
 XMax	CV_IMAGE_PROCESSING/image_estimations.h	/^    static float XMax;$/;"	m	class:GeometryDistortionImage
 XNumberPos	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    float XNumberPos = 0;$/;"	m	class:DynamicAimControl
 X_AXIS	AIMING_MODULES/rotate_vector_class.h	/^enum RotateAxisenum { X_AXIS = 0, Y_AXIS= 1 , Z_AXIS = 2};$/;"	e	enum:RotateAxisenum
-X_Pressed	gui_sources/labelimage.h	/^	int X_Pressed = 0;$/;"	m	class:LabelImage
 YCoordPos	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    float YCoordPos = 0;$/;"	m	class:DynamicAimControl
 YMax	CV_IMAGE_PROCESSING/image_estimations.cpp	/^float GeometryDistortionImage::YMax = 0;$/;"	m	class:GeometryDistortionImage	file:
 YMax	CV_IMAGE_PROCESSING/image_estimations.h	/^    static float YMax;$/;"	m	class:GeometryDistortionImage
 YNumberPos	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^    float YNumberPos = 0;$/;"	m	class:DynamicAimControl
 Y_AXIS	AIMING_MODULES/rotate_vector_class.h	/^enum RotateAxisenum { X_AXIS = 0, Y_AXIS= 1 , Z_AXIS = 2};$/;"	e	enum:RotateAxisenum
-Y_Pressed	gui_sources/labelimage.h	/^	int Y_Pressed = 0;$/;"	m	class:LabelImage
 Z_AXIS	AIMING_MODULES/rotate_vector_class.h	/^enum RotateAxisenum { X_AXIS = 0, Y_AXIS= 1 , Z_AXIS = 2};$/;"	e	enum:RotateAxisenum
 ZeroCoord	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	QPair<float,float> ZeroCoord = QPair<float,float>(0,0);$/;"	m	class:AccumulateDataFilter
 _GNU_SOURCE	build/ImageProcProject_autogen/moc_predefs.h	440;"	d
@@ -4436,7 +4400,8 @@ elements	gui_sources/qcustomplot.cpp	/^QList<QCPLayoutElement*> QCPPolarAxisAngu
 elements	gui_sources/qcustomplot.h	/^  QList<QCPLayoutElement*> elements(QCP::MarginSide side) const { return mChildren.value(side); }$/;"	f	class:QCPMarginGroup
 enable	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    quint8  enable = 0;$/;"	m	struct:ControlCommandLaser
 enable	DEVICES/LaserPointerControlLib/LaserCommandStructures.h	/^    quint8  enable = 0;$/;"	m	struct:LaserStateStruct
-enableMove	DEVICES/device_rotary_interface.h	/^  void enableMove(bool OnOff) { if(OnOff && timerMove.isActive()) return; if(OnOff) timerMove.start(1); else timerMove.stop(); }$/;"	f	class:DynamicModule
+enableMove	DEVICES/device_rotary_interface.h	/^  virtual void enableMove(bool OnOff) { if(OnOff && timerMove.isActive()) return; if(OnOff) timerMove.start(1); else timerMove.stop(); }$/;"	f	class:DynamicModule
+enableMove	DEVICES/device_rotary_interface.h	/^  void enableMove(bool OnOff) { if(OnOff && SinusGenerator.isActive()) return; if(OnOff) SinusGenerator.slotStartGenerate(true); $/;"	f	class:SinusMoveModule
 end	gui_sources/qcustomplot.h	/^  QCPItemPosition * const end;$/;"	m	class:QCPItemCurve
 end	gui_sources/qcustomplot.h	/^  QCPItemPosition * const end;$/;"	m	class:QCPItemLine
 end	gui_sources/qcustomplot.h	/^  int end() const { return mEnd; }$/;"	f	class:QCPDataRange
@@ -4613,6 +4578,7 @@ getOutput	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	const QPair<float,float
 getOutput	COMMON/interface_pass_coord.h	/^	virtual const QPair<V, V>& getOutput() { return OutputCoord;};$/;"	f	class:PassCoordClass
 getOutput	COMMON/interface_pass_coord.h	/^    const QPair<float,float>& getOutput() { if(OutputFunction != nullptr) PassCoordClass<float>::OutputCoord = OutputFunction(*Receiver); $/;"	f	class:PortAdapter
 getOutput	DEVICES/device_generic_interface.h	/^	const QPair<float, float>& getOutput() {OutputCoord = getPos(); return PassCoordClass<float>::OutputCoord;};$/;"	f	class:DeviceRotaryInterface
+getOutput	DEVICES/device_rotary_interface.h	/^	const QPair<float,float>& getOutput() { return Position;};$/;"	f	class:SinusMoveModule
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^const QPair<float,float>& AccumulateDataFilter::getOutput() { return LastInputFirst; }$/;"	f	class:AccumulateDataFilter
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^const QPair<float,float>& RotateOperationContainer::getOutput()$/;"	f	class:RotateOperationContainer
 getOutput	ROTATE_OPTIMIZATION/RotationContainerLib/SubstractPair.h	/^	 const QPair<float,float>& getOutput()$/;"	f	class:Substract
@@ -4889,6 +4855,7 @@ inverted	gui_sources/qcustomplot.cpp	/^QCPColorGradient QCPColorGradient::invert
 inverted	gui_sources/qcustomplot.h	/^  bool inverted() const { return mInverted; }$/;"	f	class:QCPLineEnding
 ipBorderAligned	gui_sources/qcustomplot.h	/^                        ,ipBorderAligned  \/\/\/< The element is aligned to one of the layout sides, see \\ref setInsetAlignment$/;"	e	enum:QCPLayoutInset::InsetPlacement
 ipFree	gui_sources/qcustomplot.h	/^  enum InsetPlacement { ipFree            \/\/\/< The element may be positioned\/sized arbitrarily, see \\ref setInsetRect$/;"	e	enum:QCPLayoutInset::InsetPlacement
+isActive	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^  bool isActive() { return TimerGenerateSinus.isActive(); } $/;"	f	class:SinusGeneratorClass
 isActive	gui_sources/qcustomplot.h	/^  bool isActive() const { return mActive; }$/;"	f	class:QCPSelectionRect
 isAimingFault	AIMING_MODULES/aiming_class.cpp	/^bool AimingClass::isAimingFault()$/;"	f	class:AimingClass
 isAimingFaultStatistic	AIMING_MODULES/aiming_class.cpp	/^bool AimingParamOptimizator::isAimingFaultStatistic()$/;"	f	class:AimingParamOptimizator
@@ -5054,9 +5021,11 @@ linePosCorrection	build/ImageProcProject_autogen/include/ui_widget_aiming_contro
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPCurve
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPGraph
 lineStyle	gui_sources/qcustomplot.h	/^  LineStyle lineStyle() const { return mLineStyle; }$/;"	f	class:QCPPolarGraph
+linkAdapter	COMMON/interface_pass_coord.h	/^    void linkAdapter(T* LinkObject,std::function<void(T&,QPair<float,float>)> SetFunction, std::function<QPair<float,float>(T&)> GetFunction)$/;"	f	class:PortAdapter
 linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANEngineInterface* device) $/;"	f	class:CANDelayMeasure
 linkTo	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void linkTo(CANEngineInterface* device) { deviceCAN = device; };$/;"	f	class:CANTestMessage
 linkToControlWindow	DEVICES/device_focus_ranger_interface.h	/^    void linkToControlWindow(WidgetFocusRangerControl* Window ){ ControlWindow = Window;};$/;"	f	class:DeviceFocusRangerInterface
+linkToPort	AIMING_MODULES/aiming_class.h	/^    void linkToPort(PassCoordClass<float>* Port) { SetCoordPort = Port;};$/;"	f	class:SignalPortAdapter
 linkToSource	stream_video_rtsp.cpp	/^void VideoStreamRTSP::linkToSource(ImageSourceInterface* Source)$/;"	f	class:VideoStreamRTSP
 linux	build/ImageProcProject_autogen/moc_predefs.h	305;"	d
 listMessages	build/ImageProcProject_autogen/include/ui_widget_output_text_display.h	/^    QListWidget *listMessages;$/;"	m	class:Ui_OutputTextDisplay
@@ -5802,6 +5771,7 @@ metaObject	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^cons
 metaObject	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^const QMetaObject *SignalPortAdapter::metaObject() const$/;"	f	class:SignalPortAdapter
 metaObject	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^const QMetaObject *ImageSourceInterface::metaObject() const$/;"	f	class:ImageSourceInterface
 metaObject	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^const QMetaObject *DynamicModule::metaObject() const$/;"	f	class:DynamicModule
+metaObject	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^const QMetaObject *SinusMoveModule::metaObject() const$/;"	f	class:SinusMoveModule
 minRange	gui_sources/qcustomplot.cpp	/^const double QCPRange::minRange = 1e-280;$/;"	m	class:QCPRange	file:
 minRange	gui_sources/qcustomplot.h	/^  static const double minRange;$/;"	m	class:QCPRange
 minimum	gui_sources/qcustomplot.h	/^  double key, minimum, lowerQuartile, median, upperQuartile, maximum;$/;"	m	class:QCPStatisticalBoxData
@@ -5860,6 +5830,7 @@ moveRange	gui_sources/qcustomplot.cpp	/^void QCPAxis::moveRange(double diff)$/;"
 moveRange	gui_sources/qcustomplot.cpp	/^void QCPPolarAxisAngular::moveRange(double diff)$/;"	f	class:QCPPolarAxisAngular
 moveRange	gui_sources/qcustomplot.cpp	/^void QCPPolarAxisRadial::moveRange(double diff)$/;"	f	class:QCPPolarAxisRadial
 moveSelection	gui_sources/qcustomplot.cpp	/^void QCPSelectionRect::moveSelection(QMouseEvent *event)$/;"	f	class:QCPSelectionRect
+moveSinus	DEVICES/device_rotary_interface.h	/^	void moveSinus(bool OnOff) { ModuleMoveSinus.enableMove(OnOff); } ;$/;"	f	class:DeviceRotaryControl
 moveToLayer	gui_sources/qcustomplot.cpp	/^bool QCPLayerable::moveToLayer(QCPLayer *layer, bool prepend)$/;"	f	class:QCPLayerable
 moveToPos	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<int, int>& Pos)$/;"	f	class:DeviceRotaryControl
 moveToPosRelative	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<int, int>& PosRelative) $/;"	f	class:DeviceRotaryControl
@@ -5908,13 +5879,13 @@ offset	gui_sources/qcustomplot.h	/^    QPoint offset;$/;"	m	struct:QCPLabelPaint
 offset	gui_sources/qcustomplot.h	/^    QPointF offset;$/;"	m	struct:QCPAxisPainterPrivate::CachedLabel
 offset	gui_sources/qcustomplot.h	/^  int offset; \/\/ directly accessed by QCPAxis setters\/getters$/;"	m	class:QCPAxisPainterPrivate
 ohlcSelectTest	gui_sources/qcustomplot.cpp	/^double QCPFinancial::ohlcSelectTest(const QPointF &pos, const QCPFinancialDataContainer::const_iterator &begin, const QCPFinancialDataContainer::const_iterator &end, QCPFinancialDataContainer::const_iterator &closestDataPoint) const$/;"	f	class:QCPFinancial
-on_butMoveDown_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveDown_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim( 1,1,2); }$/;"	f	class:WidgetImageImitator
+on_butMoveDown_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveDown_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim( 1,1,2); }$/;"	f	class:WidgetImageImitator
 on_butMoveDown_released	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveDown_released() {if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }$/;"	f	class:WidgetImageImitator
-on_butMoveLeft_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveLeft_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim( 1,0,2); }$/;"	f	class:WidgetImageImitator
+on_butMoveLeft_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveLeft_pressed() {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim( 1,0,2); }$/;"	f	class:WidgetImageImitator
 on_butMoveLeft_released	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveLeft_released() {if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }$/;"	f	class:WidgetImageImitator
-on_butMoveRight_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveRight_pressed(){if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim(-1,0,2); }$/;"	f	class:WidgetImageImitator
+on_butMoveRight_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveRight_pressed(){if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim(-1,0,2); }$/;"	f	class:WidgetImageImitator
 on_butMoveRight_released	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveRight_released(){if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }$/;"	f	class:WidgetImageImitator
-on_butMoveUp_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveUp_pressed()   {if(!ImitationModule) return; ImitationModule->ManualControl.SlotStartMoveAim(-1,1,2); }$/;"	f	class:WidgetImageImitator
+on_butMoveUp_pressed	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveUp_pressed()   {if(!ImitationModule) return; ImitationModule->ManualControl.slotStartMoveAim(-1,1,2); }$/;"	f	class:WidgetImageImitator
 on_butMoveUp_released	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butMoveUp_released()   {if(!ImitationModule) return; ImitationModule->ManualControl.StopMove(); }$/;"	f	class:WidgetImageImitator
 on_butStartAimMoving_clicked	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butStartAimMoving_clicked() {if(!ImitationModule) return; ImitationModule->DynamicControl.StartMove(); }$/;"	f	class:WidgetImageImitator
 on_butStopAimMoving_clicked	gui_sources/widget_imitator_control.cpp	/^void WidgetImageImitator::on_butStopAimMoving_clicked()  {if(!ImitationModule) return; ImitationModule->DynamicControl.StopMove(); }/;"	f	class:WidgetImageImitator
@@ -6387,6 +6358,7 @@ qt_meta_data_ZN15QCPAbstractItemE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_
 qt_meta_data_ZN15QCPAxisTickerPiE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN15QCPAxisTickerPiE[] = {$/;"	v	file:
 qt_meta_data_ZN15QCPItemPositionE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN15QCPItemPositionE[] = {$/;"	v	file:
 qt_meta_data_ZN15QCPScatterStyleE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN15QCPScatterStyleE[] = {$/;"	v	file:
+qt_meta_data_ZN15SinusMoveModuleE	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN15SinusMoveModuleE[] = {$/;"	v	file:
 qt_meta_data_ZN16ManualAimControlE	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN16ManualAimControlE[] = {$/;"	v	file:
 qt_meta_data_ZN16QCPColorGradientE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN16QCPColorGradientE[] = {$/;"	v	file:
 qt_meta_data_ZN16QCPLayoutElementE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^Q_CONSTINIT static const uint qt_meta_data_ZN16QCPLayoutElementE[] = {$/;"	v	file:
@@ -6486,6 +6458,7 @@ qt_meta_stringdata_ZN15QCPAbstractItemE	build/ImageProcProject_autogen/7RAEHFKGB
 qt_meta_stringdata_ZN15QCPAxisTickerPiE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN15QCPAxisTickerPiE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN15QCPItemPositionE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN15QCPItemPositionE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN15QCPScatterStyleE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN15QCPScatterStyleE = QtMocHelpers::stringData($/;"	v	file:
+qt_meta_stringdata_ZN15SinusMoveModuleE	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^static constexpr auto qt_meta_stringdata_ZN15SinusMoveModuleE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN16ManualAimControlE	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^static constexpr auto qt_meta_stringdata_ZN16ManualAimControlE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN16QCPColorGradientE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN16QCPColorGradientE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN16QCPLayoutElementE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN16QCPLayoutElementE = QtMocHelpers::stringData($/;"	v	file:
@@ -6546,102 +6519,103 @@ qt_meta_stringdata_ZN8QCPGraphE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qc
 qt_meta_stringdata_ZN8QCPLayerE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN8QCPLayerE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN9QCPLayoutE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN9QCPLayoutE = QtMocHelpers::stringData($/;"	v	file:
 qt_meta_stringdata_ZN9QCPLegendE	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^static constexpr auto qt_meta_stringdata_ZN9QCPLegendE = QtMocHelpers::stringData($/;"	v	file:
-qt_meta_tag_ZN10LabelImageE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^struct qt_meta_tag_ZN10LabelImageE_t {};$/;"	s	namespace:__anon19	file:
-qt_meta_tag_ZN10QCPPainterE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN10QCPPainterE_t {};$/;"	s	namespace:__anon26	file:
-qt_meta_tag_ZN11QCPAxisRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPAxisRectE_t {};$/;"	s	namespace:__anon52	file:
-qt_meta_tag_ZN11QCPColorMapE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPColorMapE_t {};$/;"	s	namespace:__anon64	file:
-qt_meta_tag_ZN11QCPItemLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemLineE_t {};$/;"	s	namespace:__anon68	file:
-qt_meta_tag_ZN11QCPItemRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemRectE_t {};$/;"	s	namespace:__anon70	file:
-qt_meta_tag_ZN11QCPItemTextE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemTextE_t {};$/;"	s	namespace:__anon71	file:
-qt_meta_tag_ZN11QCustomPlotE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCustomPlotE_t {};$/;"	s	namespace:__anon49	file:
-qt_meta_tag_ZN12QCPBarsGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPBarsGroupE_t {};$/;"	s	namespace:__anon61	file:
-qt_meta_tag_ZN12QCPErrorBarsE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPErrorBarsE_t {};$/;"	s	namespace:__anon66	file:
-qt_meta_tag_ZN12QCPFinancialE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPFinancialE_t {};$/;"	s	namespace:__anon65	file:
-qt_meta_tag_ZN12QCPItemCurveE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPItemCurveE_t {};$/;"	s	namespace:__anon69	file:
-qt_meta_tag_ZN12QCPLayerableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPLayerableE_t {};$/;"	s	namespace:__anon28	file:
-qt_meta_tag_ZN12QCPPolarGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPPolarGridE_t {};$/;"	s	namespace:__anon78	file:
+qt_meta_tag_ZN10LabelImageE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^struct qt_meta_tag_ZN10LabelImageE_t {};$/;"	s	namespace:__anon20	file:
+qt_meta_tag_ZN10QCPPainterE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN10QCPPainterE_t {};$/;"	s	namespace:__anon27	file:
+qt_meta_tag_ZN11QCPAxisRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPAxisRectE_t {};$/;"	s	namespace:__anon53	file:
+qt_meta_tag_ZN11QCPColorMapE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPColorMapE_t {};$/;"	s	namespace:__anon65	file:
+qt_meta_tag_ZN11QCPItemLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemLineE_t {};$/;"	s	namespace:__anon69	file:
+qt_meta_tag_ZN11QCPItemRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemRectE_t {};$/;"	s	namespace:__anon71	file:
+qt_meta_tag_ZN11QCPItemTextE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCPItemTextE_t {};$/;"	s	namespace:__anon72	file:
+qt_meta_tag_ZN11QCustomPlotE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN11QCustomPlotE_t {};$/;"	s	namespace:__anon50	file:
+qt_meta_tag_ZN12QCPBarsGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPBarsGroupE_t {};$/;"	s	namespace:__anon62	file:
+qt_meta_tag_ZN12QCPErrorBarsE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPErrorBarsE_t {};$/;"	s	namespace:__anon67	file:
+qt_meta_tag_ZN12QCPFinancialE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPFinancialE_t {};$/;"	s	namespace:__anon66	file:
+qt_meta_tag_ZN12QCPItemCurveE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPItemCurveE_t {};$/;"	s	namespace:__anon70	file:
+qt_meta_tag_ZN12QCPLayerableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPLayerableE_t {};$/;"	s	namespace:__anon29	file:
+qt_meta_tag_ZN12QCPPolarGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN12QCPPolarGridE_t {};$/;"	s	namespace:__anon79	file:
 qt_meta_tag_ZN13DynamicModuleE_t	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^struct qt_meta_tag_ZN13DynamicModuleE_t {};$/;"	s	namespace:__anon18	file:
 qt_meta_tag_ZN13NeuralTrackerE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_tracker_neural.cpp	/^struct qt_meta_tag_ZN13NeuralTrackerE_t {};$/;"	s	namespace:__anon14	file:
-qt_meta_tag_ZN13QCPAxisTickerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPAxisTickerE_t {};$/;"	s	namespace:__anon37	file:
-qt_meta_tag_ZN13QCPColorScaleE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPColorScaleE_t {};$/;"	s	namespace:__anon58	file:
-qt_meta_tag_ZN13QCPItemAnchorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemAnchorE_t {};$/;"	s	namespace:__anon46	file:
-qt_meta_tag_ZN13QCPItemPixmapE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemPixmapE_t {};$/;"	s	namespace:__anon73	file:
-qt_meta_tag_ZN13QCPItemTracerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemTracerE_t {};$/;"	s	namespace:__anon74	file:
-qt_meta_tag_ZN13QCPLayoutGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPLayoutGridE_t {};$/;"	s	namespace:__anon33	file:
-qt_meta_tag_ZN13QCPLineEndingE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPLineEndingE_t {};$/;"	s	namespace:__anon35	file:
-qt_meta_tag_ZN13QCPPolarGraphE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPPolarGraphE_t {};$/;"	s	namespace:__anon80	file:
+qt_meta_tag_ZN13QCPAxisTickerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPAxisTickerE_t {};$/;"	s	namespace:__anon38	file:
+qt_meta_tag_ZN13QCPColorScaleE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPColorScaleE_t {};$/;"	s	namespace:__anon59	file:
+qt_meta_tag_ZN13QCPItemAnchorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemAnchorE_t {};$/;"	s	namespace:__anon47	file:
+qt_meta_tag_ZN13QCPItemPixmapE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemPixmapE_t {};$/;"	s	namespace:__anon74	file:
+qt_meta_tag_ZN13QCPItemTracerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPItemTracerE_t {};$/;"	s	namespace:__anon75	file:
+qt_meta_tag_ZN13QCPLayoutGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPLayoutGridE_t {};$/;"	s	namespace:__anon34	file:
+qt_meta_tag_ZN13QCPLineEndingE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPLineEndingE_t {};$/;"	s	namespace:__anon36	file:
+qt_meta_tag_ZN13QCPPolarGraphE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN13QCPPolarGraphE_t {};$/;"	s	namespace:__anon81	file:
 qt_meta_tag_ZN14CANTestMessageE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^struct qt_meta_tag_ZN14CANTestMessageE_t {};$/;"	s	namespace:__anon8	file:
-qt_meta_tag_ZN14QCPItemBracketE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPItemBracketE_t {};$/;"	s	namespace:__anon75	file:
-qt_meta_tag_ZN14QCPItemEllipseE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPItemEllipseE_t {};$/;"	s	namespace:__anon72	file:
-qt_meta_tag_ZN14QCPLayoutInsetE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPLayoutInsetE_t {};$/;"	s	namespace:__anon34	file:
-qt_meta_tag_ZN14QCPMarginGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPMarginGroupE_t {};$/;"	s	namespace:__anon30	file:
-qt_meta_tag_ZN14QCPTextElementE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPTextElementE_t {};$/;"	s	namespace:__anon56	file:
-qt_meta_tag_ZN15AdjustableLabelE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable.cpp	/^struct qt_meta_tag_ZN15AdjustableLabelE_t {};$/;"	s	namespace:__anon87	file:
+qt_meta_tag_ZN14QCPItemBracketE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPItemBracketE_t {};$/;"	s	namespace:__anon76	file:
+qt_meta_tag_ZN14QCPItemEllipseE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPItemEllipseE_t {};$/;"	s	namespace:__anon73	file:
+qt_meta_tag_ZN14QCPLayoutInsetE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPLayoutInsetE_t {};$/;"	s	namespace:__anon35	file:
+qt_meta_tag_ZN14QCPMarginGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPMarginGroupE_t {};$/;"	s	namespace:__anon31	file:
+qt_meta_tag_ZN14QCPTextElementE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN14QCPTextElementE_t {};$/;"	s	namespace:__anon57	file:
+qt_meta_tag_ZN15AdjustableLabelE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable.cpp	/^struct qt_meta_tag_ZN15AdjustableLabelE_t {};$/;"	s	namespace:__anon88	file:
 qt_meta_tag_ZN15CANDelayMeasureE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^struct qt_meta_tag_ZN15CANDelayMeasureE_t {};$/;"	s	namespace:__anon9	file:
-qt_meta_tag_ZN15QCPAbstractItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPAbstractItemE_t {};$/;"	s	namespace:__anon48	file:
-qt_meta_tag_ZN15QCPAxisTickerPiE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPAxisTickerPiE_t {};$/;"	s	namespace:__anon40	file:
-qt_meta_tag_ZN15QCPItemPositionE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPItemPositionE_t {};$/;"	s	namespace:__anon47	file:
-qt_meta_tag_ZN15QCPScatterStyleE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPScatterStyleE_t {};$/;"	s	namespace:__anon43	file:
-qt_meta_tag_ZN16ManualAimControlE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN16ManualAimControlE_t {};$/;"	s	namespace:__anon95	file:
-qt_meta_tag_ZN16QCPColorGradientE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPColorGradientE_t {};$/;"	s	namespace:__anon50	file:
-qt_meta_tag_ZN16QCPLayoutElementE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPLayoutElementE_t {};$/;"	s	namespace:__anon31	file:
-qt_meta_tag_ZN16QCPSelectionRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPSelectionRectE_t {};$/;"	s	namespace:__anon29	file:
-qt_meta_tag_ZN16WidgetAdjustableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable.cpp	/^struct qt_meta_tag_ZN16WidgetAdjustableE_t {};$/;"	s	namespace:__anon86	file:
-qt_meta_tag_ZN16WidgetMainWindowE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_main_window.cpp	/^struct qt_meta_tag_ZN16WidgetMainWindowE_t {};$/;"	s	namespace:__anon88	file:
-qt_meta_tag_ZN16WidgetTableGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_table_group.cpp	/^struct qt_meta_tag_ZN16WidgetTableGroupE_t {};$/;"	s	namespace:__anon22	file:
-qt_meta_tag_ZN17DynamicAimControlE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN17DynamicAimControlE_t {};$/;"	s	namespace:__anon96	file:
-qt_meta_tag_ZN17QCPAxisTickerTimeE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN17QCPAxisTickerTimeE_t {};$/;"	s	namespace:__anon38	file:
-qt_meta_tag_ZN17QCPStatisticalBoxE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN17QCPStatisticalBoxE_t {};$/;"	s	namespace:__anon63	file:
+qt_meta_tag_ZN15QCPAbstractItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPAbstractItemE_t {};$/;"	s	namespace:__anon49	file:
+qt_meta_tag_ZN15QCPAxisTickerPiE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPAxisTickerPiE_t {};$/;"	s	namespace:__anon41	file:
+qt_meta_tag_ZN15QCPItemPositionE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPItemPositionE_t {};$/;"	s	namespace:__anon48	file:
+qt_meta_tag_ZN15QCPScatterStyleE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN15QCPScatterStyleE_t {};$/;"	s	namespace:__anon44	file:
+qt_meta_tag_ZN15SinusMoveModuleE_t	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^struct qt_meta_tag_ZN15SinusMoveModuleE_t {};$/;"	s	namespace:__anon19	file:
+qt_meta_tag_ZN16ManualAimControlE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN16ManualAimControlE_t {};$/;"	s	namespace:__anon96	file:
+qt_meta_tag_ZN16QCPColorGradientE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPColorGradientE_t {};$/;"	s	namespace:__anon51	file:
+qt_meta_tag_ZN16QCPLayoutElementE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPLayoutElementE_t {};$/;"	s	namespace:__anon32	file:
+qt_meta_tag_ZN16QCPSelectionRectE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN16QCPSelectionRectE_t {};$/;"	s	namespace:__anon30	file:
+qt_meta_tag_ZN16WidgetAdjustableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_adjustable.cpp	/^struct qt_meta_tag_ZN16WidgetAdjustableE_t {};$/;"	s	namespace:__anon87	file:
+qt_meta_tag_ZN16WidgetMainWindowE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_main_window.cpp	/^struct qt_meta_tag_ZN16WidgetMainWindowE_t {};$/;"	s	namespace:__anon89	file:
+qt_meta_tag_ZN16WidgetTableGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_table_group.cpp	/^struct qt_meta_tag_ZN16WidgetTableGroupE_t {};$/;"	s	namespace:__anon23	file:
+qt_meta_tag_ZN17DynamicAimControlE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN17DynamicAimControlE_t {};$/;"	s	namespace:__anon97	file:
+qt_meta_tag_ZN17QCPAxisTickerTimeE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN17QCPAxisTickerTimeE_t {};$/;"	s	namespace:__anon39	file:
+qt_meta_tag_ZN17QCPStatisticalBoxE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN17QCPStatisticalBoxE_t {};$/;"	s	namespace:__anon64	file:
 qt_meta_tag_ZN17SignalPortAdapterE_t	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^struct qt_meta_tag_ZN17SignalPortAdapterE_t {};$/;"	s	namespace:__anon16	file:
-qt_meta_tag_ZN17WidgetSinusSourceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^struct qt_meta_tag_ZN17WidgetSinusSourceE_t {};$/;"	s	namespace:__anon92	file:
+qt_meta_tag_ZN17WidgetSinusSourceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_widget_sinus_source.cpp	/^struct qt_meta_tag_ZN17WidgetSinusSourceE_t {};$/;"	s	namespace:__anon93	file:
 qt_meta_tag_ZN18AimingWatcherClassE_t	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^struct qt_meta_tag_ZN18AimingWatcherClassE_t {};$/;"	s	namespace:__anon17	file:
 qt_meta_tag_ZN18CANEngineInterfaceE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_can_interface.cpp	/^struct qt_meta_tag_ZN18CANEngineInterfaceE_t {};$/;"	s	namespace:__anon7	file:
 qt_meta_tag_ZN18CameraInterfaceHIKE_t	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hik.cpp	/^struct qt_meta_tag_ZN18CameraInterfaceHIKE_t {};$/;"	s	namespace:__anon1	file:
-qt_meta_tag_ZN18QCPAxisTickerFixedE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPAxisTickerFixedE_t {};$/;"	s	namespace:__anon39	file:
-qt_meta_tag_ZN18QCPPolarAxisRadialE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarAxisRadialE_t {};$/;"	s	namespace:__anon76	file:
-qt_meta_tag_ZN18QCPPolarLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarLegendItemE_t {};$/;"	s	namespace:__anon79	file:
+qt_meta_tag_ZN18QCPAxisTickerFixedE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPAxisTickerFixedE_t {};$/;"	s	namespace:__anon40	file:
+qt_meta_tag_ZN18QCPPolarAxisRadialE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarAxisRadialE_t {};$/;"	s	namespace:__anon77	file:
+qt_meta_tag_ZN18QCPPolarLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN18QCPPolarLegendItemE_t {};$/;"	s	namespace:__anon80	file:
 qt_meta_tag_ZN18UDPEngineInterfaceE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_udp_interface.cpp	/^struct qt_meta_tag_ZN18UDPEngineInterfaceE_t {};$/;"	s	namespace:__anon6	file:
-qt_meta_tag_ZN19AimControlInterfaceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN19AimControlInterfaceE_t {};$/;"	s	namespace:__anon94	file:
+qt_meta_tag_ZN19AimControlInterfaceE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN19AimControlInterfaceE_t {};$/;"	s	namespace:__anon95	file:
 qt_meta_tag_ZN19ImageTemplateFinderE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_image_finder.cpp	/^struct qt_meta_tag_ZN19ImageTemplateFinderE_t {};$/;"	s	namespace:__anon15	file:
-qt_meta_tag_ZN19QCPItemStraightLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPItemStraightLineE_t {};$/;"	s	namespace:__anon67	file:
-qt_meta_tag_ZN19QCPPolarAxisAngularE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPPolarAxisAngularE_t {};$/;"	s	namespace:__anon77	file:
-qt_meta_tag_ZN19SinusGeneratorClassE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^struct qt_meta_tag_ZN19SinusGeneratorClassE_t {};$/;"	s	namespace:__anon93	file:
+qt_meta_tag_ZN19QCPItemStraightLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPItemStraightLineE_t {};$/;"	s	namespace:__anon68	file:
+qt_meta_tag_ZN19QCPPolarAxisAngularE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN19QCPPolarAxisAngularE_t {};$/;"	s	namespace:__anon78	file:
+qt_meta_tag_ZN19SinusGeneratorClassE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_sinus_generator_class.cpp	/^struct qt_meta_tag_ZN19SinusGeneratorClassE_t {};$/;"	s	namespace:__anon94	file:
 qt_meta_tag_ZN19TCPConnectionEngineE_t	build/ImageProcProject_autogen/VEFJCPGILW/moc_engine_tcp_interface.cpp	/^struct qt_meta_tag_ZN19TCPConnectionEngineE_t {};$/;"	s	namespace:__anon5	file:
-qt_meta_tag_ZN19WidgetAimingControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_aiming_control.cpp	/^struct qt_meta_tag_ZN19WidgetAimingControlE_t {};$/;"	s	namespace:__anon85	file:
-qt_meta_tag_ZN19WidgetCameraControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_camera_control.cpp	/^struct qt_meta_tag_ZN19WidgetCameraControlE_t {};$/;"	s	namespace:__anon23	file:
-qt_meta_tag_ZN19WidgetImageImitatorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_imitator_control.cpp	/^struct qt_meta_tag_ZN19WidgetImageImitatorE_t {};$/;"	s	namespace:__anon24	file:
+qt_meta_tag_ZN19WidgetAimingControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_aiming_control.cpp	/^struct qt_meta_tag_ZN19WidgetAimingControlE_t {};$/;"	s	namespace:__anon86	file:
+qt_meta_tag_ZN19WidgetCameraControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_camera_control.cpp	/^struct qt_meta_tag_ZN19WidgetCameraControlE_t {};$/;"	s	namespace:__anon24	file:
+qt_meta_tag_ZN19WidgetImageImitatorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_imitator_control.cpp	/^struct qt_meta_tag_ZN19WidgetImageImitatorE_t {};$/;"	s	namespace:__anon25	file:
 qt_meta_tag_ZN20ImageSourceInterfaceE_t	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^struct qt_meta_tag_ZN20ImageSourceInterfaceE_t {};$/;"	s	namespace:__anon3	file:
 qt_meta_tag_ZN20ImageTrackerCentroidE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_tracker_centroid.cpp	/^struct qt_meta_tag_ZN20ImageTrackerCentroidE_t {};$/;"	s	namespace:__anon12	file:
 qt_meta_tag_ZN20ImageTrackerTemplateE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_tracker_template.cpp	/^struct qt_meta_tag_ZN20ImageTrackerTemplateE_t {};$/;"	s	namespace:__anon10	file:
-qt_meta_tag_ZN20QCPAbstractPlottableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN20QCPAbstractPlottableE_t {};$/;"	s	namespace:__anon45	file:
-qt_meta_tag_ZN20WidgetContainerGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_container_group.cpp	/^struct qt_meta_tag_ZN20WidgetContainerGroupE_t {};$/;"	s	namespace:__anon82	file:
-qt_meta_tag_ZN21AimImageImitatorClassE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN21AimImageImitatorClassE_t {};$/;"	s	namespace:__anon97	file:
+qt_meta_tag_ZN20QCPAbstractPlottableE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN20QCPAbstractPlottableE_t {};$/;"	s	namespace:__anon46	file:
+qt_meta_tag_ZN20WidgetContainerGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_container_group.cpp	/^struct qt_meta_tag_ZN20WidgetContainerGroupE_t {};$/;"	s	namespace:__anon83	file:
+qt_meta_tag_ZN21AimImageImitatorClassE_t	build/ImageProcProject_autogen/SERQFGPBY3/moc_imitator_image_aim.cpp	/^struct qt_meta_tag_ZN21AimImageImitatorClassE_t {};$/;"	s	namespace:__anon98	file:
 qt_meta_tag_ZN21ModuleImageProcessingE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_image_processing_node.cpp	/^struct qt_meta_tag_ZN21ModuleImageProcessingE_t {};$/;"	s	namespace:__anon11	file:
-qt_meta_tag_ZN21QCPAbstractLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN21QCPAbstractLegendItemE_t {};$/;"	s	namespace:__anon53	file:
-qt_meta_tag_ZN21QCPSelectionDecoratorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN21QCPSelectionDecoratorE_t {};$/;"	s	namespace:__anon44	file:
-qt_meta_tag_ZN21WidgetMiniLabelsGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^struct qt_meta_tag_ZN21WidgetMiniLabelsGroupE_t {};$/;"	s	namespace:__anon20	file:
-qt_meta_tag_ZN21WidgetProcessingImageE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^struct qt_meta_tag_ZN21WidgetProcessingImageE_t {};$/;"	s	namespace:__anon21	file:
+qt_meta_tag_ZN21QCPAbstractLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN21QCPAbstractLegendItemE_t {};$/;"	s	namespace:__anon54	file:
+qt_meta_tag_ZN21QCPSelectionDecoratorE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN21QCPSelectionDecoratorE_t {};$/;"	s	namespace:__anon45	file:
+qt_meta_tag_ZN21WidgetMiniLabelsGroupE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^struct qt_meta_tag_ZN21WidgetMiniLabelsGroupE_t {};$/;"	s	namespace:__anon21	file:
+qt_meta_tag_ZN21WidgetProcessingImageE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_generic.cpp	/^struct qt_meta_tag_ZN21WidgetProcessingImageE_t {};$/;"	s	namespace:__anon22	file:
 qt_meta_tag_ZN22ProcessControllerClassE_t	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^struct qt_meta_tag_ZN22ProcessControllerClassE_t {};$/;"	s	namespace:__anon2	file:
-qt_meta_tag_ZN22QCPLabelPainterPrivateE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN22QCPLabelPainterPrivateE_t {};$/;"	s	namespace:__anon36	file:
-qt_meta_tag_ZN22QCPPlottableLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN22QCPPlottableLegendItemE_t {};$/;"	s	namespace:__anon54	file:
+qt_meta_tag_ZN22QCPLabelPainterPrivateE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN22QCPLabelPainterPrivateE_t {};$/;"	s	namespace:__anon37	file:
+qt_meta_tag_ZN22QCPPlottableLegendItemE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN22QCPPlottableLegendItemE_t {};$/;"	s	namespace:__anon55	file:
 qt_meta_tag_ZN23ImageTrackerCentroidGPUE_t	build/ImageProcProject_autogen/F4UU7PBV5P/moc_tracker_centroid.cpp	/^struct qt_meta_tag_ZN23ImageTrackerCentroidGPUE_t {};$/;"	s	namespace:__anon13	file:
-qt_meta_tag_ZN23WidgetOutputTextDisplayE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_output_text_display.cpp	/^struct qt_meta_tag_ZN23WidgetOutputTextDisplayE_t {};$/;"	s	namespace:__anon91	file:
-qt_meta_tag_ZN23WidgetProcessControllerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_process_controller.cpp	/^struct qt_meta_tag_ZN23WidgetProcessControllerE_t {};$/;"	s	namespace:__anon90	file:
-qt_meta_tag_ZN24WidgetOutputImageDisplayE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_output_image_display.cpp	/^struct qt_meta_tag_ZN24WidgetOutputImageDisplayE_t {};$/;"	s	namespace:__anon84	file:
-qt_meta_tag_ZN24WidgetSceneNodeInterfaceE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^struct qt_meta_tag_ZN24WidgetSceneNodeInterfaceE_t {};$/;"	s	namespace:__anon89	file:
-qt_meta_tag_ZN28QCPColorScaleAxisRectPrivateE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN28QCPColorScaleAxisRectPrivateE_t {};$/;"	s	namespace:__anon57	file:
-qt_meta_tag_ZN28QCPSelectionDecoratorBracketE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN28QCPSelectionDecoratorBracketE_t {};$/;"	s	namespace:__anon51	file:
-qt_meta_tag_ZN28WidgetProcessingImageControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_control.cpp	/^struct qt_meta_tag_ZN28WidgetProcessingImageControlE_t {};$/;"	s	namespace:__anon25	file:
-qt_meta_tag_ZN3QCPE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN3QCPE_t {};$/;"	s	namespace:__anon81	file:
-qt_meta_tag_ZN7QCPAxisE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPAxisE_t {};$/;"	s	namespace:__anon42	file:
-qt_meta_tag_ZN7QCPBarsE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPBarsE_t {};$/;"	s	namespace:__anon62	file:
-qt_meta_tag_ZN7QCPGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPGridE_t {};$/;"	s	namespace:__anon41	file:
-qt_meta_tag_ZN8LinkLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^struct qt_meta_tag_ZN8LinkLineE_t {};$/;"	s	namespace:__anon83	file:
-qt_meta_tag_ZN8QCPCurveE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPCurveE_t {};$/;"	s	namespace:__anon60	file:
-qt_meta_tag_ZN8QCPGraphE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPGraphE_t {};$/;"	s	namespace:__anon59	file:
-qt_meta_tag_ZN8QCPLayerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPLayerE_t {};$/;"	s	namespace:__anon27	file:
-qt_meta_tag_ZN9QCPLayoutE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN9QCPLayoutE_t {};$/;"	s	namespace:__anon32	file:
-qt_meta_tag_ZN9QCPLegendE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN9QCPLegendE_t {};$/;"	s	namespace:__anon55	file:
+qt_meta_tag_ZN23WidgetOutputTextDisplayE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_output_text_display.cpp	/^struct qt_meta_tag_ZN23WidgetOutputTextDisplayE_t {};$/;"	s	namespace:__anon92	file:
+qt_meta_tag_ZN23WidgetProcessControllerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_process_controller.cpp	/^struct qt_meta_tag_ZN23WidgetProcessControllerE_t {};$/;"	s	namespace:__anon91	file:
+qt_meta_tag_ZN24WidgetOutputImageDisplayE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_output_image_display.cpp	/^struct qt_meta_tag_ZN24WidgetOutputImageDisplayE_t {};$/;"	s	namespace:__anon85	file:
+qt_meta_tag_ZN24WidgetSceneNodeInterfaceE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_scene_node_interface.cpp	/^struct qt_meta_tag_ZN24WidgetSceneNodeInterfaceE_t {};$/;"	s	namespace:__anon90	file:
+qt_meta_tag_ZN28QCPColorScaleAxisRectPrivateE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN28QCPColorScaleAxisRectPrivateE_t {};$/;"	s	namespace:__anon58	file:
+qt_meta_tag_ZN28QCPSelectionDecoratorBracketE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN28QCPSelectionDecoratorBracketE_t {};$/;"	s	namespace:__anon52	file:
+qt_meta_tag_ZN28WidgetProcessingImageControlE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_widget_processing_image_control.cpp	/^struct qt_meta_tag_ZN28WidgetProcessingImageControlE_t {};$/;"	s	namespace:__anon26	file:
+qt_meta_tag_ZN3QCPE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN3QCPE_t {};$/;"	s	namespace:__anon82	file:
+qt_meta_tag_ZN7QCPAxisE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPAxisE_t {};$/;"	s	namespace:__anon43	file:
+qt_meta_tag_ZN7QCPBarsE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPBarsE_t {};$/;"	s	namespace:__anon63	file:
+qt_meta_tag_ZN7QCPGridE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN7QCPGridE_t {};$/;"	s	namespace:__anon42	file:
+qt_meta_tag_ZN8LinkLineE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^struct qt_meta_tag_ZN8LinkLineE_t {};$/;"	s	namespace:__anon84	file:
+qt_meta_tag_ZN8QCPCurveE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPCurveE_t {};$/;"	s	namespace:__anon61	file:
+qt_meta_tag_ZN8QCPGraphE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPGraphE_t {};$/;"	s	namespace:__anon60	file:
+qt_meta_tag_ZN8QCPLayerE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN8QCPLayerE_t {};$/;"	s	namespace:__anon28	file:
+qt_meta_tag_ZN9QCPLayoutE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN9QCPLayoutE_t {};$/;"	s	namespace:__anon33	file:
+qt_meta_tag_ZN9QCPLegendE_t	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^struct qt_meta_tag_ZN9QCPLegendE_t {};$/;"	s	namespace:__anon56	file:
 qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^int LabelImage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:LabelImage
 qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^int LinkLine::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:LinkLine
 qt_metacall	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^int QCPAbstractItem::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:QCPAbstractItem
@@ -6724,6 +6698,7 @@ qt_metacall	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^int
 qt_metacall	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^int SignalPortAdapter::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SignalPortAdapter
 qt_metacall	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^int ImageSourceInterface::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ImageSourceInterface
 qt_metacall	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^int DynamicModule::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:DynamicModule
+qt_metacall	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^int SinusMoveModule::qt_metacall(QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SinusMoveModule
 qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^void *LabelImage::qt_metacast(const char *_clname)$/;"	f	class:LabelImage
 qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_link_line.cpp	/^void *LinkLine::qt_metacast(const char *_clname)$/;"	f	class:LinkLine
 qt_metacast	build/ImageProcProject_autogen/7RAEHFKGBG/moc_qcustomplot.cpp	/^void *QCPAbstractItem::qt_metacast(const char *_clname)$/;"	f	class:QCPAbstractItem
@@ -6806,6 +6781,7 @@ qt_metacast	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^voi
 qt_metacast	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^void *SignalPortAdapter::qt_metacast(const char *_clname)$/;"	f	class:SignalPortAdapter
 qt_metacast	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void *ImageSourceInterface::qt_metacast(const char *_clname)$/;"	f	class:ImageSourceInterface
 qt_metacast	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^void *DynamicModule::qt_metacast(const char *_clname)$/;"	f	class:DynamicModule
+qt_metacast	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^void *SinusMoveModule::qt_metacast(const char *_clname)$/;"	f	class:SinusMoveModule
 qt_resource_data	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^static const unsigned char qt_resource_data[] = {$/;"	v	file:
 qt_resource_name	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^static const unsigned char qt_resource_name[] = {$/;"	v	file:
 qt_resource_struct	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^static const unsigned char qt_resource_struct[] = {$/;"	v	file:
@@ -6891,6 +6867,7 @@ qt_static_metacall	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cp
 qt_static_metacall	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^void SignalPortAdapter::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SignalPortAdapter
 qt_static_metacall	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void ImageSourceInterface::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:ImageSourceInterface
 qt_static_metacall	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^void DynamicModule::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:DynamicModule
+qt_static_metacall	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^void SinusMoveModule::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)$/;"	f	class:SinusMoveModule
 radialAxes	gui_sources/qcustomplot.cpp	/^QList<QCPPolarAxisRadial*> QCPPolarAxisAngular::radialAxes() const$/;"	f	class:QCPPolarAxisAngular
 radialAxis	gui_sources/qcustomplot.cpp	/^QCPPolarAxisRadial *QCPPolarAxisAngular::radialAxis(int index) const$/;"	f	class:QCPPolarAxisAngular
 radialAxis	gui_sources/qcustomplot.h	/^  QCPPolarAxisRadial *radialAxis() const { return mRadialAxis.data(); }$/;"	f	class:QCPPolarGrid
@@ -7372,6 +7349,7 @@ setInput	COMMON/interface_pass_coord.h	/^	virtual void setInput(const QPair<V, V
 setInput	COMMON/interface_pass_coord.h	/^    void setInput(const QPair<float,float>& coord) { if(InputFunction != nullptr) InputFunction(*Receiver,coord);};$/;"	f	class:PortAdapter
 setInput	CV_IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)$/;"	f	class:ModuleImageProcessing
 setInput	DEVICES/device_generic_interface.h	/^	void setInput(const QPair<float, float>& Coord) { moveToPos(Coord);};$/;"	f	class:DeviceRotaryInterface
+setInput	DEVICES/device_rotary_interface.h	/^	void setInput(const QPair<float,float>& Coord) { Position = Coord; slotMove(); } $/;"	f	class:SinusMoveModule
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void AccumulateDataFilter::setInput(const QPair<float,float>& Coord)$/;"	f	class:AccumulateDataFilter
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::setInput(const QPair<float,float>& Coord)$/;"	f	class:RotateOperationContainer
 setInput	ROTATE_OPTIMIZATION/RotationContainerLib/SubstractPair.h	/^	 void setInput(const QPair<float,float>& Coord)$/;"	f	class:Substract
@@ -7784,6 +7762,7 @@ signalNewImage	build/ImageProcProject_autogen/IUOK47BH6O/moc_interface_camera_hi
 signalNewImage	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void ImageSourceInterface::signalNewImage()$/;"	f	class:ImageSourceInterface
 signalNewImage	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void ImageSourceInterface::signalNewImage(const QImage & _t1)$/;"	f	class:ImageSourceInterface
 signalNewImage	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^void ImageSourceInterface::signalNewImage(const cv::Mat & _t1)$/;"	f	class:ImageSourceInterface
+signalPosPressed	build/ImageProcProject_autogen/7RAEHFKGBG/moc_labelimage.cpp	/^void LabelImage::signalPosPressed(int _t1, int _t2)$/;"	f	class:LabelImage
 signals	CAMERA_INTERFACE/camera_interface_class.h	16;"	d
 signals	CAMERA_INTERFACE/camera_interface_class.h	22;"	d
 signals	controller_process_class.cpp	10;"	d	file:
@@ -7810,6 +7789,7 @@ skipFrames	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAra
 skipFrames	CAMERA_INTERFACE/interface_camera_hik.cpp	/^void CameraInterfaceHIK::CameraImageStorage::skipFrames()$/;"	f	class:CameraInterfaceHIK::CameraImageStorage
 skipFrames	COMMON/interface_image_source.h	/^    virtual void skipFrames() {};$/;"	f	class:ImageSourceInterface
 slotAcceptConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotAcceptConnection()$/;"	f	class:TCPConnectionEngine
+slotCalculateValue	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotCalculateValue()$/;"	f	class:SinusGeneratorClass
 slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotCheckConnection()$/;"	f	class:CANEngineInterface
 slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotCheckConnection() { }$/;"	f	class:TCPConnectionEngine
 slotCheckConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotCheckConnection()$/;"	f	class:UDPEngineInterface
@@ -7818,8 +7798,21 @@ slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/
 slotCloseConnection	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotCloseConnection()$/;"	f	class:UDPEngineInterface
 slotConnectedToHost	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotConnectedToHost()$/;"	f	class:TCPConnectionEngine
 slotConnectionAttempt	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotConnectionAttempt()$/;"	f	class:TCPConnectionEngine
+slotDisplayCoord	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::slotDisplayCoord(QPair<float,float> Point)$/;"	f	class:PlotGraphicsInterface
+slotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetMiniLabelsGroup::slotDisplayImage(const QImage& Image, int Channel)$/;"	f	class:WidgetMiniLabelsGroup
+slotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotDisplayImage()$/;"	f	class:WidgetProcessingImage
+slotDisplayImage	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotDisplayImage(const QImage& Image)$/;"	f	class:WidgetProcessingImage
+slotDisplayMiniLabels	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotDisplayMiniLabels()$/;"	f	class:WidgetProcessingImage
+slotDisplayProcessImage	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAravis::slotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }$/;"	f	class:CameraInterfaceAravis
+slotDisplayScanatorState	gui_sources/widget_scanator_control.cpp	/^void WidgetScanatorControl::slotDisplayScanatorState()$/;"	f	class:WidgetScanatorControl
+slotDisplayState	gui_sources/widget_aiming_control.cpp	/^void WidgetAimingControl::slotDisplayState()$/;"	f	class:WidgetAimingControl
+slotDisplayString	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotDisplayString(QString InfoString)$/;"	f	class:WidgetProcessingImage
+slotDisplayTimePairSeries	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::slotDisplayTimePairSeries()$/;"	f	class:PlotGraphicsInterface
+slotDisplayTimeSeries	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.cpp	/^void PlotGraphicsInterface::slotDisplayTimeSeries()$/;"	f	class:PlotGraphicsInterface
+slotEnableChannel	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotEnableChannel(bool Enable , int Channel)$/;"	f	class:SinusGeneratorClass
 slotMessageReceived	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotMessageReceived()$/;"	f	class:CANDelayMeasure
-slotMove	DEVICES/device_rotary_interface.h	/^  void slotMove() { Device->moveOnStep(Device->getVelocity()); }$/;"	f	class:DynamicModule
+slotMove	DEVICES/device_rotary_interface.h	/^  virtual void slotMove() { Device->moveOnStep(Device->getVelocity()); }$/;"	f	class:DynamicModule
+slotMove	DEVICES/device_rotary_interface.h	/^  void slotMove() { Device->moveToPos(Position); }$/;"	f	class:SinusMoveModule
 slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp	/^void CANEngineInterface::slotReadData()$/;"	f	class:CANEngineInterface
 slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotReadData()$/;"	f	class:TCPConnectionEngine
 slotReadData	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotReadData()$/;"	f	class:UDPEngineInterface
@@ -7830,7 +7823,32 @@ slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp	/^voi
 slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const QByteArray& ArrayCommand, uint16_t Param)$/;"	f	class:UDPEngineInterface
 slotSendMessage	TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp	/^void UDPEngineInterface::slotSendMessage(const char* DataCommand, int size, uint16_t Param)$/;"	f	class:UDPEngineInterface
 slotSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  virtual void slotSendTest(){ deviceCAN->slotSendMessage(message, TypeRegister<CommandSetPosScanator>::GetTypeID()); }$/;"	f	class:CANTestMessage
+slotSetActiveChannel	gui_sources/widget_container_group.cpp	/^void WidgetContainerGroup::slotSetActiveChannel(int Channel)$/;"	f	class:WidgetContainerGroup
+slotSetActiveChannel	gui_sources/widget_processing_image_generic.cpp	/^void WidgetMiniLabelsGroup::slotSetActiveChannel(int Number)$/;"	f	class:WidgetMiniLabelsGroup
+slotSetActiveChannel	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotSetActiveChannel(int Channel)$/;"	f	class:WidgetProcessingImage
+slotSetAimPos	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void AimImageImitatorClass::slotSetAimPos(int PosX, int PosY)$/;"	f	class:AimImageImitatorClass
+slotSetAmplitude	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotSetAmplitude(float Ampl1, float Ampl2) { Amplitude.first = Ampl1*60*5; $/;"	f	class:SinusGeneratorClass
+slotSetAmplitude	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	void slotSetAmplitude(float Ample1) { slotSetAmplitude(Ample1, Ample1); }$/;"	f	class:SinusGeneratorClass
+slotSetAmplitudeNoize	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotSetAmplitudeNoize(float Ampl) { this->AmplitudeNoize = Ampl; }$/;"	f	class:SinusGeneratorClass
+slotSetCoord	AIMING_MODULES/aiming_class.h	/^void slotSetCoord(QPair<float,float> Coord) $/;"	f	class:SignalPortAdapter
+slotSetFrequency	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotSetFrequency(float Freq1, float Freq2) { Freq.first = Freq1; Freq.second = Freq2; PERIOD = 360\/Freq1;}$/;"	f	class:SinusGeneratorClass
+slotSetFrequency	AIM_IMAGE_IMITATION/sinus_generator_class.h	/^	void slotSetFrequency(float Freq1) { slotSetFrequency(Freq1, Freq1); }$/;"	f	class:SinusGeneratorClass
+slotSetFrequencyDevider	CAMERA_INTERFACE/camera_interface_class.h	/^    void slotSetFrequencyDevider(int param) { FrequencyDevider = param; };$/;"	f	class:CameraInterfaceAravis
+slotSetHighFrequency	CAMERA_INTERFACE/camera_interface_class.cpp	/^void CameraInterfaceAravis::slotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};$/;"	f	class:CameraInterfaceAravis
+slotSetInterfaceSize	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::slotSetInterfaceSize(int GuiSize)$/;"	f	class:WidgetMainWindow
+slotSetProcessAiming	controller_process_class.cpp	/^void ProcessControllerClass::slotSetProcessAiming(bool OnOff)$/;"	f	class:ProcessControllerClass
+slotSetProcessAiming2	controller_process_class.cpp	/^void ProcessControllerClass::slotSetProcessAiming2(bool OnOff)$/;"	f	class:ProcessControllerClass
+slotSetProcessCamera	controller_process_class.cpp	/^void ProcessControllerClass::slotSetProcessCamera(bool OnOff)$/;"	f	class:ProcessControllerClass
+slotSetProcessImitation	controller_process_class.cpp	/^void ProcessControllerClass::slotSetProcessImitation(bool OnOff)$/;"	f	class:ProcessControllerClass
+slotSetWindowSize	gui_sources/widget_adjustable.cpp	/^void AdjustableLabel::slotSetWindowSize(int FontSize)$/;"	f	class:AdjustableLabel
+slotSetWindowSize	gui_sources/widget_adjustable.cpp	/^void WidgetAdjustable::slotSetWindowSize(int FontSize)$/;"	f	class:WidgetAdjustable
+slotStartGenerate	AIM_IMAGE_IMITATION/sinus_generator_class.cpp	/^void SinusGeneratorClass::slotStartGenerate(bool StartStop)$/;"	f	class:SinusGeneratorClass
+slotStartMoveAim	AIM_IMAGE_IMITATION/imitator_image_aim.cpp	/^void ManualAimControl::slotStartMoveAim(int Dir, int MoveAxis, int MoveStep)$/;"	f	class:ManualAimControl
+slotStartPaintTrajectory	gui_sources/widget_processing_image_generic.cpp	/^void WidgetProcessingImage::slotStartPaintTrajectory(bool OnOff)$/;"	f	class:WidgetProcessingImage
+slotStartProcessRTSP	controller_process_class.cpp	/^void ProcessControllerClass::slotStartProcessRTSP(bool OnOff)$/;"	f	class:ProcessControllerClass
+slotStartRotationFind	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::slotStartRotationFind(bool StartStop)$/;"	f	class:RotationFindProcessClass
 slotStartSendTest	TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.h	/^  void slotStartSendTest(bool OnOff) {if(deviceCAN == nullptr) return; if(OnOff) timerSendTest.start(1000); else timerSendTest.stop(); }$/;"	f	class:CANTestMessage
+slotStartWork	AIM_IMAGE_IMITATION/imitator_image_aim.h	/^void slotStartWork() { DynamicControl.StartMove(); }$/;"	f	class:AimImageImitatorClass
 slots	PYTORCH_PROCESSING/TorchProcessing.h	2;"	d
 slots	PYTORCH_PROCESSING/TorchProcessing.h	4;"	d
 slots	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	10;"	d
@@ -8028,6 +8046,7 @@ staticMetaObject	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	
 staticMetaObject	build/ImageProcProject_autogen/VVJNAS6J2C/moc_aiming_class.cpp	/^Q_CONSTINIT const QMetaObject SignalPortAdapter::staticMetaObject = { {$/;"	m	class:SignalPortAdapter	file:
 staticMetaObject	build/ImageProcProject_autogen/XJUVE5KTRL/moc_interface_image_source.cpp	/^Q_CONSTINIT const QMetaObject ImageSourceInterface::staticMetaObject = { {$/;"	m	class:ImageSourceInterface	file:
 staticMetaObject	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^Q_CONSTINIT const QMetaObject DynamicModule::staticMetaObject = { {$/;"	m	class:DynamicModule	file:
+staticMetaObject	build/ImageProcProject_autogen/XWFUSFUWCP/moc_device_rotary_interface.cpp	/^Q_CONSTINIT const QMetaObject SinusMoveModule::staticMetaObject = { {$/;"	m	class:SinusMoveModule	file:
 stopFeed	stream_video_rtsp.h	/^  static void  stopFeed(GstElement *source) { FLAG_OUTPUT_PIPE_WAIT_DATA = false; }$/;"	f	class:VideoStreamRTSP
 stopServerProcess	stream_video_rtsp.h	/^  void stopServerProcess()  { g_main_loop_quit(processServerRTSP); }$/;"	f	class:VideoStreamRTSP
 stopsUseAlpha	gui_sources/qcustomplot.cpp	/^bool QCPColorGradient::stopsUseAlpha() const$/;"	f	class:QCPColorGradient
@@ -8386,7 +8405,7 @@ zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRec
 ~ImageTrackerCentroid	CV_IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroid::~ImageTrackerCentroid()$/;"	f	class:ImageTrackerCentroid
 ~ImageTrackerCentroidGPU	CV_IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroidGPU::~ImageTrackerCentroidGPU()$/;"	f	class:ImageTrackerCentroidGPU
 ~ImageTrackerTemplate	CV_IMAGE_PROCESSING/tracker_template.h	/^    ~ImageTrackerTemplate() {};$/;"	f	class:ImageTrackerTemplate
-~LabelImage	gui_sources/labelimage.cpp	/^LabelImage::~LabelImage()$/;"	f	class:LabelImage
+~LabelImage	gui_sources/labelimage.cpp	/^     LabelImage::~LabelImage() { }$/;"	f	class:LabelImage
 ~ModuleImageProcessing	CV_IMAGE_PROCESSING/image_processing_node.h	/^~ModuleImageProcessing() { } $/;"	f	class:ModuleImageProcessing
 ~NeuralTracker	CV_IMAGE_PROCESSING/tracker_neural.h	/^    ~NeuralTracker() {};$/;"	f	class:NeuralTracker
 ~PIDClass	AIMING_MODULES/pid_class.cpp	/^PIDClass::~PIDClass() { }$/;"	f	class:PIDClass

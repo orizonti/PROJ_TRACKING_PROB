@@ -65,7 +65,7 @@ WidgetMainWindow::WidgetMainWindow(QWidget *parent)
 	ui.graphicsView->setScene(Scene);
 	ui.graphicsView->centerOn(20, 20);
 
-	SlotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
+	slotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
   QObject::connect(this, SIGNAL(WindowClosedSignal()), this, SLOT(SlotDeinitMainWindow()));
 }
 
@@ -78,7 +78,7 @@ WidgetMainWindow::~WidgetMainWindow()
 
 //void WidgetMainWindow::DisplayCoordData(DataCoordStructure Data)             { ShowImageDisplay->DisplayCoordAim(Data.Coords, Data.CoordsROI); }
 //void WidgetMainWindow::DisplayCameraData(DataCamerasStructure DataStructure) { CameraControlBlockDisplay->DisplayState(DataStructure.State); }
-//void WidgetMainWindow::DisplaySensorData(DataKLPSensorMeasures Data) { SensorDisplay->SlotDisplayState(Data); }
+//void WidgetMainWindow::DisplaySensorData(DataKLPSensorMeasures Data) { SensorDisplay->slotDisplayState(Data); }
 //
 //void WidgetMainWindow::DisplayAimingData(DataAimingErrorStructure DataStructure)
 //{
@@ -146,7 +146,7 @@ void WidgetMainWindow::SlotChangeInterfaceType()
 
    if(Action->objectName() == "actionGuiDebug") {InterfaceType = InterfaceDebugScheme;};
    if(Action->objectName() == "actionGuiWork")  {InterfaceType = InterfaceWorkScheme;};
-   SlotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
+   slotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
 }
 
 void WidgetMainWindow::SlotChangeInterfaceSize()
@@ -155,7 +155,7 @@ void WidgetMainWindow::SlotChangeInterfaceSize()
 
 	if(Action->objectName() == "actionGuiSizeSmall") InterfaceSizeType = SmallSize;
 	if(Action->objectName() == "actionGuiSizeBig")   InterfaceSizeType = BigSize;
-	SlotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
+	slotSetInterfaceSize((int)InterfaceSizeType + (int)InterfaceType);
    
 }
 
@@ -174,13 +174,13 @@ void WidgetMainWindow::SetGuiFontSize(int GuiSize)
 			WidgetAdjustable* widget = dynamic_cast<WidgetAdjustable*>(node->WindowNode);
 			AdjustableLabel* label = dynamic_cast<AdjustableLabel*>(node->WindowNode);
 
-			if ( widget != nullptr) widget->SlotSetWindowSize(FontSize);
-			if ( label != nullptr) label->SlotSetWindowSize(FontSize);
+			if ( widget != nullptr) widget->slotSetWindowSize(FontSize);
+			if ( label != nullptr) label->slotSetWindowSize(FontSize);
 		}
 	}
 }
 
-void WidgetMainWindow::SlotSetInterfaceSize(int GuiSize)
+void WidgetMainWindow::slotSetInterfaceSize(int GuiSize)
 {
 	CurrentInterfaceScheme = GuiSize;
     SetGuiFontSize(CurrentInterfaceScheme);

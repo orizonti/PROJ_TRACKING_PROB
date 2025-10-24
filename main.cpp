@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
                  WindowGraphics.show();
   SinusGeneratorClass SinusGenerator;
                       SinusGenerator.setLink(WindowGraphics.Graph1);
-                      SinusGenerator.SlotStartGenerate(true);
+                      SinusGenerator.slotStartGenerate(true);
   #endif
 
 
@@ -100,19 +100,20 @@ int main(int argc, char* argv[])
 
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
                            ProcessController->setParent(&WindowTableGroup);
-                           ProcessController->SlotSetProcessAiming(true);
+                           ProcessController->slotSetProcessAiming(true);
 
-  ProcessControllerClass::DeviceCamera->SetZoom(3);
+  ProcessControllerClass::DeviceCamera->SetZoom(1);
   ProcessControllerClass::DeviceCamera->StartCameraStream(true);
 
   WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
-  //WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
-  WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::DeviceCamera);    
+  WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
+  //WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::DeviceCamera);    
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
-  QObject::connect(WindowImageProcessingDisplay, SIGNAL(signalPosPressed(QPair<float,float>)), AimingPort,SLOT(slotSetCoord(QPair<float,float>))) ;
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+                                                       AimingPort,SLOT  (slotSetCoord    (QPair<float,float>))) ;
 
-  ProcessController->SlotStartProcessRTSP(true);
+  ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();
   #endif
 
@@ -130,8 +131,8 @@ int main(int argc, char* argv[])
 
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
                            ProcessController->setParent(&WindowTableGroup);
-                           ProcessControllerClass::ModuleImitatorImage->SlotStartWork();
-                           ProcessController->SlotSetProcessImitation(true);
+                           ProcessControllerClass::ModuleImitatorImage->slotStartWork();
+                           ProcessController->slotSetProcessImitation(true);
 
    WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
    WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
@@ -178,7 +179,7 @@ int main(int argc, char* argv[])
 
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
-  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<float,float>)), AimingPort,SLOT(SlotSetCoord(QPair<float,float>))) ;
+  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<float,float>)), AimingPort,SLOT(slotSetCoord(QPair<float,float>))) ;
 
   WidgetGraphisPlot WindowGraphics;
 
@@ -201,10 +202,10 @@ int main(int argc, char* argv[])
                    MainWindow.show();
                    ProcessController->setParent(&MainWindow);
 
-  QObject::connect(&WidgetGroup,                  SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(SlotSetActiveChannel(int)));
-  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalChannelChanged(int)),&WidgetGroup,                  SLOT(SlotSetActiveChannel(int)));
+  QObject::connect(&WidgetGroup,                  SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(slotSetActiveChannel(int)));
+  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalChannelChanged(int)),&WidgetGroup,                  SLOT(slotSetActiveChannel(int)));
 
-  ProcessControllerClass::ModuleImitatorImage->SlotStartWork();
+  ProcessControllerClass::ModuleImitatorImage->slotStartWork();
   #endif 
 
 

@@ -8,10 +8,10 @@ WidgetProcessController::WidgetProcessController(QWidget* parent) : WidgetAdjust
 
 void WidgetProcessController::LinkTo(ProcessControllerClass* ProcessController)
 {
-   connect(ui->butRegimAiming,      &QPushButton::toggled, ProcessController, &ProcessControllerClass::SlotSetProcessAiming);
-   connect(ui->butRegimImitator,    &QPushButton::toggled, ProcessController, &ProcessControllerClass::SlotSetProcessImitation);
-   //connect(ui->butRegimTestSignal,  &QPushButton::toggled, ProcessController, &ProcessControllerClass::SlotSetProcessTestSignal);
-   //connect(ui->butRegimCalibration, &QPushButton::toggled, ProcessController, &ProcessControllerClass::SlotStartProcessRotFind);
+   connect(ui->butRegimAiming,      &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotSetProcessAiming);
+   connect(ui->butRegimImitator,    &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotSetProcessImitation);
+   //connect(ui->butRegimTestSignal,  &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotSetProcessTestSignal);
+   //connect(ui->butRegimCalibration, &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotStartProcessRotFind);
 }
 
 

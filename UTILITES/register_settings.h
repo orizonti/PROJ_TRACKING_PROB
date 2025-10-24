@@ -19,6 +19,10 @@ class SettingsRegister
     static void AppendSettings(QString key, float setting);
     static void AppendSettings(QString key, std::pair<float,float> setting);
 
+    static void ResetSettings(QString key, QString setting);
+    static void ResetSettings(QString key, float setting);
+    static void ResetSettings(QString key, std::pair<float,float> setting);
+
     static void PrintSettingsList() 
     {
       for(auto& record: settings) qDebug() << "[ SETTINGS ] " << "LOAD: " << std::get<0>(record) << std::get<1>(record); 

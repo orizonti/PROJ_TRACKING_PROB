@@ -101,6 +101,7 @@ ConnectionUDP->Dispatcher->AppendCallback<CommandDeviceLaserPointer>( [this](Mes
                   }
                   );
 
+ //DeviceRotary->moveSinus(true);
 
  //DeviceCamera->moveToThread(&ThreadProcess);
  //ThreadCamera.start();
@@ -119,9 +120,9 @@ ConnectionUDP->Dispatcher->AppendCallback<CommandDeviceLaserPointer>( [this](Mes
  //ThreadProcess2.start();
  //ThreadProcess2.setPriority(QThread::HighPriority);
 
-// SlotSetProcessCamera(true);
-// SlotSetProcessImitation(true);
-// SlotSetProcessAiming(true);
+// slotSetProcessCamera(true);
+// slotSetProcessImitation(true);
+// slotSetProcessAiming(true);
 
  //QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get()   , SLOT(SlotDeinitCamera())  , Qt::QueuedConnection);
  QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
@@ -157,7 +158,7 @@ void ProcessControllerClass::DeleteModulesLinks()
    //ModuleAiming1->CutLink();
 }
 
-void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)
+void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
 {
    if(!OnOff) return; DeleteModulesLinks(); StopAllProcess();
 
@@ -175,7 +176,7 @@ void ProcessControllerClass::SlotSetProcessAiming(bool OnOff)
 
 }
 
-void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)
+void ProcessControllerClass::slotSetProcessAiming2(bool OnOff)
 {
    if(!OnOff) return; DeleteModulesLinks(); StopAllProcess();
 
@@ -193,17 +194,17 @@ void ProcessControllerClass::SlotSetProcessAiming2(bool OnOff)
 
 }
 
-void ProcessControllerClass::SlotSetProcessCamera(bool OnOff)
+void ProcessControllerClass::slotSetProcessCamera(bool OnOff)
 {
    DeviceCamera | ModuleImageProc;  
 }
 
-void ProcessControllerClass::SlotStartProcessRTSP(bool OnOff)
+void ProcessControllerClass::slotStartProcessRTSP(bool OnOff)
 {
    ModuleVideoOutput->linkToSource(DeviceCamera.get());
 }
 
-void ProcessControllerClass::SlotSetProcessImitation(bool OnOff)
+void ProcessControllerClass::slotSetProcessImitation(bool OnOff)
 {
    ModuleImitatorImage | ModuleImageProc; 
    ProcessState = ProcessStateList::ProcessAiming; 

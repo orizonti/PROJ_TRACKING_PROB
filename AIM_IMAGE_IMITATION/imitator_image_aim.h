@@ -41,7 +41,7 @@ class ManualAimControl : public AimControlInterface
     int Axis = 0;
 
     public slots:
-    void SlotStartMoveAim(int Dir, int MoveAxis, int MoveStep);
+    void slotStartMoveAim(int Dir, int MoveAxis, int MoveStep);
     private slots:
     void SlotMoveAim() override; 
 };
@@ -112,8 +112,8 @@ bool IsROIValid(cv::Rect& ROI);
 public  slots:
 
 void SlotMoveAimPos(int XStep, int YStep);
-void SlotSetAimPos(int PosX, int PosY);
-void SlotStartWork() { DynamicControl.StartMove(); }
+void slotSetAimPos(int PosX, int PosY);
+void slotStartWork() { DynamicControl.StartMove(); }
 
 };
 

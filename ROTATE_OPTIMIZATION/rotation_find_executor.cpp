@@ -41,7 +41,7 @@ void RotationFindProcessClass::StartProcess()
     timerStepper.start(10);
 }
 
-void RotationFindProcessClass::SlotStartRotationFind(bool StartStop)
+void RotationFindProcessClass::slotStartRotationFind(bool StartStop)
 {
     if(!BaseObject || !RotationObject) { qDebug() << TAG << "ROTATION OBJECTS IS NOT SET CANT START CALIBRATION"; return;};
     if(StartStop) StartProcess(); else StopProcess();

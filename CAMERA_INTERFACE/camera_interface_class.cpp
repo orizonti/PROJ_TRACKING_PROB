@@ -19,7 +19,7 @@ void DestroyBufferInfo ( gpointer data)
   std::cout << "BUFFER DELETE: " << data << std::endl;
 }
 
-void CameraInterfaceAravis::SlotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};
+void CameraInterfaceAravis::slotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};
 
 CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): ImageSourceInterface(parent) 
 {
@@ -34,7 +34,7 @@ CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): ImageSourceInterf
    ImageToProcess = cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1);
    ImageToProcess = cv::Scalar(0);
 
-   QObject::connect(&timerDisplayTestImage,SIGNAL(timeout()),this, SLOT(SlotDisplayProcessImage()));
+   QObject::connect(&timerDisplayTestImage,SIGNAL(timeout()),this, SLOT(slotDisplayProcessImage()));
 }
 
 CameraInterfaceAravis::~CameraInterfaceAravis()
@@ -265,7 +265,7 @@ void CameraInterfaceAravis::StartCameraStream (bool OnOff)
 	}
 }
 
-void CameraInterfaceAravis::SlotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
+void CameraInterfaceAravis::slotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
 
 void CameraInterfaceAravis::SetCameraRegion(int x, int y, int width, int height )
 {

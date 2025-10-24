@@ -18,7 +18,7 @@ class WidgetAdjustable : public QWidget
     int WIDGET_FONT_SIZE = 12;
 
 public slots:
-void SlotSetWindowSize(int FontSize);
+void slotSetWindowSize(int FontSize);
 void AdjustWindow();
 signals:
 void SignalHideWidget();
@@ -35,7 +35,7 @@ class AdjustableLabel : public QLabel
     int WIDGET_FONT_SIZE = 12;
 
 public slots:
-void SlotSetWindowSize(int FontSize);
+void slotSetWindowSize(int FontSize);
 void AdjustWindow();
 };
 

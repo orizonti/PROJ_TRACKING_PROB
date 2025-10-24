@@ -73,11 +73,11 @@ QThread ThreadUtilite;
 
 public slots:
 
-void SlotSetProcessCamera(bool OnOff);
-void SlotSetProcessImitation(bool OnOff);
-void SlotSetProcessAiming(bool OnOff);
-void SlotSetProcessAiming2(bool OnOff);
-void SlotStartProcessRTSP(bool OnOff);
+void slotSetProcessCamera(bool OnOff);
+void slotSetProcessImitation(bool OnOff);
+void slotSetProcessAiming(bool OnOff);
+void slotSetProcessAiming2(bool OnOff);
+void slotStartProcessRTSP(bool OnOff);
 
 
 signals:

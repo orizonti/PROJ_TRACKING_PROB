@@ -7,7 +7,7 @@ WidgetAimingControl::WidgetAimingControl(QWidget *parent)
 {
 	ui.setupUi(this);
     
-    QObject::connect(&timerDisplayState,SIGNAL(timeout()), this, SLOT(SlotDisplayState()));
+    QObject::connect(&timerDisplayState,SIGNAL(timeout()), this, SLOT(slotDisplayState()));
     //this->setFixedHeight(250);
     this->setFixedWidth(290);
 
@@ -19,7 +19,7 @@ WidgetAimingControl::~WidgetAimingControl()
 }
     
 
-void WidgetAimingControl::SlotDisplayState()
+void WidgetAimingControl::slotDisplayState()
 {
     auto& BlockState      = Modules[0]->StateBlock;
     auto& BlockAimingType = Modules[0]->AimingState;

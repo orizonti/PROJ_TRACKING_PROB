@@ -26,7 +26,7 @@ public:
     int NumberChannel = -1;
 
 public  slots:
-    void SlotSetActiveChannel(int Number);
+    void slotSetActiveChannel(int Number);
 signals:
     void SignalChannelChanged(int);
 

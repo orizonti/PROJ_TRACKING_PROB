@@ -31,15 +31,15 @@ public:
 	bool BlockOutput1 = false;
 	bool BlockOutput2 = false;
 
-    int Offset = 0;
+    int Offset = 20000;
 	QPair<float,float> CurrentOutput;
 
-	QPair<float,float> Amplitude = QPair<float,float>(60*60,60*60);
+	QPair<float,float> Amplitude = QPair<float,float>(20000,20000);
 	//QPair<float,float> Amplitude = QPair<float,float>(3000,3000);
 
 	QPair<float,float> Freq = QPair<float,float>(1,1);
-    QPair<float,float> Noize = QPair<float,float>(0,0);
-                   double AmplitudeNoize = 3;
+  QPair<float,float> Noize = QPair<float,float>(0,0);
+                   float AmplitudeNoize = 3;
 
     bool FLAG_ENABLE_NOIZE = false;
 
@@ -47,14 +47,17 @@ public:
 
 	void setInput(const QPair<float,float>& Coord);
 	const QPair<float,float>& getOutput() { return CurrentOutput;};
+  bool isActive() { return TimerGenerateSinus.isActive(); } 
 
 	public slots:
-	void SlotSetFrequency(double Freq1, double Freq2);
-	void SlotSetAmplitude(double Ampl1, double Ampl2);
-    void SlotSetAmplitudeNoize(double Ampl);
-    void SlotEnableChannel(bool Enable , int Channel);
+	void slotSetFrequency(float Freq1) { slotSetFrequency(Freq1, Freq1); }
+	void slotSetFrequency(float Freq1, float Freq2);
+	void slotSetAmplitude(float Ample1) { slotSetAmplitude(Ample1, Ample1); }
+	void slotSetAmplitude(float Ampl1, float Ampl2);
+  void slotSetAmplitudeNoize(float Ampl);
+  void slotEnableChannel(bool Enable , int Channel);
 
-	void SlotCalculateValue();
-	void SlotStartGenerate(bool StartStop);
+	void slotCalculateValue();
+	void slotStartGenerate(bool StartStop);
 };
 

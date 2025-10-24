@@ -61,13 +61,13 @@ void WidgetScanatorControl::LinkToDevice(std::shared_ptr<ScanatorControlClass> E
                     EngineModule->SetBlockEnabled(OnOff);
 				});
 
-   QObject::connect(&timerUpdateState,SIGNAL(timeout()), this, SLOT(SlotDisplayScanatorState()));
+   QObject::connect(&timerUpdateState,SIGNAL(timeout()), this, SLOT(slotDisplayScanatorState()));
    timerUpdateState.start(100);
 }
 
 
 
-void WidgetScanatorControl::SlotDisplayScanatorState()
+void WidgetScanatorControl::slotDisplayScanatorState()
 {
   if(!ScanatorDevice) return;
 
