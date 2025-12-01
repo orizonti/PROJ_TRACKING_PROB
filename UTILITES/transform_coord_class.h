@@ -23,7 +23,7 @@ public:
 
 	double Scale = 1;
 	double Offset = 0;
-	double Saturation = 20000;
+	double Saturation = 30000;
 	TransformCoordClass& operator()(double ScaleParam) {Scale = ScaleParam; return *this;}
 	void SetParam(double ScaleParam, double OffsetParam, double Saturation)
 	{

@@ -5,7 +5,7 @@
 std::pair<int,int> AimImageImitatorClass::SizeImage{420,420}; // MAY BE CHANGED IN INIT
 std::pair<int,int> AimImageImitatorClass::SizeAimBoundry{420-40,420-40}; // MAY BE CHANGED IN INIT
 
-AimImageImitatorClass::AimImageImitatorClass(QObject* parent) : ImageSourceInterface(parent)
+AimImageImitatorClass::AimImageImitatorClass(QObject* parent) : QObject(parent)
 {
 
  //auto user = SettingsRegister::GetString("USER");
@@ -27,8 +27,8 @@ auto BLOTCH_RECT = AIM_RECT; BLOTCH_RECT.x += 30; BlotchObject.copyTo(OutputImag
 
 ImageTestObject.copyTo(OutputImage(AIM_RECT));
 
-DynamicControl.LinkToImageImitator(this);
- ManualControl.LinkToImageImitator(this);
+DynamicControl.linkToImageImitator(this);
+ ManualControl.linkToImageImitator(this);
 
 ThinningTimePeriod = QTime::currentTime();
 
@@ -61,7 +61,6 @@ void AimImageImitatorClass::GenerateAimImage()
     {
     ImageToProcess = OutputImage.clone();
     ThinningTimePeriod = QTime::currentTime();
-    emit signalNewImage();
     FLAG_FRAME_AVAILABLE = true;
     }
 
@@ -114,20 +113,20 @@ void AimImageImitatorClass::slotSetAimPos(int PosX, int PosY)
 
 QImage& AimImageImitatorClass::getImageToDisplay() { return ImageToDisplay; }
 cv::Mat& AimImageImitatorClass::getImageToProcess() { FLAG_FRAME_AVAILABLE = false; return ImageToProcess; }
-QString& AimImageImitatorClass::getInfo()  { return INFO_STRING; }
+const QString& AimImageImitatorClass::getInfo()  { return INFO_STRING; }
 
 AimImageImitatorClass::~AimImageImitatorClass()
 {
  qDebug() << TAG_NAME.c_str() << "STOP AND DEINIT CAMERA";
 }
 
-std::vector<QPair<int,int>>& AimImageImitatorClass::getPoints()  
+const std::vector<QPair<int,int>>& AimImageImitatorClass::getPoints()  
 {
   CoordsImage[0].first = AIM_RECT.x + AIM_RECT.width/2; 
   CoordsImage[0].second = AIM_RECT.y + AIM_RECT.height/2; 
   return CoordsImage;
 }
-std::vector<QRect>& AimImageImitatorClass::getRects()  
+const std::vector<QRect>& AimImageImitatorClass::getRects()  
 {
    RectsImage[0].setRect(AIM_RECT.x, AIM_RECT.y,  AIM_RECT.width,  AIM_RECT.height );
    return RectsImage;
@@ -138,9 +137,9 @@ std::vector<QRect>& AimImageImitatorClass::getRects()
 void AimControlInterface::StartMove(){ timerMoveAim.start(50); }
 void AimControlInterface::StopMove() { timerMoveAim.stop(); }
 
-void AimControlInterface::LinkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr)
+void AimControlInterface::linkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr)
 {
-connect(&timerMoveAim, SIGNAL(timeout()), this ,SLOT(SlotMoveAim()));
+connect(&timerMoveAim, SIGNAL(timeout()), this ,SLOT(SlotMoveAimPos()));
 ImageImitator = ImitatorObjectPtr;
 }
 //==================================================================================

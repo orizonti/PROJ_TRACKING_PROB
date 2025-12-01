@@ -31,8 +31,7 @@ struct ArvStreamCallbackData
 };
 
 
-
-class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlInterface
+class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface
 {
     //Q_OBJECT
     public:

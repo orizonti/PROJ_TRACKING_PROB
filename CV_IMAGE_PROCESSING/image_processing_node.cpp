@@ -19,7 +19,7 @@ std::vector<ModuleImageProcessing*> ModuleImageProcessing::Modules;
 
 std::mutex ModuleImageProcessing::MutexImageAccess;
 
-ModuleImageProcessing::ModuleImageProcessing(QObject* parent) : ImageSourceInterface(parent) 
+ModuleImageProcessing::ModuleImageProcessing(QObject* parent) : QObject(parent) 
 {
     CountModules++;
     NumberModule = CountModules;
@@ -36,21 +36,21 @@ connect(&timerProcessImage, SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
 };
 
 
-std::vector<QPair<int,int>>& ModuleImageProcessing::getPoints()  
+const std::vector<QPair<int,int>>& ModuleImageProcessing::getPoints()  
 {
    CoordsImage[0] = CoordsObject[0];
    CoordsImage[1] = CoordsObject[1];
    return CoordsImage;
 }
 
-std::vector<QRect>& ModuleImageProcessing::getRects()  
+const std::vector<QRect>& ModuleImageProcessing::getRects()  
 {
    RectsImage[0].setRect(RectsObject[0].x, RectsObject[0].y, RectsObject[0].width, RectsObject[0].height);
-   RectsImage[1].setRect(CoordsObject[0].first-20, CoordsObject[0].second-20, 40, 40);
+   RectsImage[1].setRect(CoordsObject[0].first-40, CoordsObject[0].second-40, 80, 80);
    return RectsImage;
 }
 
-QString& ModuleImageProcessing::getInfo()  { return ProcessInfo; }
+const QString& ModuleImageProcessing::getInfo()  { return ProcessInfo; }
 
 cv::Mat& ModuleImageProcessing::getImageToProcess() { return ImageProcessing; }
 
@@ -103,15 +103,27 @@ void ModuleImageProcessing::getImageToDisplay(QImage& ImageDst)
 
 
 //==================================================================================
-void ModuleImageProcessing::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)
+void ModuleImageProcessing::linkToModule(std::shared_ptr<SourceImageInterface> Source)
 {
    if(isLinked()) return; SourceImage = Source; 
 }
 
-std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<ImageSourceInterface> Source, std::shared_ptr<ModuleImageProcessing> Rec)
+void ModuleImageProcessing::linkToModule(std::shared_ptr<ModuleImageProcessing> Dst)
 {
-    //Rec->LinkToModule(Source->getImageSourceChannel()); return Rec;
-    Rec->LinkToModule(Source); return Rec;
+   this->setLink(Dst.get()); Dst->FLAG_SLAVE_MODE = true; Dst->FLAG_TRACK_MODE = true;
+}
+
+
+void operator|(std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst)
+{
+  qDebug() << Source->TAG_NAME << " [ LINK TO ] " << Dst->TAG_NAME;
+  Source->linkToModule(Dst);
+}
+
+std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<SourceImageInterface> Source, std::shared_ptr<ModuleImageProcessing> Rec)
+{
+    //Rec->linkToModule(Source->getImageSourceChannel()); return Rec;
+    Rec->linkToModule(Source->getImageSourceChannel()); return Rec;
 }
 
 
@@ -181,22 +193,23 @@ void ModuleImageProcessing::SlotResetProcessing()
 
 void ModuleImageProcessing::SlotStopProcessing()
 {
-   qDebug() << TAG_NAME.c_str() << "[ STOP PROCESSING ]" << QThread::currentThread();
+   qDebug() << TAG_NAME << "[ STOP PROCESSING ]" << QThread::currentThread();
    timerProcessImage.stop();
 }
 
 
 void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
 {
+  qDebug() << OutputFilter::Filter(20) << TAG_NAME << "[ SLAVE INPUT ]" << Coord.first << Coord.second;
   CoordsObject[1] = Coord; 
   RectsObject[0] = cv::Rect(CoordsObject[1].first  - ROI_SIZE/2, 
                             CoordsObject[1].second - ROI_SIZE/2 , ROI_SIZE, ROI_SIZE);
 };
 
-void ModuleImageProcessing::SetSlaveMode(ModuleImageProcessing* Master)
-{
-   Master->setLink(this); FLAG_SLAVE_MOVE = true; FLAG_TRACK_MODE = true;
-}
+//void ModuleImageProcessing::SetSlaveMode(ModuleImageProcessing* Master)
+//{
+//   Master->setLink(this); FLAG_SLAVE_MODE = true; FLAG_TRACK_MODE = true;
+//}
 
 //auto max_element_it = std::max_element(ContourAreas.begin(), ContourAreas.end());
 //NumberMaxContour = std::distance(ContourAreas.begin(), max_element_it);

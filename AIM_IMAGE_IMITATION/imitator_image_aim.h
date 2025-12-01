@@ -24,7 +24,7 @@ class AimControlInterface : public QObject
     QTimer timerMoveAim;
     AimImageImitatorClass* ImageImitator = 0;
 
-    void LinkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr);
+    void linkToImageImitator(AimImageImitatorClass* ImitatorObjectPtr);
     void StopMove();
     void StartMove();
 
@@ -61,7 +61,7 @@ class DynamicAimControl : public AimControlInterface
 
 };
 
-class AimImageImitatorClass : public ImageSourceInterface
+class AimImageImitatorClass : public QObject, public SourceImageInterface, public SourceImageDisplayInterface
 {
     Q_OBJECT
 public:
@@ -88,19 +88,21 @@ public:
 
 QTime ThinningTimePeriod;
 
-QImage& getImageToDisplay();
-cv::Mat& getImageToProcess();
+QImage& getImageToDisplay()  override ;
+cv::Mat& getImageToProcess() override ;
+
+void getImageToDisplay(QImage& ImageDst)  override { ImageDst = ImageToDisplay.copy();};
+void getImageToProcess(cv::Mat& ImageDst) override { ImageDst = ImageToProcess.clone();};
 
 bool FLAG_FRAME_AVAILABLE = false;
-void getImageToDisplay(QImage& ImageDst) { ImageDst = ImageToDisplay.copy();};
-//void getImageToDisplay(QImage& ImageDst) { getImageToDisplayColor(ImageDst);};
-void getImageToProcess(cv::Mat& ImageDst) { ImageDst = ImageToProcess.clone();};
+
 void getImageToDisplayColor(QImage& ImageDst);
+std::pair<int,int> getSizeImage() override { return std::make_pair(OutputImage.cols, OutputImage.rows); } 
 
 bool isFrameAvailable() override { return FLAG_FRAME_AVAILABLE;};
-std::vector<QPair<int,int>>& getPoints()override ;  
-std::vector<QRect>&          getRects() override ;  
-QString&                     getInfo()  override ;  
+const std::vector<QPair<int,int>>& getPoints()override ;  
+const std::vector<QRect>&          getRects() override ;  
+const QString&                     getInfo()  override ;  
 //==================================================
 std::vector<QPair<int,int>> CoordsImage;
 std::vector<QRect>          RectsImage;

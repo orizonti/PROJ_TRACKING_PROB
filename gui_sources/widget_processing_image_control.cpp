@@ -12,7 +12,7 @@ void WidgetProcessingImageControl::HideLabel()
     ui->label->hide();
 }
 
-void WidgetProcessingImageControl::LinkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface)
+void WidgetProcessingImageControl::linkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface)
 {
   connect(ui->spinThreshold,static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, ControlInterface](int value)
   {

@@ -2,14 +2,12 @@
 #include "interface_image_source.h"
 #include <QDebug>
 #include "debug_output_filter.h"
+#include "register_settings.h"
 
 CameraInterfaceHIK* CameraInterfaceHIK::CameraInterface;
+cv::Mat CameraInterfaceHIK::inputImage;
+QMutex CameraInterfaceHIK::mutexGetImage;
 
-std::vector<uint8_t*> CameraInterfaceHIK::CameraImageStorage::Buffers;
-std::vector<uint8_t*>::iterator CameraInterfaceHIK::CameraImageStorage::BufferToWrite;
-QImage CameraInterfaceHIK::CameraImageStorage::ImageToDisplay;
-std::pair<int,int> CameraInterfaceHIK::CameraImageStorage::SizeImage;
-long int CameraInterfaceHIK::CameraImageStorage::FrameNumber;
 
 bool CameraInterfaceHIK::PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
 {
@@ -29,19 +27,22 @@ bool CameraInterfaceHIK::PrintDeviceInfo(MV_CC_DEVICE_INFO* pstMVDevInfo)
 
 void __stdcall CameraInterfaceHIK::ImageCallBackEx(unsigned char * pData, MV_FRAME_OUT_INFO_EX* FrameInfo, void* pUser)
 {
-  CameraInterfaceHIK::CameraImageStorage::PutNewFrameToStorage(pData, FrameInfo->nFrameLenEx,FrameInfo->nExtendWidth,FrameInfo->nExtendHeight);
+  inputImage = cv::Mat(FrameInfo->nExtendWidth,FrameInfo->nExtendHeight,CV_8UC1, pData);
+  CameraTypeStorage::putNewFrameToStorage(inputImage);
+  mutexGetImage.lock();
+  CameraTypeStorage::ImageToDisplay = QImage(pData,FrameInfo->nExtendWidth,FrameInfo->nExtendHeight,QImage::Format_Grayscale8);
+  mutexGetImage.unlock();
                            CameraInterface->FrameMeasureInput++;
-  emit CameraInterfaceHIK::CameraInterface->signalNewImage();
 }
 
 std::pair<float,float> CameraInterfaceHIK::getFramePeriod() { return std::pair<float,float>(FrameMeasureInput.FramePeriod, 
                                                                                     FrameMeasureProcess.FramePeriod);};
 
 
-std::shared_ptr<ImageSourceInterface> CameraInterfaceHIK::getImageSourceChannel()
+std::shared_ptr<SourceImageInterface> CameraInterfaceHIK::getImageSourceChannel()
 {
   auto ImageSourceChannel = ImageChanneledStore.back();
-                            ImageChanneledStore.push_back(std::make_shared<CameraImageStorage>(this));
+                            ImageChanneledStore.push_back(std::make_shared<CameraTypeStorage>(this,SizeImage));
       CurrentStoreChannel = ImageChanneledStore.begin();
 
 return ImageSourceChannel;
@@ -112,12 +113,12 @@ int nRet = MV_OK;
 MV_CC_Finalize();
 }
 
-CameraInterfaceHIK::CameraInterfaceHIK()
+CameraInterfaceHIK::CameraInterfaceHIK(std::string name)
 {
 qDebug()<< TAG_NAME.c_str()  << "[ HIK CAMERA INTERFACE CREATE FORMAT 720 540 ]";
 CameraInterface = this;
 CameraInit();
-ImageChanneledStore.push_back(std::make_shared<CameraImageStorage>(this));
+ImageChanneledStore.push_back(std::make_shared<CameraTypeStorage>(this,SizeImage));
 CurrentStoreChannel = ImageChanneledStore.begin();
 
 }
@@ -221,7 +222,7 @@ if (0 != bGetBoolValue) return true; else return false;
 }
 
 //===================================================
-void CameraInterfaceHIK::CameragetImageSize()
+void CameraInterfaceHIK::CameragetSizeImage()
 {
 
 MVCC_INTVALUE height = {0}; MVCC_INTVALUE width = {0};
@@ -245,61 +246,6 @@ else                   qDebug()<< TAG_NAME.c_str()  << "[ GET EXPOSURE FAILED ]"
 }
 //==========================================================================================================
 
-void CameraInterfaceHIK::CameraImageStorage::InitStorage()
-{
-if(Buffers.empty())
-{
-
-for (int i = 0; i < 20; i++) Buffers.push_back(new uint8_t[720*540]); //USER STORAGE BUFFERS TO PROCESSS
-             BufferToWrite = Buffers.begin();
-}
-             BufferToRead = Buffers.begin();
-}
-
-void CameraInterfaceHIK::CameraImageStorage::DeinitStorage() { if(Buffers.size()) for(auto Buffer: Buffers) delete Buffer; }
-
-
-void CameraInterfaceHIK::CameraImageStorage::PutNewFrameToStorage(uint8_t* Data, int Size, int Width, int Height)
-{
-  std::copy_n(Data,Size,*BufferToWrite);
-  BufferToWrite++; if(BufferToWrite == Buffers.end()) BufferToWrite = Buffers.begin();
-
-  SizeImage.first = Width; SizeImage.second = Height;
-  ImageToDisplay = QImage(Data,Width,Height,QImage::Format_Grayscale8);
-  FrameNumber++;
-}
-
-void CameraInterfaceHIK::CameraImageStorage::skipFrames()
-{
-	qDebug()<< TAG_NAME.c_str() << "[ SKIP FRAMES ]" << BufferToWrite - BufferToRead;
-    FrameNumber = 0; FrameProcessed = 0;
-    BufferToRead = BufferToWrite;
-}
-
-QImage& CameraInterfaceHIK::CameraImageStorage::getImageToDisplay() { return ImageToDisplay; }
-void CameraInterfaceHIK::CameraImageStorage::getImageToDisplay(QImage& ImageDst){ ImageDst = ImageToDisplay.copy();};
-
-cv::Mat& CameraInterfaceHIK::CameraImageStorage::getImageToProcess()                  
-{
-   switchToNextFrame(); return ImageToProcess; 
-}
-
-void   CameraInterfaceHIK::CameraImageStorage::getImageToProcess(cv::Mat& ImageDst) 
-{
-    switchToNextFrame(); ImageDst = ImageToProcess.clone(); 
-    //FrameProcessed++; qDebug() << TAG_NAME.c_str() << "[ FRAME PASSED ]" << FrameNumber << "[ PROCESSED ]" << FrameProcessed;
-};
-
-bool CameraInterfaceHIK::CameraImageStorage::switchToNextFrame() 
-{
-   if(BufferToRead == BufferToWrite) return false;
-   
-   ImageToProcess = cv::Mat(SizeImage.second,SizeImage.first,CV_8UC1,*BufferToRead); 
-   BufferToRead++; if(BufferToRead == Buffers.end()) BufferToRead = Buffers.begin(); 
-   
-   return true;
-}
-
 void CameraInterfaceHIK::SetZoom(int Number)
 {
                 int size = 120; 
@@ -314,5 +260,11 @@ void CameraInterfaceHIK::SetZoom(int Number)
     int RIGHT  = X_ROI + size;
     int BOTTOM = Y_ROI + size;
 
-    CameraInterface->SetCameraRegion(X_ROI,Y_ROI,size,size);
+    SettingsRegister::ResetSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(X_ROI, Y_ROI));
+    SettingsRegister::ResetSettings("CAMERA_IMAGE_SIZE", size);
+    SettingsRegister::ResetSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(size,size));
+    SettingsRegister::PrintSetting("CAMERA_IMAGE_SIZE");
+    SettingsRegister::PrintSetting("CAMERA_IMAGE_POS");
+
+    this->SetCameraRegion(X_ROI,Y_ROI,size,size);
 }

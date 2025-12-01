@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <set>
 #include "engine_type_register.h"
+#include "message_command_structures.h"
 
 
 template<typename T, typename H>
@@ -31,7 +32,6 @@ class MessageGenericExt
   static int GetSizeStatic() {return sizeof(T) + sizeof(H);};
 
          MessageGenericExt<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageGenericExt<void*,H>*>(this);  }
-
 };
 
 template<typename T,typename H> 
@@ -70,6 +70,33 @@ template<typename M, typename H> void operator<<(QDataStream& stream, MessageGen
   stream << Message.HEADER; 
   stream.writeRawData(reinterpret_cast<char*>(&Message.DATA), sizeof(Message.DATA));
 }
+
+template<typename H>
+class MessageGenericExt<CommandSetPosJson,H>
+{
+  public:
+    MessageGenericExt(){};
+	public:
+    H HEADER;
+    CommandSetPosJson DATA; 
+
+  public:
+
+  friend void operator>>(QDataStream& stream, MessageGenericExt<CommandSetPosJson,H>& Message) { stream << Message.DATA.toByteArray(); }
+  friend void operator<<(QDataStream& stream, MessageGenericExt<CommandSetPosJson,H>& Message) 
+  { 
+    stream.writeBytes(Message.DATA.toByteArray().data(), Message.DATA.toByteArray().size());
+  };
+  //template<typename M, typename P> friend void operator<<(QDataStream& stream, MessageGenericExt<M,P>& Message);
+  QByteArray toByteArray(){ return DATA.toByteArray(); };
+     QString toString();
+	      bool isMessasge() { return true; };
+         int GetSize()    { return this->toByteArray().size(); };
+         int GetSizeFromHeader(){ return this->toByteArray().size();};
+  static int GetSizeStatic() {return 0;};
+
+         MessageGenericExt<void*,H>& toGenericMessage() { return *reinterpret_cast<MessageGenericExt<void*,H>*>(this);  }
+};
 
 
 

@@ -18,7 +18,7 @@
 #include "widget_camera_control.h"
 #include "widget_scanator_control.h"
 #include "WindowLaserControl.h"
-#include "AIM_IMAGE_IMITATION/widget_sinus_source.h"
+//#include "AIM_IMAGE_IMITATION/widget_sinus_source.h"
 #include "widget_process_controller.h"
 #include "widget_aiming_control.h"
 #include "widget_container_group.h"
@@ -34,6 +34,7 @@
 //#include "GRAPHICS_WINDOW/widget_graphics_plot.h"
 #include "AIM_IMAGE_IMITATION/sinus_generator_class.h"
 #include <QWidget>
+#include "arduino_json.h"
 
 //#define CAMERA_WORK 
 #define IMITATOR_WORK 
@@ -68,6 +69,7 @@ void printRegisteredTypes();
 void OpenCL_Init();
 
 
+
 int main(int argc, char* argv[])
 {
 
@@ -76,14 +78,13 @@ int main(int argc, char* argv[])
   qRegisterMetaType<const QImage&>();
   //OpenCL_Init();
   //
-  
 
   #ifdef PROJECT_TEST
-  WidgetGraphisPlot WindowGraphics;
-                 WindowGraphics.show();
-  SinusGeneratorClass SinusGenerator;
-                      SinusGenerator.setLink(WindowGraphics.Graph1);
-                      SinusGenerator.slotStartGenerate(true);
+//  WidgetGraphisPlot WindowGraphics;
+//                 WindowGraphics.show();
+//  SinusGeneratorClass SinusGenerator;
+//                      SinusGenerator.setLink(WindowGraphics.Graph1);
+//                      SinusGenerator.slotStartGenerate(true);
   #endif
 
 
@@ -102,18 +103,27 @@ int main(int argc, char* argv[])
                            ProcessController->setParent(&WindowTableGroup);
                            ProcessController->slotSetProcessAiming(true);
 
-  ProcessControllerClass::DeviceCamera->SetZoom(1);
+  //ProcessControllerClass::DeviceCamera->SetZoom(3);
   ProcessControllerClass::DeviceCamera->StartCameraStream(true);
 
-  WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
-  //WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::DeviceCamera);    
+  WindowImageProcessingControl->linkToModule(ProcessControllerClass::ModuleImageProc2);
+
+  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc);    
+  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
+
+  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::DeviceCamera);    
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
                                                        AimingPort,SLOT  (slotSetCoord    (QPair<float,float>))) ;
 
-  ProcessController->slotStartProcessRTSP(true);
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+                                                       ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
+
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+                                                       ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
+
+  //ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();
   #endif
 
@@ -134,8 +144,8 @@ int main(int argc, char* argv[])
                            ProcessControllerClass::ModuleImitatorImage->slotStartWork();
                            ProcessController->slotSetProcessImitation(true);
 
-   WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
-   WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
+   WindowImageProcessingControl->linkToModule(ProcessControllerClass::ModuleImageProc);
+   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc);    
 
   WindowTableGroup.show();
   #endif
@@ -145,7 +155,7 @@ int main(int argc, char* argv[])
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
 
   WidgetProcessController  WindowProcessController;
-                           WindowProcessController.LinkTo(ProcessController);
+                           WindowProcessController.linkTo(ProcessController);
 
 
   WidgetProcessingImageControl    WindowImageProcessingControl; 
@@ -163,19 +173,19 @@ int main(int argc, char* argv[])
   WidgetProcessingImage WindowCameraDisplay("КАМЕРА");
   WidgetProcessingImage WindowImageProcessingDisplay("ОБРАБОТКА");
 
-           WindowCameraControl.LinkToDevice(ProcessControllerClass::DeviceCamera);
-           WindowCameraDisplay.LinkToModule(ProcessControllerClass::DeviceCamera);
+           WindowCameraControl.linkToDevice(ProcessControllerClass::DeviceCamera);
+           WindowCameraDisplay.linkToModule(ProcessControllerClass::DeviceCamera);
 
 
-  WindowImageProcessingControl.LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingControl2.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+  WindowImageProcessingControl.linkToModule(ProcessControllerClass::ModuleImageProc);
+  WindowImageProcessingControl2.linkToModule(ProcessControllerClass::ModuleImageProc2);
 
-  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc);
+  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc2);
 
-      WindowScanatorInterface.LinkToDevice(ProcessControllerClass::DeviceScanator);
-          WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAiming1);
-          WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAiming2);
+      WindowScanatorInterface.linkToDevice(ProcessControllerClass::DeviceScanator);
+          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming1);
+          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming2);
 
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 

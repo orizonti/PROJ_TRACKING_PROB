@@ -119,8 +119,10 @@ const QPair<float,float>& AimingClass::GetAimingError()
 
 void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       
 { 
-  qDebug() << "COORD AIM: " << Coord;
-  CoordAim = Coord; //this->SetBlockEnabled(true);
+  auto& SIZE = SettingsRegister::CAMERA_IMAGE_SIZE;
+  CoordAim = QPair<float,float>(SIZE.first*Coord.first, SIZE.second*Coord.second); 
+
+  qDebug() << "COORD AIM: " << CoordAim;
 }
 void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection    = Coord; }
 void AimingClass::SetOutputCorrection(const QPair<float,float>& Coord)     { CoordOutputCorrection = Coord; };
@@ -130,11 +132,13 @@ void AimingClass::MoveAimingCorrection(const QPair<float,float>& Velocity) { Vel
 
 void AimingClass::PrintpassCoords(QPair<float,float> Coord)
 {
-    qDebug() << FilterOutput2 << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second 
-                              << "AIM" << CoordAim.first << CoordAim.second 
-                              << "ERROR" << CoordAimingError.first << CoordAimingError.second
-                              << "OUTPUT" << VectorOutput.first << VectorOutput.second
-                              << "TYPE: " << (int)TypeEnumAiming::AimingLoop;
+//    qDebug() << OutputFilter::Filter(100) << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second 
+//                              << "AIM" << CoordAim.first << CoordAim.second 
+//                              << "ERROR" << CoordAimingError.first << CoordAimingError.second
+//                              << "OUTPUT" << VectorOutput.first << VectorOutput.second
+//                              << "TYPE: " << (int)TypeEnumAiming::AimingLoop;
+
+    qDebug() << OutputFilter::Filter(100) << TAG_NAME.c_str() << "OUTPUT" << VectorOutput.first << VectorOutput.second;
 }
 
 void AimingClass::BlockOutput(bool channelx, bool channely)
@@ -147,8 +151,10 @@ void AimingClass::ProcessLoop1()
 {
   //MUST WORK ALWAYS, SIMPLE INTEGRATOR
    CoordSpot >> Substract;
-    CoordAim >> Substract >> CoordAimingError >> Rotation >> IntegratorInput>> Gain(GainList[3]) >> VectorOutput; //BlockOutput(true,false);
-    //PrintpassCoords(CoordSpot);
+    CoordAim >> Substract >> CoordAimingError >> IntegratorInput>> Gain(GainList[3]) >> VectorOutput; 
+
+    //PrintpassCoords(CoordSpot); 
+    BlockOutput(false,false);
 }
 
 void AimingClass::ProcessLoop2()
@@ -210,8 +216,8 @@ void AimingClass::setInput(const QPair<float,float>& Coord)
   if(AimingState == TypeEnumAiming::AimingLoop)
   {
 
-      //ProcessLoop1();
-      ProcessLoop2();
+      ProcessLoop1();
+      //ProcessLoop2();
       //ProcessLoop3();
       //ProcessLoop4();
       //ProcessLoopForCalibration();

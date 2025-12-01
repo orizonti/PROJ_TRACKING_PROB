@@ -16,7 +16,7 @@ public:
 	WidgetSinusSource(QWidget *parent = 0);
 	~WidgetSinusSource();
 
-	void LinkToModule(std::shared_ptr<SinusGeneratorClass> SinusGenerator);
+	void linkToModule(std::shared_ptr<SinusGeneratorClass> SinusGenerator);
 
 void StartGenerateSignal(bool StartStop) { emit SignalStart(StartStop);}
 signals:

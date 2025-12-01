@@ -37,7 +37,7 @@ void WidgetAimingControl::slotDisplayState()
 }
 
 
-void WidgetAimingControl::LinkToModule(std::shared_ptr<AimingClass> Module)
+void WidgetAimingControl::linkToModule(std::shared_ptr<AimingClass> Module)
 {
     Modules.push_back(Module);
     qDebug() << "LINK CONTROL TO AIMING MODULE: " << Module->NumberChannel;

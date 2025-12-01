@@ -23,7 +23,7 @@ public:
 
     std::shared_ptr<AimImageImitatorClass> ImitationModule;
 
-void LinkToModule(std::shared_ptr<AimImageImitatorClass> Imitator);
+void linkToModule(std::shared_ptr<AimImageImitatorClass> Imitator);
 
 
 public  slots:

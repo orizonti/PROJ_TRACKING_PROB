@@ -24,6 +24,7 @@
 ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcessing(parent)
 {
   qRegisterMetaType<const cv::Mat&>();
+  ModuleImageProcessing::TAG_NAME = "[ TRACKER_CENTROID ]";
 
     //==================================================================
     cv::Mat kernel1 = (cv::Mat_<double>(3,3) << 0, 0, 0, 
@@ -85,11 +86,13 @@ ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcess
       for(auto& Node: NodesList) Node(Image);
       CalcCentroid(Image); 
     };
+
+    SetHighFrequencyProcessing();
 }
 
 ImageTrackerCentroid::~ImageTrackerCentroid()
 {
- qDebug() << TAG_NAME.c_str() << "[ DELETE ]";
+ qDebug() << TAG_NAME << "[ DELETE ]";
 }
 
 bool ImageTrackerCentroid::CheckCentroid() 
@@ -184,10 +187,10 @@ void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
 
   //TrackingProcess2(ImageProcessingROI); 
 
-  if(FLAG_SLAVE_MOVE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
+  //if(FLAG_SLAVE_MODE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
 
   CoordsObject[0].first  += ROI.x; 
-  CoordsObject[0].second += ROI.y; if(FLAG_SLAVE_MOVE) return;
+  CoordsObject[0].second += ROI.y; if(FLAG_SLAVE_MODE) return;
   
   ROI = cv::Rect(CoordsObject[0].first  - ROI_SIZE/2, 
                  CoordsObject[0].second - ROI_SIZE/2 ,ROI_SIZE,ROI_SIZE);
@@ -246,7 +249,7 @@ void ImageTrackerCentroid::SlotProcessImage()
   ImageProcessing = ImageInput;
 
                                                                     FrameMeasureProcess++; 
-  if(FLAG_SLAVE_MOVE || FLAG_TRACK_MODE) 
+  if(FLAG_SLAVE_MODE || FLAG_TRACK_MODE) 
   TrackObjectCentroid(ImageProcessing, RectsObject[0]);
   else                  
   FindObjectCentroid(ImageProcessing);  
@@ -255,8 +258,6 @@ void ImageTrackerCentroid::SlotProcessImage()
   //                                     << CoordsObject[0].second << FrameMeasureProcess.printPeriod() << info;
 
   MutexImageAccess.unlock();
-
-  emit ImageSourceInterface::signalNewImage();
 
   if(FLAG_OBJECT_HOLD ) passCoord(); 
 
@@ -404,8 +405,8 @@ void ImageTrackerCentroidGPU::TrackObjectCentroidGPU(cv::Mat& Image, cv::Rect& R
     CoordsObject[0].first  += ROI.x; 
     CoordsObject[0].second += ROI.y;
 
-  if(FLAG_SLAVE_MOVE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
-  if(FLAG_SLAVE_MOVE) return;
+  if(FLAG_SLAVE_MODE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
+  if(FLAG_SLAVE_MODE) return;
   
   ROI = cv::Rect(CoordsObject[0].first  - ROI_SIZE/2, 
                  CoordsObject[0].second - ROI_SIZE/2 ,ROI_SIZE,ROI_SIZE);
@@ -438,7 +439,7 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
   ImageProcessing = ImageInput;
 
                                            FrameMeasureProcess++; 
-  if(FLAG_SLAVE_MOVE || FLAG_TRACK_MODE) 
+  if(FLAG_SLAVE_MODE || FLAG_TRACK_MODE) 
   TrackObjectCentroidGPU(ImageProcessing, RectsObject[0]);
   else                  
   FindObjectCentroidGPU(ImageProcessing);  
@@ -446,15 +447,13 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
   qDebug() << OutputFilter::Filter(30) << FrameMeasureProcess.printPeriod() << info;
 
 
-  emit ImageSourceInterface::signalNewImage();
-
   if(FLAG_OBJECT_HOLD ) passCoord(); 
 
 }
 
 ImageTrackerCentroidGPU::~ImageTrackerCentroidGPU()
 {
- qDebug() << TAG_NAME.c_str() << "[ DELETE ]" << info;
+ qDebug() << TAG_NAME << "[ DELETE ]" << info;
 }
 
 //==============================================================================================

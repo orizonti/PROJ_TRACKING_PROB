@@ -19,7 +19,7 @@ class WidgetCameraControl : public WidgetAdjustable
     Q_OBJECT
 public:
     explicit WidgetCameraControl(QWidget* parent = 0);
-    void LinkToDevice(std::shared_ptr<CameraControlInterface> CameraInterface);
+    void linkToDevice(std::shared_ptr<CameraControlInterface> CameraInterface);
 
 private:
 Ui::WidgetCameraControl *ui;

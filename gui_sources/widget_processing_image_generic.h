@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include "labelimage.h"
 #include "debug_output_filter.h"
+#include "interface_image_source.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WidgetProcessingImage; }
@@ -49,7 +50,7 @@ public:
     WidgetProcessingImage(QString ModuleName = "ДИСПЛЕЙ", QWidget* parent = 0);
     std::string TAG_NAME{"[ IMG_CTRL ]"};
 
-void LinkToModule(std::shared_ptr<ImageSourceInterface> ImageSource);
+void linkToModule(std::shared_ptr<SourceImageDisplayInterface> ImageSource);
 
 int Counter = 0;
 int ImageCounter = 0;
@@ -66,8 +67,8 @@ ThinningCounter Thinning;
         QImage  DisplayImage;
 QVector<QImage> DisplayImagesMini;
 
-std::shared_ptr<ImageSourceInterface> ImageSourceActive;
-std::vector<std::shared_ptr<ImageSourceInterface>> ImageSources;
+std::shared_ptr<SourceImageDisplayInterface> ImageSourceActive;
+std::vector<std::shared_ptr<SourceImageDisplayInterface>> ImageSources;
 
 QPolygonF Trajectory;
 
@@ -75,11 +76,11 @@ void SetName(QString name);
 void CopyImageToDisplayImage(const QImage& Image);
 bool FLAG_PAINT_TRAJECTORY = false;
 
-QPen pen1{QBrush(Qt::green) ,1}; 
-QPen pen2{QBrush(Qt::red)   ,1, Qt::DashLine}; 
-QPen pen3{QBrush(Qt::yellow),1}; 
-QPen pen4{QBrush(Qt::black) ,1}; 
-QPen pen5{QBrush(Qt::white) ,1}; 
+QPen pen1{QBrush(Qt::green) ,2}; 
+QPen pen2{QBrush(Qt::red)   ,2, Qt::DashLine}; 
+QPen pen3{QBrush(Qt::yellow),2}; 
+QPen pen4{QBrush(Qt::black) ,2}; 
+QPen pen5{QBrush(Qt::white) ,2}; 
 std::vector<QPen> pens{pen1, pen2, pen4, pen4, pen4, pen4};
 
 QString strFreq; 

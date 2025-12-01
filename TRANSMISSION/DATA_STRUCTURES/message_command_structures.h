@@ -54,19 +54,6 @@ using MessageDeviceLaserPower   = MessageDevice<1>;
 using MessageDeviceLaserPointer = MessageDevice<2>;
 using MessageDeviceFocusator    = MessageDevice<3>;
 
-template<int N_CHAN>
-struct CommandSetPos
-{
-   public:
-   uint16_t Param1 = 0;
-   uint16_t Param2 = 0;
-   void clearStruct() { std::memset(this,0,sizeof(CommandSetPos)); }
-   template<typename T>
-   void operator=(const QPair<T,T>& Pos) { Param1 = Pos.first; Param2 = Pos.second; };
-   QPair<int,int> toPair() { return QPair<int,int>(Param1,Param2); }
-};
-using CommandSetPosRotary   = CommandSetPos<0>;
-using CommandSetPosScanator = CommandSetPos<1>;
 
 template<int N_CHAN>
 struct CommandSetSpeed
@@ -139,4 +126,69 @@ struct CommandCalibration
 #define LASER_MODULE_BEAM  1
 #define LASER_MODULE_PILOT 2
 #define LASER_MODULE_POWER 3
+
+#include "arduino_json.h"
+class CommandSetPosJson
+{
+  public:
+  JsonDocument command;
+  JsonDocument slave1; 
+  JsonDocument slave2; 
+  float Param1 = 0;
+  float Param2 = 0;
+  std::string json_doc;
+  QByteArray array;
+
+  template<typename T> void operator=(const QPair<T,T>& Pos) 
+  { 
+    Param1 = Pos.first; Param2 = Pos.second; 
+    slave1["target"] = Param1;
+    slave2["target"] = Param2;
+
+    command["slaves"][0] = slave1;
+    command["slaves"][1] = slave2;
+
+    int size = serializeJson(command,json_doc); 
+                    array.setRawData(json_doc.c_str(), size); 
+
+    qDebug() << "ROTARY SET COMMAND" << json_doc.c_str(); 
+  };
+
+  CommandSetPosJson()
+  {
+   command["id"] = 123;
+   command["dtg"] = 1111;
+   
+   slave1["name"] = "joint1";
+   slave1["mode"] = "position";
+   slave1["class"] = "TDrive";
+   slave1["target"] = Param1;
+
+   slave2["name"] = "joint2";
+   slave2["mode"] = "position";
+   slave2["class"] = "TDrive";
+   slave2["target"] = Param2;
+
+   command["slaves"][0] = slave1;
+   command["slaves"][1] = slave2;
+  }
+  QByteArray toByteArray() { return array;};
+
+};
+
+template<int N_CHAN>
+struct CommandSetPos
+{
+   public:
+   int16_t Param1 = 0;
+   int16_t Param2 = 0;
+   void clearStruct() { std::memset(this,0,sizeof(CommandSetPos)); }
+   template<typename T>
+   void operator=(const QPair<T,T>& Pos) { Param1 = Pos.first; Param2 = Pos.second; };
+   QPair<int,int> toPair() { return QPair<int,int>(Param1,Param2); }
+};
+
+
+using CommandSetPosRotary   = CommandSetPos<0>;
+using CommandSetPosScanator = CommandSetPos<1>;
 

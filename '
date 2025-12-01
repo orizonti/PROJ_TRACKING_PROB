@@ -172,9 +172,6 @@ void WidgetProcessingImage::slotSetActiveChannel(int Channel)
     NumberActiveChannel = Channel;
     reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->slotSetActiveChannel(Channel);
 
-    qDebug() << "ACTIVE CHANNEL : " << Channel;
-
-    ImageSourceActive = ImageSources[Channel];
 }
 
 //=============================================================

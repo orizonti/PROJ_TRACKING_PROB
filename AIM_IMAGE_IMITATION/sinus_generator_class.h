@@ -18,7 +18,7 @@ public:
 	void DisplayControlWindow();
 	void DisplayControlWindow(QGraphicsScene* Scene);
 	PassCoordClass<float>* LinkedReceiver = 0;
-	void LinkToDevice(PassCoordClass<float>& Receiver) { LinkedReceiver = &Receiver;}
+	void linkToDevice(PassCoordClass<float>& Receiver) { LinkedReceiver = &Receiver;}
 	void SetTimerPeriod(int Period) { TimerPeriod = Period;};
 	void MoveGeneratorToThread(QThread* Thread);
 

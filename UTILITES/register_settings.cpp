@@ -8,6 +8,7 @@ static char* TAG_NAME{"[ SETTINGS ]"};
 std::map<QString,QString>                SettingsRegister::settings;
 std::map<QString,float>                  SettingsRegister::settings_values;
 std::map<QString,std::pair<float,float>> SettingsRegister::settings_pairs;
+std::pair<float,float> SettingsRegister::CAMERA_IMAGE_SIZE{160,160};
 
 bool SettingsRegister::FLAG_SETTINGS_LOADED = false;
 
@@ -83,11 +84,17 @@ bool SettingsRegister::TryLoadSettings(QString file, QString GROUP)
   return true;
 }
 
-void SettingsRegister::AppendSettings(QString key, QString setting)                { settings.emplace(key,setting); }
-void SettingsRegister::AppendSettings(QString key, float setting)                  { settings_values.emplace(key,setting); }
-void SettingsRegister::AppendSettings(QString key, std::pair<float,float> setting) { settings_pairs.emplace(key,setting); }
+void SettingsRegister::SetStaticSettings()
+{
+  if(settings_pairs.contains("CAMERA_IMAGE_SIZE")) SettingsRegister::CAMERA_IMAGE_SIZE = settings_pairs["CAMERA_IMAGE_SIZE"];
+}
 
-void SettingsRegister::ResetSettings(QString key, QString setting)                { settings[key] = setting; }
-void SettingsRegister::ResetSettings(QString key, float setting)                  { settings_values[key] = setting; }
-void SettingsRegister::ResetSettings(QString key, std::pair<float,float> setting) { settings_pairs[key] = setting; }
+
+void SettingsRegister::AppendSettings(QString key, QString setting)                { settings.emplace(key,setting);        SetStaticSettings();}
+void SettingsRegister::AppendSettings(QString key, float setting)                  { settings_values.emplace(key,setting); SetStaticSettings();}
+void SettingsRegister::AppendSettings(QString key, std::pair<float,float> setting) { settings_pairs.emplace(key,setting);  SetStaticSettings();}
+
+void SettingsRegister::ResetSettings(QString key, QString setting)                { settings[key] = setting; SetStaticSettings();}
+void SettingsRegister::ResetSettings(QString key, float setting)                  { settings_values[key] = setting; SetStaticSettings();}
+void SettingsRegister::ResetSettings(QString key, std::pair<float,float> setting) { settings_pairs[key] = setting; SetStaticSettings();}
 

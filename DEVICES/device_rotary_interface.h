@@ -68,15 +68,16 @@ public:
 
 	~DeviceRotaryControl() { qDebug() << TAG_NAME << "DELETE"; }
 
-	QPair<int, int> LimitDown{0,0};
-	QPair<int, int> LimitUp  {50000, 50000};
+	QPair<int, int> LimitDown{-30000,-30000};
+	QPair<int, int> LimitUp  { 30000, 30000};
 	QPair<int, int> Range{LimitUp - LimitDown};
 	QPair<int, int> RangeOffset {0,0};
 
-	QPair<int, int> PositionNull {0,0};
-	QPair<int, int> Position{0,0};
-	QPair<int, int> PositionTarget{0,0};
-	QPair<int, int> Distance{0,0};
+	QPair<int, int> PositionNull   {0,0};
+	QPair<int, int> Position       {0,0};
+	QPair<int, int> PositionTarget {0,0};
+	QPair<int, int> PositionDevice {0,0};
+	QPair<int, int> Distance       {0,0};
 	QPair<int, int> PositionRotated{0,0};
 	QPair<int, int> Velocity {0,0};
 
@@ -159,8 +160,9 @@ void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPa
   if(RangeOffset.first  > Range.first ) PositionTarget.first  = Position.first; 
   if(RangeOffset.second > Range.second) PositionTarget.second = Position.second;
 
-                                   Position = PositionTarget;
-  DEVICE_BASE_TYPE::Command.DATA = Position;
+                                                     Position = PositionTarget;
+                                   PositionDevice  = Position + PositionNull;
+  DEVICE_BASE_TYPE::Command.DATA = PositionDevice;
   DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
                                                               sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 
@@ -175,12 +177,12 @@ void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPai
   if(RangeOffset.first >Range.first ) PositionTarget.first =Pos.first <0 ?LimitDown.first  :LimitUp.first; 
   if(RangeOffset.second>Range.second) PositionTarget.second=Pos.second<0 ?LimitDown.second :LimitUp.second;
 
+                                                     Position = PositionTarget;
+                                   PositionDevice  = Position + PositionNull;
+  DEVICE_BASE_TYPE::Command.DATA = PositionDevice;
 
-                                   Position = PositionTarget;
-  DEVICE_BASE_TYPE::Command.DATA = Position;
-
-   //qDebug() << OutputFilter::Filter(4) << "[ GET COMMAND SET POS SCANATOR ]" << Position.first 
-   //                                                                            << Position.second;
+   qDebug() << OutputFilter::Filter(200) << "[ GET COMMAND SET POS SCANATOR ]" << PositionDevice.first 
+                                                                               << PositionDevice.second << "LIMIT: " << LimitUp.first;
   DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
                                                               sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 }
@@ -192,10 +194,10 @@ void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(co
                          PositionTarget = PositionAbs;
   RangeOffset = abs_pair(PositionTarget - LimitDown) + abs_pair(LimitUp - PositionTarget);
      
-  if(RangeOffset.first >Range.first ) PositionTarget.first = PositionAbs.first <0 ?LimitDown.first  :LimitUp.first; 
-  if(RangeOffset.second>Range.second) PositionTarget.second= PositionAbs.second<0 ?LimitDown.second :LimitUp.second;
+  if(RangeOffset.first >Range.first ) PositionTarget.first = PositionAbs.first  < 0 ?LimitDown.first  :LimitUp.first; 
+  if(RangeOffset.second>Range.second) PositionTarget.second= PositionAbs.second < 0 ?LimitDown.second :LimitUp.second;
 
-  DEVICE_BASE_TYPE::Command.DATA = PositionTarget;
+  DEVICE_BASE_TYPE::Command.DATA = PositionTarget + PositionNull;
   DEVICE_BASE_TYPE::ConnectionDevice->slotSendMessage((const char*)(&DEVICE_BASE_TYPE::Command.DATA),
                                                               sizeof(DEVICE_BASE_TYPE::Command.DATA),2); 
 

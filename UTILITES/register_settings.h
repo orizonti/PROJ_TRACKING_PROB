@@ -11,6 +11,7 @@ class SettingsRegister
     static std::map<QString,float>                settings_values;
     static std::map<QString,std::pair<float,float>> settings_pairs;
     static bool FLAG_SETTINGS_LOADED;
+    static std::pair<float,float> CAMERA_IMAGE_SIZE;
 
     static void    LoadSettings();
     static bool TryLoadSettings(QString file, QString GROUP);
@@ -28,6 +29,13 @@ class SettingsRegister
       for(auto& record: settings) qDebug() << "[ SETTINGS ] " << "LOAD: " << std::get<0>(record) << std::get<1>(record); 
       for(auto& record: settings_values) qDebug() << "[ SETTINGS ] " << "LOAD: " << std::get<0>(record) << std::get<1>(record); 
       for(auto& record: settings_pairs) qDebug() << "[ SETTINGS ] " << "LOAD: " << std::get<0>(record) << std::get<1>(record); 
+    }
+
+    static void PrintSetting(QString key) 
+    {
+      if(settings.contains(key))        { qDebug() << "[ SETTINGS ] " << key << settings[key];        return; }
+      if(settings_values.contains(key)) { qDebug() << "[ SETTINGS ] " << key << settings_values[key]; return; }
+      if(settings_pairs.contains(key))  { qDebug() << "[ SETTINGS ] " << key << settings_pairs[key];  return; }
     }
 
     static QString GetString(const QString& setting_name)
@@ -60,6 +68,8 @@ class SettingsRegister
 
         return settings_pairs[setting_name];
     };
+    private:
+    static void SetStaticSettings();
 };
 
 

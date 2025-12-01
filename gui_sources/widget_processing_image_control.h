@@ -20,7 +20,7 @@ class WidgetProcessingImageControl : public WidgetAdjustable
 public:
     explicit WidgetProcessingImageControl(QWidget* parent = 0);
 
-    void LinkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface);
+    void linkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface);
     void HideLabel();
 signals:
 void SignalResetProcessing();

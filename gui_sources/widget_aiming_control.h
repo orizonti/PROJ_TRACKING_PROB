@@ -15,7 +15,7 @@ public:
 	WidgetAimingControl(QWidget *parent = 0);
 	~WidgetAimingControl();
 
-	void LinkToModule(std::shared_ptr<AimingClass> Module);
+	void linkToModule(std::shared_ptr<AimingClass> Module);
 
 	std::vector<std::shared_ptr<AimingClass>> Modules;
 	QTimer timerDisplayState;

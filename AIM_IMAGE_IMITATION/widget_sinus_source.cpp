@@ -14,7 +14,7 @@ WidgetSinusSource::~WidgetSinusSource()
 
 
 
-void WidgetSinusSource::LinkToModule(std::shared_ptr<SinusGeneratorClass> SinusGenerator)
+void WidgetSinusSource::linkToModule(std::shared_ptr<SinusGeneratorClass> SinusGenerator)
 {
     qDebug() << "WINDOW SINUS SOURCE CONNECT TO GENERATOR";
 

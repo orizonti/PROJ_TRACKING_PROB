@@ -20,7 +20,7 @@ public:
     friend void operator|(RingBufferType& RingBuffer, MessageDispatcher& Processor) 
                                                                        { Processor.DispatchNextMessage(RingBuffer); }
 
-    void LinkToBuffer(RingBufferType& RingBuffer) { this->DispatchNextMessage(RingBuffer); }
+    void linkToBuffer(RingBufferType& RingBuffer) { this->DispatchNextMessage(RingBuffer); }
 
     //void DispatchNextMessage(RingBufferType& RingBuffer);
 

@@ -5,7 +5,7 @@ WidgetCameraControl::WidgetCameraControl(QWidget* parent) : WidgetAdjustable(par
     ui->setupUi(this);
 }
 
-void WidgetCameraControl::LinkToDevice(std::shared_ptr<CameraControlInterface> CameraInterface)
+void WidgetCameraControl::linkToDevice(std::shared_ptr<CameraControlInterface> CameraInterface)
 {
 
   connect(ui->butSetExposure,&QPushButton::clicked,[this, CameraInterface]()

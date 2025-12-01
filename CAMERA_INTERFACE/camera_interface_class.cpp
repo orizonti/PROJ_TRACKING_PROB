@@ -21,7 +21,7 @@ void DestroyBufferInfo ( gpointer data)
 
 void CameraInterfaceAravis::slotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};
 
-CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): ImageSourceInterface(parent) 
+CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): SourceImageInterface(parent) 
 {
    qDebug() << "CAMERA INTERFACE CREATE";
 

@@ -7,7 +7,7 @@ WidgetImageImitator::WidgetImageImitator(QWidget* parent) : WidgetAdjustable(par
 
 
 
-void WidgetImageImitator::LinkToModule(std::shared_ptr<AimImageImitatorClass> Imitator)
+void WidgetImageImitator::linkToModule(std::shared_ptr<AimImageImitatorClass> Imitator)
 {
    qDebug() << "LINK TO IMITATOR MODULE : ";
    ImitationModule = Imitator; 

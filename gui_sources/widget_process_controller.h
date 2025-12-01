@@ -20,7 +20,7 @@ class WidgetProcessController : public WidgetAdjustable
     Q_OBJECT
 public:
     explicit WidgetProcessController(QWidget* parent = 0);
-    void LinkTo(ProcessControllerClass* ProcessController);
+    void linkTo(ProcessControllerClass* ProcessController);
 
 private:
 Ui::WidgetProcessController *ui;

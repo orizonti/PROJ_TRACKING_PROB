@@ -7,63 +7,30 @@
 #include "interface_image_source.h"
 #include <QDebug>
 #include "camera_control_interface.h"
+#include "interface_image_source.h"
+#include "camera_image_storage.h"
 
-class CameraInterfaceHIK : public ImageSourceInterface, public CameraControlInterface
+class CameraInterfaceHIK;
+using CameraTypeStorage = CameraImageStorage<CameraInterfaceHIK>;
+class CameraInterfaceHIK :public QObject, public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface
 {
   Q_OBJECT
   public:
-  class CameraImageStorage: public ImageSourceInterface
-  {
-    public:
-    std::string TAG_NAME = QString("[ %1 ] ").arg("CAMERA STOR").toStdString();
-    explicit CameraImageStorage(CameraInterfaceHIK* CameraDevice) : Camera(CameraDevice) {InitStorage(); };
-            ~CameraImageStorage() {DeinitStorage(); };
-    void InitStorage();
-    void DeinitStorage();
-    static std::vector<uint8_t*> Buffers;
-    static std::vector<uint8_t*>::iterator BufferToWrite;
-    static QImage ImageToDisplay;
-    static std::pair<int,int> SizeImage; 
-
-    static void PutNewFrameToStorage(uint8_t* Data, int Size, int Width, int Height);
-    static long int FrameNumber;
-           long int FrameProcessed = 0;
-
-    std::vector<uint8_t*>::iterator BufferToRead;
-
-    int getAvailableFrames() override {return BufferToWrite - BufferToRead;}
-    bool isFrameAvailable() override { return BufferToWrite != BufferToRead;};
-
-    CameraInterfaceHIK* Camera = nullptr;
-
-    bool switchToNextFrame() override;
-    void skipFrames() override;
-
-    cv::Mat ImageToProcess;
-
-  cv::Mat& getImageToProcess() override ;
-   QImage& getImageToDisplay() override ;
-
-      void getImageToProcess(cv::Mat& ImageDst)override ;
-      void getImageToDisplay(QImage& ImageDst) override ;
-    std::pair<int,int> getImageSize() override { Camera->getImageSize();};
-
-    const std::vector<QPair<int,int>>& getPoints() override {return Camera->getPoints(); };  
-    const std::vector<QRect>& getRects() override  {return Camera->getRects();};  
-    const QString& getInfo() override {return Camera->getInfo();};  
-
-  };
-
 
   public:
-   CameraInterfaceHIK();
+   CameraInterfaceHIK(std::string name);
   ~CameraInterfaceHIK();
 
   public:
   QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
-  std::string TAG_NAME = QString("[ %1 ] ").arg("CAMERA").toStdString();
+  std::string TAG_NAME{"[ CAMERA ]"};
 
-  std::shared_ptr<ImageSourceInterface> getImageSourceChannel() override;
+  FramePeriodMeasure FrameMeasureInput;
+  FramePeriodMeasure FrameMeasureProcess;
+
+  std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
+  static cv::Mat inputImage;
+  static QMutex mutexGetImage;
 
   //======================================================
   public slots:
@@ -81,10 +48,10 @@ class CameraInterfaceHIK : public ImageSourceInterface, public CameraControlInte
   void CameraSetOffset(int XOffset, int YOffset);
   void CameraSetExposure(float Exposure);
 
-   QImage& getImageToDisplay() override {return (*CurrentStoreChannel)->getImageToDisplay();};
+   QImage& getImageToDisplay() override {return CameraTypeStorage::ImageToDisplay;};
   cv::Mat& getImageToProcess() override {return (*CurrentStoreChannel)->getImageToProcess(); SwitchOutputChannel();};
 
-      void getImageToDisplay(QImage& ImageDst) override { (*CurrentStoreChannel)->getImageToDisplay(ImageDst);};
+      void getImageToDisplay(QImage& ImageDst) override { mutexGetImage.lock(); ImageDst = CameraTypeStorage::ImageToDisplay.copy(); mutexGetImage.unlock(); };
       void getImageToProcess(cv::Mat& ImageDst)override { (*CurrentStoreChannel)->getImageToProcess(ImageDst); SwitchOutputChannel();};
       void SwitchOutputChannel() { CurrentStoreChannel++; if(CurrentStoreChannel == ImageChanneledStore.end()) CurrentStoreChannel = ImageChanneledStore.begin();}
 
@@ -95,14 +62,14 @@ class CameraInterfaceHIK : public ImageSourceInterface, public CameraControlInte
     const            QString& getInfo() override { return CAMERA_INFO;};  
            std::pair<float,float> getFramePeriod() override ;
 
-    std::pair<int,int> getImageSize() override { return SizeImage;};
+    std::pair<int,int> getSizeImage() override { return SizeImage;};
   //=========================================
           void CameraSetTriggerMode(int Mode);
           void CameraSetHorisontalReverse(bool OnOff);
           void CameraSetCameraID(QString str);
           void CameraGetTriggerMode();
           void CameraGetID();
-          void CameragetImageSize();
+          void CameragetSizeImage();
           void CameraGetExposure();
           bool isReverseHorizontal();
   //=========================================
@@ -124,8 +91,8 @@ class CameraInterfaceHIK : public ImageSourceInterface, public CameraControlInte
   static void __stdcall ImageCallBackEx(unsigned char * pData, MV_FRAME_OUT_INFO_EX* FrameInfo, void* pUser);
   static CameraInterfaceHIK* CameraInterface;
 
-           std::vector<std::shared_ptr<CameraImageStorage>> ImageChanneledStore;
-  typename std::vector<std::shared_ptr<CameraImageStorage>>::iterator CurrentStoreChannel;
+           std::vector<std::shared_ptr<CameraTypeStorage>> ImageChanneledStore;
+  typename std::vector<std::shared_ptr<CameraTypeStorage>>::iterator CurrentStoreChannel;
 
   //=====================================================
 

@@ -18,7 +18,7 @@ public:
 	virtual void setInput(const QPair<V, V>& Coord) {OutputCoord = Coord;};
 
     void setLink(PassCoordClass<V>* NewLink) { NodesLinked.push_back(NewLink); }
-	void passCoord() { if(!isLinked() || PassBlocked) return; for(auto& link: NodesLinked) {*this >> *link;} }
+	void passCoord() { if(!isLinked() || PassBlocked) return; for(auto& link: NodesLinked) {*this >> *link; } }
 	
 	virtual QPair<V,V>& operator >>(QPair<V, V>& Coord) { Coord = getOutput(); return Coord;}
 

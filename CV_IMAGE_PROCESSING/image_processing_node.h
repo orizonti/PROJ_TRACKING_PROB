@@ -24,6 +24,7 @@
 #include "optimization_threshold.h"
 #include "./TRACKER_ROBUST/Tracker.h"
 #include "state_block_enum.h"
+#include "interface_image_source.h"
 
 
 template<typename T> 
@@ -43,7 +44,7 @@ cv::Rect& operator*(cv::Rect& rect, T Scale)
 }
 
 
-class ModuleImageProcessing : public ImageSourceInterface, public PassCoordClass<float>
+class ModuleImageProcessing : public QObject, public SourceImageInterface, public SourceImageDisplayInterface, public PassCoordClass<float>
 {
 Q_OBJECT
 public:
@@ -58,9 +59,7 @@ ModuleImageProcessing(QObject* parent = 0);
 
     void SetThreshold(int Threshold);
     void SetHighFrequencyProcessing() { timerProcessImage.setInterval(1);};
-    void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(20);};
-
-    void SetSlaveMode(ModuleImageProcessing* Master);
+    void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(30);};
 
     void setInput (const QPair<float,float>& Coord) override;
     const QPair<float,float>& getOutput()           override  { return CoordsObject[0]; }
@@ -71,26 +70,35 @@ ModuleImageProcessing(QObject* parent = 0);
 
     bool FLAG_OBJECT_HOLD = false;
     bool FLAG_TRACK_MODE  = false;
-    bool FLAG_SLAVE_MOVE  = false;
+    bool FLAG_SLAVE_MODE  = false;
     bool FLAG_CHECK_OBJECT_HOLD = false;
+
+    FramePeriodMeasure FrameMeasureInput;
+    FramePeriodMeasure FrameMeasureProcess;
 
     static std::vector<ModuleImageProcessing*> Modules;
     //==================================================
     QImage&  getImageToDisplay()              override;
-    cv::Mat& getImageToProcess()              override;
-
     void getImageToDisplay(QImage& ImageDst)  override;
-    void getImageToProcess(cv::Mat& ImageDst) override;
 
-    std::vector<QPair<int,int>>& getPoints()  override;  
-    std::vector<QRect>&          getRects()   override;  
-    QString&                     getInfo()    override;  
+    cv::Mat& getImageToProcess()              override;
+    void getImageToProcess(cv::Mat& ImageDst) override;
+    std::pair<int,int> getSizeImage() override { return std::make_pair(ImageProcessing.cols, ImageProcessing.rows); }
+
+    const std::vector<QPair<int,int>>& getPoints()  override;  
+    const std::vector<QRect>&          getRects()   override;  
+    const QString&                     getInfo()    override;  
 
     //==================================================
 
-    void LinkToModule(std::shared_ptr<ImageSourceInterface> ImageSource);
-    friend std::shared_ptr<ModuleImageProcessing> operator| (std::shared_ptr<ImageSourceInterface > Source, 
+    void linkToModule(std::shared_ptr<SourceImageInterface > ImageSource);
+    void linkToModule(std::shared_ptr<ModuleImageProcessing> ImageSource);
+
+    friend std::shared_ptr<ModuleImageProcessing> operator| (std::shared_ptr<SourceImageInterface > Source, 
                                                              std::shared_ptr<ModuleImageProcessing> Rec);
+
+    friend void operator | (std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst);
+
 
     void SetImageParam(int MinWeight, int MaxWeight, int Distortion);
     void SetObjectHoldCheck(bool Flag) { FLAG_CHECK_OBJECT_HOLD = Flag;};
@@ -100,6 +108,7 @@ ModuleImageProcessing(QObject* parent = 0);
     virtual void SlotProcessImage() = 0;
     virtual void SlotResetProcessing();
     virtual void SlotStopProcessing();
+    virtual void SlotSetAimPoint(std::pair<float,float> PointRelative) {};
 
     //==================================================
             bool IsROIValid(cv::Rect& ROI);
@@ -122,7 +131,7 @@ ModuleImageProcessing(QObject* parent = 0);
       QImage ImageToDisplay;
 
     //===================================================
-    std::shared_ptr<ImageSourceInterface> SourceImage = nullptr;
+    std::shared_ptr<SourceImageInterface> SourceImage = nullptr;
     std::shared_ptr<PassCoordClass<float>> ReceiverLinkCoord;
     //===================================================
 
@@ -148,7 +157,7 @@ ModuleImageProcessing(QObject* parent = 0);
     std::chrono::time_point<std::chrono::high_resolution_clock> ProcessTimePoint2;
 
     public:
-  std::string TAG_NAME = QString("[ %1 ] ").arg("TRACKER_CENTROID").toStdString();
+    QString TAG_NAME = QString("[ %1 ] ").arg("TRACKER");
     QString ProcessInfo = "[ NO DATA ]";
 
     QTimer timerProcessImage;

@@ -9,9 +9,15 @@ std::atomic_bool VideoStreamRTSP::FLAG_CLIENT_CONNECTED = false;
 
 void VideoStreamRTSP::init(int width, int height, int framerate)
 {
-   cv::namedWindow("test");
+   //cv::namedWindow("test");
    std::cout << "[ RTSP STREAM ]" << "[ CREATE RTSP SERVER ] " << std::endl;
    std::cout << "[ RTSP STREAM ]" << "[ WIDTH ]" << width << "[ HEIGHT ]" << height << std::endl;
+
+    //videoParam = gst_caps_new_simple ("video/x-raw",
+    //"format" , G_TYPE_STRING, "GRAY8",
+    //"width"  , G_TYPE_INT   , width,
+    //"height" , G_TYPE_INT   , height,
+    //"framerate", GST_TYPE_FRACTION, framerate, 1, NULL);
 
     videoParam = gst_caps_new_simple ("video/x-raw",
     "format" , G_TYPE_STRING, "GRAY8",
@@ -68,6 +74,7 @@ void VideoStreamRTSP::call_configure_video(GstRTSPMediaFactory * factory, GstRTS
 void VideoStreamRTSP::writeFrame(cv::Mat& frame)
 {
   if(!FLAG_OUTPUT_PIPE_WAIT_DATA) return;
+  //qDebug() << "RTSP BUFFER: " << frame.cols << frame.rows << frame.depth() << CV_8UC1;
 
     int bufferSize = 1*frame.cols*frame.rows;
     GstMapInfo mapOut;
@@ -95,16 +102,16 @@ void VideoStreamRTSP::grabFramesProcess()
     {
     //ImageSource->getImageToProcess(frameOutput);
     frameOutput = ImageSource->getImageToProcess();
-                           writeFrame(frameOutput);
+                               writeFrame(frameOutput);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000/30));
 
     }
 }
 
-void VideoStreamRTSP::linkToSource(ImageSourceInterface* Source)
+void VideoStreamRTSP::linkToSource(SourceImageInterface* Source)
 {
-   std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << std::endl;
-    auto [width, height] = Source->getImageSize();
+    auto [width, height] = Source->getSizeImage();
+   std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << width  << " " << height << std::endl;
 
     this->init(width, height, 30);
 

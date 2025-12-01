@@ -17,6 +17,8 @@
 
 #include "engine_udp_interface.h"
 #include "engine_can_interface.h"
+#include "image_processing_node.h"
+#include "interface_camera_rtsp.h"
 #include "message_command_structures.h"
 #include "device_rotary_interface.h"
 #include "device_laser_interface.h"
@@ -25,6 +27,9 @@ enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSigna
 
 using DeviceTypeLaserPointer = DeviceLaserControl<CANEngineInterface, CommandDeviceLaserPointer, MessageDeviceLaserPointer>;
 using DeviceTypeLaserPower   = DeviceLaserControl<CANEngineInterface, CommandDeviceLaserPower, MessageDeviceLaserPower>;
+
+//using CameraType = CameraInterfaceHIK;
+using CameraType = CameraInterfaceUniversal;
 
 class VideoStreamRTSP;
 class ProcessControllerClass : public QObject
@@ -35,14 +40,16 @@ public:
 std::string TAG_NAME = QString("[ %1 ] ").arg("CONTROLLER").toStdString();
 static ProcessControllerClass* GetInstance(QObject* parent = nullptr);
 
-static std::shared_ptr<CameraInterfaceHIK> DeviceCamera;
+
+static std::shared_ptr<CameraType> DeviceCamera;
 
 static std::shared_ptr<DeviceTypeLaserPower>   DeviceLaserPower;
 static std::shared_ptr<DeviceTypeLaserPointer> DeviceLaserPointer;
 
-static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc;
-static std::shared_ptr<ImageTrackerCentroid>    ModuleImageProc2;
-static std::shared_ptr<ImageTrackerCentroidGPU> ModuleImageProc3;
+static std::shared_ptr<ModuleImageProcessing > ModuleImageProc;
+static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc2;
+
+
 static std::shared_ptr<AimImageImitatorClass>   ModuleImitatorImage;
 
 static std::shared_ptr<DeviceRotaryInterface> DeviceRotary;

@@ -6,7 +6,7 @@ WidgetProcessController::WidgetProcessController(QWidget* parent) : WidgetAdjust
 }
 
 
-void WidgetProcessController::LinkTo(ProcessControllerClass* ProcessController)
+void WidgetProcessController::linkTo(ProcessControllerClass* ProcessController)
 {
    connect(ui->butRegimAiming,      &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotSetProcessAiming);
    connect(ui->butRegimImitator,    &QPushButton::toggled, ProcessController, &ProcessControllerClass::slotSetProcessImitation);

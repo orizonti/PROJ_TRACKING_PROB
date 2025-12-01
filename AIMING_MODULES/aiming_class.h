@@ -129,7 +129,7 @@ class AimingClass : public PassCoordClass<float>
   std::vector<float> GainList{0.2,
                                1.0,
                                1.0,
-                               80};
+                               80000};
 
   float GetAbsError();
   void   Reset();
@@ -229,7 +229,7 @@ class AimingClass : public PassCoordClass<float>
   TransformCoordClass PixToRadian;
   TransformCoordClass RadianToPix;
   TransformCoordClass Gain{10};
-  TransformCoordClass Saturation{1,0,5000};
+  TransformCoordClass Saturation{1,0,30000};
 
   TimeIntegratorClass<float> Integrator;
   TimeIntegratorClass<float> IntegratorInput;

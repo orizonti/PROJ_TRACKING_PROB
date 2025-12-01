@@ -23,6 +23,9 @@ void LabelImage::mouseMoveEvent(QMouseEvent * ev)
 void LabelImage::mousePressEvent(QMouseEvent * ev)
 {
 	const auto& LabelSize = this->size();
+	PosPressedAbs.first  = ev->position().x();
+	PosPressedAbs.second = ev->position().y();
+
 	PosPressed.first  = ev->position().x()/LabelSize.width();
 	PosPressed.second = ev->position().y()/LabelSize.height();
 	//qInfo() <<"[LABEL    ]"<< "POS PRESS - " << PosPressed.first << PosPressed.second << "SIZE: " << this->size();
