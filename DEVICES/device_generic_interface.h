@@ -1,89 +1,132 @@
 #ifndef DEVICE_GENERIC_CLASS_H
 #define DEVICE_GENERIC_CLASS_H
 
-#include "message_command_structures.h"
-#include "message_struct_generic_ext.h"
-#include "message_header_generic_ext.h"
 #include "interface_pass_coord.h"
+#include <typeinfo>
+#include "engine_type_register.h"
 #include "message_struct_generic.h"
+#include "message_header_generic.h"
+#include "message_command_structures.h"
+
+class DeviceGenericHandleControl
+{
+	public:
+	virtual void setLevel( uint32_t Level) {setParam(0, Level);};
+	virtual void setValue( float    Value) {setParam(1, Value);};
+	virtual void setPair(std::pair<float,float> Coord) {};
+
+	virtual std::pair<float,float> getPair() { return std::pair<float,float>(0,0); };
+	virtual                  float getValue() { return 0; };
+
+	virtual void setParam (uint16_t CommandID, uint32_t CommandParam) = 0;
+	virtual void setParam (uint16_t CommandID, float    CommandParam)    = 0;
+
+	virtual void setEnable(bool OnOff, uint16_t Number = 0) { setParam(Number,(uint32_t)OnOff);};
+};
 
 
-template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-class DeviceGenericInterface 
+template<typename T_CONNECTION, typename T_COMMAND, typename T_REQUEST>
+class DeviceGenericInterface : public DeviceGenericHandleControl
 {
 public:
-    DeviceGenericInterface(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) 
+  DeviceGenericInterface(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]"): TAG_NAME(Name) 
 	{ 
 		ConnectionDevice = Connection;
-		init();
 	};
 	QString TAG_NAME;
 
 	~DeviceGenericInterface() {};
 
-	virtual void setParam (uint8_t ID, uint16_t Value) = 0; 
-	virtual void setParam (uint8_t ID, bool OnOff) {if(OnOff) setParam(ID,uint16_t(1)); else setParam(ID,uint16_t(0)); } 
-	virtual void setParams(uint16_t Value1, uint16_t Value2) = 0;
-	virtual void setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) = 0; 
+  virtual void putMessage(T_REQUEST Request) {};
 
-  void sendCommand() { ConnectionDevice->slotSendMessage(Command.toByteArray());};//GENERIC MESSAGE [HEADER DATA]
-	void sendCommand(T_COMMAND commandDevice) { Command.DATA = commandDevice;  
-                                              ConnectionDevice->slotSendMessage((char*)(&Command.DATA), sizeof(T_COMMAND),TypeRegister<T_COMMAND>::TYPE_ID);};
+	void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
+	void setParam (uint16_t CommandID, float    CommandParam) override {} ;
 
-    virtual void putMessage(T_MESSAGE Message) = 0;
-	void init()
+  void transmitMessage(const char* Message, int size, uint16_t param) { ConnectionDevice->slotSendMessage(Message,size, param); }
+
+	void sendCommand(QByteArray command) { ConnectionDevice->slotSendMessage(command); };
+	void sendCommand(T_COMMAND& commandToSend) 
+	{ 
+				  Command = commandToSend;
+				  Command.dumpToByteArray(MessageOutputBuffer);
+		ConnectionDevice->slotSendMessage(MessageOutputBuffer);
+    //qDebug() << TAG_NAME << "[ SEND COMMAND ] " << MessageOutputBuffer.toHex(); 
+	};
+
+	template<typename T> 
+	void sendCommand(const QPair<T,T>& data) { 
+								 Command.setData(data); 
+								 Command.dumpToByteArray(MessageOutputBuffer);
+			           ConnectionDevice->slotSendMessage(MessageOutputBuffer); 
+    //qDebug() << TAG_NAME << "[ SEND COMMAND ] " << MessageOutputBuffer.toHex(); 
+  };
+
+	template<typename T> 
+	void sendCommand(const QPair<T,T>& data, const QPair<T,T>& data2) { 
+								 Command.setData(data,data2); 
+								 Command.dumpToByteArray(MessageOutputBuffer);
+			           ConnectionDevice->slotSendMessage(MessageOutputBuffer); 
+
+    //qDebug() << TAG_NAME << "[ SEND COMMAND ] " << MessageOutputBuffer.toHex(); 
+  };
+
+  template<COMMAND_STANDART TYPE>
+	void sendCommand(TYPE& commandToSend) 
 	{
-    //auto callBack = [this](MessageGeneric<void*, T_CONNECTION::HeaderType>& Message)
-    //{ 
-    //auto MessageData = ConnectionDevice->Dispatcher->ExtractData<T_MESSAGE>(&Message);
-    //putMessage(*MessageData);
-    //}; 
-    //if(ConnectionDevice) ConnectionDevice->Dispatcher->AppendCallback<T_MESSAGE>(callBack);
-	}
+				  Command.DATA = commandToSend;
+		ConnectionDevice->slotSendMessage(Command.castToByteArray());
+		//qDebug()<< TAG_NAME << "[ SEND STANDART COMMAND ]" << typeid(commandToSend).name();
+	};
 	
 protected:
     std::shared_ptr<T_CONNECTION> ConnectionDevice = nullptr;
-    MessageGenericExt<T_COMMAND,MESSAGE_HEADER_EXT> Command;
+    T_COMMAND Command;
+    T_REQUEST Request;
+
+    QByteArray MessageOutputBuffer;
 };
 
-class DeviceLaserInterface
+
+
+//=========================================================
+template<typename T, typename H> class MessageGenericExt; 
+                                 class MESSAGE_HEADER_EXT; 
+
+template<int NUM_DEVICE> struct CommandDevice;
+template<int NUM_DEVICE> struct RequestDevice;
+template<int NUM_DEVICE>  class MessageDeviceGeneric : public MessageGenericExt<CommandDevice<NUM_DEVICE>   ,MESSAGE_HEADER_EXT> { public: };
+
+template<typename T_CONNECTION, int NUM_DEVICE>
+class DeviceGenericControl : public DeviceGenericInterface<T_CONNECTION, MessageDeviceGeneric<NUM_DEVICE> ,MessageDeviceGeneric<NUM_DEVICE> >
 {
-	public:
-	virtual void setEnable(bool OnOff) = 0;
-	virtual void setPowerEnable(bool OnOff) = 0;
-	virtual void setPilotEnable(bool OnOff) = 0;
-	virtual void setPower(uint16_t Value) = 0;
+public:
+    using DEVICE_INTERFACE = DeviceGenericInterface<T_CONNECTION, MessageDeviceGeneric<NUM_DEVICE>, MessageDeviceGeneric<NUM_DEVICE>>; 
+    explicit DeviceGenericControl(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]") : DEVICE_INTERFACE(Connection, Name)
+	{
+
+	}
+	~DeviceGenericControl()
+	{
+
+	};
+
+
+	void setParam (uint16_t CommandID, uint32_t CommandParam) override
+	{
+      qDebug() << "DEVICE SET PARAM: " << CommandParam;     
+	}
+	void setParam (uint16_t CommandID, float    CommandParam) override
+	{
+
+	}
+
+	QString TAG_NAME{"[ DEVICE_ANY ]"};
+	QString DISPLAY_NAME{"Устройство"};
 };
+//=========================================================
+template<int NUM> class CommandAiming;
 
-class DeviceFocusInterface
-{
-	public:
-	virtual void setEnable(bool OnOff) = 0;
-	virtual void setPos(uint16_t Value) = 0;
-	virtual uint16_t getDistance() = 0;
-};
-
-class DeviceRotaryInterface: public PassCoordClass<float>
-{
-	public:
-	virtual void moveOnStep(const QPair<int, int>& Pos) = 0;
-	virtual void moveToPos(const QPair<int, int>& Pos) = 0;
-	virtual void moveToPosRelative(const QPair<int, int>& Pos) = 0;
-	virtual void      setVelocity(const QPair<int, int>& Velocity) = 0;
-	virtual void moveWithVelocity(const QPair<int, int>& Velocity) = 0;
-	virtual void stopMove() = 0;
-	virtual void moveSinus(bool OnOff) = 0;
-
-	const QPair<float, float>& getOutput() {OutputCoord = getPos(); return PassCoordClass<float>::OutputCoord;};
-	void setInput(const QPair<float, float>& Coord) { moveToPos(Coord);};
-
-	virtual const QPair<int,int>& getPos() = 0;
-	virtual const QPair<int,int>& getVelocity() = 0;
-
-virtual	          bool checkRangeOffset(QPair<int,int> Pos) = 0;
-virtual	QPair<int,int> getLimits(int axis) = 0;
-virtual	QPair<int,int> getRange() = 0;
-};
+template<int NUM_DEVICE> class MessageAimingDevice : public MessageGenericExt<CommandAiming<NUM_DEVICE>   ,MESSAGE_HEADER_EXT> { public: };
 
 
 #endif 

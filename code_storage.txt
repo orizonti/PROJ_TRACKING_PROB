@@ -1,0 +1,12 @@
+//controller_process_class.cpp
+DeviceRotary->moveSinus();
+
+DeviceCamera        = make_shared<CameraType>("rtspsrc location=rtspsrc location=rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp latency=20 buffer-mode=auto ! rtph265depay ! h265parse ! mppvideodec ! videoconvert ! appsink");
+
+DeviceCamera        = make_shared<CameraType>("rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp protocols=udp latency=1 buffer-mode=auto ! rtph265depay ! h265parse ! mppvideodec ! appsink drop=true sync=false async=true");
+
+DeviceCamera        = make_shared<CameraType>("rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp protocols=udp latency=2 buffer-mode=auto ! rtph265depay ! h265parse ! mppvideodec ! videoconvert ! appsink drop=true max-lateness=10000000 max-buffers=1");
+
+//using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize(), 20,IteratorMode::Continous>; 
+//======================================================================================================================
+

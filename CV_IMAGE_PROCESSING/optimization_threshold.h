@@ -15,25 +15,25 @@
 //class ContoursProcessorClass;
 
 template<typename T = float>
-class ValueSpongeShift : public PassValueClass<T>
+class NodeValueSpongeShift : public PassValueClass<T>
 {
   public:
-  double Speed = 0.001;
-  double InputValue = 0;
-  T& GetValue() override {        Speed = StatNode2.GetAvarageValue(); 
+  T Speed = 0.001;
+  T InputValue = 0;
+  const T& getValue() override {  Speed = StatNode2.GetAvarageValue(); 
                                   PassValueClass<T>::Value = InputValue - StatNode.GetAvarageValue()*Speed; 
-                                  double(0) >> StatNode; double(0) >> StatNode;
+                                  T(0) >> StatNode; T(0) >> StatNode;
                            return PassValueClass<T>::Value; }  
 
-  void SetValue(T Value) override {InputValue = Value; Value >> TimeDiffer >> Saturation(Value/50) >> InversionLogic >> StatNode;
+  void setValue(T Value) override {InputValue = Value; Value >> TimeDiffer >> Saturation(Value/50) >> InversionLogic >> StatNode;
                                                                 TimeDiffer >> StatNode2;}
-  StatisticNode<double> StatNode{20};
-  StatisticNode<double> StatNode2{20};
-  ValueSaturation<double>      Saturation;
-  ValueBinaryInversion<double> InversionLogic;
-  ValueDifference<double>      TimeDiffer;
+  StatisticNode<T> StatNode{20};
+  StatisticNode<T> StatNode2{20};
+  NodeValueSaturation<T>      Saturation;
+  NodeValueInversionBinary<T> InversionLogic;
+  NodeValueDifference<T>      TimeDiffer;
 
-  ValueSpongeShift<T>& operator()(double SpongeSpeed){ Speed = SpongeSpeed; return *this;};
+  NodeValueSpongeShift<T>& operator()(double SpongeSpeed){ Speed = SpongeSpeed; return *this;};
 };
 
 class OptimizationThreshold : public PassValueClass<double>
@@ -46,7 +46,7 @@ class OptimizationThreshold : public PassValueClass<double>
 
   void Disable(){ DISABLED = true;};
 	bool isEnabled() { return !DISABLED;}
-  void SetValue(double NewValue) override {InputValue = NewValue;}
+  void setValue(double NewValue) override {InputValue = NewValue;}
   virtual void Reset() = 0;
 
   virtual void CalcThreshold(const cv::Mat& Image) = 0;
@@ -68,7 +68,7 @@ class ThresholdAdjustionDispersion : public OptimizationThreshold
 {
 	public:
   void CalcThreshold(const cv::Mat& Image) override;
-	    ValueSpongeShift<double> SpongeValue;
+  NodeValueSpongeShift<double> SpongeValue;
   void Reset() override {};
 };
 

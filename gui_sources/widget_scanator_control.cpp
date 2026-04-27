@@ -13,7 +13,7 @@ WidgetScanatorControl::WidgetScanatorControl(QWidget* parent) : WidgetAdjustable
   ui->labelDisplayPos1->setText(QString("УГОЛ [ %1 ] [ %2 ]").arg(numPosX).arg(numPosY));
 }
 
-void WidgetScanatorControl::LinkToDevice(std::shared_ptr<ScanatorControlClass> EngineModule)
+void WidgetScanatorControl::linkToDevice(std::shared_ptr<ScanatorControlClass> EngineModule)
 {
 
     ScanatorDevice = EngineModule;

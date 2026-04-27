@@ -153,7 +153,7 @@ void WidgetProcessingImage::linkToModule(std::shared_ptr<SourceImageDisplayInter
    ImageSourceActive = Source;
    ImageSources.push_back(Source);
 
-   timerDisplay.start(20);
+   timerDisplay.start(30);
    this->AddMiniLabel();
    //if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(slotDisplayImage()));
    //QObject::connect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(slotDisplayImage()),Qt::QueuedConnection);
@@ -172,9 +172,6 @@ void WidgetProcessingImage::slotSetActiveChannel(int Channel)
     NumberActiveChannel = Channel;
     reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget)->slotSetActiveChannel(Channel);
 
-    qDebug() << "ACTIVE CHANNEL : " << Channel;
-
-    ImageSourceActive = ImageSources[Channel];
 }
 
 //=============================================================

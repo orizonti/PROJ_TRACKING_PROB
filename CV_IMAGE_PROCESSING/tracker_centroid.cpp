@@ -1,6 +1,4 @@
 
-#include "AIM_IMAGE_IMITATION/imitator_image_aim.h"
-
 #include "glib.h"
 #include "gmodule.h"
 #include "image_processing_node.h"
@@ -24,6 +22,7 @@
 ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcessing(parent)
 {
   qRegisterMetaType<const cv::Mat&>();
+  ModuleImageProcessing::TAG_NAME = "[ TRACKER_CENTROID ]";
 
     //==================================================================
     cv::Mat kernel1 = (cv::Mat_<double>(3,3) << 0, 0, 0, 
@@ -85,11 +84,13 @@ ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcess
       for(auto& Node: NodesList) Node(Image);
       CalcCentroid(Image); 
     };
+
+    SetHighFrequencyProcessing();
 }
 
 ImageTrackerCentroid::~ImageTrackerCentroid()
 {
- qDebug() << TAG_NAME.c_str() << "[ DELETE ]";
+ qDebug() << TAG_NAME << "[ DELETE ]";
 }
 
 bool ImageTrackerCentroid::CheckCentroid() 
@@ -173,27 +174,15 @@ QPair<float,float> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
 {
              CheckCorrectROI(ROI);
-  ImageProcessingROI = Image(ROI);
+  ImageProcessingROI = Image(ROI); if(ImageProcessingROI.empty()) return;
   //====================================================
-  ProcessTimePoint = std::chrono::high_resolution_clock::now();
   CalcCentroid(ImageProcessingROI); 
-  //auto Dur = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - ProcessTimePoint);
-  //counter++; if(counter % 100 == 0) qDebug() << "PROCESS DURATION - " << Dur.count();
-  //std::this_thread::sleep_for(std::chrono::milliseconds(2));
-  //====================================================
-
-  //TrackingProcess2(ImageProcessingROI); 
-
-  if(FLAG_SLAVE_MOVE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
 
   CoordsObject[0].first  += ROI.x; 
-  CoordsObject[0].second += ROI.y; if(FLAG_SLAVE_MOVE) return;
+  CoordsObject[0].second += ROI.y; if(FLAG_SLAVE_MODE) return;
   
   ROI = cv::Rect(CoordsObject[0].first  - ROI_SIZE/2, 
                  CoordsObject[0].second - ROI_SIZE/2 ,ROI_SIZE,ROI_SIZE);
-
-
-
   
 }
 
@@ -221,12 +210,12 @@ void ImageTrackerCentroid::FindObjectCentroid(cv::Mat& Image)
                              CoordsObject[0].second - Image.rows/4 ,Image.cols/2,Image.rows/2);
    CheckCorrectROI(RectsObject[0]);
 
-  if(StatisticCoord.IsCoordLoaded()) 
+  if(StatisticCoord.isCoordLoaded()) 
      StatisticCoord.GetDispersionNorm() >> Saturation(20) 
                                         >> InversionBinary 
                                         >> StatisticDispersion;
 
-                                        if(StatisticDispersion.IsValueLoaded()) 
+                                        if(StatisticDispersion.isValueLoaded()) 
                                            StatisticDispersion.GetAvarageValue() >> TrackingDetector(0.9);
 
    FLAG_TRACK_MODE = TrackingDetector.isSignal(); if(FLAG_TRACK_MODE) Threshold *= 1.1;
@@ -237,28 +226,40 @@ void ImageTrackerCentroid::FindObjectCentroid(cv::Mat& Image)
 
 void ImageTrackerCentroid::SlotProcessImage()
 {
+
           if(  SourceImage == nullptr || 
               !SourceImage->isFrameAvailable()) return;
+                                                                    FrameMeasureProcess++; 
                                                                     FrameMeasureInput++;
   MutexImageAccess.lock();
-  ImageInput = SourceImage->getImageToProcess().clone(); 
+  ImageInput = SourceImage->getImageToProcess().clone();  if(ImageInput.empty()) return;
             if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
   ImageProcessing = ImageInput;
 
+  try
+  {
+    if(FLAG_OBJECT_HOLD) 
+    { 
+      TrackObjectCentroid(ImageProcessing, RectsObject[0]); this->passCoord(); 
+      //qDebug() << TAG_NAME << "PASS COORD: " << this->isLinked() << this->PassBlocked;
+    } 
+  }
+  catch(const cv::Exception& e) 
+  {
+    const char* err_msg = e.what();
+    qDebug() << TAG_NAME << "[CV EXCETION]" << err_msg;
+  }
+
+
                                                                     FrameMeasureProcess++; 
-  if(FLAG_SLAVE_MOVE || FLAG_TRACK_MODE) 
-  TrackObjectCentroid(ImageProcessing, RectsObject[0]);
-  else                  
-  FindObjectCentroid(ImageProcessing);  
-                                           FrameMeasureProcess++;
-  //qDebug() << OutputFilter::Filter(50) << CoordsObject[0].first 
+
+  //qDebug() << OutputFilter::Filter(30) << TAG_NAME << CoordsObject[0].first 
   //                                     << CoordsObject[0].second << FrameMeasureProcess.printPeriod() << info;
 
+  //if(FrameMeasureProcess.getMilliseconds() > 5) qDebug() << TAG_NAME << "[ PROCESS TIME TO HIGH ] "
+  //                                                                   << FrameMeasureProcess.getMilliseconds();
+  //
   MutexImageAccess.unlock();
-
-  emit ImageSourceInterface::signalNewImage();
-
-  if(FLAG_OBJECT_HOLD ) passCoord(); 
 
 
 }
@@ -269,7 +270,6 @@ void ImageTrackerCentroid::SlotResetProcessing()
    ModuleImageProcessing::SlotResetProcessing(); 
    qDebug() << TAG_NAME << "[ NUMBER ]" << NumberModule << "[ CENTROID RESET]";
 
-   TrackHoldDetector.Reset();
 }
 
 void ImageTrackerCentroid::CalcThreshold() 
@@ -278,7 +278,7 @@ void ImageTrackerCentroid::CalcThreshold()
   //{
   //ImageProcessing >> OptimizationLumin >> Threshold;
   //                                        Threshold >> StatisticThreshold;
-  //                   OptimizationLumin.GetValue() >> OptimizationDisp;
+  //                   OptimizationLumin.getValue() >> OptimizationDisp;
 
   //if(StatisticThreshold.GetDispersionValue() < 1) OptimizationLumin.Disable();
   //return;
@@ -378,13 +378,6 @@ void ImageTrackerCentroidGPU::FindObjectCentroidGPU(cv::Mat& Image)
                               CoordsObject[0].second - Image.rows/4 ,Image.cols/2,Image.rows/2);
     CheckCorrectROI(RectsObject[0]);
 
-    CoordsObject[0] >> TrackHoldDetector(0.9,20);
-
-       FLAG_TRACK_MODE = TrackHoldDetector.isTrackHold(); 
-    if(FLAG_TRACK_MODE) Threshold *= 1.1;
-    if(FLAG_TRACK_MODE) SourceImage->skipFrames();
-    if(FLAG_TRACK_MODE) this->SetHighFrequencyProcessing();
-
 }
 
 void ImageTrackerCentroidGPU::TrackObjectCentroidGPU(cv::Mat& Image, cv::Rect& ROI)
@@ -404,8 +397,8 @@ void ImageTrackerCentroidGPU::TrackObjectCentroidGPU(cv::Mat& Image, cv::Rect& R
     CoordsObject[0].first  += ROI.x; 
     CoordsObject[0].second += ROI.y;
 
-  if(FLAG_SLAVE_MOVE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
-  if(FLAG_SLAVE_MOVE) return;
+  if(FLAG_SLAVE_MODE) FLAG_OBJECT_HOLD = CheckCentroid(); else FLAG_OBJECT_HOLD = true;
+  if(FLAG_SLAVE_MODE) return;
   
   ROI = cv::Rect(CoordsObject[0].first  - ROI_SIZE/2, 
                  CoordsObject[0].second - ROI_SIZE/2 ,ROI_SIZE,ROI_SIZE);
@@ -438,7 +431,7 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
   ImageProcessing = ImageInput;
 
                                            FrameMeasureProcess++; 
-  if(FLAG_SLAVE_MOVE || FLAG_TRACK_MODE) 
+  if(FLAG_SLAVE_MODE || FLAG_TRACK_MODE) 
   TrackObjectCentroidGPU(ImageProcessing, RectsObject[0]);
   else                  
   FindObjectCentroidGPU(ImageProcessing);  
@@ -446,15 +439,13 @@ void ImageTrackerCentroidGPU::SlotProcessImage()
   qDebug() << OutputFilter::Filter(30) << FrameMeasureProcess.printPeriod() << info;
 
 
-  emit ImageSourceInterface::signalNewImage();
-
   if(FLAG_OBJECT_HOLD ) passCoord(); 
 
 }
 
 ImageTrackerCentroidGPU::~ImageTrackerCentroidGPU()
 {
- qDebug() << TAG_NAME.c_str() << "[ DELETE ]" << info;
+ qDebug() << TAG_NAME << "[ DELETE ]" << info;
 }
 
 //==============================================================================================

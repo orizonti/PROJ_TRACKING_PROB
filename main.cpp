@@ -1,6 +1,5 @@
 #include "interface_pass_coord.h"
 #include "thread_operation_nodes.h"
-#include "widget_imitator_control.h"
 
 #define NOMINMAX
 
@@ -13,13 +12,9 @@
 #include "widget_processing_image_generic.h"
 #include "widget_main_window.h"
 #include "register_settings.h"
-#include "widget_imitator_control.h"
 #include "widget_processing_image_control.h"
 #include "widget_camera_control.h"
 #include "widget_scanator_control.h"
-#include "WindowLaserControl.h"
-#include "AIM_IMAGE_IMITATION/widget_sinus_source.h"
-#include "widget_process_controller.h"
 #include "widget_aiming_control.h"
 #include "widget_container_group.h"
 #include "widget_table_group.h"
@@ -29,123 +24,241 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "engine_can_interface.h"
-#include "TRACKER_ROBUST/Tracker.h"
 //#include "GRAPHICS_WINDOW/widget_graphics_plot.h"
-#include "AIM_IMAGE_IMITATION/sinus_generator_class.h"
+
 #include <QWidget>
+#include "arduino_json.h"
 
-//#define CAMERA_WORK 
-#define IMITATOR_WORK 
-
-//#define PROJECT_PROB_ENV 1
-#define PROJECT_EDGE_PROCESS 1 
-//#define PROJECT_EDGE_IMITATOR 1 
-//#define PROJECT_TEST 1 
-//
-//#define PROJECT_TEST_CAN 1 
-
-#include "message_command_id.h"
-
-int ID1 =  TypeRegister<CommandSetPosScanator    >::RegisterType();
-int ID2 =  TypeRegister<CommandSetPosRotary      >::RegisterType();
-int ID3 =  TypeRegister<CommandDeviceController  >::RegisterType();
-int ID4 =  TypeRegister<CommandDeviceLaserPower  >::RegisterType();
-int ID5 =  TypeRegister<CommandDeviceLaserPointer>::RegisterType();
-int ID6 =  TypeRegister<CommandDeviceFocusator   >::RegisterType();
-int ID7 =  TypeRegister<MessageDeviceController  >::RegisterType();
-int ID8 =  TypeRegister<MessageDeviceLaserPower  >::RegisterType();
-int ID9 =  TypeRegister<MessageDeviceLaserPointer>::RegisterType();
-int ID10 = TypeRegister<CommandSetPosScanator    >::RegisterType();
-int ID11 = TypeRegister<CommandSetPosScanator    >::RegisterType();
-int ID12 = TypeRegister<MessagePositionState<0>  >::RegisterType();
-int ID13 = TypeRegister<MessagePositionState<1>  >::RegisterType();
-int ID14 = TypeRegister<CommandCheckConnection   >::RegisterType();
-int ID15 = TypeRegister<CommandCloseConnection   >::RegisterType();
-void printRegisteredTypes();
+//#define PROJECT_COMPLEX 1
+#define PROJECT_SIMPLE 1 
 
 
 void OpenCL_Init();
+
+
+
+template<> constinit const int TypeRegister<CommandSetPosRotary>      ::TYPE_ID{0 };
+template<> constinit const int TypeRegister<CommandSetPosScanator>    ::TYPE_ID{1 };
+template<> constinit const int TypeRegister<RequestPosRotary  >       ::TYPE_ID{2 };
+template<> constinit const int TypeRegister<RequestPosScanator>       ::TYPE_ID{3 };
+template<> constinit const int TypeRegister<CommandAiming1>           ::TYPE_ID{4 };
+template<> constinit const int TypeRegister<CommandAiming2>           ::TYPE_ID{5 };
+template<> constinit const int TypeRegister<RequestAiming >           ::TYPE_ID{6 };
+
+template<> constinit const int TypeRegister<CommandDeviceLaserPointer>::TYPE_ID{0x110};
+template<> constinit const int TypeRegister<CommandDeviceLaserPower  >::TYPE_ID{0x120};
+template<> constinit const int TypeRegister<CommandDeviceFocusator   >::TYPE_ID{0x130};
+template<> constinit const int TypeRegister<RequestDeviceLaserPointer>::TYPE_ID{0x210};
+template<> constinit const int TypeRegister<RequestDeviceLaserPower  >::TYPE_ID{0x220};
+template<> constinit const int TypeRegister<CommandCheckConnection   >::TYPE_ID{0x230};
+
+template<> constinit const int TypeRegister<SystemState>              ::TYPE_ID{0xA001}; 
+template<> constinit const int TypeRegister<ControlRX  >              ::TYPE_ID{0xA002};
+template<> constinit const int TypeRegister<ControlTX  >              ::TYPE_ID{0xB001};
+template<> constinit const int TypeRegister<MessageRotaryStateJson >  ::TYPE_ID{0x7B22};
+
+
+template<> class TypeRegisterSizes<sizeof(MESSAGE_HEADER_GENERIC)>
+{
+  public:
+      static constexpr std::array<int,100> SIZES
+      {
+          sizeof(CommandSetPosRotary      ),
+          sizeof(CommandSetPosScanator    ),
+          sizeof(RequestPosRotary         ),
+          sizeof(RequestPosScanator       ),
+          sizeof(CommandAiming1           ),
+          sizeof(CommandAiming2           ),
+          sizeof(RequestAiming            ),
+          sizeof(CommandDeviceLaserPower  ),
+          sizeof(CommandDeviceLaserPointer),
+          sizeof(CommandDeviceFocusator   ),
+          sizeof(RequestDeviceLaserPower  ),
+          sizeof(RequestDeviceLaserPointer),
+          sizeof(CommandCheckConnection   ),
+      };
+
+      static constexpr int HEADER_SIZE = sizeof(MESSAGE_HEADER_GENERIC);
+      static constexpr int MinSize = TypeRegisterSizes<0>::GetMinTypeSize(SIZES) + HEADER_SIZE; 
+      static constexpr int MaxSize = TypeRegisterSizes<0>::GetMaxTypeSize(SIZES) + HEADER_SIZE; 
+};
+
+
+class TestMessageTransmission
+{
+  using MessageType    = MessageGeneric<void*, MESSAGE_HEADER_GENERIC>;
+  using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>(), 20,IteratorMode::Continous>; 
+  using DispatcherType = MessageDispatcher<MESSAGE_HEADER_GENERIC     ,BufferType>;
+  public:
+  TestMessageTransmission()
+  {
+            Connection = std::make_shared<UDPConnectionEngine>();
+            RingBuffer = std::make_shared<BufferType>();
+            Dispatcher = std::make_shared<DispatcherType>();
+   *Connection | RingBuffer | Dispatcher;
+
+    qDebug() << "[ TEST CONNECTION ] 192.168.1.75 3333 REMOTE: 192.168.1.59 2525";  
+    Connection->listenTo("192.168.1.58",3333);
+    Connection->connectTo("192.168.1.121",4444);
+  }
+
+  std::shared_ptr<UDPConnectionEngine>     Connection ;
+  std::shared_ptr<MessageStorageInterface> RingBuffer ;
+  std::shared_ptr<DispatcherType>          Dispatcher ;
+
+  template<typename T> void addType() 
+  { 
+    Dispatcher->AppendCallback<T> ( [](MessageType& Message)
+    {
+     auto data = DispatcherType::ExtractData<T>(&Message); qDebug() << "GET REQUEST: " << TypeRegister<T>::GetTypeName() << data->print();
+    });
+  };
+
+  template<typename T> void pushMessage(const T& Data)
+  {
+     auto Message = new MessageGeneric<T,MESSAGE_HEADER_GENERIC>;   
+          Message->DATA = Data;
+
+    qDebug() << "PUT MESSAGE: " << TypeRegister<T>::GetTypeName() 
+             << " ID: "   << Message->HEADER.MESSAGE_IDENT 
+             << " SIZE: " << Message->HEADER.DATA_SIZE << " SIZE_MESSAGE: " << Message->GetSizeMessage();
+             
+    Connection->slotSendMessage((const char*)Message, Message->GetSizeMessage(),0);
+    delete Message;
+  }
+};
+
+
 
 
 int main(int argc, char* argv[])
 {
 
   QApplication app(argc,argv);
-  SettingsRegister::LoadSettings();
-  qRegisterMetaType<const QImage&>();
-  //OpenCL_Init();
-  //
-  
+  SettingsRegister::LoadSettings("/home/orangepi/SETTINGS");
 
-  #ifdef PROJECT_TEST
-  WidgetGraphisPlot WindowGraphics;
-                 WindowGraphics.show();
-  SinusGeneratorClass SinusGenerator;
-                      SinusGenerator.setLink(WindowGraphics.Graph1);
-                      SinusGenerator.slotStartGenerate(true);
-  #endif
+  qRegisterMetaType<const QImage&>("QImage");
+  qRegisterMetaType<std::pair<float,float>>("std::pair");
 
 
+  //std::string info = cv::getBuildInformation();
+  //std::cout << info << std::endl;
 
-  #ifdef PROJECT_EDGE_PROCESS
+  qDebug() << "";
 
-  auto WindowImageProcessingControl = new WidgetProcessingImageControl; WindowImageProcessingControl->HideLabel();
-  auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
+
+  TypeRegister<CommandSetPosRotary  >    ::registerType("SET_POS_ROTARY"); 
+  TypeRegister<CommandSetPosScanator>    ::registerType("SET_POS_SCANATOR");
+  TypeRegister<RequestPosRotary  >       ::registerType("REQUEST_POS_SCANATOR");
+  TypeRegister<RequestPosScanator>       ::registerType("REQUEST_POS_SCANATOR");
+  TypeRegister<CommandAiming1>           ::registerType("COMMAND_AIMING1");
+  TypeRegister<CommandAiming2>           ::registerType("COMMAND_AIMING2");
+  TypeRegister<RequestAiming >           ::registerType("REQUEST_AIMING");
+  TypeRegister<CommandDeviceLaserPower  >::registerType("COMMAND_LASER_POWER");
+  TypeRegister<CommandDeviceLaserPointer>::registerType("COMMAND_LASER_POINTER");
+  TypeRegister<CommandDeviceFocusator   >::registerType("COMMAND_LASER_FOCUSATOR");
+  TypeRegister<RequestDeviceLaserPower  >::registerType("REQUEST_LASER_POWER");
+  TypeRegister<RequestDeviceLaserPointer>::registerType("REQUEST_LASER_POINTER");
+   TypeRegister<CommandCheckConnection  >::registerType("CHECK_CONNECTION");
+                TypeRegister<SystemState>::registerType("SystemStateRotary"); 
+               TypeRegister <ControlTX  >::registerType("ControlTXRotary");
+                TypeRegister<ControlRX  >::registerType("ControlRXRotary");
+
+  TypeRegister<>::TYPES_INFO.printTypesSignature();
+  qDebug() << "[ MIN ] " << TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>() 
+           << "[ MAX ]"  << TypeRegister<>::GetMaxTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>() ;
+
+              //====================================================
+                //TestMessageTransmission TestTransmission;
+                //TestTransmission.addType<CommandSetPosRotary>();
+                //TestTransmission.addType<CommandSetPosScanator>();
+                //TestTransmission.addType<RequestPosRotary>();
+                //TestTransmission.addType<RequestPosScanator>();
+                //TestTransmission.addType<CommandAiming1>();
+                //TestTransmission.addType<CommandAiming2>();
+                //TestTransmission.addType<CommandDeviceLaserPower>();
+                //TestTransmission.addType<CommandDeviceLaserPointer>();
+                //TestTransmission.addType<RequestDeviceLaserPower>();
+                //TestTransmission.addType<RequestDeviceLaserPointer>();
+
+                //TestTransmission.pushMessage(CommandSetPosScanator(20,33));
+                //TestTransmission.pushMessage(CommandSetPosScanator(20.2,11.2));
+                //TestTransmission.pushMessage(CommandSetPosScanator(2,3));
+                //TestTransmission.pushMessage(CommandSetPosScanator(3,5));
+
+                //TestTransmission.pushMessage(CommandAiming1(20,33,1,1));
+                //TestTransmission.pushMessage(CommandAiming1(20.2,11.2,2,2));
+                //TestTransmission.pushMessage(CommandAiming1(2,3,0,0));
+                //TestTransmission.pushMessage(CommandAiming1(3,5,0,0));
+                //====================================================
+
+  qDebug() << "IS REGISTERED 1 : " << TypeRegisterID<>::isRegistered(1);
+  qDebug() << "IS REGISTERED 2 : " << TypeRegisterID<>::isRegistered(2);
+  qDebug() << "IS REGISTERED 5 : " << TypeRegisterID<>::isRegistered(3);
+  qDebug() << "IS REGISTERED 45 : " << TypeRegisterID<>::isRegistered(45);
+
+
+
+  #ifdef PROJECT_SIMPLE
+auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
+
+  auto WindowImageProcessingControl1 = new WidgetProcessingImageControl; WindowImageProcessingControl1->HideLabel();
+  auto WindowImageProcessingControl2 = new WidgetProcessingImageControl; WindowImageProcessingControl2->HideLabel();
+  auto WindowContainer = new WidgetContainerGroup(WindowImageProcessingDisplay);
+
+       WindowContainer->AddWidget(*WindowImageProcessingControl1);
+       WindowContainer->AddWidget(*WindowImageProcessingControl2);
+ QObject::connect(WindowImageProcessingDisplay, SIGNAL(signalChannelChanged(int)), WindowContainer, SLOT(slotSetActiveChannel(int)));
+
   WidgetTableGroup WindowTableGroup;
   WindowTableGroup.AddWidget(WindowImageProcessingDisplay);
-  WindowTableGroup.AddWidget(WindowImageProcessingControl);
+  WindowTableGroup.AddWidget(WindowContainer);
   WindowTableGroup.setFixedSize(400,500);
   WindowTableGroup.move(300,300);
+  WindowTableGroup.linkToWidget(WindowImageProcessingDisplay->LinkedWidget);
 
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
                            ProcessController->setParent(&WindowTableGroup);
+
+  ProcessControllerClass::DeviceCamera->CameraSetZoom(5);
+  ProcessControllerClass::DeviceCamera->CameraSetExposure(1500);
+  ProcessControllerClass::DeviceCamera->CameraSetGain(0);
+  ProcessControllerClass::DeviceCamera->CameraStartStream(true);
+
                            ProcessController->slotSetProcessAiming(true);
 
-  ProcessControllerClass::DeviceCamera->SetZoom(1);
-  ProcessControllerClass::DeviceCamera->StartCameraStream(true);
+  WindowImageProcessingControl1->linkToModule(ProcessControllerClass::ModuleImageProc );
+  WindowImageProcessingControl2->linkToModule(ProcessControllerClass::ModuleImageProc2);
 
-  WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
-  //WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::DeviceCamera);    
+  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc);    
+  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
+
+  WindowImageProcessingDisplay->slotSetActiveChannel(0);
+  WindowContainer->slotSetActiveChannel(0);
+
+  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::DeviceCamera);    
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
-  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed2(QPair<float,float>)), 
                                                        AimingPort,SLOT  (slotSetCoord    (QPair<float,float>))) ;
+
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+                                                       ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
+
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
+                                                       ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
 
   ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();
   #endif
 
   
-  #ifdef PROJECT_EDGE_IMITATION
-  OpenCL_Init();
-  
-  auto WindowImageProcessingControl = new WidgetProcessingImageControl; WindowImageProcessingControl->HideLabel();
-  auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
 
-  WidgetTableGroup WindowTableGroup;
-  WindowTableGroup.AddWidget(WindowImageProcessingDisplay);
-  WindowTableGroup.AddWidget(WindowImageProcessingControl);
-  WindowTableGroup.move(300,300);
-
-  ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
-                           ProcessController->setParent(&WindowTableGroup);
-                           ProcessControllerClass::ModuleImitatorImage->slotStartWork();
-                           ProcessController->slotSetProcessImitation(true);
-
-   WindowImageProcessingControl->LinkToModule(ProcessControllerClass::ModuleImageProc);
-   WindowImageProcessingDisplay->LinkToModule(ProcessControllerClass::ModuleImageProc);    
-
-  WindowTableGroup.show();
-  #endif
-
-
-  #ifdef PROJECT_PROB_ENV
+  #ifdef PROJECT_COMPLEX
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
 
   WidgetProcessController  WindowProcessController;
-                           WindowProcessController.LinkTo(ProcessController);
+                           WindowProcessController.linkTo(ProcessController);
 
 
   WidgetProcessingImageControl    WindowImageProcessingControl; 
@@ -163,19 +276,19 @@ int main(int argc, char* argv[])
   WidgetProcessingImage WindowCameraDisplay("КАМЕРА");
   WidgetProcessingImage WindowImageProcessingDisplay("ОБРАБОТКА");
 
-           WindowCameraControl.LinkToDevice(ProcessControllerClass::DeviceCamera);
-           WindowCameraDisplay.LinkToModule(ProcessControllerClass::DeviceCamera);
+           WindowCameraControl.linkToDevice(ProcessControllerClass::DeviceCamera);
+           WindowCameraDisplay.linkToModule(ProcessControllerClass::DeviceCamera);
 
 
-  WindowImageProcessingControl.LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingControl2.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+  WindowImageProcessingControl.linkToModule(ProcessControllerClass::ModuleImageProc);
+  WindowImageProcessingControl2.linkToModule(ProcessControllerClass::ModuleImageProc2);
 
-  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay.LinkToModule(ProcessControllerClass::ModuleImageProc2);
+  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc);
+  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc2);
 
-      WindowScanatorInterface.LinkToDevice(ProcessControllerClass::DeviceScanator);
-          WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAiming1);
-          WindowAimingControl.LinkToModule(ProcessControllerClass::ModuleAiming2);
+      WindowScanatorInterface.linkToDevice(ProcessControllerClass::DeviceScanator);
+          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming1);
+          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming2);
 
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
@@ -265,23 +378,6 @@ void OpenCL_Init()
   //          box.setStyleSheet(WindowCameraDisplay.styleSheet());
   //box.show();
   //
-void printRegisteredTypes()
-{
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandSetPos<0>>::TYPE_ID).arg(TypeRegister<CommandSetPosScanator>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandSetPos<1>>::TYPE_ID).arg(TypeRegister<CommandSetPosRotary>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandDevice<0>>::TYPE_ID).arg(TypeRegister<CommandDevice<0>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandDevice<1>>::TYPE_ID).arg(TypeRegister<CommandDevice<1>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandDevice<2>>::TYPE_ID).arg(TypeRegister<CommandDevice<2>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandDevice<3>>::TYPE_ID).arg(TypeRegister<CommandDevice<3>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessageDevice<0>>::TYPE_ID).arg(TypeRegister<MessageDevice<0>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessageDevice<1>>::TYPE_ID).arg(TypeRegister<MessageDevice<1>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessageDevice<2>>::TYPE_ID).arg(TypeRegister<MessageDevice<2>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessageDevice<3>>::TYPE_ID).arg(TypeRegister<MessageDevice<3>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandCalibration>::TYPE_ID).arg(TypeRegister<CommandCalibration>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessagePositionState<0>>::TYPE_ID).arg(TypeRegister<MessagePositionState<0>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<MessagePositionState<1>>::TYPE_ID).arg(TypeRegister<MessagePositionState<0>>::GetTypeSize());
-  qDebug() << QString("REGISTER TYPE %1 SIZE %2").arg(TypeRegister<CommandCheckConnection>::TYPE_ID).arg(TypeRegister<CommandCheckConnection>::GetTypeSize());
-}
 //template<> void CommandDispatcherGeneric<TypeRegister<CommandDevice<0>>::ID()>::dispatchCommand(const QByteArray& Command) 
 //{
 //  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandDevice<0>>::TYPE_ID << " DEV 0";
@@ -291,3 +387,5 @@ void printRegisteredTypes()
 //{
 //  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandSetPosRotary>::TYPE_ID << " POS ROTARY";
 //};
+//
+//

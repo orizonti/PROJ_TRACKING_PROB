@@ -25,6 +25,7 @@ public:
 
     void CalcObjectTrajectory();
 
+
 public  slots:
    void SlotProcessImage(const cv::Mat& Image) override;
    void SlotProcessImage() override;

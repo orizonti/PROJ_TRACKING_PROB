@@ -1,4 +1,3 @@
-#include "AIM_IMAGE_IMITATION/imitator_image_aim.h"
 #include "engine_statistics.h"
 #include "glib.h"
 #include "gmodule.h"
@@ -9,9 +8,9 @@
 #include <opencv2/imgproc.hpp>
 #include <qnamespace.h>
 #include <chrono>
-#include <debug_output_filter.h>
 #include <QThread>
 #include "image_processing_node.h"
+#include <debug_output_filter.h>
 
 
 int ModuleImageProcessing::CountModules = 0;
@@ -19,7 +18,7 @@ std::vector<ModuleImageProcessing*> ModuleImageProcessing::Modules;
 
 std::mutex ModuleImageProcessing::MutexImageAccess;
 
-ModuleImageProcessing::ModuleImageProcessing(QObject* parent) : ImageSourceInterface(parent) 
+ModuleImageProcessing::ModuleImageProcessing(QObject* parent) : QObject(parent) 
 {
     CountModules++;
     NumberModule = CountModules;
@@ -31,41 +30,32 @@ CoordsObject[0] = QPair<float,float>(80,80);
 CoordsObject[1] = QPair<float,float>(80,80); 
 ImageToDisplay = QImage(400,400,QImage::Format_Grayscale8); ImageToDisplay.fill(Qt::black);
 
-         timerProcessImage.setInterval(15);
-connect(&timerProcessImage, SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
+       timerProcessImage.setInterval(15);
+       timerCheckSlaveInput.setInterval(6000);
+
+connect(&timerProcessImage   , SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
+connect(&timerCheckSlaveInput, SIGNAL(timeout()), this, SLOT(SlotCheckSlaveInputPeriod()));
+
 };
 
 
-std::vector<QPair<int,int>>& ModuleImageProcessing::getPoints()  
+const std::vector<QPair<int,int>>& ModuleImageProcessing::getPoints()  
 {
    CoordsImage[0] = CoordsObject[0];
    CoordsImage[1] = CoordsObject[1];
    return CoordsImage;
 }
 
-std::vector<QRect>& ModuleImageProcessing::getRects()  
+const std::vector<QRect>& ModuleImageProcessing::getRects()  
 {
    RectsImage[0].setRect(RectsObject[0].x, RectsObject[0].y, RectsObject[0].width, RectsObject[0].height);
-   RectsImage[1].setRect(CoordsObject[0].first-20, CoordsObject[0].second-20, 40, 40);
+   RectsImage[1].setRect(CoordsObject[0].first-40, CoordsObject[0].second-40, 80, 80);
    return RectsImage;
 }
 
-QString& ModuleImageProcessing::getInfo()  { return ProcessInfo; }
+const QString& ModuleImageProcessing::getInfo()  { return ProcessInfo; }
 
 cv::Mat& ModuleImageProcessing::getImageToProcess() { return ImageProcessing; }
-
-QImage& ModuleImageProcessing::getImageToDisplay()
-{
-    MutexImageAccess.lock();
-    ImageToDisplay = QImage(ImageProcessing.data,   //GRAY IMAGE
-                            ImageProcessing.cols,
-                            ImageProcessing.rows,
-           static_cast<int>(ImageProcessing.step),
-              QImage::Format_Grayscale8 );
-
-    MutexImageAccess.unlock();
-    return ImageToDisplay;
-}
 
 void ModuleImageProcessing::getImageToProcess(cv::Mat& ImageDst)
 {
@@ -103,15 +93,33 @@ void ModuleImageProcessing::getImageToDisplay(QImage& ImageDst)
 
 
 //==================================================================================
-void ModuleImageProcessing::LinkToModule(std::shared_ptr<ImageSourceInterface> Source)
+void ModuleImageProcessing::linkToModule(std::shared_ptr<SourceImageInterface> Source)
 {
    if(isLinked()) return; SourceImage = Source; 
 }
 
-std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<ImageSourceInterface> Source, std::shared_ptr<ModuleImageProcessing> Rec)
+void ModuleImageProcessing::linkToModule(std::shared_ptr<ModuleImageProcessing> Dst)
 {
-    //Rec->LinkToModule(Source->getImageSourceChannel()); return Rec;
-    Rec->LinkToModule(Source); return Rec;
+   qDebug() << TAG_NAME << "[ LINK TO        SLAVE ]" << Dst->TAG_NAME;
+   //this->setLink(Dst.get()); Dst->setSlaveMode(); 
+   QObject::connect(this, SIGNAL(SignalTrackCoord(std::pair<float,float>)), Dst.get(), 
+                          SLOT  (SlotInputCoord  (std::pair<float,float>)), Qt::QueuedConnection);
+   SlaveProcessor = Dst;
+}
+
+
+
+
+void operator|(std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst)
+{
+  qDebug() << Source->TAG_NAME << " [ LINK TO ] " << Dst->TAG_NAME;
+  Source->linkToModule(Dst);
+}
+
+std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<SourceImageInterface> Source, std::shared_ptr<ModuleImageProcessing> Rec)
+{
+    //Rec->linkToModule(Source->getImageSourceChannel()); return Rec;
+    Rec->linkToModule(Source->getImageSourceChannel()); return Rec;
 }
 
 
@@ -152,16 +160,18 @@ if(ROI.y < 0 ) ROI.y = 0;
 
 void ModuleImageProcessing::SetProcessingRegim(int Regim)       { }
 
+
 void ModuleImageProcessing::SetModuleEnabled(bool StartStop) 
 { 
+   qDebug() << TAG_NAME << "[ PASS SIGNAL ]" << StartStop;
       this->PassBlocked = !StartStop;
    emit SignalBlockEnabled(StartStop);
 }
 
 void ModuleImageProcessing::SetThreshold(int Thresh)  { this->Threshold = Thresh; }
 
-std::pair<float,float> ModuleImageProcessing::getFramePeriod() { return std::pair<float,float>(FrameMeasureInput.FramePeriod, 
-                                                                                               FrameMeasureProcess.FramePeriod);};
+std::pair<float,float> ModuleImageProcessing::getTickPeriod() { return std::pair<float,float>(FrameMeasureInput.TickPeriod, 
+                                                                                              FrameMeasureProcess.TickPeriod);};
 
 void ModuleImageProcessing::SetImageParam(int MinWeight, int MaxWeight, int Distortion)
 {
@@ -181,22 +191,35 @@ void ModuleImageProcessing::SlotResetProcessing()
 
 void ModuleImageProcessing::SlotStopProcessing()
 {
-   qDebug() << TAG_NAME.c_str() << "[ STOP PROCESSING ]" << QThread::currentThread();
+   qDebug() << TAG_NAME << "[ STOP PROCESSING ]" << QThread::currentThread();
    timerProcessImage.stop();
+}
+
+void ModuleImageProcessing::SlotCheckSlaveInputPeriod()
+{
+//     MeasurePeriodMasterInput.PushTick();
+//  if(MeasurePeriodMasterInput.getSeconds() > 5) FLAG_OBJECT_HOLD = false; 
+//  qDebug() << TAG_NAME << "[ CHECK MASTER HOLD OBJECT ]" << FLAG_OBJECT_HOLD;
+
 }
 
 
 void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
 {
+  //qDebug() << OutputFilter::Filter(20) << TAG_NAME << "[ SLAVE INPUT ]" << Coord.first << Coord.second;
+
+  MeasurePeriodMasterInput.PushTick();          FLAG_OBJECT_HOLD = true;
+
   CoordsObject[1] = Coord; 
   RectsObject[0] = cv::Rect(CoordsObject[1].first  - ROI_SIZE/2, 
                             CoordsObject[1].second - ROI_SIZE/2 , ROI_SIZE, ROI_SIZE);
+  if(FLAG_OBJECT_HOLD) return;
 };
 
-void ModuleImageProcessing::SetSlaveMode(ModuleImageProcessing* Master)
-{
-   Master->setLink(this); FLAG_SLAVE_MOVE = true; FLAG_TRACK_MODE = true;
-}
+//void ModuleImageProcessing::SetSlaveMode(ModuleImageProcessing* Master)
+//{
+//   Master->setLink(this); FLAG_SLAVE_MODE = true; FLAG_TRACK_MODE = true;
+//}
 
 //auto max_element_it = std::max_element(ContourAreas.begin(), ContourAreas.end());
 //NumberMaxContour = std::distance(ContourAreas.begin(), max_element_it);

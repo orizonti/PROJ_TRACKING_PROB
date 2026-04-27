@@ -27,7 +27,7 @@ class LaserControlClass : public QObject
     LaserControlClass();
     ~LaserControlClass();
     WindowLaserControlClass* WindowControl = 0;
-    void LinkToWindow(WindowLaserControlClass* Window);
+    void linkToWindow(WindowLaserControlClass* Window);
 
 	std::string TAG_NAME{"[ LASER ]"};
     ControlCommandLaser ControlData;
@@ -58,7 +58,7 @@ class WindowLaserControlClass : public WidgetAdjustable
 public:
     WindowLaserControlClass(QWidget* parent = nullptr);
     ~WindowLaserControlClass();
-    void LinkToModule(LaserControlClass* LaserControl);
+    void linkToModule(LaserControlClass* LaserControl);
 private slots:
 private:
     Ui::WindowLaserControlClass *ui;

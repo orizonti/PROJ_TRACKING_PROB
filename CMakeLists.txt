@@ -165,19 +165,19 @@ function(INCLUDE_PROJECT_DIRS)
         include_directories("./gui_sources/GRAPHICS_WINDOW_GRAPH")
         include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING") 
         include_directories("${PROJECT_SOURCE_DIR}/CV_IMAGE_PROCESSING/TRACKER_ROBUST") 
-        include_directories("${PROJECT_SOURCE_DIR}/CV_AIM_IMITATION")
         include_directories("${PROJECT_SOURCE_DIR}/UTILITES") 
         include_directories("${PROJECT_SOURCE_DIR}/COMMON") 
         include_directories("${PROJECT_SOURCE_DIR}/AIMING_MODULES") 
-        include_directories("${PROJECT_SOURCE_DIR}/AIM_IMAGE_IMITATION") 
         include_directories("${PROJECT_SOURCE_DIR}/DEVICES") 
-        include_directories("${PROJECT_SOURCE_DIR}/DEVICES/LaserPointerControlLib") 
+        include_directories("${PROJECT_SOURCE_DIR}/DEVICES/LaserIllumControlLib") 
         include_directories("${PROJECT_SOURCE_DIR}/DEVICES/MotorImitatorLib") 
-        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/DATA_STRUCTURES") 
-        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/EMBEDED_RING_BUFFER") 
-        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/GENERIC_MESSAGES") 
-        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/TRANSMISSION_MODULES") 
-        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION/RING_BUFFER_ADAPTERS") 
+        include_directories("${PROJECT_SOURCE_DIR}/CAMERA_INTERFACE") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/DATA_STRUCTURES") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/NETWORK_INTERFACES") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/GENERIC_MESSAGES") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/TRANSMISSION_MODULES") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/RING_BUFFER") 
+        include_directories("${PROJECT_SOURCE_DIR}/TRANSMISSION_MODULES/RING_BUFFER_ADAPTERS") 
         message("[ INCLUDE ] PROJECT DIRS")
 endfunction()
 
@@ -190,6 +190,7 @@ include_directories("/usr/include/c++/12")
 #include_directories("${PROJECT_SOURCE_DIR}/PYTORCH_PROCESSING") #SUBPROJECT PYTORCH_PROCESSING
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/Eigen")
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/")
+include_directories("/home/orangepi/SETTINGS/TrackingProject/")
 endfunction()
 
 
@@ -199,7 +200,6 @@ list(APPEND GUI_FILES_LIST "./gui_files/widget_processing_image_control.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_processing_image_generic.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_processing_image_control.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_camera_control.ui")
-list(APPEND GUI_FILES_LIST "./gui_files/widget_imitator_control.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_container_group.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_table_group.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/widget_main_window.ui")
@@ -210,9 +210,7 @@ list(APPEND GUI_FILES_LIST "./gui_files/widget_aiming_control.ui")
 list(APPEND GUI_FILES_LIST "./gui_files/pictures.qrc")
 
         set(GUI_SOURCES_LIST "")
-list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_process_controller.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_processing_image_generic.cpp")
-list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_imitator_control.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_container_group.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_table_group.cpp")
 list(APPEND GUI_SOURCES_LIST "./gui_sources/widget_processing_image_control.cpp")
@@ -243,26 +241,23 @@ list(APPEND IMAGE_PROCESSING_SOURCES "./CV_IMAGE_PROCESSING/optimization_thresho
 list(APPEND IMAGE_PROCESSING_SOURCES "./CV_IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp")
 
         set(TRANSMISSION_MODULE_SOURCES "")
-list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_udp_interface.cpp")
-list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_tcp_interface.cpp")
-list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION/TRANSMISSION_MODULES/engine_can_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_udp_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_can_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.cpp")
 
         set(UTILITIES_SOURCES "")
 list(APPEND UTILITIES_SOURCES "./UTILITES/debug_output_filter.cpp")
 list(APPEND UTILITIES_SOURCES "./UTILITES/register_settings.cpp")
 list(APPEND UTILITIES_SOURCES "./UTILITES/engine_statistics.cpp")
+list(APPEND UTILITIES_SOURCES "./UTILITES/sinus_generator_class.cpp")
 list(APPEND UTILITIES_SOURCES "./COMMON/interface_pass_coord.cpp")
 list(APPEND UTILITIES_SOURCES "./COMMON/interface_image_source.cpp")
 
 
-        set(SIGNAL_IMITATOR_SOURCES "")
-list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/sinus_generator_class.cpp")
-list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/imitator_image_aim.cpp")
-#list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/widget_sinus_source.cpp")
-#list(APPEND SIGNAL_IMITATOR_SOURCES "./AIM_IMAGE_IMITATION/widget_sinus_source.ui")
-
          set(DEVICE_CONTROL_SOURCES "")
 list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_hik.cpp")
+list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_rtsp.cpp")
 #list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/camera_interface_class.cpp")
 
 #=========================FIND LIBRARIES=====================
@@ -309,17 +304,12 @@ pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-
                 "./AIMING_MODULES/pid_class.cpp"
                 "./AIMING_MODULES/rotate_vector_class.cpp"
                 "./DEVICES/device_rotary_interface.cpp"
-                #"./ROTATE_OPTIMIZATION/rotation_find_executor.cpp"
-                
-                #"gui_sources/GRAPHICS_WINDOW_GRAPH/widget_line_graph.cpp"
-                #"gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp"
 
                 ${GUI_FILES_LIST}
                 ${GUI_SOURCES_LIST}
                 ${IMAGE_PROCESSING_SOURCES}
                 ${TRANSMISSION_MODULE_SOURCES}
                 ${UTILITIES_SOURCES}
-                ${SIGNAL_IMITATOR_SOURCES}
                 ${DEVICE_CONTROL_SOURCES}
                 )
 
@@ -347,5 +337,5 @@ pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-
 #==========================================================
 
 #target_link_libraries(ImageProcProject /usr/local/lib/aarch64-linux-gnu/libaravis-0.10.so)
-#target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/DEVICES/LaserPointerControlLib/libLaserControlLib.so")
+#target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/DEVICES/LaserIllumControlLib/libLaserControlLib.so")
 #target_link_libraries(ImageProcProject "${CMAKE_CURRENT_SOURCE_DIR}/DEVICES/MotorImitatorLib/libMotorControlLib.so")

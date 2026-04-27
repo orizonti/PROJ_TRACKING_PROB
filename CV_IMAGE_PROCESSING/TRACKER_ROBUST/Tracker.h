@@ -4,6 +4,7 @@
 #include "opencv2/tracking.hpp"
 #include <opencv2/core/ocl.hpp>
 #include <QPair>
+#include <atomic>
 
 class TrackerFirst
 {
@@ -13,9 +14,10 @@ public:
 	cv::Ptr<cv::TrackerKCF> tracker;
 
   cv::Mat TemplateImage;
+  cv::Mat ProcessImage;
   cv::UMat ProcessImageGPU;
 
-	void   init(const cv::Mat& image, cv::Rect bbox);
+	void   init(const cv::Mat& image, cv::Rect rectAim);
 	void   find(cv::Mat& image);
 	void follow(cv::Mat& image);
 	 int thread(cv::Mat& image);
@@ -41,8 +43,8 @@ private:
 
 	cv::KalmanFilter KF = cv::KalmanFilter(4, 2, 0);
 
-	bool init_follow = false;
-	bool follow_flag = false;
+  std::atomic<bool> init_follow = false;
+  std::atomic<bool> follow_flag = false;
 
 	cv::Rect bbox;
 	cv::Rect bbox_prev;

@@ -31,8 +31,7 @@ struct ArvStreamCallbackData
 };
 
 
-
-class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlInterface
+class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface
 {
     //Q_OBJECT
     public:
@@ -55,10 +54,17 @@ class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlIn
     int  getAvailableFrames() override { return NumberFrameToProcess; };
     void GetCurrentCameraRegion();
 
-    void SetZoom(int Number) override;
-    void SetCameraRegion(int x, int y, int width, int height ) override;
-    void SetCameraExposure(int Exposure) override {}; 
-    void StartCameraStream(bool OnOff) override;
+    void CameraSetZoom(int Number) override;
+    void CameraSetRegion(int XOffset, int YOffset, int width, int height ) override;
+    void CameraSetExposure(float Exposure) override {}; 
+    void CameraSetGain    (float Gain)     override {};
+
+    void CameraSetSize    (int Width  , int Height)  override {};
+    void CameraSetOffset  (int XOffset, int YOffset) override {};
+    void CameraSetHeight  (int Height) override {};
+    void CameraSetWidth   (int Width ) override {};
+
+    void CameraStartStream(bool OnOff) override;
 
     bool switchToNextFrame() override;
     void skipFrames() override;
@@ -74,7 +80,6 @@ class CameraInterfaceAravis: public ImageSourceInterface, public CameraControlIn
     int NumberFrameToProcess = 0;
     int Counter = 0;
 
-     QImage& getImageToDisplay() override ;
     cv::Mat& getImageToProcess() override ;
 
     void getImageToDisplay(QImage& ImageDst) override { ImageDst = ImageToDisplay.copy();};

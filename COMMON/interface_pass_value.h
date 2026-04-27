@@ -11,34 +11,34 @@ public:
 	bool isLinked() { return !NodesLinked.empty();}
 	V Value;
 
-	virtual const V& GetValue() { return Value;};
-	virtual void SetValue(V InputValue) { Value = InputValue; };
+	virtual const V& getValue() { return Value;};
+	virtual void setValue(V InputValue) { Value = InputValue; };
 
     void setLink(PassValueClass* NewLink) { NodesLinked.push_back(NewLink);}
 
-	void passCoord() { if(!isLinked()) return; for(auto& Link: NodesLinked) *this >> *Link; }
+	void passValue() { if(!isLinked()) return; for(auto& Link: NodesLinked) *this >> *Link; }
 	
 	friend PassValueClass& operator >>(               V Value, PassValueClass& Reciever)
-	{ Reciever.SetValue(Value); if(Reciever.isLinked()) Reciever.passCoord(); return Reciever; };
+	{ Reciever.setValue(Value); if(Reciever.isLinked()) Reciever.passValue(); return Reciever; };
 
 	friend PassValueClass& operator >>(               int Value, PassValueClass& Reciever)
-	{ Reciever.SetValue((int)Value); if(Reciever.isLinked()) Reciever.passCoord(); return Reciever; };
+	{ Reciever.setValue((int)Value); if(Reciever.isLinked()) Reciever.passValue(); return Reciever; };
 
 	friend PassValueClass& operator >>(               uint32_t Value, PassValueClass& Reciever)
-	{ Reciever.SetValue((uint32_t)Value); if(Reciever.isLinked()) Reciever.passCoord(); return Reciever; };
+	{ Reciever.setValue((uint32_t)Value); if(Reciever.isLinked()) Reciever.passValue(); return Reciever; };
 
 
     friend PassValueClass& operator >>(PassValueClass& Sender, PassValueClass& Reciever)
-	{ Reciever.SetValue(Sender.GetValue()); if(Reciever.isLinked()) Reciever.passCoord(); return Reciever; }
+	{ Reciever.setValue(Sender.getValue()); if(Reciever.isLinked()) Reciever.passValue(); return Reciever; }
 
 	friend PassValueClass& operator >>(PassValueClass& Sender,  V& Value)
-	{ Value = Sender.GetValue(); return Sender; }
+	{ Value = Sender.getValue(); return Sender; }
 
 	friend PassValueClass& operator >>(PassValueClass& Sender,  int& Value)
-	{ Value = Sender.GetValue(); return Sender; }
+	{ Value = Sender.getValue(); return Sender; }
 
 	friend PassValueClass& operator >>(PassValueClass& Sender,  uint32_t& Value)
-	{ Value = Sender.GetValue(); return Sender; }
+	{ Value = Sender.getValue(); return Sender; }
 
     friend PassValueClass& operator | (PassValueClass& Sender, PassValueClass& Reciever)
 	{ Sender.setLink(&Reciever); return Reciever; }

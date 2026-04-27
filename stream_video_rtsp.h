@@ -51,8 +51,8 @@ class VideoStreamRTSP
 
   cv::Mat frameOutput;
   cv::Mat frameOutputScaled;
-  ImageSourceInterface* ImageSource = nullptr;
-  void linkToSource(ImageSourceInterface* Source);
+  SourceImageInterface* ImageSource = nullptr;
+  void linkToSource(SourceImageInterface* Source);
 };
 
 #endif

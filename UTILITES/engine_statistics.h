@@ -8,8 +8,8 @@
 #include <QQueue>
 #include <QDebug>
 #include "debug_output_filter.h"
-static OutputFilter EngFilter{20};
-static OutputFilter EngFilter2{40};
+static OutputFilter MessageFilter{20};
+static OutputFilter MessageFilter2{40};
 
 
 template<typename T>
@@ -19,7 +19,10 @@ public:
 	StatisticValue() { SetSize(10);};
 	StatisticValue(int WindowSize) {SetSize(WindowSize);};
 
-	void SetSize(int SizeStat){StatSample.resize(SizeStat); Reset(); this->Size = SizeStat;};
+	void SetSize(int SizeStat){                   Size = SizeStat;
+								StatSample.resize(Size); 
+                                CurrentElement = StatSample.begin(); EndPos = StatSample.end(); clear(); };
+
 
 	std::vector<T> StatSample;
 
@@ -32,23 +35,27 @@ public:
 	T ValueDispersion = 0;
 
 	int Size = 10;
-	bool StatLoaded = false;
+	bool isStatLoaded = false;
+	bool isModeSingle = false;
 
-	void CalcDispersion();
+    void reset(){CurrentElement = StatSample.begin(); isStatLoaded = false;};
 
-	void Reset(){ValueMax = 0; ValueMin = 0; ValueAvarage = 0; ValueDispersion = 0; 
-				 std::fill(StatSample.begin(), StatSample.end(),0); 
-				 CurrentElement = StatSample.begin(); EndPos = StatSample.end(); StatLoaded = false;};
+    void clear(){ ValueMax = 0; ValueMin = 0; ValueAvarage = 0; ValueDispersion = 0; 
+				  std::fill(StatSample.begin(), StatSample.end(),0); 
+				  CurrentElement = StatSample.begin(); isStatLoaded = false; };
 
-	bool isLoaded() { return StatLoaded; };
+
+	void setModeSingle(bool OnOff) { isModeSingle = OnOff; }
+	bool isLoaded() { return isStatLoaded;};
 	bool isValueRising();
 
-	void SetValue(T Input) override;
-	const T& GetValue() override { return ValueAvarage;}
+	    void setValue(T Input) override;
+	const T& getValue() override { return ValueAvarage;}
 
 	const T& GetDispersionValue() { return ValueDispersion;};
 	const T& GetAvarageValue() {    return ValueAvarage;};
 
+	void CalcDispersion();
 };
 
 template<typename T>
@@ -58,7 +65,7 @@ public:
 	StatisticCoord() {SetSize(10); };
 	StatisticCoord(int WindowSize) { SetSize(WindowSize); };
 
-    void SetSize(int WindowSize) { Size = WindowSize; StatSample.resize(Size); Reset();}
+    void SetSize(int WindowSize) { Size = WindowSize; StatSample.resize(Size); EndPos = StatSample.end(); clear();}
 	std::vector<QPair<T,T>> StatSample;
 	decltype(StatSample.begin()) CurrentElement = StatSample.begin();
 	decltype(StatSample.begin()) EndPos = StatSample.end();
@@ -77,20 +84,23 @@ public:
 	T DeviationAvarage = 0;
 
 	int Size = 10;
-	bool StatLoaded = false;
+	bool isStatLoaded = false;
+	bool isModeSingle = false;
+	bool isResultAvailable = false;
+	void setModeSingle(bool OnOff) { isModeSingle = OnOff; }
 
-	void CalcDispersion();
-
-	void Reset(){QPair<T,T> Null(0,0); CoordMax = Null; CoordMin = Null; CoordAvarage = Null; CoordDispersion = Null;
+    void clear(){QPair<T,T> Null(0,0); CoordMax = Null; CoordMin = Null; CoordAvarage = Null; CoordDispersion = Null;
 	                                   NormMin = 0; NormMax = 0; NormAvarage = 0; 
 									   std::fill(StatSample.begin(), StatSample.end(),Null); 
-									   CurrentElement = StatSample.begin(); EndPos = StatSample.end(); StatLoaded = false;
-									};
+									   CurrentElement = StatSample.begin(); isStatLoaded = false; };
 
-	bool isLoaded() { return StatLoaded;};
+    void reset(){ CurrentElement = StatSample.begin(); isStatLoaded = false; };
+
+	bool isLoaded() { return isStatLoaded;};
+
 	bool isValueRising();
 
-	void setInput(const QPair<T,T>& Input);
+	             void setInput(const QPair<T,T>& Input);
 	const QPair<T,T>& getOutput() { return CoordAvarage;};
 
 	static T Norm(QPair<T,T> Coord) { return std::sqrt(std::pow(Coord.first,2) + std::pow(Coord.second,2)); }
@@ -104,8 +114,8 @@ public:
 
 		T GetMaxDeviation() { return DeviationMax; };
 		T GetAvarageDeviation() { return DeviationAvarage; }
-
-
+	
+	void CalcDispersion();
 };
 
 template<typename T = float>
@@ -119,25 +129,31 @@ class StatisticNode : public PassValueClass<T>, public PassCoordClass<T>
 	StatisticValue<T> NodeValue{10};
 	StatisticCoord<T> NodeCoord{10};
 
-	 const QPair<T, T>& getOutput() override { return NodeCoord.getOutput();};
-	 void setInput(const QPair<T, T>& Coord) override  { Coord >> NodeCoord;};
+	 const QPair<T, T>& getOutput() override                          { return NodeCoord.getOutput();};
+	                void setInput(const QPair<T, T>& Coord) override  { Coord >> NodeCoord;};
 
-	 const T& GetValue() override  { return NodeValue.GetValue();};
-	 void SetValue(T InputValue) override  { InputValue >> NodeValue; };
+	 const T& getValue() override              { return NodeValue.getValue();};
+	     void setValue(T InputValue) override  { InputValue >> NodeValue; };
 
-	 const T& GetAvarageValue() { return NodeValue.GetAvarageValue();}
+	 const T& GetAvarageValue()           { return NodeValue.GetAvarageValue();}
+	 const QPair<T, T>& GetAvarageCoord() { return NodeCoord.GetAvarageCoord();}
 
-	 bool IsValueLoaded() { return NodeValue.isLoaded();}
-	 bool IsCoordLoaded() { return NodeCoord.isLoaded();}
-	 T GetDispersionNorm() { return NodeCoord.GetDispersionNorm();}
+	 bool isValueLoaded()   { return NodeValue.isLoaded();}
+	 bool isCoordLoaded()   { return NodeCoord.isLoaded();}
+	 bool isLoaded()        { return NodeCoord.isLoaded() || NodeValue.isLoaded();}
+	 T GetDispersionNorm()  { return NodeCoord.GetDispersionNorm();}
 	 T GetDispersionValue() { return NodeValue.GetDispersionValue();}
-	 void Reset() { NodeValue.Reset(); NodeCoord.Reset();}
+	 void reset() { NodeValue.reset(); NodeCoord.reset();}
+
+	 void setModeSingle(bool OnOff) { NodeCoord.setModeSingle(OnOff); NodeValue.setModeSingle(OnOff); }
 };
 //================================================================================
 
 template<typename T>
-void StatisticValue<T>::SetValue(T Input) 
+void StatisticValue<T>::setValue(T Input) 
 {
+	if(isModeSingle && isStatLoaded) return;
+
 	if (ValueMin > Input) ValueMin = Input;
 	if (ValueMax < Input) ValueMax = Input;
 	if (ValueMin == 0)    ValueMin = Input;
@@ -147,7 +163,7 @@ void StatisticValue<T>::SetValue(T Input)
 	                *CurrentElement = Input; 
 					 CurrentElement++; 
 
-	if(CurrentElement == EndPos) {CurrentElement = StatSample.begin(); CalcDispersion(); StatLoaded= true;}
+	if(CurrentElement == EndPos) {CurrentElement = StatSample.begin(); CalcDispersion(); isStatLoaded= true;}
 
 
 };
@@ -166,16 +182,20 @@ void StatisticValue<T>::CalcDispersion()
 template<typename T>
 void StatisticCoord<T>::setInput(const QPair<T,T>& Input)
 {
-	//qDebug() << EngFilter << "[ STAT COORD SET ] " << Input.first << Input.second << "AVARAGE: " << CoordAvarage.first << CoordAvarage.second;
+	if(isStatLoaded && isModeSingle ) return;
 
-     CoordAvarage.first -= (*CurrentElement).first/Size;
-    CoordAvarage.second -= (*CurrentElement).second/Size; 
+     CoordAvarage.first -= CurrentElement->first/Size;
+    CoordAvarage.second -= CurrentElement->second/Size; 
 	
      CoordAvarage.first += Input.first/Size;
     CoordAvarage.second += Input.second/Size;
 
+	//qDebug() << MessageFilter << "[INPUT] " << Input.first << Input.second 
+	//		   << "[LAST]"   << CurrentElement->first << CurrentElement->second
+	//		   << "[AVG]"    << CoordAvarage.first << CoordAvarage.second;
+
 	*CurrentElement = Input; 
-	 CurrentElement++; if(CurrentElement == EndPos) { CurrentElement = StatSample.begin(); CalcDispersion(); StatLoaded = true;}
+	 CurrentElement++; if(CurrentElement == EndPos) {CurrentElement = StatSample.begin(); CalcDispersion(); isStatLoaded = true;}
 
 };
 
@@ -220,9 +240,9 @@ public:
 
     std::map<int,StatisticNode<T>> Statistics;
 
-    void Reset() {};
+    void reset() {};
     bool IsBestStatisticFaund() { return BestStatNumber != -1; };
-    bool IsStatisticsLoaded() { return Statistics[Statistics.size()-1].IsCoordLoaded();};
+    bool IsStatisticsLoaded() { return Statistics[Statistics.size()-1].isCoordLoaded();};
     void PerformAvailableData() {};
 
     friend void operator>>(double NewValue, StatisticGroup& StatObj) {};

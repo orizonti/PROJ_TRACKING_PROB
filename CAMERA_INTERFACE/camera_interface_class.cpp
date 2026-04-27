@@ -21,7 +21,7 @@ void DestroyBufferInfo ( gpointer data)
 
 void CameraInterfaceAravis::slotSetHighFrequency() { qDebug() << "CAMERA SET FREQ: 200"; FrequencyDevider = 0;};
 
-CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): ImageSourceInterface(parent) 
+CameraInterfaceAravis::CameraInterfaceAravis(QObject* parent): SourceImageInterface(parent) 
 {
    qDebug() << "CAMERA INTERFACE CREATE";
 
@@ -109,10 +109,6 @@ void CameraInterfaceAravis::SetFrequency(int Frequency)
 	//qDebug() << TAG_NAME << "FREQUENCY: " << Frequency << "BASE: " << BaseFrequency << "DEVIDER: " << FrequencyDevider;
 };
 
-QImage& CameraInterfaceAravis::getImageToDisplay() 
-{ 
-	return ImageToDisplay; 
-}
 
 cv::Mat& CameraInterfaceAravis::getImageToProcess()                  {switchToNextFrame(); return ImageToProcess; }
 void     CameraInterfaceAravis::getImageToProcess(cv::Mat& ImageDst) {switchToNextFrame(); ImageDst = ImageToProcess.clone(); };
@@ -267,10 +263,10 @@ void CameraInterfaceAravis::StartCameraStream (bool OnOff)
 
 void CameraInterfaceAravis::slotDisplayProcessImage() { imshow("TEST IMAGE: ", ImageToProcess); }
 
-void CameraInterfaceAravis::SetCameraRegion(int x, int y, int width, int height )
+void CameraInterfaceAravis::CameraSetRegion(int XOffset, int YOffset, int width, int height )
 {
-	qDebug() << TAG_NAME << "SET ROI: " << x << y << width << height;
-	arv_camera_set_region (camera, x, y, width, height, NULL);
+	qDebug() << TAG_NAME << "SET ROI: " << XOffset << YOffset << width << height;
+	arv_camera_set_region (camera, XOffset, YOffset, width, height, NULL);
 	GetCurrentCameraRegion();
 }
 
@@ -300,7 +296,6 @@ QString& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }
 			//}
 	        //buffer = arv_stream_pop_buffer(callback_data.stream);
 
-void CameraInterfaceAravis::SetZoom(int Number) 
-{
+void CameraInterfaceAravis::CameraSetZoom(int Number) {
 
 }

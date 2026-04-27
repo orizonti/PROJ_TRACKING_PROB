@@ -10,15 +10,16 @@ class LabelImage : public AdjustableLabel
 public:
 	LabelImage(QWidget *parent = 0);
 	~LabelImage();
-  QPair<float,float> PosPressed{0,0};
+  QPair<float,float> PosPressed{0.5,0.5};
+  QPair<float,float> PosPressedAbs{0,0};
 
-protected:
+  protected:
 	void mousePressEvent(QMouseEvent * ev);
 	void mouseMoveEvent(QMouseEvent * ev);
 
-
 signals:
 	void signalPosPressed(QPair<float,float>);
+	void signalPosPressed2(QPair<float,float>);
 };
 
 #endif // LABELIMAGE_H

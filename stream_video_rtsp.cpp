@@ -1,5 +1,6 @@
 #include "stream_video_rtsp.h"
-#include <opencv4/opencv2/highgui.hpp>
+//#include <opencv4/opencv2/highgui.hpp>
+#include "debug_output_filter.h"
 
 GstCaps* VideoStreamRTSP::videoParam;
 
@@ -9,8 +10,7 @@ std::atomic_bool VideoStreamRTSP::FLAG_CLIENT_CONNECTED = false;
 
 void VideoStreamRTSP::init(int width, int height, int framerate)
 {
-   cv::namedWindow("test");
-   std::cout << "[ RTSP STREAM ]" << "[ CREATE RTSP SERVER ] " << std::endl;
+   //cv::namedWindow("test");
    std::cout << "[ RTSP STREAM ]" << "[ WIDTH ]" << width << "[ HEIGHT ]" << height << std::endl;
 
     videoParam = gst_caps_new_simple ("video/x-raw",
@@ -23,6 +23,7 @@ void VideoStreamRTSP::init(int width, int height, int framerate)
    mounts = gst_rtsp_server_get_mount_points (server);
   factory = gst_rtsp_media_factory_new ();
 
+
 gst_rtsp_media_factory_set_launch (factory, "( appsrc name=videosrc\
                                                 ! videoconvert\
                                                 ! mpph264enc\
@@ -34,6 +35,7 @@ gst_rtsp_media_factory_set_launch (factory, "( appsrc name=videosrc\
             gst_rtsp_mount_points_add_factory (mounts, "/test", factory);
             gst_rtsp_server_attach (server, NULL);
 
+   std::cout << "[CREATE LOOP ]" << std::endl ;
    processServerRTSP = g_main_loop_new(NULL, FALSE); 
 
   threadServer = std::jthread(g_main_loop_run, processServerRTSP);
@@ -101,10 +103,10 @@ void VideoStreamRTSP::grabFramesProcess()
     }
 }
 
-void VideoStreamRTSP::linkToSource(ImageSourceInterface* Source)
+void VideoStreamRTSP::linkToSource(SourceImageInterface* Source)
 {
-   std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << std::endl;
-    auto [width, height] = Source->getImageSize();
+    auto [width, height] = Source->getSizeImage();
+   std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << width << height << std::endl;
 
     this->init(width, height, 30);
 

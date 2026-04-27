@@ -5,6 +5,8 @@
 #include "state_block_enum.h"
 #include <QTimer>
 #include <QFile>
+#include "engine_statistics.h"
+
 OutputFilter FilterOutput50{20};
 OutputFilter FilterOutput2{100};
 OutputFilter FilterOutput3{2};
@@ -58,19 +60,6 @@ AimingClass::AimingClass()
   auto path = QString("/home/%1/DATA/TrackingProject/MEASURES/MeasureData.txt").arg(SettingsRegister::GetString("USER"));
   Rotation.LoadRotationFromFile(path);
                                             
-
-	this->PixToRadian.TransformCoord = [this](QPair<float,float> CoordError)
-							{
-								PixToRadian.Output.first = (CoordError.first * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
-								PixToRadian.Output.second = (CoordError.second * PixToRadian.Scale) * M_PI / (60.0 * 60.0 * 180.0);
-							};
-
-	this->RadianToPix.TransformCoord = [this](QPair<float,float> CoordError)
-							{
-								RadianToPix.Output.first = (CoordError.first*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
-								RadianToPix.Output.second = (CoordError.second*(60.0*60.0*180.0)/M_PI)/PixToRadian.Scale;
-							};
-
 	//Filter.enableFiltering(false);
   SetModuleEnabled(false);
 }
@@ -119,8 +108,11 @@ const QPair<float,float>& AimingClass::GetAimingError()
 
 void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       
 { 
-  qDebug() << "COORD AIM: " << Coord;
-  CoordAim = Coord; //this->SetBlockEnabled(true);
+  auto& SIZE = SettingsRegister::CAMERA_IMAGE_SIZE;
+  CoordAim = QPair<float,float>(SIZE.first*Coord.first, SIZE.second*Coord.second); 
+  qDebug() << "[IMAGE SIZE]" << SIZE;
+
+  qDebug() << TAG_NAME << "[ COORD AIM ]" << CoordAim.first << CoordAim.second << "[RELATIVE ]" << Coord.first << Coord.second;
 }
 void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection    = Coord; }
 void AimingClass::SetOutputCorrection(const QPair<float,float>& Coord)     { CoordOutputCorrection = Coord; };
@@ -130,11 +122,17 @@ void AimingClass::MoveAimingCorrection(const QPair<float,float>& Velocity) { Vel
 
 void AimingClass::PrintpassCoords(QPair<float,float> Coord)
 {
-    qDebug() << FilterOutput2 << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second 
-                              << "AIM" << CoordAim.first << CoordAim.second 
-                              << "ERROR" << CoordAimingError.first << CoordAimingError.second
-                              << "OUTPUT" << VectorOutput.first << VectorOutput.second
-                              << "TYPE: " << (int)TypeEnumAiming::AimingLoop;
+//    qDebug() << OutputFilter::Filter(100) << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second 
+//                              << "AIM" << CoordAim.first << CoordAim.second 
+//                              << "ERROR" << CoordAimingError.first << CoordAimingError.second
+//                              << "OUTPUT" << VectorOutput.first << VectorOutput.second
+//                              << "TYPE: " << (int)TypeEnumAiming::AimingLoop;
+
+    FrameMeasureInput++;
+    qDebug() << OutputFilter::Filter(100) << TAG_NAME.c_str() 
+                              << "OUTPUT" << VectorOutput.first     << VectorOutput.second
+                              << "ERROR " << CoordAimingError.first << CoordAimingError.second 
+                              << "GAIN: " << GainList[3] << FrameMeasureInput.getMilliseconds();
 }
 
 void AimingClass::BlockOutput(bool channelx, bool channely)
@@ -147,8 +145,16 @@ void AimingClass::ProcessLoop1()
 {
   //MUST WORK ALWAYS, SIMPLE INTEGRATOR
    CoordSpot >> Substract;
-    CoordAim >> Substract >> CoordAimingError >> Rotation >> IntegratorInput>> Gain(GainList[3]) >> VectorOutput; //BlockOutput(true,false);
-    //PrintpassCoords(CoordSpot);
+    CoordAim >> Substract >> CoordAimingError >> Gain(GainList[3]) >> IntegratorInput >> AxisInversion(3) >> VectorOutput; 
+
+                                                           GainList[3] = 1000; 
+    if(StatisticCoord<float>::Norm(CoordAimingError) < 14) GainList[3] = 10000;
+    if(StatisticCoord<float>::Norm(CoordAimingError) < 8)  GainList[3]  = 15000;
+    //if(StatisticCoord<float>::Norm(CoordAimingError) > 20) GainList[3] = 1000;
+    //if(StatisticCoord<float>::Norm(CoordAimingError) > 50) GainList[3] = 1000;
+     
+    PrintpassCoords(CoordSpot); 
+        BlockOutput(false,false);
 }
 
 void AimingClass::ProcessLoop2()
@@ -184,9 +190,11 @@ void AimingClass::ProcessLoopForCalibration()
 
 void AimingClass::ProcessDirect1()
 {
-                CoordAim >> Substract;                               
-      CoordAimCorrection >> Substract >> Rotation >> AxisInversion(2) >> VectorOutput; 
+     CoordSpot >> Substract;                               
+      CoordAim >> Substract >> CoordAimingError >> Gain(100) >>AxisInversion(2) >> VectorOutput; 
+    //PrintpassCoords(CoordSpot); 
 }
+
 void AimingClass::ProcessDirect2()
 {
 }
@@ -210,11 +218,13 @@ void AimingClass::setInput(const QPair<float,float>& Coord)
   if(AimingState == TypeEnumAiming::AimingLoop)
   {
 
-      //ProcessLoop1();
-      ProcessLoop2();
+
+      ProcessLoop1();
+      //ProcessLoop2();
       //ProcessLoop3();
       //ProcessLoop4();
       //ProcessLoopForCalibration();
+     PassCoordClass::passCoord();
 
   }
  
@@ -227,10 +237,6 @@ void AimingClass::setInput(const QPair<float,float>& Coord)
   }
 
   //PrintpassCoords(Coord);
-  //PassCoordClass<float>::passCoord();
-
-  //if(AimingState == AimingTuning) CoordAimingError >> AimingOptimizator; SetPIDParamFromTable(AimingOptimizator.BestPIDParamNumber); 
-   
 }
 
 void AimingClass::Reset()
@@ -239,8 +245,8 @@ void AimingClass::Reset()
 
   this->ModulePID.ResetPID();
   this->VectorOutput = QPair<float,float>(0,0);
-  AimingStatistic.Reset();
-  FaultStatistic.Reset();
+  AimingStatistic.reset();
+  FaultStatistic.reset();
 
   Integrator.Reset();
   IntegratorInput.Reset();
@@ -250,6 +256,7 @@ void AimingClass::Reset()
 
 void AimingClass::SetModuleEnabled(bool OnOff) 
 { 
+  qDebug() << TAG_NAME << "[ BLOCK ENABLE ]" << OnOff;
                                               PassCoordClass::PassBlocked = true;
   if( OnOff) { StateBlock = StateBlockAtWork; PassCoordClass::PassBlocked = false; } 
   if(!OnOff)   StateBlock = StateBlockDisabled; 
@@ -327,7 +334,7 @@ void AimingClass::LoadSettings()
 bool AimingParamOptimizator::isAimingFaultStatistic()
 {
    auto Error =  CurrentStatistic.NodeCoord.GetAvarageDeviation(); 
-   if(Error > 3) { LimitDispersionCounter++; CurrentStatistic.Reset();} 
+   if(Error > 3) { LimitDispersionCounter++; CurrentStatistic.reset();} 
 
    if(LimitDispersionCounter >= 10) { LimitDispersionCounter = 0; return true; }
 
@@ -403,7 +410,7 @@ AimingParamOptimizator::AimingParamOptimizator()
 void AimingParamOptimizator::Reset()
 {
   BestPIDParam = PIDParamTable[0];
-  PIDParamGroupStat.Reset();
+  PIDParamGroupStat.reset();
   BestPIDParamNumber = 0;
 
   FLAG_CONTROL_PARAM_REGIM = false;

@@ -4,38 +4,52 @@
 #include "state_block_enum.h"
 #include <QSettings>
 #include "device_generic_interface.h"
-#include "widget_focus_ranger_control.h"
+#include "message_command_structures.h"
+#include <typeinfo>
 
-
-template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
-class DeviceFocusRangerInterface : public DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>, public DeviceFocusGenericInterface
+template<typename T_CONNECTION, int NUM_DEVICE>
+class DeviceFocusRangerInterface : public DeviceGenericInterface<T_CONNECTION, 
+                                                                 MessageGenericExt<CommandDeviceRedux<NUM_DEVICE>, MESSAGE_HEADER_EXT>, 
+                                                                 RequestDeviceRedux<NUM_DEVICE>>
 {
 public:
-    explicit DeviceFocusRangerInterface(T_CONNECTION* Connection, QString Name) :
-             DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>(Connection,Name) { };
-        	~DeviceFocusRangerInterface(){};
 
-    using DEVICE_BASE_TYPE = DeviceGenericInterface<T_CONNECTION, T_COMMAND, T_MESSAGE>; 
+    using COMMAND_TYPE = CommandDeviceRedux<NUM_DEVICE>; 
+    using MESSAGE_TYPE = MessageGenericExt<COMMAND_TYPE, MESSAGE_HEADER_EXT>;
+    using REQUEST_TYPE = RequestDeviceRedux<NUM_DEVICE>; 
+    using DEVICE_INTERFACE = DeviceGenericInterface<T_CONNECTION, MESSAGE_TYPE, REQUEST_TYPE>; 
 
-    void linkToControlWindow(WidgetFocusRangerControl* Window ){ ControlWindow = Window;};
-    WidgetFocusRangerControl* ControlWindow;
+    explicit DeviceFocusRangerInterface(std::shared_ptr<T_CONNECTION> Connection, QString Name = "[ DEVICE ]") :
+             DEVICE_INTERFACE(Connection,Name) 
+             {
+              //commandArray = QByteArray((char*)(&DEVICE_INTERFACE::Message.DATA), 4);
+             };
+        	~DeviceFocusRangerInterface() { };
 
-	void setParam(uint8_t ID, uint16_t Value) override
+	void setParam(uint16_t ID, uint32_t Param) 
     {
-        DEVICE_BASE_TYPE::Command.DATA.DeviceID = TypeRegister<T_COMMAND>::GetTypeID();
-        DEVICE_BASE_TYPE::Command.DATA.Command  = ID;
-        DEVICE_BASE_TYPE::Command.DATA.Param    = Value;
-        DEVICE_BASE_TYPE::sendCommand();
+                QDataStream stream(&commandArray, QIODevice::WriteOnly);
+                 stream << ID;
+        qDebug() << "[ FOCUSATOR ] [ SEND COMMAND ]" << commandArray.toHex(); 
+        //DEVICE_INTERFACE::sendCommand(commandArray);
     }
-	void setParams(uint16_t Value1, uint16_t Value2) override {};
-	void setParams(uint16_t Value1, uint16_t Value2, uint16_t Value3, uint16_t Value4) override {}; 
 
-	void setEnable(bool OnOff)  override { if(OnOff) setParam(0,1); else setParam(0,0); }; 
-    void setPos(uint16_t Value) override { setParam(1,Value); };
+	void setEnable(bool OnOff, uint16_t Number = 0)  override { if(OnOff) setParam(0,1); else setParam(0,0); }; 
+    void setValue(float Value) override 
+    { 
+       //            int8_t* DataPtr = (int8_t*)&Value+1;
+       //          QDataStream stream(&commandArray, QIODevice::WriteOnly);
 
-	uint16_t getDistance() override { return messageState.Param1; };
-        void putMessage(T_MESSAGE Message) { messageState = Message;};
-    T_MESSAGE messageState;
+       // qDebug() << "[ FOCUSATOR ] [ SEND COMMAND ]" << this->Message.toByteArray().toHex(); 
+       // DEVICE_INTERFACE::sendCommand(this->Message);
+    };
+
+	float getDistance() { return (float)requestMessage.Param; };
+	float getValue() override { return getDistance(); };
+    void putMessage(REQUEST_TYPE Message) { };
+
+    REQUEST_TYPE requestMessage;
+    QByteArray commandArray;
 };
 
 #endif 

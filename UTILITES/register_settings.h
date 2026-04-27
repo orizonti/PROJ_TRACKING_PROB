@@ -11,8 +11,9 @@ class SettingsRegister
     static std::map<QString,float>                settings_values;
     static std::map<QString,std::pair<float,float>> settings_pairs;
     static bool FLAG_SETTINGS_LOADED;
+    static std::pair<float,float> CAMERA_IMAGE_SIZE;
 
-    static void    LoadSettings();
+    static void    LoadSettings(QString path_default = "/home/orangepi/SETTINGS");
     static bool TryLoadSettings(QString file, QString GROUP);
 
     static void AppendSettings(QString key, QString setting);
@@ -30,6 +31,13 @@ class SettingsRegister
       for(auto& record: settings_pairs) qDebug() << "[ SETTINGS ] " << "LOAD: " << std::get<0>(record) << std::get<1>(record); 
     }
 
+    static void PrintSetting(QString key) 
+    {
+      if(settings.contains(key))        { qDebug() << "[ SETTINGS ] " << key << settings[key];        return; }
+      if(settings_values.contains(key)) { qDebug() << "[ SETTINGS ] " << key << settings_values[key]; return; }
+      if(settings_pairs.contains(key))  { qDebug() << "[ SETTINGS ] " << key << settings_pairs[key];  return; }
+    }
+
     static QString GetString(const QString& setting_name)
     {
         if(!FLAG_SETTINGS_LOADED) LoadSettings();
@@ -41,7 +49,7 @@ class SettingsRegister
 
     };
 
-    static float GetValue(const QString& setting_name)
+    static float getValue(const QString& setting_name)
     {
         if(!FLAG_SETTINGS_LOADED) LoadSettings();
 
@@ -60,6 +68,8 @@ class SettingsRegister
 
         return settings_pairs[setting_name];
     };
+    private:
+    static void SetStaticSettings();
 };
 
 

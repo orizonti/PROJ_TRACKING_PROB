@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>246</width>
-    <height>284</height>
+    <width>259</width>
+    <height>113</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1316,187 +1316,24 @@ QComboBox::item:alternate {
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
-    <number>4</number>
+    <number>1</number>
    </property>
    <property name="topMargin">
-    <number>4</number>
+    <number>1</number>
    </property>
    <property name="rightMargin">
-    <number>4</number>
+    <number>1</number>
    </property>
    <property name="bottomMargin">
-    <number>4</number>
+    <number>1</number>
    </property>
    <property name="spacing">
-    <number>4</number>
+    <number>1</number>
    </property>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="butProcessCentroid">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	background-color: rgba(220, 59, 23,110);
-  color: #E0E1E3;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-  border: none;
-	font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:disabled {
-  background-color: #455364;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-QPushButton:checked {
-	background-color: rgba(35, 102, 12,160);
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:checked:disabled {
-  background-color: #60798B;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-}
-
-QPushButton:checked:selected {
-  background: #60798B;
-}
-
-QPushButton:hover {
-  background-color: #54687A;
-  color: #E0E1E3;
-}
-
-QPushButton:pressed {
-  background-color: #60798B;
-}
-
-QPushButton:selected {
-  background: #60798B;
-  color: #E0E1E3;
-}
-
-QPushButton::menu-indicator {
-  subcontrol-origin: padding;
-  subcontrol-position: bottom right;
-  bottom: 4px;
-	background-color: rgb(210, 204, 182);
-}
-
-QDialogButtonBox QPushButton {
-  /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
-  min-width: 80px;
-}</string>
-     </property>
-     <property name="text">
-      <string>Центроид</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="butProcessTemplate">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	background-color: rgba(220, 59, 23,110);
-  color: #E0E1E3;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-  border: none;
-	font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:disabled {
-  background-color: #455364;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-QPushButton:checked {
-	background-color: rgba(35, 102, 12,160);
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:checked:disabled {
-  background-color: #60798B;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-}
-
-QPushButton:checked:selected {
-  background: #60798B;
-}
-
-QPushButton:hover {
-  background-color: #54687A;
-  color: #E0E1E3;
-}
-
-QPushButton:pressed {
-  background-color: #60798B;
-}
-
-QPushButton:selected {
-  background: #60798B;
-  color: #E0E1E3;
-}
-
-QPushButton::menu-indicator {
-  subcontrol-origin: padding;
-  subcontrol-position: bottom right;
-  bottom: 4px;
-	background-color: rgb(210, 204, 182);
-}
-
-QDialogButtonBox QPushButton {
-  /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
-  min-width: 80px;
-}</string>
-     </property>
-     <property name="text">
-      <string>Шаблон</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -1519,108 +1356,10 @@ border-radius: 4px;
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QPushButton" name="butResetProcessing">
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	
-	font: 600 14pt &quot;Ubuntu&quot;;
-}
-
-</string>
-     </property>
-     <property name="text">
-      <string>Сброс</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QPushButton" name="pushButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	background-color: rgba(220, 59, 23,110);
-  color: #E0E1E3;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-  border: none;
-	font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:disabled {
-  background-color: #455364;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-}
-
-QPushButton:checked {
-	background-color: rgba(35, 102, 12,160);
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-font: 14pt &quot;Ubuntu&quot;;
-}
-
-QPushButton:checked:disabled {
-  background-color: #60798B;
-  color: #9DA9B5;
-  border-radius: 4px;
-  padding: 2px;
-  outline: none;
-}
-
-QPushButton:checked:selected {
-  background: #60798B;
-}
-
-QPushButton:hover {
-  background-color: #54687A;
-  color: #E0E1E3;
-}
-
-QPushButton:pressed {
-  background-color: #60798B;
-}
-
-QPushButton:selected {
-  background: #60798B;
-  color: #E0E1E3;
-}
-
-QPushButton::menu-indicator {
-  subcontrol-origin: padding;
-  subcontrol-position: bottom right;
-  bottom: 4px;
-	background-color: rgb(210, 204, 182);
-}
-
-QDialogButtonBox QPushButton {
-  /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
-  min-width: 80px;
-}</string>
-     </property>
-     <property name="text">
-      <string>Работа</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="1">
+      <widget class="QLabel" name="labelParam1">
        <property name="styleSheet">
         <string notr="true">QLabel
 {
@@ -1636,8 +1375,8 @@ QDialogButtonBox QPushButton {
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QSpinBox" name="spinThreshold">
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinParam1">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -1688,6 +1427,110 @@ background-color: rgba(181, 131, 90,200);
        </property>
        <property name="value">
         <number>50</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" rowspan="2">
+      <widget class="QPushButton" name="butResetProcessing">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	
+	font: 600 14pt &quot;Ubuntu&quot;;
+}
+
+</string>
+       </property>
+       <property name="text">
+        <string>Сброс</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" rowspan="2">
+      <widget class="QPushButton" name="pushButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+	background-color: rgba(220, 59, 23,110);
+  color: #E0E1E3;
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+  border: none;
+	font: 14pt &quot;Ubuntu&quot;;
+}
+
+QPushButton:disabled {
+  background-color: #455364;
+  color: #9DA9B5;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+QPushButton:checked {
+	background-color: rgba(35, 102, 12,160);
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+font: 14pt &quot;Ubuntu&quot;;
+}
+
+QPushButton:checked:disabled {
+  background-color: #60798B;
+  color: #9DA9B5;
+  border-radius: 4px;
+  padding: 2px;
+  outline: none;
+}
+
+QPushButton:checked:selected {
+  background: #60798B;
+}
+
+QPushButton:hover {
+  background-color: #54687A;
+  color: #E0E1E3;
+}
+
+QPushButton:pressed {
+  background-color: #60798B;
+}
+
+QPushButton:selected {
+  background: #60798B;
+  color: #E0E1E3;
+}
+
+QPushButton::menu-indicator {
+  subcontrol-origin: padding;
+  subcontrol-position: bottom right;
+  bottom: 4px;
+	background-color: rgb(210, 204, 182);
+}
+
+QDialogButtonBox QPushButton {
+  /* Issue #194 #248 - Special case of QPushButton inside dialogs, for better UI */
+  min-width: 80px;
+}</string>
+       </property>
+       <property name="text">
+        <string>Работа</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

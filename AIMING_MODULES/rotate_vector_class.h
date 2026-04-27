@@ -50,7 +50,8 @@ public:
 	void operator=(RotateVectorClass && Matrix);
 	void operator=(RotateVectorClass & Matrix);
 
-	friend RotateVectorClass operator*(RotateVectorClass  Rotate1,RotateVectorClass  Rotate2);
+  template<typename V>
+	friend RotateVectorClass operator*(RotateVectorClass<V>  Rotate1, RotateVectorClass<V> Rotate2);
 
 };
 

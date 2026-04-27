@@ -7,7 +7,8 @@
 #include <QPixmap>
 #include <QLine>
 #include "widget_adjustable.h"
-#include "CV_IMAGE_PROCESSING/tracker_centroid.h"
+#include "CV_IMAGE_PROCESSING/image_processing_node.h"
+#include "CAMERA_INTERFACE/camera_control_interface.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class WidgetProcessingImageControl; }
@@ -20,8 +21,10 @@ class WidgetProcessingImageControl : public WidgetAdjustable
 public:
     explicit WidgetProcessingImageControl(QWidget* parent = 0);
 
-    void LinkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface);
+    void linkToModule(std::shared_ptr<ModuleImageProcessing> ControlInterface);
+    void linkToModule(CameraControlInterface* ControlInterface);
     void HideLabel();
+    void setParamRange(int Range, int Steps);
 signals:
 void SignalResetProcessing();
 

@@ -10,17 +10,22 @@ class ImageTrackerTemplate : public ModuleImageProcessing
 {
     Q_OBJECT
 public:
-    explicit ImageTrackerTemplate(QObject* parent = 0) {};
+    explicit ImageTrackerTemplate(QObject* parent = 0) 
+    { 
+      ModuleImageProcessing::TAG_NAME = "[ TRACKER_TEMPLATE ]"; 
+      SetLowFrequencyProcessing();
+    };
     ~ImageTrackerTemplate() {};
-    QString info = "[ TEMPLATE CPU ]";
+   QString info = "[ TEMPLATE CPU ]";
+   QString getName() override { return info; };
     
-    ImageTemplateFinder ImageFinder;
+   ImageTemplateFinder ImageFinder;
 
-    FramePeriodMeasure FrameMeasureInput;
-    FramePeriodMeasure FrameMeasureProcess;
+   MeasurePeriodNode FrameMeasureInput;
+   MeasurePeriodNode FrameMeasureProcess;
 
-    TrackerFirst NodeTracker;
-    TrackHoldDetectorNode TrackHoldDetector{0.1,10};
+   TrackerFirst NodeTracker;
+   //TrackHoldDetectorNode TrackHoldDetector{0.1,10};
 
 
    void FindObject();
@@ -30,6 +35,7 @@ public  slots:
    void SlotProcessImage(const cv::Mat& Image) override;
    void SlotProcessImage() override;
    void SlotResetProcessing() override;
+   void SlotSetAimPoint(std::pair<float,float> PointRelative) override;
   
 };
 #endif 

@@ -1,5 +1,6 @@
 #include "Tracker.h"
 #include <QDebug>
+#include <opencv2/highgui.hpp>
 #include "debug_output_filter.h"
 
 TrackerFirst::TrackerFirst()
@@ -7,11 +8,20 @@ TrackerFirst::TrackerFirst()
     auto params = cv::tracking::TrackerKCF::Params();
     params.desc_npca = cv::TrackerKCF::GRAY;
     params.desc_pca = cv::TrackerKCF::GRAY;
+
     params.compressed_size = 1;
+    params.sigma = 0.5;
+    params.lambda = 0.002;
+    params.pca_learning_rate = 0.001;
+    params.detect_thresh = 0.3;
+    params.interp_factor=0.1;
+
     tracker = cv::tracking::TrackerKCF::create(params);
 
 
-    ProcessImageGPU.create(400,400,CV_8UC1); 
+    ProcessImageGPU.create(2560/2,1440/2,CV_8UC1); 
+    //cv::namedWindow("test2");
+    
 }
 
 TrackerFirst::~TrackerFirst()
@@ -19,20 +29,63 @@ TrackerFirst::~TrackerFirst()
     tracker.release();
 }
 
-void TrackerFirst::init(const cv::Mat& image, cv::Rect bbox)
+void TrackerFirst::init(const cv::Mat& image, cv::Rect rectAim)
 {
 
     qDebug() << "INIT TRACKER: " << bbox.x << bbox.y << bbox.width << bbox.height 
              << "IMAGE: " << image.cols << image.rows;
+    if(init_follow) 
+    {
+      qDebug() << " [ CREATE NEW TRACKER ]";
+      init_follow = false;
+      tracker.release();
+
+      auto params = cv::tracking::TrackerKCF::Params();
+      params.desc_npca = cv::TrackerKCF::GRAY;
+      params.desc_pca = cv::TrackerKCF::GRAY;
+
+      params.compressed_size = 1;
+
+      //params.sigma = 0.3;
+      //params.lambda = 0.0001;
+      //params.interp_factor=0.02;
+
+      tracker = cv::tracking::TrackerKCF::create(params);
+    }
+
+	                       bbox = rectAim;
     tracker->init(image, bbox);
     init_follow = true;
+    qDebug () << "INIT TRACKER: SUCCESS"; 
+}
+
+void TrackerFirst::follow(cv::Mat& image)
+{
+    if(!init_follow) return;
+    //qDebug() << OutputFilter::Filter(10) << " [ TRACK AIM ]" << bbox.x << bbox.y << bbox.width << bbox.height;
+    //cv::imshow("test2", image(bbox));
+
+    update(image, bbox); follow_flag = true;
+    predict();
+
+    if (bbox.width < 0 || bbox.height < 0)
+    {
+        qDebug() << " [ TRACK AIM FAIL ]" << bbox.x << bbox.y;
+        follow_flag = false;
+        init_follow = false;
+        tracker.release();
+    }
+        
 }
 
 void TrackerFirst::update(cv::Mat& image, cv::Rect& bbox)
 {
-        image.copyTo(ProcessImageGPU);
-     tracker->update(ProcessImageGPU, bbox);
-    //tracker->update(image, bbox);
+     //   image.copyTo(ProcessImageGPU);
+     //tracker->update(ProcessImageGPU, bbox);
+     //qDebug() << "RECT AIM: " << bbox.x << bbox.y << bbox.width << bbox.height;
+    auto result = tracker->update(image, bbox);
+
+    if(!result) qDebug() << OutputFilter::Filter(2) << " [ TRACK FAIL ]" << bbox.x << bbox.y << bbox.width << bbox.height;
 }
 
 
@@ -129,19 +182,6 @@ void TrackerFirst::find(cv::Mat& image)
 }
 
 
-void TrackerFirst::follow(cv::Mat& image)
-{
-    update(image, bbox);
-    predict();
-
-    if (bbox.width < 0 && bbox.height < 0)
-    {
-        follow_flag = false;
-        init_follow = false;
-        tracker.release();
-    }
-        
-}
 
 void TrackerFirst::predict()
 {

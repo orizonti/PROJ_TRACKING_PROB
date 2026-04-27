@@ -13,6 +13,7 @@
 #include "thread_operation_nodes.h"
 #include "transform_coord_class.h"
 #include <QTimer>
+#include "module_period_measure.h"
 
 template<typename T>
 class TimeIntegratorClass : public PassCoordClass<T>
@@ -29,9 +30,10 @@ class TimeIntegratorClass : public PassCoordClass<T>
 	auto TimePoint = std::chrono::high_resolution_clock::now();
 	    StepPeriod = std::chrono::duration<float>((TimePoint - LastTimePoint)).count(); 
 
-	LastTimePoint = TimePoint; if(StepPeriod*1000 > 20) return;
+	LastTimePoint = TimePoint; if(StepPeriod*1000 > 30) return;
 
     PassCoordClass<float>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
+
 	}
 
 };
@@ -129,20 +131,22 @@ class AimingClass : public PassCoordClass<float>
   std::vector<float> GainList{0.2,
                                1.0,
                                1.0,
-                               80};
+                               1000};
 
+
+  MeasurePeriodNode FrameMeasureInput;
   float GetAbsError();
   void   Reset();
   
   RotateVectorClass<float> Rotation;
 
-  CoordInversionAxisNode<float> AxisInversion{0};
+  NodeCoordAxisInversion<float> AxisInversion{0};
   StatisticValue<float> StatValue{100};
 
-  SubstractNode<float> Substract;
-  SumNode<float> Sum;
+  NodeCoordSubstract<float> Substract;
+  NodeCoordSum<float> Sum;
 
-  CoordPassFilter<float> PassFilter{30};
+  NodeCoordPassFilter<float> PassFilter{30};
   
   const QPair<float, float>& getOutput();
   const QPair<float, float>& GetAimPosition();  //AIM POSITION IS SET MANUAL OR FROM CAMERA 
@@ -226,10 +230,8 @@ class AimingClass : public PassCoordClass<float>
   QPair<float, float> VectorOutput        {0.0,0.0};
   //==========================================
   
-  TransformCoordClass PixToRadian;
-  TransformCoordClass RadianToPix;
-  TransformCoordClass Gain{10};
-  TransformCoordClass Saturation{1,0,5000};
+  NodeCoordGain<float> Gain{10};
+  TransformCoordClass Saturation{1,0,30000};
 
   TimeIntegratorClass<float> Integrator;
   TimeIntegratorClass<float> IntegratorInput;

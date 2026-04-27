@@ -41,6 +41,7 @@ public:
     explicit ImageTrackerCentroid(QObject* parent = 0);
             ~ImageTrackerCentroid();
     QString info = "[ CENTROID CPU ]";
+    QString getName() override { return info; };
 
         FilterBlotchClass FilterBlotch;
     ThresholdOptimizatorEngine ThresholdAdjuster{PROCESS_METHOD::PARALLEL_BY_DISPERSION};
@@ -49,11 +50,10 @@ public:
     StatisticNode<double> StatisticDispersion{100};
     StatisticNode<double> StatisticThreshold{100};
 
-    ValueDetector<double> TrackingDetector;
-    ValueSaturation<double> Saturation;
-    ValueBinaryInversion<double> InversionBinary;
+    NodeValueDetector<double> TrackingDetector;
+    NodeValueSaturation<double> Saturation;
+    NodeValueInversionBinary<double> InversionBinary;
 
-    TrackHoldDetectorNode TrackHoldDetector{0.9, 10};
 
     cv::Mat Image;
     cv::Mat ImageTemp;
