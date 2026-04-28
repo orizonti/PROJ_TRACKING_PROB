@@ -1,27 +1,16 @@
 #include "image_finder.h"
 #include "register_settings.h"
 
-ImageTemplateFinder::ImageTemplateFinder(QObject* parent) : ModuleImageProcessing(parent)
+ImageTemplateFinder::ImageTemplateFinder(QObject* parent) : ModuleImageProcessing("[TEMPLATE FINDER]",parent)
 {
-   auto user = SettingsRegister::GetString("USER");
-   auto path = QString("/home/%1/DATA/UFO.png").arg(user);
-
-             if(QFile::exists(path))
-   ImageTemplate = cv::imread(path.toStdString(),cv::IMREAD_GRAYSCALE );
-             else qDebug() << "[ IMAGE TEMPLATE FINDER ]" << "/home//DATA/UFO.png" << "[NOT EXISTS]";
-
 }
 
-ImageTemplateFinder::~ImageTemplateFinder()
-{
- qDebug() << "DELETE IMAGE TRACKER TEMPLATE";
-}
+ImageTemplateFinder::~ImageTemplateFinder() { }
 
 void ImageTemplateFinder::FindImageTemplate(cv::Mat& Image)
 {
   if(ImageTemplate.empty()) {qDebug() << TAG_NAME << " [ TRACKING TEMPLATE EMPTY ]"; return; }
 
-                     //ImageProcessing = Image(RectsObject[0]); 
   //=================================================================================
   int result_cols = Image.cols - ImageTemplate.cols + 1;
   int result_rows = Image.rows - ImageTemplate.rows + 1;
@@ -50,10 +39,10 @@ void ImageTemplateFinder::SlotProcessImage()
 {
     MutexImageAccess.lock();
                  SourceImage->switchToNextFrame();
-    ImageInput = SourceImage->getImageToProcess().clone(); ImageProcessing = ImageInput;
+    *ImageInput = SourceImage->getImageToProcess().clone(); ImageProcessing = *ImageInput;
     MutexImageAccess.unlock();
 
-    FilterBlotch.FilterImage(ImageProcessing, ImageProcessing); 
+    FilterBlotch.FilterImage(ImageProcessing); 
 
       FindImageTemplate(ImageProcessing); 
 
@@ -61,10 +50,9 @@ void ImageTemplateFinder::SlotProcessImage()
 
 void ImageTemplateFinder::SlotProcessImage(const cv::Mat& Image) 
 {
-    ImageInput = Image.clone(); ImageProcessing = ImageInput;
+    *ImageInput = Image.clone(); ImageProcessing = *ImageInput;
 
-    FilterBlotch.FilterImage(ImageProcessing, ImageProcessing); 
-
-      FindImageTemplate(ImageProcessing); 
+    FilterBlotch.FilterImage(ImageProcessing); 
+                 FindImageTemplate(ImageProcessing); 
 
 }

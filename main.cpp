@@ -243,10 +243,10 @@ auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТК�
                                                        AimingPort,SLOT  (slotSetCoord    (QPair<float,float>))) ;
 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
-                                                       ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
+                                                       ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
-                                                       ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSetAimPoint (QPair<float,float>))) ;
+                                                       ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
   ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();

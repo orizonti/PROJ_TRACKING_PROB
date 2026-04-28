@@ -10,8 +10,8 @@
 #include "aiming_class.h"
 //#include "rotation_find_executor.h"
 
-#include "CV_IMAGE_PROCESSING/tracker_centroid.h"
-#include "CV_IMAGE_PROCESSING/tracker_template.h"
+#include "IMAGE_PROCESSING/tracker_centroid.h"
+#include "IMAGE_PROCESSING/tracker_template.h"
 
 #include "engine_udp_interface.h"
 #include "engine_can_interface.h"

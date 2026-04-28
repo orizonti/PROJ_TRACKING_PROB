@@ -37,7 +37,6 @@ void __stdcall CameraInterfaceHIK::ImageCallBackEx(unsigned char * pData, MV_FRA
   CameraTypeStorage::ImageToDisplay = QImage(pData,FrameInfo->nExtendWidth,FrameInfo->nExtendHeight,QImage::Format_Grayscale8);
   mutexGetImage.unlock();
                            CameraInterface->FrameMeasureInput++;
-  //qDebug() << OutputFilter::Filter(200) << "CAMERA INPUT PERIOD: " << CameraInterface->FrameMeasureInput.getMilliseconds();
 }
 
 std::pair<float,float> CameraInterfaceHIK::getTickPeriod() { return std::pair<float,float>(FrameMeasureInput.TickPeriod, 
@@ -70,28 +69,22 @@ void CameraInterfaceHIK::EnumerateCameras()
     {
         MV_CC_DEVICE_INFO* pDeviceInfo = stDeviceList.pDeviceInfo[n]; if (NULL == pDeviceInfo) return;  
         PrintDeviceInfo(pDeviceInfo);            
-        DevicesIP[pDeviceInfo->SpecialInfo.stGigEInfo.nCurrentIp] = n;
-
     qDebug() << "==============================";
     }
     qDebug() << "==============================";
+    
 
 }
 
 void CameraInterfaceHIK::CameraInit()
 {
-
     int nRet = MV_OK;
         nRet = MV_CC_Initialize(); if (MV_OK != nRet) { qDebug() << TAG_NAME.c_str() << "INITIALIZE SDK FAIL" << nRet; return; }
 
         EnumerateCameras();
-
-        uint IP = SettingsRegister::GetString("CAMERA_IP").toUInt(); qDebug() << "CAMERA DEVICE: " << DevicesIP[uint32_t(IP)] << "IP: " << IP;
-        int device_id = DevicesIP[IP];
-
         if(DeviceNum > CountDevice){ qDebug() << TAG_NAME.c_str() << "DEVICE INDEX EXCEED DEVICE COUNT" << DeviceNum; return; }
 
-        nRet = MV_CC_CreateHandle(&handle, stDeviceList.pDeviceInfo[device_id]);
+        nRet = MV_CC_CreateHandle(&handle, stDeviceList.pDeviceInfo[DeviceNum]);
                                              if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_CREATE HANDLE FAIL " << nRet; return; }
         nRet = MV_CC_OpenDevice(handle);     if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_OPEND EVICE FAIL "   << nRet; return; }
         
@@ -268,12 +261,12 @@ else                   qDebug()<< TAG_NAME.c_str()  << "[ GET EXPOSURE FAILED ]"
 
 void CameraInterfaceHIK::CameraSetZoom(int Number)
 {
-                int size = 120; 
-    if(Number == 2) size = 200; 
-    if(Number == 3) size = 240; 
-    if(Number == 4) size = 360; 
-    if(Number == 5) size = 400; 
-    if(Number == 6) size = 540; 
+                int size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI1"); 
+    if(Number == 2) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI2"); 
+    if(Number == 3) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI3"); 
+    if(Number == 4) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI4"); 
+    if(Number == 5) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI5"); 
+    if(Number == 6) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI6"); 
 
     int X_ROI = 720/2 - size/2; X_ROI = X_ROI/4; X_ROI = X_ROI*4; 
     int Y_ROI = 540/2 - size/2; Y_ROI = Y_ROI/4; Y_ROI = Y_ROI*4; 

@@ -10,8 +10,15 @@
 #include "camera_image_storage.h"
 #include "module_period_measure.h"
 #include "camera_control_interface.h"
+#include "device_generic_interface.h"
 
-class CameraInterfaceUniversal :public QObject, public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface
+
+class CameraInterfaceUniversal :public QObject, 
+                                public SourceImageInterface, 
+                                public SourceImageDisplayInterface, 
+                                public CameraControlInterface,
+                                public DeviceGenericHandleControl
+ 
 {
   Q_OBJECT
 
@@ -58,6 +65,9 @@ class CameraInterfaceUniversal :public QObject, public SourceImageInterface, pub
   void CameraSetExposure(float Exposure) override;
   void CameraSetGain    (float Gain)     override;
   void CameraStartStream(bool OnOff )    override { if(OnOff) slotStartStream(); else slotStopStream(); }
+
+	void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
+	void setParam (uint16_t CommandID, float    CommandParam) override {};
 
 
   MeasurePeriodNode FrameMeasureInput;

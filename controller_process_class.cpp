@@ -201,7 +201,7 @@ Dispatcher->AppendCallback<CommandAiming1>( [this](MessageType& message)
                   {
                      auto data = DispatcherType::ExtractData<CommandAiming2>(&message);
                      qDebug() << "[ COMMAND SECELT AIM ]"  << data->Command.first << data->Command.second;
-                     ModuleImageProc->SlotSetAimPoint(data->Command);;
+                     ModuleImageProc->SlotSelectObject(data->Command);;
                   }
                   );
 
@@ -275,8 +275,8 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
    ModuleImageProc2->SetHighFrequencyProcessing();
 
       ModuleAiming1->SetModuleEnabled(true);
-    ModuleImageProc->SetModuleEnabled(true);
-   ModuleImageProc2->SetModuleEnabled(false);
+    ModuleImageProc->SetStateActive();
+   ModuleImageProc2->SetStateActive();
 
    ModuleAimingMonitor1->startWork(true);
 

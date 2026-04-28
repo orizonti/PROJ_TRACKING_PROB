@@ -6,7 +6,6 @@
 #include "thread_operation_nodes.h"
 #include "rotate_vector_class.h"
 #include "state_block_enum.h"
-#include "transform_coord_class.h"
 
 #include <QSettings>
 #include <QTimer>
@@ -15,7 +14,6 @@
 #include "device_generic_interface.h"
 #include "debug_output_filter.h"
 //#include "widget_main_control.h"
-#include "transform_coord_class.h"
 #include "sinus_generator_class.h"
 #include <QThread>
 

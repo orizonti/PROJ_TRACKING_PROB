@@ -19,7 +19,6 @@ void ThresholdCalculationLumen::CalcThreshold(const cv::Mat& Image)
         {
             sum_all += RowData[col];
             if (max_pixel < RowData[col]) max_pixel = RowData[col];
-
         }
     }
             avg_pixel = sum_all / (Image.rows * Image.cols);
@@ -56,7 +55,7 @@ void ThresholdFindingParallelDispersion::SetParam(int MinThreshold, int Step, in
 {
     GroupDispersion.resize(NumberGroup);
     GroupStatistics.resize(NumberGroup);
-    GroupThreshold.resize(NumberGroup);
+     GroupThreshold.resize(NumberGroup);
 
     ProcessFunctionList.resize(NumberGroup);
     ControursProcessors.resize(NumberGroup);
@@ -77,8 +76,8 @@ void ThresholdFindingParallelDispersion::SetParam(int MinThreshold, int Step, in
        cv::threshold(Image,Image,Threshold,256,cv::THRESH_BINARY);
 
        ContourProcessor.SetImage(Image);
-       ContourProcessor.CalcContoursStatistic();
-       ContourProcessor.GetMinimumContourDispersion() >> Stat;
+       //ContourProcessor.CalcContoursStatistic();
+       //ContourProcessor.GetMinimumContourDispersion() >> Stat;
        return;
     };
 
@@ -107,7 +106,8 @@ void ThresholdFindingParallelDispersion::CalcThreshold(const cv::Mat& Image)
 
 int  ThresholdFindingParallelDispersion::GetResult()
 {
-     auto element = std::max_element(GroupStatistics.begin(), GroupStatistics.end(), [](StatisticNode<double>& Stat1,StatisticNode<double>& Stat2) -> bool 
+     auto element = std::max_element(GroupStatistics.begin(), 
+                                     GroupStatistics.end(), [](StatisticNode<float>& Stat1,StatisticNode<float>& Stat2) -> bool 
                                                                          {return Stat1.GetAvarageValue() > Stat2.GetAvarageValue();});
      int number = std::distance(GroupStatistics.begin(), element);
 

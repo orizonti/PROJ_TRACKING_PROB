@@ -7,9 +7,10 @@
 class FilterBlotchClass
 {
     public:
-    void FilterImage(cv::Mat& FilteringImage, cv::Mat& RawImage);
+    void FilterImage(cv::Mat& Image);
     ContoursProcessorClass FindContours;
     std::string TAG_NAME{"[ BLOTCH_FILTER ]"};
+    bool isEmpty(const cv::Rect& rect);
 };
 
 #endif 

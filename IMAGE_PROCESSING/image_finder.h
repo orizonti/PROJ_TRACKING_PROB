@@ -9,7 +9,7 @@ class ImageTemplateFinder : public ModuleImageProcessing
 {
     Q_OBJECT
 public:
-    explicit ImageTemplateFinder(QObject* parent = 0);
+    ImageTemplateFinder(QObject* parent = 0);
     ~ImageTemplateFinder();
 
     ContoursProcessorClass ContoursProcessor;

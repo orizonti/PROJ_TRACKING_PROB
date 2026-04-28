@@ -7,7 +7,7 @@
 #include <QPixmap>
 #include <QLine>
 #include "widget_adjustable.h"
-#include "CV_IMAGE_PROCESSING/image_processing_node.h"
+#include "IMAGE_PROCESSING/image_processing_node.h"
 #include "CAMERA_INTERFACE/camera_control_interface.h"
 
 QT_BEGIN_NAMESPACE

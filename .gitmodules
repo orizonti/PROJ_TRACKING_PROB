@@ -1,0 +1,3 @@
+[submodule "UTILITIES"]
+	path = UTILITIES
+	url = git@github.com::orizonti/UTILITIES.git

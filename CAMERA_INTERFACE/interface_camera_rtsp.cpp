@@ -23,14 +23,7 @@ void CameraInterfaceUniversal::slotStopStream()  { timerGetFrame.stop(); }
 
 CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, QString NAME) : TAG_NAME(NAME)
 {
-  //capture.set(cv::CAP_GSTREAMER,1);
-  //capture.set(cv::CAP_FFMPEG,3);
-  //capture.open(strVideoSource, cv::CAP_GSTREAMER);
-  //strVideoSource = "rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp protocols=udp latency=1 drop-on-latency=true buffer-mode=none ! rtph265depay ! h265parse ! avdec_h265 max-threads=4 thread-type=frame discard-corrupted-frames=true ! videoconvert ! appsink sync=false max-buffers=1 async=false";
-  strVideoSource = "rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp latency=0 drop-on-latency=true buffer-mode=auto ! rtph265depay ! h265parse ! mppvideodec dma-feature=true ! videoconvert ! appsink sync=false max-buffers=1 async=false";
-  //strVideoSource = "rtsp://192.168.1.11:554/user=admin_password=_channel=1_stream=0.sdp";
  
-//  capture.set(cv::CAP_PROP_HW_ACCELERATION, 1);
   capture.open(strVideoSource, cv::CAP_GSTREAMER);
   //capture.set(cv::CAP_PROP_HW_DEVICE, 1);
   //capture.set(cv::CAP_PROP_BUFFERSIZE, 1);
@@ -75,19 +68,17 @@ void CameraInterfaceUniversal::slotGetFrame()
         FrameMeasureInput.PushTick();
         FrameMeasureProcess.PushTick();
 
-
          //QThread::msleep(100);
         cv::resize  (inputImage     ,inputImageSmall,cv::Size(SizeImage.first,SizeImage.second));
         cv::cvtColor(inputImageSmall,inputImageGray,cv::COLOR_BGR2GRAY);
-        
 
         mutexStorage.lock(); 
         CameraStorageType::putNewFrameToStorage(inputImageGray); 
         mutexStorage.unlock();
 
         FrameMeasureProcess.PushTick();
-        qDebug() << OutputFilter::Filter(10) << "RTSP FRAME PERIOD: " << FrameMeasureInput.TickPeriod*1000 
-                                             << "PROCESS: " << FrameMeasureProcess.TickPeriod*1000;
+        //qDebug() << OutputFilter::Filter(10) << "RTSP FRAME PERIOD: " << FrameMeasureInput.TickPeriod*1000 
+        //                                     << "PROCESS: " << FrameMeasureProcess.TickPeriod*1000;
 }
 
 void CameraInterfaceUniversal::slotEndWork() 

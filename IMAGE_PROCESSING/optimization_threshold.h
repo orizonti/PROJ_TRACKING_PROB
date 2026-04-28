@@ -22,31 +22,34 @@ class NodeValueSpongeShift : public PassValueClass<T>
   T InputValue = 0;
   const T& getValue() override {  Speed = StatNode2.GetAvarageValue(); 
                                   PassValueClass<T>::Value = InputValue - StatNode.GetAvarageValue()*Speed; 
-                                  T(0) >> StatNode; T(0) >> StatNode;
+                                  //T(0) >> StatNode; T(0) >> StatNode;
                            return PassValueClass<T>::Value; }  
 
-  void setValue(T Value) override {InputValue = Value; Value >> TimeDiffer >> Saturation(Value/50) >> InversionLogic >> StatNode;
-                                                                TimeDiffer >> StatNode2;}
+  void setValue(T Value) override 
+  {
+    //InputValue = Value; Value >> TimeDiffer >> Saturation(Value/50) >> InversionLogic >> StatNode;
+                                                                //TimeDiffer >> StatNode2;
+  }
   StatisticNode<T> StatNode{20};
   StatisticNode<T> StatNode2{20};
   NodeValueSaturation<T>      Saturation;
   NodeValueInversionBinary<T> InversionLogic;
   NodeValueDifference<T>      TimeDiffer;
 
-  NodeValueSpongeShift<T>& operator()(double SpongeSpeed){ Speed = SpongeSpeed; return *this;};
+  NodeValueSpongeShift<T>& operator()(float SpongeSpeed){ Speed = SpongeSpeed; return *this;};
 };
 
-class OptimizationThreshold : public PassValueClass<double>
+class OptimizationThreshold : public PassValueClass<float>
 {
 	public:
 
-	double InputValue = 0;
-	double ValueOffset = 0;
+	float InputValue = 0;
+	float ValueOffset = 0;
 	bool DISABLED = false;
 
   void Disable(){ DISABLED = true;};
 	bool isEnabled() { return !DISABLED;}
-  void setValue(double NewValue) override {InputValue = NewValue;}
+  void setValue(float NewValue) override {InputValue = NewValue;}
   virtual void Reset() = 0;
 
   virtual void CalcThreshold(const cv::Mat& Image) = 0;
@@ -54,7 +57,7 @@ class OptimizationThreshold : public PassValueClass<double>
 	friend OptimizationThreshold& operator>>(const cv::Mat& Image, OptimizationThreshold& Node) 
   {if(Node.DISABLED) return Node; Node.CalcThreshold(Image); return Node; }
 
-	StatisticNode<double>  StatNode{40};
+	StatisticNode<float>  StatNode{40};
 };
 
 class ThresholdCalculationLumen : public OptimizationThreshold
@@ -68,7 +71,7 @@ class ThresholdAdjustionDispersion : public OptimizationThreshold
 {
 	public:
   void CalcThreshold(const cv::Mat& Image) override;
-  NodeValueSpongeShift<double> SpongeValue;
+  NodeValueSpongeShift<float> SpongeValue;
   void Reset() override {};
 };
 
@@ -81,15 +84,15 @@ class ThresholdFindingParallelDispersion : public OptimizationThreshold
   int  GetResult();
   void SetParam(int MinThreshold, int Step, int NumberGroup);
 
-  void Reset();
+  void Reset() override;
   int MinThreshold = 0;
   int Step = 10;
   int NumberGroup = 10;
   cv::Mat InputImage;
 
-  std::vector<StatisticNode<double>> GroupStatistics;
+  std::vector<StatisticNode<float>> GroupStatistics;
   std::vector<ContoursProcessorClass> ControursProcessors;
-  std::vector<double>    GroupDispersion;
+  std::vector<float>    GroupDispersion;
   std::vector<cv::Mat>    GroupImages;
 
   std::vector<int> GroupThreshold;

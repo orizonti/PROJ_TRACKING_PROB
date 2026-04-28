@@ -10,10 +10,15 @@
 #include "interface_image_source.h"
 #include "camera_image_storage.h"
 #include "module_period_measure.h"
+#include "device_generic_interface.h"
 
 class CameraInterfaceHIK;
 using CameraTypeStorage = CameraImageStorage<CameraInterfaceHIK>;
-class CameraInterfaceHIK :public QObject, public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface
+class CameraInterfaceHIK :public QObject, 
+                          public SourceImageInterface, 
+                          public SourceImageDisplayInterface, 
+                          public CameraControlInterface,
+                          public DeviceGenericHandleControl
 {
   Q_OBJECT
   public:
@@ -33,7 +38,6 @@ class CameraInterfaceHIK :public QObject, public SourceImageInterface, public So
   std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
   static cv::Mat inputImage;
   static  QMutex mutexGetImage;
-  std::map<int,int> DevicesIP;
 
   //======================================================
   //======================================================
@@ -61,6 +65,7 @@ class CameraInterfaceHIK :public QObject, public SourceImageInterface, public So
       void SwitchOutputChannel() { CurrentStoreChannel++; if(CurrentStoreChannel == ImageChanneledStore.end()) CurrentStoreChannel = ImageChanneledStore.begin();}
 
       bool isFrameAvailable() override { return (*CurrentStoreChannel)->isFrameAvailable();};
+      bool empty()            override { return (*CurrentStoreChannel)->empty();};
 
       int getAvailableFrames() override;
 
@@ -80,6 +85,9 @@ class CameraInterfaceHIK :public QObject, public SourceImageInterface, public So
           void CameraGetExposure();
           bool isReverseHorizontal();
   //=========================================
+
+	void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
+	void setParam (uint16_t CommandID, float    CommandParam) override {};
 
   signals:
   void signalNewImage(const cv::Mat&);

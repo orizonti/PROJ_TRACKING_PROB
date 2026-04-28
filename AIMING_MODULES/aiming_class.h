@@ -11,7 +11,6 @@
 #include "register_settings.h"
 #include "engine_statistics.h"
 #include "thread_operation_nodes.h"
-#include "transform_coord_class.h"
 #include <QTimer>
 #include "module_period_measure.h"
 
@@ -143,8 +142,11 @@ class AimingClass : public PassCoordClass<float>
   NodeCoordAxisInversion<float> AxisInversion{0};
   StatisticValue<float> StatValue{100};
 
-  NodeCoordSubstract<float> Substract;
+  NodeCoordDifference<float> Substract;
   NodeCoordSum<float> Sum;
+
+  NodeCoordGain<float> Gain{10};
+  NodeCoordSaturation<float> Saturation{30000};
 
   NodeCoordPassFilter<float> PassFilter{30};
   
@@ -230,8 +232,6 @@ class AimingClass : public PassCoordClass<float>
   QPair<float, float> VectorOutput        {0.0,0.0};
   //==========================================
   
-  NodeCoordGain<float> Gain{10};
-  TransformCoordClass Saturation{1,0,30000};
 
   TimeIntegratorClass<float> Integrator;
   TimeIntegratorClass<float> IntegratorInput;
