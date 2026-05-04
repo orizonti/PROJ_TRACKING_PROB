@@ -20,7 +20,8 @@ public:
 	QPair<float,float> CalcStep(QPair<float,float> CoordError);
 	const QPair<float,float>& getOutput();
 	QPair<float,float> GetLastCoordError() { return this->CoordAimingError;};
-	void ResetPID();
+
+	void Reset();
 	void setInput(const QPair<float,float>& Coord);
 	void SetPIDParam(PIDParamStruct Param);
 	void SetFrameRate(double Rate);
@@ -30,10 +31,7 @@ public:
 	PIDParamStruct PIDParam;
 	QPair<float,float> ErrorsSumm;
 private:
-    //double MaxAccelAxis1 = 20*4.84/1000000;
-    //double MaxAccelAxis2 = 20*4.84/1000000;
 	QPair<float,float> PIDControlOutput;
 	QPair<float,float> CoordAimingError;
-    //QTime timeAiming;
 };
 #endif //PIDCLASS_H

@@ -18,22 +18,18 @@ std::shared_ptr<SourceImageInterface> CameraInterfaceUniversal::getImageSourceCh
   return ChannelStore;
 }
 
-void CameraInterfaceUniversal::slotStartStream() { timerGetFrame.start(2); qDebug() << "[ START RTSP ]"; }
+void CameraInterfaceUniversal::slotStartStream() { timerGetFrame.start(10); qDebug() << "[ START RTSP ]"; }
 void CameraInterfaceUniversal::slotStopStream()  { timerGetFrame.stop(); }
 
-CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, QString NAME) : TAG_NAME(NAME)
+CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME)
 {
  
   capture.open(strVideoSource, cv::CAP_GSTREAMER);
-  //capture.set(cv::CAP_PROP_HW_DEVICE, 1);
-  //capture.set(cv::CAP_PROP_BUFFERSIZE, 1);
 
+                           qDebug() << TAG_NAME << "[LINK]" << strVideoSource.c_str();
+  if (!capture.isOpened()) qDebug() << "[ERROR] [BAD LINK]" << strVideoSource.c_str();
 
-  qDebug()  << TAG_NAME << "[ OPEN VIDEO SOURCE TEST ]" << strVideoSource.c_str();
-  if (!capture.isOpened()) qDebug()  << "[ ERROR ] CANNOT OPEN VIDEO SOURCE: " << strVideoSource.c_str();
   QObject::connect(&timerGetFrame, SIGNAL(timeout()),this, SLOT(slotGetFrame()));
-
-  //cv::namedWindow("test");
 
   ImageStore.push_back(std::make_shared<CameraStorageType>(this, SizeImage));
 }
@@ -43,10 +39,8 @@ CameraInterfaceUniversal::~CameraInterfaceUniversal() { qDebug() << "[ THERMAL C
 
 void CameraInterfaceUniversal::getImageToDisplay(QImage& ImageDst) 
 { 
-  //qDebug() << "RTSP DISPLAY IMAGE SIZE" << ImageStore->ImageToDisplay.size() << "NULL:" << ImageStore->ImageToDisplay.isNull();
-//                               if(ImageStore->ImageToDisplay.isNull()) return;
-    //mutexStorage.lock(); ImageDst = ImageStore->ImageToDisplay.copy(); mutexStorage.unlock();
-    mutexStorage.lock(); ImageDst = CameraStorageType::ImageToDisplay; mutexStorage.unlock();
+                                 if(CameraStorageType::ImageToDisplay.isNull()) return;
+    mutexStorage.lock(); ImageDst = CameraStorageType::ImageToDisplay.copy(); mutexStorage.unlock();
 }
 
 cv::Mat& CameraInterfaceUniversal::getImageToProcess()                  { return ImageStore[0]->getImageToProcess(); };

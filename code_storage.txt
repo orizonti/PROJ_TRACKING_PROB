@@ -10,3 +10,67 @@ DeviceCamera        = make_shared<CameraType>("rtsp://192.168.1.11:554/user=admi
 //using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize(), 20,IteratorMode::Continous>; 
 //======================================================================================================================
 
+
+void OpenCL_Init()
+{
+  #ifdef PROJECT_EDGE_PROCESS
+
+  std::string TAG_NAME = QString("[ %1 ] ").arg("INFO").toStdString();
+
+  cv::ocl::Context ctx;
+  auto result = ctx.create(cv::ocl::Device::TYPE_GPU);
+
+   cv::ocl::Device device;
+        if(result) device = ctx.device(0);
+
+  cv::ocl::setUseOpenCL(true);
+  cv::ocl::Context context = cv::ocl::Context::getDefault();
+
+  qDebug() << "======================================";
+  qDebug() << TAG_NAME.c_str() << "TEST OPENCL INIT";
+  qDebug() << TAG_NAME.c_str() <<" CL DEVICE NUMBER" << ctx.ndevices();
+  qDebug() << TAG_NAME.c_str() <<" CRETE GPU DEVICE:  " << result ;
+  qDebug() << TAG_NAME.c_str() << "DEVICE       : " << device.vendorName().c_str();
+  qDebug() << TAG_NAME.c_str() << "DEVICE DRIVER: " << device.driverVersion().c_str();
+  qDebug() << TAG_NAME.c_str() << "OPENCL USED: " << cv::ocl::useOpenCL();
+  qDebug() << TAG_NAME.c_str() << "HAS SVM: "     << cv::ocl::haveSVM();
+
+  qDebug() << TAG_NAME.c_str() << "OPENCL AVAILABLE DEVICES";
+  for (int i = 0; i < context.ndevices(); i++) 
+  {
+      cv::ocl::Device device = context.device(i);
+      qDebug() << TAG_NAME.c_str() << "[ DEVICE ]" << i << ": " << device.name().c_str();
+  }
+
+  qDebug() << "======================================";
+  qDebug() << Qt::endl;
+
+  #endif
+}
+
+  //
+  //
+  //QHBoxLayout lay_base;
+  //QVBoxLayout lay;   lay.addWidget(&WindowCameraDisplay);
+  //                   lay.addWidget(&WindowCameraControl);
+  //QVBoxLayout lay2;  
+  //                   lay2.addWidget(&WindowImageProcessingDisplay);
+  //                   lay2.addWidget(&WindowImageProcessingControl);
+  //            lay_base.addLayout(&lay);
+  //            lay_base.addLayout(&lay2);
+
+  //QGroupBox box; box.setLayout(&lay_base);
+  //          box.setStyleSheet(WindowCameraDisplay.styleSheet());
+  //box.show();
+  //
+//template<> void CommandDispatcherGeneric<TypeRegister<CommandDevice<0>>::ID()>::dispatchCommand(const QByteArray& Command) 
+//{
+//  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandDevice<0>>::TYPE_ID << " DEV 0";
+//};
+//
+//template<> void CommandDispatcherGeneric<TypeRegister<CommandSetPosRotary>::ID()>::dispatchCommand(const QByteArray& Command) 
+//{
+//  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandSetPosRotary>::TYPE_ID << " POS ROTARY";
+//};
+//
+//

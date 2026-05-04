@@ -13,6 +13,7 @@
 #include "thread_operation_nodes.h"
 #include <QTimer>
 #include "module_period_measure.h"
+#include "interface_node_signal_adapter.h"
 
 template<typename T>
 class TimeIntegratorClass : public PassCoordClass<T>
@@ -43,27 +44,6 @@ class IntegratorClass : public PassCoordClass<T>
 	public:
 	void setInput(const QPair<float,float>& Coord) override 
   { PassCoordClass<T>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord; }
-};
-
-template<typename T>
-class SignalRegister : public PassCoordClass<T>
-{
-	public:
-  SignalRegister(int Size)
-  {
-    Register.resize(Size);
-    CurrentPos = Register.begin();
-    End = Register.end();
-  }
-  std::vector<QPair<T,T>> Register;
-  std::vector<QPair<T,T>>::iterator CurrentPos;
-  std::vector<QPair<T,T>>::iterator End;
-  bool FlagRegisterFilled = false;
-
-	void setInput(const QPair<float,float>& Coord) override 
-  { 
-    *CurrentPos = Coord; CurrentPos++; if(CurrentPos == End) { CurrentPos = Register.begin(); FlagRegisterFilled = true; }
-  }
 };
 
 
@@ -112,7 +92,7 @@ class AimingParamOptimizator: public PassCoordClass<float>
 
 
 
-class AimingClass : public PassCoordClass<float>
+class AimingClass : public PassCoordClass<float>, public DeviceGenericHandleControl
   {
   public:
       
@@ -171,8 +151,6 @@ class AimingClass : public PassCoordClass<float>
   void SetGain(int Number, float Gain);
   //========================================================
   
-  void LoadPIDParam(QString SettingsFile);
-  void LoadSettings();
   
   bool isAimingFault();
   void PrintpassCoords(QPair<float,float> Coord);
@@ -188,7 +166,16 @@ class AimingClass : public PassCoordClass<float>
   void ProcessDirect3();
   void ProcessDirect4();
   void BlockOutput(bool channelx, bool channely);
-  
+
+  //======================================================
+  //DeviceGenericHandleControl
+	void setParam (uint16_t CommandID, float    CommandParam);
+ 	void setLevel ( uint32_t Level) {};
+	void setEnable(bool OnOff, uint16_t Number = 0);
+
+  NodeSignalAdapter NodeSignalEnable{this,0};
+  NodeSignalAdapter NodeSignalFault {this,1};
+  //======================================================
   
   BlockCounterClass PassCounter = BlockCounterClass(200,true);
   
@@ -197,6 +184,7 @@ class AimingClass : public PassCoordClass<float>
   std::shared_ptr<PortAdapter<AimingClass>> PortCalibration= nullptr;
   std::shared_ptr<PortAdapter<AimingClass>> PortCorrection = nullptr;
   std::shared_ptr<PortAdapter<AimingClass>> PortCorrectionOutput = nullptr;
+
   
   SignalPortAdapter PortSignalSetAiming;
   
@@ -235,31 +223,7 @@ class AimingClass : public PassCoordClass<float>
 
   TimeIntegratorClass<float> Integrator;
   TimeIntegratorClass<float> IntegratorInput;
-  TimeIntegratorClass<float> IntegratorInputSignal;
 };
 
-class AimingWatcherClass: public QObject
-{
-  Q_OBJECT
-  public:
-  AimingWatcherClass(AimingClass* AimingModule);
-  AimingClass* ModuleWathing = 0;
-  QTimer timerWatchModule;
-  void StartWatching(bool OnOff)
-  {
-    if( OnOff) timerWatchModule.start(20);
-    if(!OnOff) timerWatchModule.stop();
-  }
-  public slots:
-  void SlotWatchModule()
-  {
-    emit SignalCoord1(ModuleWathing->GetAimingError());
-  }
-  signals:
-  void SignalCoord1(QPair<float,float> Coord);
-  void SignalCoord2(QPair<float,float> Coord);
-  void SignalCoord3(QPair<float,float> Coord);
-
-};
 
 #endif //AIMINGCLASS_H

@@ -44,6 +44,7 @@ public:
    ~ImageTrackerCentroid();
 
         FilterBlotchClass FilterBlotch;
+
     ThresholdOptimizatorEngine ThresholdAdjuster{PROCESS_METHOD::PARALLEL_BY_DISPERSION};
     cv::Ptr<cv::BackgroundSubtractor> backSubstractor;
     bool FLAG_SUBSTRACT_BACKGROUND = false;

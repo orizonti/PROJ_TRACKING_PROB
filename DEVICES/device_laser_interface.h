@@ -35,7 +35,7 @@ public:
 
 	public:
     void loadSettings(){};
-	  void setParam(uint16_t ID, uint32_t Param) override;
+	  void setParam(uint16_t ID, float Param) override;
 
     void putMessage(REQUEST_TYPE message) override; 
 	QString getName() { return DISPLAY_NAME; }
@@ -81,7 +81,7 @@ template<typename T_CONNECTION, int NUM_DEVICE>
 DeviceLaserInterface<T_CONNECTION,NUM_DEVICE>::~DeviceLaserInterface() { qDebug() << this->TAG_NAME << "DELETE"; }
 
 template<typename T_CONNECTION, int NUM_DEVICE>
-void DeviceLaserInterface<T_CONNECTION, NUM_DEVICE>::setParam(uint16_t ID, uint32_t Value)
+void DeviceLaserInterface<T_CONNECTION, NUM_DEVICE>::setParam(uint16_t ID, float Value)
 {
 	uint8_t param = Value > 0 ? 1 : 0;  
 	Command.DATA.Command = ID_PARAM_KEY[ID][param];

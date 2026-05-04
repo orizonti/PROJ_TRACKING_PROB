@@ -144,7 +144,7 @@ ModuleAimingMonitor3 = make_shared<TypeAimingMonitoring>(ConnectionControlUDP);
 ModuleAimingMonitor1->linkToModule(ModuleImageProc2);
 
 if(TypeCameraUsed == CAMERA_TYPE_HIK)  DeviceCamera  = make_shared<TypeCamera>("[HIK CAMERA]", 0);
-if(TypeCameraUsed == CAMERA_TYPE_RTSP) DeviceCamera  = make_shared<TypeCamera>(cameras_links.back());
+if(TypeCameraUsed == CAMERA_TYPE_RTSP) DeviceCamera  = make_shared<TypeCamera>(SettingsRegister::GetString("CAMERA_LINK").toStdString());
 
 ModuleVideoOutput   = make_shared<VideoStreamRTSP>();
 
@@ -216,14 +216,8 @@ Dispatcher->AppendCallback<CommandAiming2>( [this](MessageType& message)
 
  //DeviceRotary->moveSinus(true);
 
- ModuleImageProc->moveToThread(&ThreadProcess);
- ModuleImageProc->timerProcessImage.moveToThread(&ThreadProcess);
- QObject::connect(&ThreadProcess, SIGNAL(started()), &ModuleImageProc->timerProcessImage, SLOT(start()));
-
+  ModuleImageProc->moveToThread(&ThreadProcess);
  ModuleImageProc2->moveToThread(&ThreadProcess2);
- ModuleImageProc2->timerProcessImage.moveToThread(&ThreadProcess2);
- QObject::connect(&ThreadProcess2, SIGNAL(started()), &ModuleImageProc2->timerProcessImage, SLOT(start()));
-
 
 
  //QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get()   , SLOT(SlotDeinitCamera())  , Qt::QueuedConnection);
@@ -240,7 +234,7 @@ ProcessControllerClass::~ProcessControllerClass()
   emit SignalProcessEnd(); QThread::sleep(2);
 
   ThreadProcess.quit(); ThreadProcess.deleteLater();
-   ThreadCamera.quit(); ThreadCamera.deleteLater();
+   ThreadCamera.quit();  ThreadCamera.deleteLater();
 
                            QThread::sleep(2);
 
@@ -270,13 +264,17 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
    DeviceCamera | ModuleImageProc  | ModuleImageProc2;
    DeviceCamera | ModuleImageProc2 | ModuleAiming1 | RotaryControlPort;                     
 
+   ModuleAiming1->NodeSignalFault |  ModuleImageProc->NodeSignalFault;
+   ModuleAiming1->NodeSignalFault | ModuleImageProc2->NodeSignalFault;
+
 
     ModuleImageProc->SetLowFrequencyProcessing();
    ModuleImageProc2->SetHighFrequencyProcessing();
 
-      ModuleAiming1->SetModuleEnabled(true);
-    ModuleImageProc->SetStateActive();
-   ModuleImageProc2->SetStateActive();
+    ModuleImageProc2->SetSlaveMode();
+     ModuleImageProc->SetStateActive();
+
+    ModuleAiming1->SetModuleEnabled(false);
 
    ModuleAimingMonitor1->startWork(true);
 

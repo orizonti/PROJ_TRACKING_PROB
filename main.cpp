@@ -10,21 +10,17 @@
 
 #include <QThread>
 #include "widget_processing_image_generic.h"
-#include "widget_main_window.h"
 #include "register_settings.h"
 #include "widget_processing_image_control.h"
-#include "widget_camera_control.h"
-#include "widget_scanator_control.h"
-#include "widget_aiming_control.h"
 #include "widget_container_group.h"
 #include "widget_table_group.h"
+#include "widget_device_control.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/ocl.hpp>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-//#include "GRAPHICS_WINDOW/widget_graphics_plot.h"
 
 #include <QWidget>
 #include "arduino_json.h"
@@ -198,22 +194,36 @@ int main(int argc, char* argv[])
   qDebug() << "IS REGISTERED 45 : " << TypeRegisterID<>::isRegistered(45);
 
 
-
   #ifdef PROJECT_SIMPLE
-auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
+  auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
+ 
+  auto WindowProc1Control  = new WidgetDeviceControl("[ШАБЛОН  ]"); 
+  auto WindowProc2Control  = new WidgetDeviceControl("[ЦЕНТРОИД]");
+  auto WindowProc3Control  = new WidgetDeviceControl("[ДЕТЕКТОР]");
+  auto WindowAimingControl = new WidgetDeviceControl("[КОНТУР  ]");
 
-  auto WindowImageProcessingControl1 = new WidgetProcessingImageControl; WindowImageProcessingControl1->HideLabel();
-  auto WindowImageProcessingControl2 = new WidgetProcessingImageControl; WindowImageProcessingControl2->HideLabel();
-  auto WindowContainer = new WidgetContainerGroup(WindowImageProcessingDisplay);
+  WindowProc1Control->enableScheme(0,1,0,1,0); WindowProc1Control->setScheme(0,2,0);
+  WindowProc2Control->enableScheme(0,1,0,1,0); WindowProc2Control->setScheme(0,2,0);
+  WindowProc3Control->enableScheme(0,1,0,1,0); WindowProc3Control->setScheme(0,2,0);
+  WindowAimingControl->enableScheme(1,0,0,1,0); WindowAimingControl->setScheme(0,2,0);
+  WindowProc1Control->setParamList(1000,50,100);
+  WindowProc2Control->setParamList(1000,50,100);
+  WindowProc3Control->setParamList(1000,50,100);
 
-       WindowContainer->AddWidget(*WindowImageProcessingControl1);
-       WindowContainer->AddWidget(*WindowImageProcessingControl2);
- QObject::connect(WindowImageProcessingDisplay, SIGNAL(signalChannelChanged(int)), WindowContainer, SLOT(slotSetActiveChannel(int)));
+  WindowProc1Control->setButtonsName({"ПУСК", "СБРОС"});
+  WindowProc2Control->setButtonsName({"ПУСК", "СБРОС"});
+  WindowProc3Control->setButtonsName({"ПУСК", "СБРОС"});
+  WindowAimingControl->setButtonsName({"ПУСК", "СБРОС"});
 
   WidgetTableGroup WindowTableGroup;
   WindowTableGroup.AddWidget(WindowImageProcessingDisplay);
-  WindowTableGroup.AddWidget(WindowContainer);
-  WindowTableGroup.setFixedSize(400,500);
+  WindowTableGroup.AddWidget(WindowProc1Control);
+  WindowTableGroup.AddWidget(WindowProc2Control);
+  WindowTableGroup.AddWidget(WindowProc3Control);
+  WindowTableGroup.AddWidget(WindowAimingControl);
+
+  WindowTableGroup.setMaximumSize(720*1.2,540*1.2 + 300);
+  WindowTableGroup.setMinimumSize(640*0.7,480*0.6 + 300);
   WindowTableGroup.move(300,300);
   WindowTableGroup.linkToWidget(WindowImageProcessingDisplay->LinkedWidget);
 
@@ -227,16 +237,14 @@ auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТК�
 
                            ProcessController->slotSetProcessAiming(true);
 
-  WindowImageProcessingControl1->linkToModule(ProcessControllerClass::ModuleImageProc );
-  WindowImageProcessingControl2->linkToModule(ProcessControllerClass::ModuleImageProc2);
+  WindowProc1Control->linkToDevice(ProcessControllerClass::ModuleImageProc );
+  WindowProc2Control->linkToDevice(ProcessControllerClass::ModuleImageProc2 );
+  WindowAimingControl->linkToDevice(ProcessControllerClass::ModuleAiming1 );
 
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc);    
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
 
-  WindowImageProcessingDisplay->slotSetActiveChannel(0);
-  WindowContainer->slotSetActiveChannel(0);
 
-  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::DeviceCamera);    
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed2(QPair<float,float>)), 
@@ -251,74 +259,9 @@ auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТК�
   ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();
   #endif
-
   
 
   #ifdef PROJECT_COMPLEX
-  ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
-
-  WidgetProcessController  WindowProcessController;
-                           WindowProcessController.linkTo(ProcessController);
-
-
-  WidgetProcessingImageControl    WindowImageProcessingControl; 
-  WidgetProcessingImageControl    WindowImageProcessingControl2; 
-
-  WidgetContainerGroup WidgetGroup;
-  WidgetGroup.AddWidget(WindowImageProcessingControl);
-  WidgetGroup.AddWidget(WindowImageProcessingControl2);
-  WidgetGroup.setMaximumHeight(250);
-
-  WidgetCameraControl      WindowCameraControl; 
-  WidgetScanatorControl    WindowScanatorInterface; 
-  WidgetAimingControl      WindowAimingControl;
-
-  WidgetProcessingImage WindowCameraDisplay("КАМЕРА");
-  WidgetProcessingImage WindowImageProcessingDisplay("ОБРАБОТКА");
-
-           WindowCameraControl.linkToDevice(ProcessControllerClass::DeviceCamera);
-           WindowCameraDisplay.linkToModule(ProcessControllerClass::DeviceCamera);
-
-
-  WindowImageProcessingControl.linkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingControl2.linkToModule(ProcessControllerClass::ModuleImageProc2);
-
-  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc);
-  WindowImageProcessingDisplay.linkToModule(ProcessControllerClass::ModuleImageProc2);
-
-      WindowScanatorInterface.linkToDevice(ProcessControllerClass::DeviceScanator);
-          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming1);
-          WindowAimingControl.linkToModule(ProcessControllerClass::ModuleAiming2);
-
-
-  auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
-  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalPosPressed(QPair<float,float>)), AimingPort,SLOT(slotSetCoord(QPair<float,float>))) ;
-
-  WidgetGraphisPlot WindowGraphics;
-
-  //=================================================
-  WidgetMainWindow MainWindow;
-                   MainWindow.AddWidgetToDisplay(&WindowCameraDisplay);
-                   MainWindow.AddWidgetToDisplay(&WindowImageProcessingDisplay);
-                    
-                   MainWindow.AddWidgetToDisplay(&WidgetGroup);
-                   MainWindow.AddWidgetToDisplay(&WindowCameraControl);
-                   MainWindow.AddWidgetToDisplay(&WindowScanatorInterface);
-                   MainWindow.AddWidgetToDisplay(&WindowAimingControl);
-
-                   MainWindow.AddWidgetToDisplay(&WindowProcessController);
-                   MainWindow.AddWidgetToDisplay(WindowImageProcessingDisplay.LinkedWidget); 
-                   MainWindow.AddWidgetToDisplay(&WindowGraphics);
-
-                   MainWindow.LoadWidgetsLinks();
-//                   MainWindow.GetLastWidget()->HideNodes();
-                   MainWindow.show();
-                   ProcessController->setParent(&MainWindow);
-
-  QObject::connect(&WidgetGroup,                  SIGNAL(SignalChannelChanged(int)),&WindowImageProcessingDisplay, SLOT(slotSetActiveChannel(int)));
-  QObject::connect(&WindowImageProcessingDisplay, SIGNAL(SignalChannelChanged(int)),&WidgetGroup,                  SLOT(slotSetActiveChannel(int)));
-
-  ProcessControllerClass::ModuleImitatorImage->slotStartWork();
   #endif 
 
 
@@ -326,66 +269,3 @@ auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТК�
 }
 
 
-void OpenCL_Init()
-{
-  #ifdef PROJECT_EDGE_PROCESS
-
-  std::string TAG_NAME = QString("[ %1 ] ").arg("INFO").toStdString();
-
-  cv::ocl::Context ctx;
-  auto result = ctx.create(cv::ocl::Device::TYPE_GPU);
-
-   cv::ocl::Device device;
-        if(result) device = ctx.device(0);
-
-  cv::ocl::setUseOpenCL(true);
-  cv::ocl::Context context = cv::ocl::Context::getDefault();
-
-  qDebug() << "======================================";
-  qDebug() << TAG_NAME.c_str() << "TEST OPENCL INIT";
-  qDebug() << TAG_NAME.c_str() <<" CL DEVICE NUMBER" << ctx.ndevices();
-  qDebug() << TAG_NAME.c_str() <<" CRETE GPU DEVICE:  " << result ;
-  qDebug() << TAG_NAME.c_str() << "DEVICE       : " << device.vendorName().c_str();
-  qDebug() << TAG_NAME.c_str() << "DEVICE DRIVER: " << device.driverVersion().c_str();
-  qDebug() << TAG_NAME.c_str() << "OPENCL USED: " << cv::ocl::useOpenCL();
-  qDebug() << TAG_NAME.c_str() << "HAS SVM: "     << cv::ocl::haveSVM();
-
-  qDebug() << TAG_NAME.c_str() << "OPENCL AVAILABLE DEVICES";
-  for (int i = 0; i < context.ndevices(); i++) 
-  {
-      cv::ocl::Device device = context.device(i);
-      qDebug() << TAG_NAME.c_str() << "[ DEVICE ]" << i << ": " << device.name().c_str();
-  }
-
-  qDebug() << "======================================";
-  qDebug() << Qt::endl;
-
-  #endif
-}
-
-  //
-  //
-  //QHBoxLayout lay_base;
-  //QVBoxLayout lay;   lay.addWidget(&WindowCameraDisplay);
-  //                   lay.addWidget(&WindowCameraControl);
-  //QVBoxLayout lay2;  
-  //                   lay2.addWidget(&WindowImageProcessingDisplay);
-  //                   lay2.addWidget(&WindowImageProcessingControl);
-  //            lay_base.addLayout(&lay);
-  //            lay_base.addLayout(&lay2);
-
-  //QGroupBox box; box.setLayout(&lay_base);
-  //          box.setStyleSheet(WindowCameraDisplay.styleSheet());
-  //box.show();
-  //
-//template<> void CommandDispatcherGeneric<TypeRegister<CommandDevice<0>>::ID()>::dispatchCommand(const QByteArray& Command) 
-//{
-//  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandDevice<0>>::TYPE_ID << " DEV 0";
-//};
-//
-//template<> void CommandDispatcherGeneric<TypeRegister<CommandSetPosRotary>::ID()>::dispatchCommand(const QByteArray& Command) 
-//{
-//  qDebug() << "DISPATCH COMMAND: " << TypeRegister<CommandSetPosRotary>::TYPE_ID << " POS ROTARY";
-//};
-//
-//

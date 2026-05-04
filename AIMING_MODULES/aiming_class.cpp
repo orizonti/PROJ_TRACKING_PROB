@@ -144,14 +144,15 @@ void AimingClass::BlockOutput(bool channelx, bool channely)
 void AimingClass::ProcessLoop1()
 {
   //MUST WORK ALWAYS, SIMPLE INTEGRATOR
+                                                          GainList[3] = 1000; 
+   if(StatisticCoord<float>::Norm(CoordAimingError) < 14) GainList[3] = 10000;
+   if(StatisticCoord<float>::Norm(CoordAimingError) < 8)  GainList[3] = 15000;
+
    CoordSpot >> Substract;
     CoordAim >> Substract >> CoordAimingError >> Gain(GainList[3]) >> IntegratorInput >> AxisInversion(3) >> VectorOutput; 
 
-                                                           GainList[3] = 1000; 
-    if(StatisticCoord<float>::Norm(CoordAimingError) < 14) GainList[3] = 10000;
-    if(StatisticCoord<float>::Norm(CoordAimingError) < 8)  GainList[3]  = 15000;
-    //if(StatisticCoord<float>::Norm(CoordAimingError) > 20) GainList[3] = 1000;
-    //if(StatisticCoord<float>::Norm(CoordAimingError) > 50) GainList[3] = 1000;
+    if(false) { Reset(); true >> NodeSignalFault; } 
+
      
     PrintpassCoords(CoordSpot); 
         BlockOutput(false,false);
@@ -243,14 +244,13 @@ void AimingClass::Reset()
 {
   qDebug() << TAG_NAME.c_str() << "[ AIMING RESET ]";
 
-  this->ModulePID.ResetPID();
-  this->VectorOutput = QPair<float,float>(0,0);
-  AimingStatistic.reset();
-  FaultStatistic.reset();
+  VectorOutput = QPair<float,float>(0,0);
 
-  Integrator.Reset();
+  AimingStatistic.reset();
+
+        ModulePID.Reset();
+       Integrator.Reset();
   IntegratorInput.Reset();
-  IntegratorInputSignal.Reset();
 
 }
 
@@ -263,73 +263,34 @@ void AimingClass::SetModuleEnabled(bool OnOff)
 };
 
 
-
-
-void AimingClass::LoadPIDParam(QString SettingsFile)
+void AimingClass::setParam(uint16_t CommandID, float    CommandParam)
 {
-    QFile file(SettingsFile);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return;
+        if(CommandID > GainList.size()) return;   
+  GainList[CommandID] = CommandParam;
+}
 
-
-    QTextStream in(&file);
-    while (!in.atEnd())
-    {
-        QString line = in.readLine();
-
-        if(line.contains("==")) continue;
-
-        QStringList list_preference = line.split(" ");
-
-        if(list_preference.size() < 3) continue;
-
-        float Common = 1;
-        float rate_param = list_preference.at(0).toFloat();
-        float int_param = list_preference.at(1).toFloat();
-        float diff_param = list_preference.at(2).toFloat();
-
-        this->PIDParamTable.push_back(PIDParamStruct(rate_param,diff_param,int_param));
-
-    }
-
-    AimingOptimizator = AimingParamOptimizator(PIDParamTable);
-
-    file.close();
+void AimingClass::setEnable(bool OnOff, uint16_t Number)
+{
+  switch(Number)
+  {
+    case 0: SetModuleEnabled(OnOff); break;
+    case 1: Reset(); break;
+  }
 }
 
 void AimingParamOptimizator::operator=(const AimingParamOptimizator& Optimizator)
 {
   BestPIDParamNumber = Optimizator.BestPIDParamNumber;
-  PIDParamTable = Optimizator.PIDParamTable;
-  PIDParamGroupStat = Optimizator.PIDParamGroupStat;
-  CurrentStatistic = Optimizator.CurrentStatistic;
-  BestPIDParam = Optimizator.BestPIDParam;
+       PIDParamTable = Optimizator.PIDParamTable;
+   PIDParamGroupStat = Optimizator.PIDParamGroupStat;
+    CurrentStatistic = Optimizator.CurrentStatistic;
+        BestPIDParam = Optimizator.BestPIDParam;
 
-  int LimitDispersionCounter = Optimizator.LimitDispersionCounter;
+     int LimitDispersionCounter = Optimizator.LimitDispersionCounter;
   bool FLAG_CONTROL_PARAM_REGIM = Optimizator.FLAG_CONTROL_PARAM_REGIM;
-  bool FLAG_REGISTRATION_REGIM = Optimizator.FLAG_REGISTRATION_REGIM;
+   bool FLAG_REGISTRATION_REGIM = Optimizator.FLAG_REGISTRATION_REGIM;
 }
 
-void AimingClass::LoadSettings()
-{
-  auto PIDParamFile = SettingsRegister::GetString("PID_PARAM");
-  auto BeamPosFile = SettingsRegister::GetString("AIMING_BEAM_POS");
-
-  QSettings BeamPosSettings(BeamPosFile, QSettings::IniFormat);
-  BeamPosSettings.beginGroup("BEAMS");
-  int BEAM_X_POS = BeamPosSettings.value(QString("X%1").arg(NumberChannel)).toInt();
-  int BEAM_Y_POS = BeamPosSettings.value(QString("Y%1").arg(NumberChannel)).toInt();
-  int XPointerPos = BeamPosSettings.value("XPointer").toInt();
-  int YPointerPos = BeamPosSettings.value("XPointer").toInt();
-
-  BeamPosSettings.endGroup();
-
-  auto PointerCenteredCoord = QPair<float,float>(XPointerPos,YPointerPos);
-  
-  this->CoordNullPosition = QPair<int, int>(BEAM_X_POS,BEAM_Y_POS);
-  this->CoordAim = this->CoordNullPosition;
-
-  this->LoadPIDParam(PIDParamFile);
-}
 
 bool AimingParamOptimizator::isAimingFaultStatistic()
 {

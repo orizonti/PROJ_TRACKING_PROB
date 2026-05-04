@@ -69,8 +69,8 @@ void FinderObjectMoving::SlotProcessImage()
 {
 
   if( isLinksHoldTrack() ) { StateProcessing = StatesModule::Idle; } 
-  if( SourceImage->empty() ||
-      StateProcessing == StatesModule::Idle) return;
+  if( SourceImage->empty() ) return;
+  if( StateProcessing == StatesModule::Idle) {timerProcessImage.stop(); return; }
                                                        MutexImageAccess.lock();
                                                        FrameMeasureInput++;
                                                        FrameMeasureProcess++; 
@@ -85,7 +85,7 @@ void FinderObjectMoving::SlotProcessImage()
                                                        FrameMeasureProcess++;
                                                        MutexImageAccess.unlock();
 
-  //qDebug() << OutputFilter::Filter(50)<< "[ FIND MOVING OBJECT ] PERIOD" << FrameMeasureProcess.printPeriod();
+  qDebug() << OutputFilter::Filter(20)<< "[ FIND MOVING OBJECT ] PERIOD" << FrameMeasureProcess.printPeriod();
 
 
   if( !isTrackHold() ) return;

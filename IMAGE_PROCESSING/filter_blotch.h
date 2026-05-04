@@ -10,7 +10,10 @@ class FilterBlotchClass
     void FilterImage(cv::Mat& Image);
     ContoursProcessorClass FindContours;
     std::string TAG_NAME{"[ BLOTCH_FILTER ]"};
-    bool isEmpty(const cv::Rect& rect);
+
+    double MinPixel = 0;
+    double MaxPixel = 0;
+    int Threshold = 10;
 };
 
 #endif 

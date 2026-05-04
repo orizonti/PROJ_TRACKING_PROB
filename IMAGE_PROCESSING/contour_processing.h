@@ -6,6 +6,7 @@
 #include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
 #include <QPair>
+#include <thread>
 
 class ContoursProcessorClass
 {
@@ -19,24 +20,26 @@ class ContoursProcessorClass
                       int ContoursCount = 0;
       std::vector<double> ContourAreas;
     std::vector<cv::Rect> ContourRects;
-    std::vector<cv::Rect> ContourRectsFiltered;
-
-    std::vector<cv::Rect> ContourRectsSorted;
-                cv::Rect getMaxRect();
-                   cv::Rect getRect(int num);
                 cv::Rect rectMax;
+                cv::Rect rectMaxScaled;
+                cv::Rect rectObject;
+                cv::Rect rectImage{1,1,100,100};
+
+    std::vector<cv::Rect> rectsMaxOutside{4};
+    std::vector<cv::Rect>& getMaxOutsideRects();
+
+                   cv::Rect getMaxRect();
+     std::pair<float,float> getPosMaxRect();
+
+     void CheckCorrectROI(cv::Rect& ROI);
 
                 int countContours();
-                int countContoursFiltered();
-     std::pair<float,float> getPosMaxRect();
-     std::pair<float,float> getPosRect(int num);
      bool isAvailable(int num) { return num < ContoursCount; } 
 
     std::vector<cv::Rect>::iterator begin() { return ContourRects.begin(); };
     std::vector<cv::Rect>::iterator end()   { return RectEnd; };
 
-    std::vector<cv::Rect>::iterator beginFiltered() { return ContourRectsFiltered.begin(); };
-    std::vector<cv::Rect>::iterator endFiltered()   { return RectEndFiltered; };
+    cv::Rect& getScaledMaxRect(float Scale);
 
         void PrintContoursRect(cv::Mat& OutputImage);
 

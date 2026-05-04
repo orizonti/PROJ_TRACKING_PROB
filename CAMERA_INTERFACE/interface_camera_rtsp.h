@@ -23,7 +23,7 @@ class CameraInterfaceUniversal :public QObject,
   Q_OBJECT
 
   public:
-  explicit CameraInterfaceUniversal(std::string strVideoSource, QString NAME = "[ CAMERA ]");
+  explicit CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number = 0, QString NAME = "[ CAMERA ]");
            ~CameraInterfaceUniversal();
 
   public:
@@ -66,9 +66,7 @@ class CameraInterfaceUniversal :public QObject,
   void CameraSetGain    (float Gain)     override;
   void CameraStartStream(bool OnOff )    override { if(OnOff) slotStartStream(); else slotStopStream(); }
 
-	void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
 	void setParam (uint16_t CommandID, float    CommandParam) override {};
-
 
   MeasurePeriodNode FrameMeasureInput;
   MeasurePeriodNode FrameMeasureProcess;

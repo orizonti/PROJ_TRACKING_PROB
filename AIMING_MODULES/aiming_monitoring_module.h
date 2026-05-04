@@ -31,7 +31,6 @@ public:
   void linkToModule(std::shared_ptr<AimingClass> Node) { AimingNode = Node; init(); }
   void linkToModule(std::shared_ptr<ModuleImageProcessing> Node) { ImageProcessor = Node; init(); }
 
-	void setParam (uint16_t CommandID, uint32_t CommandParam) override { qDebug() << "DEVICE SET PARAM: " << CommandParam;}
 	void setParam (uint16_t CommandID, float    CommandParam) override { }
 
 

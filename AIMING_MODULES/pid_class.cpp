@@ -14,9 +14,9 @@ PIDClass::PIDClass()
 PIDClass::~PIDClass() { }
 
 
-void PIDClass::ResetPID()
+void PIDClass::Reset()
 {
-	this->ErrorsSumm = QPair<float,float>(0, 0);
+	  this->ErrorsSumm = QPair<float,float>(0, 0);
     this->PIDControlOutput = QPair<float,float>(0, 0);
     this->CoordAimingError = QPair<float,float>(0, 0);
 }
@@ -60,7 +60,7 @@ void PIDClass::setInput(const QPair<float,float>& Coord)
 }
 
 const QPair<float,float>& PIDClass::getOutput()                 { return PIDControlOutput; }
-                 void PIDClass::SetPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->ResetPID(); }
+                 void PIDClass::SetPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->Reset(); }
                  void PIDClass::SetFrameRate(double Rate)         { StepPeriodThreshold = 2.0/Rate; }
 
 

@@ -99,9 +99,7 @@ void ImageTrackerCentroid::SlotProcessImage()
               if((*ImageInput).empty()) return;  
 
                                                      FrameMeasureProcess++; 
-    backSubstractor->apply(*ImageInput, ImageTemp1); 
-
-                      ImageProcessing = ImageTemp1;
+                      ImageProcessing = *ImageInput;
         ImageOutput = ImageProcessing;
 
        TrackObjectCentroid(ImageProcessing, RectsObject[0]); 
@@ -138,11 +136,12 @@ void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
   if(StateProcessing == StatesModule::Idle) return;
              CheckCorrectROI(ROI);
 
-                           ImageProcessingROI = Image(ROI); if(ImageProcessingROI.empty()) return;
+                             ImageProcessingROI = Image(ROI); if(ImageProcessingROI.empty()) return;
+    FilterBlotch.FilterImage(ImageProcessingROI);
 
   //cv::threshold(ImageProcessingROI, ImageProcessingROI, 130, 255,cv::THRESH_BINARY);
   //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
-  cv::morphologyEx(ImageProcessingROI, ImageProcessingROI, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5))); 
+  //cv::morphologyEx(ImageProcessingROI, ImageProcessingROI, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5))); 
   //====================================================
   bool isNoSignal =  ProcessImage(ImageProcessingROI); if(!isNoSignal) return;
 

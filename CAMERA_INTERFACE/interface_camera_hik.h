@@ -86,7 +86,6 @@ class CameraInterfaceHIK :public QObject,
           bool isReverseHorizontal();
   //=========================================
 
-	void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
 	void setParam (uint16_t CommandID, float    CommandParam) override {};
 
   signals:

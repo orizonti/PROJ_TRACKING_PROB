@@ -206,6 +206,27 @@ std::shared_ptr<ModuleImageProcessing> operator>>(const cv::Mat& Image, std::sha
   return Module;
 }
 
+void ModuleImageProcessing::setEnable(bool OnOff, uint16_t Number)
+{
+  switch(Number)
+  {
+    case 0: if(OnOff) SlotStartProcessing(); else SlotStopProcessing(); break; //ENABLE SIGNAL
+    case 1: SlotStopProcessing(); break;                                       //FAULT SIGNAL
+  }
+}
+
+void ModuleImageProcessing::moveToThread(QThread* thread)
+{
+  qDebug() << "MOVE IMAGE_PROC TO THREAD";
+          QObject::moveToThread(thread);
+ timerProcessImage.moveToThread(thread);
+  NodeSignalFault.moveToThread(thread);
+ NodeSignalEnable.moveToThread(thread);
+  qDebug() << "END";
+
+ QObject::connect(thread, SIGNAL(started()), &timerProcessImage, SLOT(start()));
+}
+
   //qDebug() << OutputFilter::Filter(20) << TAG_NAME << "[ SLAVE INPUT ]" << Coord.first << Coord.second;
 
 

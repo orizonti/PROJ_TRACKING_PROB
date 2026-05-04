@@ -27,6 +27,7 @@
 #include "interface_image_source.h"
 #include <debug_output_filter.h>
 #include "device_generic_interface.h"
+#include "interface_node_signal_adapter.h"
 
 
 class NodeRectToCoord: public PassCoordClass<float>
@@ -76,6 +77,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     MeasurePeriodNode FrameMeasureInput;
     MeasurePeriodNode FrameMeasureProcess;
+    void moveToThread(QThread* thread);
     //==================================================
     //
     //SourceImageInterface
@@ -137,18 +139,22 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     public:
 
-    void SetThreshold(int Value)      { this->Threshold = Value; } ;
+    void SetThreshold(int Value)      { qDebug() << TAG_NAME << "[THRESHOLD]" << Value; this->Threshold = Value; } ;
     void SetHighFrequencyProcessing() { timerProcessImage.setInterval(1); };
     void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(10);};
     //===================================================
     //DeviceGenericHandleControl
-	  void setParam (uint16_t CommandID, uint32_t CommandParam) override {};
 	  void setParam (uint16_t CommandID, float    CommandParam) override {};
+	  void setValue (float Value) override { SetThreshold((int)Value); };
+	  void setEnable(bool OnOff, uint16_t Number = 0) override;
+
+
+    NodeSignalAdapter NodeSignalEnable{this,0};
+    NodeSignalAdapter NodeSignalFault {this,1};
     //===================================================
 
     protected:
     std::mutex MutexImageAccess;
-
 
     std::vector<cv::Mat> ImagesInput{10};
     std::vector<cv::Mat>::iterator ImageInput{ImagesInput.begin()};
