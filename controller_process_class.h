@@ -91,6 +91,8 @@ static constexpr int TypeRotaryUsed = USE_ROTARY_TYPE;
 //=============================================================
 static std::shared_ptr<ModuleImageProcessing > ModuleImageProc;
 static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc2;
+static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc3;
+
 static std::shared_ptr<AimingClass>            ModuleAiming1;
 static std::shared_ptr<AimingClass>            ModuleAiming2;
 //=============================================================
@@ -127,6 +129,8 @@ private:
 
 QThread ThreadProcess;
 QThread ThreadProcess2;
+QThread ThreadProcess3;
+QThread ThreadProcessAiming;
 
 QThread ThreadCamera;
 QThread ThreadUtilite;

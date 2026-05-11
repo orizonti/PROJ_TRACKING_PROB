@@ -45,7 +45,7 @@ class CameraInterfaceHIK :public QObject,
   void StartStream();
   void StopStream();
 
-  void CameraSetRegion(int x, int y, int width, int height ) override {CameraSetOffset(x,y); CameraSetSize(width,height);};
+  void CameraSetRegion(int x, int y, int width, int height ) override;
   void CameraSetSize    (int Width, int Height)    override;
   void CameraSetOffset  (int XOffset, int YOffset) override;
   void CameraSetHeight  (int Height)               override;
@@ -99,8 +99,10 @@ class CameraInterfaceHIK :public QObject,
   uint32_t CountDevice = 0;
   uint32_t DeviceNum = 0;
 
-  std::pair<int,int> ImagePos{20,20}; 
+  std::pair<int,int>  PosImage{20,20}; 
   std::pair<int,int> SizeImage{720,540}; 
+  std::pair<int,int> SizeCamera{720,540}; 
+
   std::vector<QPair<int,int>> CameraPoints{2};
   std::vector<QRect>          CameraRects{2};
 

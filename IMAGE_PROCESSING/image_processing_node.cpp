@@ -16,21 +16,24 @@
 ModuleImageProcessing::ModuleImageProcessing(QString name, QObject* parent) : QObject(parent), TAG_NAME(name)
 {
          SizeROI = SettingsRegister::GetValue("PROCESSING_ROI1");
-auto  resolution = SettingsRegister::GetPair ("CAMERA1_RESOLUTION"); 
+auto  SizeCamera = SettingsRegister::GetPair ("CAMERA_RESOLUTION"); 
 
-RectsObject[0] = cv::Rect(resolution.first/2 - SizeROI/2, resolution.second/2 - SizeROI/2, SizeROI,SizeROI);
-RectsObject[1] = cv::Rect(resolution.first/2 - SizeROI/2, resolution.second/2 - SizeROI/2, SizeROI,SizeROI);
+RectsObject[0] = cv::Rect(SizeCamera.first/2 - SizeROI/2, SizeCamera.second/2 - SizeROI/2, SizeROI,SizeROI);
+RectsObject[1] = cv::Rect(SizeCamera.first/2 - SizeROI/2, SizeCamera.second/2 - SizeROI/2, SizeROI,SizeROI);
 
-CoordsObject[0] = QPair<float,float>(resolution.first/2,resolution.first/2); 
-CoordsObject[1] = QPair<float,float>(resolution.first/2,resolution.first/2); 
+CoordsObject[0] = QPair<float,float>(SizeCamera.first/2,SizeCamera.first/2); 
+CoordsObject[1] = QPair<float,float>(SizeCamera.first/2,SizeCamera.first/2); 
 
-ImageToDisplay = QImage(resolution.first,resolution.second,QImage::Format_ARGB32); ImageToDisplay.fill(Qt::black);
+ImageToDisplay = QImage(SizeCamera.first,SizeCamera.second,QImage::Format_ARGB32); ImageToDisplay.fill(Qt::black);
 
-qDebug() << TAG_NAME << "[LOAD DEFAULT PARAMETERS ]" << "[ IMAGE ] " << resolution.first << resolution.first << "[ ROI ]" << SizeROI;
+qDebug() << TAG_NAME << "[LOAD DEFAULT PARAMETERS ]" << "[ IMAGE ] " << SizeCamera.first << SizeCamera.first << "[ ROI ]" << SizeROI;
 
          timerProcessImage.setInterval(15);
 connect(&timerProcessImage   , SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
 
+QObject::connect(this,SIGNAL(signalStart()), this, SLOT(SlotStartProcessing()),Qt::QueuedConnection);
+QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(SlotStopProcessing()),Qt::QueuedConnection);
+QObject::connect(this,SIGNAL(signalReset()), this, SLOT(SlotResetProcessing()),Qt::QueuedConnection);
 };
 
 ModuleImageProcessing::ModuleImageProcessing(int width, int height, int size, QString name, QObject* parent) : QObject(parent), 
@@ -50,6 +53,8 @@ ImageToDisplay = QImage(width,height,QImage::Format_ARGB32); ImageToDisplay.fill
 connect(&timerProcessImage   , SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
 qDebug() << TAG_NAME << "[ IMAGE ] " << width << height << "[ ROI ]" << size;
 
+QObject::connect(this,SIGNAL(signalStart()), this, SLOT(SlotStartProcessing()),Qt::QueuedConnection);
+QObject::connect(this,SIGNAL(signalStop()), this, SLOT(SlotStopProcessing()),Qt::QueuedConnection);
 };
 
 
@@ -83,38 +88,45 @@ void ModuleImageProcessing::getImageToProcess(cv::Mat& ImageDst)
 
 void ModuleImageProcessing::getImageToDisplay(QImage& ImageDst)
 {
-  if(ImageOutput.empty()) return; 
+  if(ImageOutput.empty())  return;  
 
   if(ImageDst.width() != ImageOutput.cols || ImageDst.height() != ImageOutput.rows) 
-     ImageDst = QImage(ImageOutput.cols,ImageOutput.rows,QImage::Format_ARGB32);
+       ImageDst = QImage(ImageOutput.cols,ImageOutput.rows,QImage::Format_RGB888);
 
-    //if(ImageOutput.empty()) { ImageDst = ImageToDisplay.copy(); return; }
 
-    MutexImageAccess.lock();
-    uint8_t* RowData = 0;
-    QRgb*    ImageDest = 0;
-		for (int row = 0; row < this->ImageOutput.rows; row++)
-		{
-			RowData = this->ImageOutput.ptr<uint8_t>(row);
-      ImageDest = (QRgb *)ImageDst.scanLine(row);
+  MutexImageAccess.lock();
 
-			for (int col = 0; col < this->ImageOutput.cols; col++)
-			{
-          ImageDest++; *ImageDest = qRgb(RowData[col], RowData[col], RowData[col]);
-			}
-		}
+        for (int y = 0; y < this->ImageOutput.rows; ++y) 
+        {
+            for (int x = 0; x < this->ImageOutput.cols; ++x) 
+            {
+                ImageDst.setPixel(x, y, qRgb(this->ImageOutput.at<uchar>(y, x), 
+                                             this->ImageOutput.at<uchar>(y, x), 
+                                             this->ImageOutput.at<uchar>(y, x)));
+            }
+        }
 
-    MutexImageAccess.unlock();
+  MutexImageAccess.unlock();
 }
+
+//QImage matToQImage(const cv::Mat& mat) {
+//    if (mat.type() == CV_8UC1) {
+//        QImage image(mat.cols, mat.rows, QImage::Format_Grayscale8);
+//        for (int y = 0; y < mat.rows; ++y) {
+//            for (int x = 0; x < mat.cols; ++x) {
+//                image.setPixel(x, y, qRgb(mat.at<uchar>(y, x), mat.at<uchar>(y, x), mat.at<uchar>(y, x)));
+//            }
+//        }
+//        return image;
+//    }
+//    return QImage();
+//}
 
 //==================================================================================
 
 void ModuleImageProcessing::linkToModule(std::shared_ptr<ModuleImageProcessing> Dst)
 {
    qDebug() << TAG_NAME << "[ LINK TO ]" << Dst->TAG_NAME;
-   QObject::connect(this, SIGNAL(signalCoord(std::pair<float,float>)), Dst.get(), 
-                          SLOT  (slotCoordInput  (std::pair<float,float>)), Qt::QueuedConnection);
-
    *this | *Dst; Links.push_back(Dst);
 }
 
@@ -141,28 +153,28 @@ bool ModuleImageProcessing::IsROIValid(cv::Rect& ROI)
 const int& ImageWidth  = (*ImageInput).cols;
 const int& ImageHeight = (*ImageInput).rows;
 
-if((ROI.x + ROI.width  + 2) > ImageWidth)  return false;
-if((ROI.y + ROI.height + 2) > ImageHeight) return false;
-if (ROI.x < 0) return false;
-if (ROI.y < 0) return false;
-               return true ;
+  if((ROI.x + ROI.width  + 2) > ImageWidth  || 
+     (ROI.y + ROI.height + 2) > ImageHeight ||
+                                 ROI.x <= 0 || 
+                                 ROI.y <= 0) return false;
+  return true ;
 }
 
 void ModuleImageProcessing::CheckCorrectROI(cv::Rect& ROI)
 {
 const int ImageWidth  = (*ImageInput).cols;
 const int ImageHeight = (*ImageInput).rows;
-if(ROI.width  > ImageWidth) ROI.width = ImageWidth/2;
-if(ROI.height > ImageHeight) ROI.height = ImageHeight/2;
+if(ROI.width  > ImageWidth /2) ROI.width  = ImageWidth /2;
+if(ROI.height > ImageHeight/2) ROI.height = ImageHeight/2;
 
-auto OFFSET_X = (ROI.x + ROI.width ) - ImageWidth; if(OFFSET_X < 0) OFFSET_X = 0;
+auto OFFSET_X = (ROI.x + ROI.width ) - ImageWidth;  if(OFFSET_X < 0) OFFSET_X = 0;
 auto OFFSET_Y = (ROI.y + ROI.height) - ImageHeight; if(OFFSET_Y < 0) OFFSET_Y = 0;
 
    ROI.x -= OFFSET_X;
    ROI.y -= OFFSET_Y;
 
-if(ROI.x < 0 ) ROI.x = 0;
-if(ROI.y < 0 ) ROI.y = 0;
+if(ROI.x <= 0 ) ROI.x = 1;
+if(ROI.y <= 0 ) ROI.y = 1;
 //qDebug() << "OUTPUT ROI: " << ROI.x << ROI.y << ROI.width << ROI.height << "IMAGE: " << ImageInput.cols << ImageInput.rows;
 
 }
@@ -176,10 +188,17 @@ std::pair<float,float> ModuleImageProcessing::getTickPeriod() { return std::pair
 void ModuleImageProcessing::SlotResetProcessing() { StateProcessing = StatesModule::Idle; }
 
 void ModuleImageProcessing::SlotStopProcessing() 
-{ timerProcessImage.stop(); qDebug() << TAG_NAME << "[ STOP PROCESSING ]" << QThread::currentThread(); }
+{ 
+  timerProcessImage.stop(); 
+  StateProcessing = StatesModule::Idle;
+  qDebug() << TAG_NAME << "[ STOP PROCESSING ]" << QThread::currentThread(); 
+}
 
 void ModuleImageProcessing::SlotStartProcessing() 
-{ timerProcessImage.start(); qDebug() << TAG_NAME << "[ START PROCESSING ]" << QThread::currentThread(); }
+{ 
+  StateProcessing = StatesModule::WorkTrack;
+  timerProcessImage.start(); qDebug() << TAG_NAME << "[ START PROCESSING ]" << QThread::currentThread(); 
+}
 
 
 
@@ -187,11 +206,13 @@ void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
 {
   if(StateProcessing == StatesModule::WorkTrack && ModeProcessing == ModesModule::Master) return;
 
+  std::lock_guard<std::mutex> guard(MutexInput);
+
   CoordsObject[1] = Coord; 
   RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
                             CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
 
-  SetStateActive();
+  StateProcessing = StatesModule::WorkTrack;
 };
 
 ModuleImageProcessing& operator>>(const cv::Mat& Image, ModuleImageProcessing& Module)
@@ -210,21 +231,20 @@ void ModuleImageProcessing::setEnable(bool OnOff, uint16_t Number)
 {
   switch(Number)
   {
-    case 0: if(OnOff) SlotStartProcessing(); else SlotStopProcessing(); break; //ENABLE SIGNAL
-    case 1: SlotStopProcessing(); break;                                       //FAULT SIGNAL
+    case 0: if(OnOff) emit signalStart(); else emit signalStop(); break; //ENABLE SIGNAL
+    case 1: emit signalStop(); break;                                       //FAULT SIGNAL
   }
 }
 
 void ModuleImageProcessing::moveToThread(QThread* thread)
 {
-  qDebug() << "MOVE IMAGE_PROC TO THREAD";
+
           QObject::moveToThread(thread);
  timerProcessImage.moveToThread(thread);
-  NodeSignalFault.moveToThread(thread);
- NodeSignalEnable.moveToThread(thread);
-  qDebug() << "END";
+   NodeSignalFault.moveToThread(thread);
+  NodeSignalEnable.moveToThread(thread);
 
- QObject::connect(thread, SIGNAL(started()), &timerProcessImage, SLOT(start()));
+  qDebug() << TAG_NAME << "[ MOVE TO THREAD ]" << this->thread();
 }
 
   //qDebug() << OutputFilter::Filter(20) << TAG_NAME << "[ SLAVE INPUT ]" << Coord.first << Coord.second;

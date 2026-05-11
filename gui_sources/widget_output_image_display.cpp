@@ -40,6 +40,7 @@ void WidgetOutputImageDisplay::DisplayImage(QImage Image)
 
 void WidgetOutputImageDisplay::DisplayImage(uchar* Image, int width, int height)
 {
+  
 	ImageToDisplay = QImage((const uchar*)Image, width, height, width, QImage::Format_Grayscale8);
 	ImageToDisplay = ImageToDisplay.scaled(512, 128);
 

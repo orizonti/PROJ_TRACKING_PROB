@@ -73,6 +73,8 @@ public:
     std::function<void (cv::Mat&)> NodeErosion;
     void makeFilters();
     //====================================================
+    double MinPixel;
+    double MaxPixel;
 
 
 public  slots:

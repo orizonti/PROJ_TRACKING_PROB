@@ -6,6 +6,7 @@
 #include "image_finder.h"
 #include "thread_operation_nodes.h"
 #include "register_settings.h"
+#include <atomic>
 
 class ImageTrackerTemplate : public ModuleImageProcessing
 {
@@ -27,10 +28,12 @@ public:
 
    MeasurePeriodNode FrameMeasureInput;
    MeasurePeriodNode FrameMeasureProcess;
+   MeasurePeriodNode InputPortPeriod;
+   int InputPeriod = 0;
         TrackerFirst NodeTracker;
 
 
-   bool isTrackHold() override { return StateProcessing != StatesModule::Idle; }
+   bool isTrackHold() override { return NodeTracker.isTrackHold(); }
    void TrackObject();
    void ProcessInput();
 

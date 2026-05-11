@@ -98,7 +98,7 @@ void VideoStreamRTSP::grabFramesProcess()
     //ImageSource->getImageToProcess(frameOutput);
     frameOutput = ImageSource->getImageToProcess();
                            writeFrame(frameOutput);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000/30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000/50));
 
     }
 }
@@ -108,7 +108,7 @@ void VideoStreamRTSP::linkToSource(SourceImageInterface* Source)
     auto [width, height] = Source->getSizeImage();
    std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << width << height << std::endl;
 
-    this->init(width, height, 30);
+    this->init(width, height, 20);
 
     FLAG_RUN_STREAM = true;
         ImageSource = Source;

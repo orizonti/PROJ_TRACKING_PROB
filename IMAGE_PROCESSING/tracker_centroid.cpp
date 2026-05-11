@@ -40,19 +40,6 @@ ImageTrackerCentroid::ImageTrackerCentroid(int width, int height, int size ,QObj
 
 ImageTrackerCentroid::~ImageTrackerCentroid() { qDebug() << TAG_NAME << "[ DELETE ]"; }
 
-void ImageTrackerCentroid::setInput(const QPair<float,float>& Coord)
-{
-  //if(StateProcessing == StatesModule::WorkTrack && ModeProcessing == ModesModule::Master) return;
-  if(StateProcessing == StatesModule::WorkTrack) return;
-
-  //qDebug() << TAG_NAME << "[ INPUT COORD ]" << Coord.first << Coord.second << "[ ACTIVATE TRACK ]";
-
-  CoordsObject[1] = Coord; 
-  RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
-                            CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
-
-  SetStateActive();
-};
 
 
 bool ImageTrackerCentroid::isIntersects(const QPair<float,float>& Coord)
@@ -86,31 +73,57 @@ QPair<float,float> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 }
 
 
+void ImageTrackerCentroid::setInput(const QPair<float,float>& Coord)
+{
+  if(StateProcessing == StatesModule::Idle) SetStateActive();
+  if(StateProcessing == StatesModule::WorkTrack && ModeProcessing == ModesModule::Master) return;
+
+  MutexInput.lock();
+  RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
+                            Coord.second - SizeROI/2 , SizeROI, SizeROI);
+  StateProcessing = StatesModule::WorkTrack;  
+  MutexInput.unlock();
+};
 
 void ImageTrackerCentroid::SlotProcessImage()
 {
 
-                            if( SourceImage->empty()) return;
-                                                     FrameMeasureInput++; MutexImageAccess.lock();
-
-                  *ImageInput = SourceImage->getImageToProcess().clone(); 
+	try 
+	{ 
+                             if(SourceImage->empty()) return;
                              if(SourceImage->getAvailableFrames() > 2) 
                                 SourceImage->skipFrames();
-              if((*ImageInput).empty()) return;  
 
-                                                     FrameMeasureProcess++; 
+                  *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return; ;  
+
+                                                     FrameMeasureInput++;   MutexInput.lock();
+                                                     FrameMeasureProcess++; MutexImageAccess.lock();
+       //====================================================================
                       ImageProcessing = *ImageInput;
         ImageOutput = ImageProcessing;
-
        TrackObjectCentroid(ImageProcessing, RectsObject[0]); 
                             ImageInput++; if(ImageInput == ImagesInput.end()) 
                                              ImageInput = ImagesInput.begin();
+       //====================================================================
 
-                                                     FrameMeasureProcess++; 
-                                                     MutexImageAccess.unlock();
-  qDebug() << OutputFilter::Filter(50) << "[PROCESS TIME]" << FrameMeasureProcess.getMilliseconds();
+                                                                            MutexInput.unlock();
+                                                     FrameMeasureProcess++; MutexImageAccess.unlock();
 
-  if(StateProcessing == StatesModule::Idle) return; PassCoordClass<float>::passCoord(); 
+  if( !isTrackHold()) return; PassCoordClass<float>::passCoord(); 
+
+  //if( isTrackHold()) emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
+  //qDebug() << OutputFilter::Filter(50) << "[PROCESS TIME]" << FrameMeasureProcess.getMilliseconds();
+
+	}
+	catch (const cv::Exception& cv_ec) 
+	{ 
+		if(cv_ec.code == cv::Error::StsAssert)  
+    { std::cout << TAG_NAME.toStdString() << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
+
+		if(cv_ec.code == cv::Error::BadROISize) 
+    { std::cout << TAG_NAME.toStdString() << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
+      std::cout << TAG_NAME.toStdString() << cv_ec.what() << cv_ec.code;	
+	}
 }
 
 void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image) 
@@ -126,6 +139,7 @@ void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image)
   TrackObjectCentroid(*ImageInput, RectsObject[0]); 
                        ImageInput++; if(ImageInput == ImagesInput.end()) 
                                         ImageInput = ImagesInput.begin();
+
                                             FrameMeasureProcess++; MutexImageAccess.unlock();
 
   if(StateProcessing == StatesModule::Idle) return; PassCoordClass<float>::passCoord(); 
@@ -137,9 +151,11 @@ void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
              CheckCorrectROI(ROI);
 
                              ImageProcessingROI = Image(ROI); if(ImageProcessingROI.empty()) return;
-    FilterBlotch.FilterImage(ImageProcessingROI);
+    //FilterBlotch.FilterImage(ImageProcessingROI);
+    //
+         cv::minMaxLoc(ImageProcessingROI, &MinPixel, &MaxPixel);
+		 Threshold = MinPixel + (MaxPixel - MinPixel)*0.5;
 
-  //cv::threshold(ImageProcessingROI, ImageProcessingROI, 130, 255,cv::THRESH_BINARY);
   //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
   //cv::morphologyEx(ImageProcessingROI, ImageProcessingROI, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5))); 
   //====================================================
@@ -189,11 +205,7 @@ bool ImageTrackerCentroid::ProcessImage(cv::Mat& Image)
 }
 
 
-
-void ImageTrackerCentroid::SlotResetProcessing() 
-{
-   ModuleImageProcessing::SlotResetProcessing();
-}
+void ImageTrackerCentroid::SlotResetProcessing() { ModuleImageProcessing::SlotResetProcessing(); }
 
 void ImageTrackerCentroid::makeFilters()
 {

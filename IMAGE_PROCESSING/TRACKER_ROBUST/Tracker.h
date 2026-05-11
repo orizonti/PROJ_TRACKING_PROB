@@ -5,6 +5,7 @@
 #include <opencv2/core/ocl.hpp>
 #include <QPair>
 #include <atomic>
+#include <QString>
 
 using TypeTracker = cv::tracking::TrackerKCF;
 
@@ -14,13 +15,18 @@ public:
 	 TrackerFirst();
 	~TrackerFirst();
 	cv::Ptr<cv::TrackerKCF> tracker;
+   QString TAG_NAME{"TRACKER KCF"};
 
    enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};
 
    StatesModule State{StatesModule::Idle};
+   std::atomic<bool> FLAG_INIT_TRACK = false;
 
 	 void setRectTrack(const cv::Mat& image, cv::Rect rectAim);
+	 void resetRectTrack(const cv::Mat& image, cv::Rect rectAim);
+
 	 void trackObject(cv::Mat& image);
+	 void trackObject(cv::Mat& image, cv::Rect rect);
 
    bool isTrackHold() { return State == StatesModule::WorkTrack; };
    bool isTrackRectValid() { return rect_template.width > 0 && rect_template.height > 0; }; 
@@ -37,6 +43,8 @@ public:
    };
 
    cv::Rect& GetObjectRect() { return rect_template; };
+
+   bool IsROIValid(cv::Rect& ROI, const cv::Mat& Image);
 
    void printState();
 private:

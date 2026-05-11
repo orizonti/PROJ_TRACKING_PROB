@@ -101,7 +101,6 @@ void slotDisplayImage();
 void slotDisplayMiniLabels();
 void slotDisplayImage(const QImage& Image);
 void slotDisplayString(QString InfoString);
-void slotStartPaintTrajectory(bool OnOff);
 void slotSetActiveChannel(int Channel);
 
 private:

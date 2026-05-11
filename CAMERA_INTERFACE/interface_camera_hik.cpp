@@ -83,6 +83,7 @@ void CameraInterfaceHIK::CameraInit()
 
         EnumerateCameras();
         if(DeviceNum > CountDevice){ qDebug() << TAG_NAME.c_str() << "DEVICE INDEX EXCEED DEVICE COUNT" << DeviceNum; return; }
+        DeviceNum = 0;
 
         nRet = MV_CC_CreateHandle(&handle, stDeviceList.pDeviceInfo[DeviceNum]);
                                              if (MV_OK != nRet) { qDebug()<< TAG_NAME.c_str()  << "MV_CC_CREATE HANDLE FAIL " << nRet; return; }
@@ -129,6 +130,19 @@ CameraInit();
 ImageChanneledStore.push_back(std::make_shared<CameraTypeStorage>(this,SizeImage));
 CurrentStoreChannel = ImageChanneledStore.begin();
 
+    SizeCamera = SettingsRegister::GetPair("CAMERA_RESOLUTION"); 
+     SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE"); 
+
+    SizeImage.first  /= 4; SizeImage.first  *= 4;
+    SizeImage.second /= 4; SizeImage.second *= 4;
+
+auto X_ROI = (SizeCamera.first-SizeImage.first )/2; X_ROI = X_ROI/4; PosImage.first  = X_ROI*4; 
+auto Y_ROI = (SizeCamera.first-SizeImage.second)/2; Y_ROI = Y_ROI/4; PosImage.second = Y_ROI*4; 
+
+    this->CameraSetRegion(PosImage.first,PosImage.second,SizeImage.first,SizeImage.second);
+
+  CameraSetExposure(SettingsRegister::GetValue("CAMERA_EXPOSURE"));
+      CameraSetGain(SettingsRegister::GetValue("CAMERA_GAIN"));
 }
 
 CameraInterfaceHIK::~CameraInterfaceHIK()
@@ -161,7 +175,6 @@ void CameraInterfaceHIK::CameraSetSize(int Width, int Height)
 { 
     SizeImage.first = Width;
     SizeImage.second = Height;
-    //ImageToDisplay = QImage{Width,Height, QImage::Format_Grayscale8};
     CameraSetWidth(Width); CameraSetHeight(Height); 
 }
 
@@ -261,24 +274,23 @@ else                   qDebug()<< TAG_NAME.c_str()  << "[ GET EXPOSURE FAILED ]"
 
 void CameraInterfaceHIK::CameraSetZoom(int Number)
 {
-                int size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI1"); 
-    if(Number == 2) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI2"); 
-    if(Number == 3) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI3"); 
-    if(Number == 4) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI4"); 
-    if(Number == 5) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI5"); 
-    if(Number == 6) size = SettingsRegister::GetValue("CAMERA_ZOOM_ROI6"); 
+                    SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_1"); 
+    if(Number == 2) SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_2"); 
+    if(Number == 3) SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_3"); 
+    if(Number == 4) SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_4"); 
+    if(Number == 5) SizeImage = SettingsRegister::GetPair("CAMERA_SIZE_5"); 
 
-    int X_ROI = 720/2 - size/2; X_ROI = X_ROI/4; X_ROI = X_ROI*4; 
-    int Y_ROI = 540/2 - size/2; Y_ROI = Y_ROI/4; Y_ROI = Y_ROI*4; 
+    SizeImage.first  /= 4; SizeImage.first  *= 4;
+    SizeImage.second /= 4; SizeImage.second *= 4;
 
-    int RIGHT  = X_ROI + size;
-    int BOTTOM = Y_ROI + size;
+    auto X_ROI = (SizeCamera.first-SizeImage.first )/2; X_ROI = X_ROI/4;  PosImage.first  = X_ROI*4; 
+    auto Y_ROI = (SizeCamera.first-SizeImage.second)/2 ; Y_ROI = Y_ROI/4; PosImage.second = Y_ROI*4; 
 
-    SettingsRegister::ResetSettings("CAMERA_IMAGE_POS",  std::pair<float,float>(X_ROI, Y_ROI));
-    SettingsRegister::ResetSettings("CAMERA_IMAGE_SIZE", size);
-    SettingsRegister::ResetSettings("CAMERA_IMAGE_SIZE", std::pair<float,float>(size,size));
-    SettingsRegister::PrintSetting("CAMERA_IMAGE_SIZE");
-    SettingsRegister::PrintSetting("CAMERA_IMAGE_POS");
-
-    this->CameraSetRegion(X_ROI,Y_ROI,size,size);
+    this->CameraSetRegion(PosImage.first,PosImage.second,SizeImage.first,SizeImage.second);
 }
+
+void CameraInterfaceHIK::CameraSetRegion(int x, int y, int width, int height ) 
+{
+  SettingsRegister::ResetSettings("CAMERA_SIZE_ACTIVE",std::make_pair(width,height));
+  CameraSetOffset(x,y); CameraSetSize(width,height);
+};

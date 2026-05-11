@@ -60,15 +60,16 @@ FinderObjectMoving::~FinderObjectMoving() { qDebug() << TAG_NAME << "[ DELETE ]"
 
 bool FinderObjectMoving::isLinksHoldTrack()
 {
-    bool isLinksOnTrack = true;
-  for(auto& link: Links) { isLinksOnTrack &= link->isTrackHold(); };                                     
-  return isLinksOnTrack;
+                      bool isLinksOnTrack = false;
+  for(auto& link: Links) { isLinksOnTrack |= link->isTrackHold(); };                                     
+                    return isLinksOnTrack;
 }
 
 void FinderObjectMoving::SlotProcessImage()
 {
 
-  if( isLinksHoldTrack() ) { StateProcessing = StatesModule::Idle; } 
+  //if( isLinksHoldTrack() ) { StateProcessing = StatesModule::Idle; } 
+  if( isLinksHoldTrack() ) { SlotStopProcessing(); } 
   if( SourceImage->empty() ) return;
   if( StateProcessing == StatesModule::Idle) {timerProcessImage.stop(); return; }
                                                        MutexImageAccess.lock();
@@ -89,6 +90,7 @@ void FinderObjectMoving::SlotProcessImage()
 
 
   if( !isTrackHold() ) return;
+  qDebug() << "[ FIND MOVING OBJECT ] CATCH" << CoordsObject[0].first << CoordsObject[0].second;
   emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
 
 }
@@ -134,8 +136,8 @@ void FinderObjectMoving::ProcessImage(cv::Mat& Image)
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
 
     backSubstractor->apply(Image, ImageTemp1);
-                    FilterErosion(ImageTemp1, ImageTemp2); 
-                 cv::morphologyEx(ImageTemp2, ImageProcessing, cv::MORPH_OPEN, kernel); // morphological operations to remove noise and fill holes
+                    //FilterErosion(ImageTemp1, ImageTemp2); 
+                 cv::morphologyEx(ImageTemp1, ImageProcessing, cv::MORPH_OPEN, kernel); // morphological operations to remove noise and fill holes
                                  FindContours(ImageProcessing);
 
 

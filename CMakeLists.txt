@@ -217,6 +217,7 @@ list(APPEND GUI_SOURCES_LIST "./gui_sources/node.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/image_processing_node.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/tracker_centroid.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/tracker_template.cpp")
+list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/finder_moving_centroid.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/tracker_neural.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/image_finder.cpp")
 list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/filter_blotch.cpp")
@@ -286,6 +287,7 @@ pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-
                 "controller_process_class.cpp"
                 "stream_video_rtsp.cpp"
 
+                "./AIMING_MODULES/nodes_track_approximation.cpp"
                 "./AIMING_MODULES/aiming_class.cpp"
                 "./AIMING_MODULES/pid_class.cpp"
                 "./AIMING_MODULES/rotate_vector_class.cpp"

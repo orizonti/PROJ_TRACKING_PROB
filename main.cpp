@@ -230,20 +230,17 @@ int main(int argc, char* argv[])
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
                            ProcessController->setParent(&WindowTableGroup);
 
-  ProcessControllerClass::DeviceCamera->CameraSetZoom(5);
-  ProcessControllerClass::DeviceCamera->CameraSetExposure(1500);
-  ProcessControllerClass::DeviceCamera->CameraSetGain(0);
   ProcessControllerClass::DeviceCamera->CameraStartStream(true);
 
                            ProcessController->slotSetProcessAiming(true);
+                           ProcessController->slotStartProcessRTSP(true);
 
   WindowProc1Control->linkToDevice(ProcessControllerClass::ModuleImageProc );
   WindowProc2Control->linkToDevice(ProcessControllerClass::ModuleImageProc2 );
   WindowAimingControl->linkToDevice(ProcessControllerClass::ModuleAiming1 );
 
-  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc);    
+  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc );    
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
-
 
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
@@ -256,7 +253,6 @@ int main(int argc, char* argv[])
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
                                                        ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
-  ProcessController->slotStartProcessRTSP(true);
   WindowTableGroup.show();
   #endif
   

@@ -22,10 +22,10 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
    slotDisplayString(strDisplayData);
 
                     auto ImageSize = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
-   auto Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); DisplayImagesMini.append(Image);
-        Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); DisplayImagesMini.append(Image);
+   auto Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
+        Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
 
-        DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_ARGB32); 
+        DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); 
 
    auto Widget  = new WidgetMiniLabelsGroup;
         Widget->layout()->setSpacing(6);
@@ -78,10 +78,6 @@ void WidgetProcessingImage::CopyImageToDisplayImage(const QImage& Image)
          *pixelsLine = qRgb(*pixelsLineSource, *pixelsLineSource, *pixelsLineSource);
        }
    }
-}
-void WidgetProcessingImage::slotStartPaintTrajectory(bool OnOff)
-{
-FLAG_PAINT_TRAJECTORY = OnOff; if(FLAG_PAINT_TRAJECTORY) Trajectory.clear();
 }
 
 void WidgetProcessingImage::slotDisplayMiniLabels()

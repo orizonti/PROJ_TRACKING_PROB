@@ -45,7 +45,7 @@ class ContoursProcessorClass
 
     private:
         cv::Mat InputImage;
-        int minLimit = 20*20;
+        int minLimit = 3*3;
         int maxLimit = 60*60;
 
     std::vector<cv::Rect>::iterator RectOutput;

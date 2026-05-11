@@ -97,6 +97,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
                                  QString getName() override { return "[PROCESSING NODE]"; };
             std::pair<float,float> getTickPeriod() override ;
     //===================================================
+                      std::shared_ptr<SourceImageInterface  > SourceImage    = nullptr;
     
     void linkToModule(std::shared_ptr<SourceImageInterface > ImageSource);
     void linkToModule(std::shared_ptr<ModuleImageProcessing> ImageSource);
@@ -106,20 +107,20 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     friend void operator | (std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst);
 
-    std::vector<std::shared_ptr<ModuleImageProcessing>> Links;
-                std::shared_ptr<SourceImageInterface  > SourceImage    = nullptr;
-
     bool isLinkedSource() { return SourceImage != nullptr;}
-    bool isLinkedSlave()  { return !Links.empty();}
 
+    std::vector<std::shared_ptr<ModuleImageProcessing>> Links;
     //===================================================================================
     
                StatesModule StateProcessing { StatesModule::Idle }; 
                 ModesModule ModeProcessing  { ModesModule::Master}; 
 
     void SetSlaveMode()   { ModeProcessing  = ModesModule::Slave; }
-    void SetStateActive() { StateProcessing = StatesModule::WorkTrack; }
-    void SetStateIdle()   { StateProcessing = StatesModule::Idle; }
+
+    void SetStateActive() { emit signalStart(); };
+    void SetStateIdle()   { emit signalStop(); }; 
+    void SetReset()       { emit signalReset(); }; 
+
     bool isIdle()   { return StateProcessing == StatesModule::Idle;  } 
     bool isActive() { return StateProcessing != StatesModule::Idle;  } 
     virtual bool isTrackHold() { return StateProcessing != StatesModule::Idle; }
@@ -132,16 +133,17 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     virtual void SlotResetProcessing();
     virtual void SlotStopProcessing ();
     virtual void SlotStartProcessing();
-            void SlotAllowPassCoord(bool OnOff) { this->PassBlocked = !OnOff; } ;
+
+            void SlotBlockOutput(bool OnOff) { this->PassBlocked = OnOff; } ;
 
     virtual void SlotSelectObject(std::pair<float,float> PointRelative) {};
-            void slotCoordInput  (std::pair<float,float> Coord) { setInput(Coord); };
+            void slotInputCoord  (std::pair<float,float> Coord) { setInput(Coord); };
 
     public:
 
     void SetThreshold(int Value)      { qDebug() << TAG_NAME << "[THRESHOLD]" << Value; this->Threshold = Value; } ;
     void SetHighFrequencyProcessing() { timerProcessImage.setInterval(1); };
-    void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(10);};
+    void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(20);};
     //===================================================
     //DeviceGenericHandleControl
 	  void setParam (uint16_t CommandID, float    CommandParam) override {};
@@ -155,6 +157,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     protected:
     std::mutex MutexImageAccess;
+    std::mutex MutexInput;
 
     std::vector<cv::Mat> ImagesInput{10};
     std::vector<cv::Mat>::iterator ImageInput{ImagesInput.begin()};
@@ -189,6 +192,9 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     signals:
     void signalCoord(std::pair<float,float> Coord);
+    void signalStart();
+    void signalStop();
+    void signalReset();
 };
 
 

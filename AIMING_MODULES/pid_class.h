@@ -23,7 +23,7 @@ public:
 
 	void Reset();
 	void setInput(const QPair<float,float>& Coord);
-	void SetPIDParam(PIDParamStruct Param);
+	void setPIDParam(PIDParamStruct Param);
 	void SetFrameRate(double Rate);
 	double StepPeriodThreshold = 0.01;
 

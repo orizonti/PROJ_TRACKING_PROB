@@ -60,7 +60,7 @@ void PIDClass::setInput(const QPair<float,float>& Coord)
 }
 
 const QPair<float,float>& PIDClass::getOutput()                 { return PIDControlOutput; }
-                 void PIDClass::SetPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->Reset(); }
+                 void PIDClass::setPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->Reset(); }
                  void PIDClass::SetFrameRate(double Rate)         { StepPeriodThreshold = 2.0/Rate; }
 
 

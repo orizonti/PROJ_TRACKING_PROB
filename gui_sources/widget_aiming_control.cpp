@@ -75,11 +75,11 @@ void WidgetAimingControl::linkToModule(std::shared_ptr<AimingClass> Module)
                 {
                     switch (TypeEnumAiming)
                     {
-                    case 1: Module->SetAimingRegim(AimingLoop); break;
-                    case 2: Module->SetAimingRegim(AimingLoop1); break;
-                    case 3: Module->SetAimingRegim(AimingLoop2); break;
-                    case 4: Module->SetAimingRegim(AimingLoop3); break;
-                    case 5: Module->SetAimingRegim(AimingDirect); break;
+                    case 1: Module->setAimingRegim(AimingLoop); break;
+                    case 2: Module->setAimingRegim(AimingLoop1); break;
+                    case 3: Module->setAimingRegim(AimingLoop2); break;
+                    case 4: Module->setAimingRegim(AimingLoop3); break;
+                    case 5: Module->setAimingRegim(AimingDirect); break;
                     }
                 }
             });

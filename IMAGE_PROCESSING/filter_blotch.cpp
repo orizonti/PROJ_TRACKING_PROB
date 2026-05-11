@@ -14,7 +14,8 @@ void FilterBlotchClass::FilterImage(cv::Mat& Image)
          cv::minMaxLoc(Image, &MinPixel, &MaxPixel);
 		 Threshold = MinPixel + (MaxPixel - MinPixel)*0.5;
 		 cv::threshold(Image,Image,Threshold,255,cv::THRESH_BINARY);
-                      FindContours(Image); 
+
+                    FindContours(Image); 
 	     auto Rects = FindContours.getMaxOutsideRects(); 
     
 		 for(auto& Rect: Rects) { Image(Rect).setTo(cv::Scalar(0)); }

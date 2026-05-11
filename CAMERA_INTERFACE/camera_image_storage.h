@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QMutex>
+#include "debug_output_filter.h"
 
 template<typename TYPE_CAMERA>
   class CameraImageStorage: public SourceImageInterface
@@ -26,13 +27,12 @@ template<typename TYPE_CAMERA>
 
     static std::vector<cv::Mat> Buffers;
     static std::vector<cv::Mat>::iterator BufferToWrite;
-           std::vector<cv::Mat>::iterator BufferToRead;
     static QMutex lockBuffer;
 
-    static cv::Mat ImageToProcess;
-    static cv::Mat InputImage;
-    static  QImage ImageToDisplay;
+           std::vector<cv::Mat>::iterator BufferToRead;
+           cv::Mat ImageToProcess;
 
+    static  QImage ImageToDisplay;
     static std::pair<int,int> SizeImage; 
 
     static void putNewFrameToStorage(cv::Mat& Frame);
@@ -51,8 +51,6 @@ template<typename TYPE_CAMERA>
 
 template<typename TYPE_CAMERA>   std::pair<int,int> CameraImageStorage<TYPE_CAMERA>::SizeImage; 
 template<typename TYPE_CAMERA>             QImage   CameraImageStorage<TYPE_CAMERA>::ImageToDisplay;
-template<typename TYPE_CAMERA>             cv::Mat  CameraImageStorage<TYPE_CAMERA>::ImageToProcess;
-template<typename TYPE_CAMERA>             cv::Mat  CameraImageStorage<TYPE_CAMERA>::InputImage;
 template<typename TYPE_CAMERA> std::vector<cv::Mat> CameraImageStorage<TYPE_CAMERA>::Buffers;
 template<typename TYPE_CAMERA> std::vector<cv::Mat>::iterator CameraImageStorage<TYPE_CAMERA>::BufferToWrite;
 template<typename TYPE_CAMERA> QMutex CameraImageStorage<TYPE_CAMERA>::lockBuffer;
@@ -81,15 +79,13 @@ void CameraImageStorage<TYPE_CAMERA>::skipFrames()
 template<typename TYPE_CAMERA>
 bool CameraImageStorage<TYPE_CAMERA>::switchToNextFrame() 
 {
-   lockBuffer.lock();
-   if(BufferToRead == BufferToWrite) { lockBuffer.unlock(); return false; }
-   if(getAvailableFrames() > 3) skipFrames();
+   lockBuffer.lock(); if(BufferToRead == BufferToWrite) return false; 
+                      if(getAvailableFrames() > 3) skipFrames();
    lockBuffer.unlock();
    
    ImageToProcess = *BufferToRead; 
                      BufferToRead++; 
                   if(BufferToRead == Buffers.end()) BufferToRead = Buffers.begin(); 
-   
    return true;
 }
 
@@ -97,10 +93,13 @@ bool CameraImageStorage<TYPE_CAMERA>::switchToNextFrame()
 template<typename TYPE_CAMERA>
 void CameraImageStorage<TYPE_CAMERA>::putNewFrameToStorage(cv::Mat& Frame)
 {
-                          *BufferToWrite = Frame.clone(); 
-   ImageToDisplay = QImage(BufferToWrite->data,Frame.cols,Frame.rows,QImage::Format_Grayscale8);
 
                            lockBuffer.lock();
+
+                          *BufferToWrite = Frame.clone(); 
+   ImageToDisplay = QImage(BufferToWrite->data,Frame.cols,Frame.rows,QImage::Format_Grayscale8);
+   //qDebug() << OutputFilter::Filter(100) << "PUT FRAME: " << ImageToDisplay.width() << ImageToDisplay.height();
+
                            BufferToWrite++; 
                         if(BufferToWrite == Buffers.end()) BufferToWrite = Buffers.begin();
                            lockBuffer.unlock();

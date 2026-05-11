@@ -162,8 +162,8 @@ class EstimatorVelocityAvarageStep: public PassCoordClass<T>
   {
 
     Coord >> Thinning1(2)  >> NodeAvarageStep1 >> Norm >> Velocity1 >> Categorizer1 >> Velocity1Level;
-    Coord >> Thinning2(6)  >> NodeAvarageStep2 >> Norm >> Velocity2 >> Categorizer2 >> Velocity2Level;
-    Coord >> Thinning3(12) >> NodeAvarageStep3 >> Norm >> Velocity3 >> Categorizer3 >> Velocity3Level;
+    Coord >> Thinning2(4)  >> NodeAvarageStep2 >> Norm >> Velocity2 >> Categorizer2 >> Velocity2Level;
+    Coord >> Thinning3(6) >> NodeAvarageStep3 >> Norm >> Velocity3 >> Categorizer3 >> Velocity3Level;
 
     probabiltyMoving = 100*(Velocity1Level/10 + Velocity2Level/10 + Velocity3Level/10)/3;
     //qDebug() << OutputFilter::Filter(20) << "[ VELOCITY ESTIMATOR ]" << Velocity1 << Velocity2 << Velocity3 
@@ -174,7 +174,7 @@ class EstimatorVelocityAvarageStep: public PassCoordClass<T>
   void reset() { probabiltyMoving = 0; NodeAvarageStep1.reset(); NodeAvarageStep2.reset(); NodeAvarageStep3.reset(); }
 
     float getMovingProbability() { return probabiltyMoving;        }
-                 bool isMoving() { return probabiltyMoving > 80;}
+                 bool isMoving() { return probabiltyMoving > 50;}
 
     T Velocity1{0};
     T Velocity2{0};
@@ -189,13 +189,13 @@ class EstimatorVelocityAvarageStep: public PassCoordClass<T>
           NodeCoordPassNorm<T> Norm;
     NodeValueAbsolutization<T> Abs;
 
-    NodeCoordPassThinning<T> Thinning1{1};
+    NodeCoordPassThinning<T> Thinning1{2};
     NodeCoordPassThinning<T> Thinning2{4};
-    NodeCoordPassThinning<T> Thinning3{10};
+    NodeCoordPassThinning<T> Thinning3{8};
 
-    NodeValueCategorizer<T> Categorizer1{12,10};
-    NodeValueCategorizer<T> Categorizer2{22,10};
-    NodeValueCategorizer<T> Categorizer3{30,10};
+    NodeValueCategorizer<T> Categorizer1{5,10};
+    NodeValueCategorizer<T> Categorizer2{10,10};
+    NodeValueCategorizer<T> Categorizer3{10,10};
 
     NodeCoordAvarageStep<T> NodeAvarageStep1{10};
     NodeCoordAvarageStep<T> NodeAvarageStep2{10};
@@ -315,8 +315,8 @@ class EstimatorTrackHold: public PassCoordClass<T>
        T DispersionLevel{0};
     bool isDispersionLimit{false};
 
-    NodeValueCategorizer<T> Categorizer1{40,20};
-    NodeValueCategorizer<T> Categorizer2{40,20};
+    NodeValueCategorizer<T> Categorizer1{5,10};
+    NodeValueCategorizer<T> Categorizer2{20,20};
     NodeValueCategorizer<T> Categorizer3{40,20};
 
     NodeCoordAvarageStep<T> NodeAvarageStep1{10};

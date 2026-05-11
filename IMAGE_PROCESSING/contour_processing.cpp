@@ -97,7 +97,7 @@ std::vector<cv::Rect>& ContoursProcessorClass::getMaxOutsideRects()
    //         << "[ IMAGE ]"    <<  rectImage.width << rectImage.height << "[COUNT]" << ContoursCount;
 
 //		 qDebug() << "FILTER RECTS: " << Rects[0].x << Rects[0].y << Rects[0].width << Rects[0].height << "|"
-//                                    << Rects[1].x << Rects[1].y << Rects[1].width << Rects[1].height << "|"
+//                                   << Rects[1].x << Rects[1].y << Rects[1].width << Rects[1].height << "|"
 //                                    << Rects[2].x << Rects[2].y << Rects[2].width << Rects[2].height << "|"
 //                                    << Rects[3].x << Rects[3].y << Rects[3].width << Rects[3].height
 //                                    << "[ MAX ]" <<  rectMax.x << rectMax.y << rectMax.width << rectMax.height;

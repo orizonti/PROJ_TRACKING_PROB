@@ -24,6 +24,10 @@ void CameraInterfaceUniversal::slotStopStream()  { timerGetFrame.stop(); }
 CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME)
 {
  
+  qDebug() << TAG_NAME << "[CAMERA RESOLUTION]" << SIZE_CAMERA.first << SIZE_CAMERA.second;
+  qDebug() << TAG_NAME << "[PROCESS SIZE]"      << SIZE_ROI.first    << SIZE_ROI.second;
+  qDebug() << TAG_NAME << "[PROCESS OFFSET]"    << OFFSET_ROI.first  << OFFSET_ROI.second;
+
   capture.open(strVideoSource, cv::CAP_GSTREAMER);
 
                            qDebug() << TAG_NAME << "[LINK]" << strVideoSource.c_str();
@@ -63,7 +67,11 @@ void CameraInterfaceUniversal::slotGetFrame()
         FrameMeasureProcess.PushTick();
 
          //QThread::msleep(100);
-        cv::resize  (inputImage     ,inputImageSmall,cv::Size(SizeImage.first,SizeImage.second));
+                     inputImageCrop = inputImage(rectCrop);
+                     inputImageSmall = inputImageCrop;
+
+        //qDebug() << OutputFilter::Filter(10) << "GOT IMAGE " << inputImageSmall.cols << inputImageSmall.rows;
+        //cv::resize  (inputImageCrop ,inputImageSmall,cv::Size(SizeImage.first,SizeImage.second));
         cv::cvtColor(inputImageSmall,inputImageGray,cv::COLOR_BGR2GRAY);
 
         mutexStorage.lock(); 

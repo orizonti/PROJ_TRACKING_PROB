@@ -11,6 +11,7 @@
 #include "module_period_measure.h"
 #include "camera_control_interface.h"
 #include "device_generic_interface.h"
+#include "register_settings.h"
 
 
 class CameraInterfaceUniversal :public QObject, 
@@ -27,12 +28,17 @@ class CameraInterfaceUniversal :public QObject,
            ~CameraInterfaceUniversal();
 
   public:
+  std::pair<int,int> SIZE_ROI = SettingsRegister::GetPair("PROCESS_ROI_SIZE");
+  std::pair<int,int> OFFSET_ROI = SettingsRegister::GetPair("PROCESS_ROI_OFFSET");
+  std::pair<int,int> SIZE_CAMERA = SettingsRegister::GetPair("CAMERA_RESOLUTION");
 
   QString    TAG_NAME{"[ CAMERA_RTSP ]"};
   QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
-  cv::Mat inputImage{2560,1440,CV_8UC3};
-  cv::Mat inputImageSmall{2560/2,1440/2,CV_8UC3};
-  cv::Mat inputImageGray{2560/2,1440/2,CV_8UC1};
+  cv::Mat inputImage     {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
+  cv::Mat inputImageCrop {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
+  cv::Mat inputImageSmall{SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
+  cv::Mat inputImageGray {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
+  cv::Rect rectCrop{OFFSET_ROI.first,OFFSET_ROI.second,SIZE_ROI.first,SIZE_ROI.second};
   QString getName() override { return TAG_NAME; };
 
   std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
@@ -73,7 +79,7 @@ class CameraInterfaceUniversal :public QObject,
 
   //=============================================
   std::pair<int,int> ImagePos {20 ,20 }; 
-  std::pair<int,int> SizeImage{2560/4,1440/4}; 
+  std::pair<int,int> SizeImage{1440/2,1440/2}; 
 
   std::vector<QPair<int,int>> CameraPoints{2};
   std::vector<QRect>          CameraRects {2};
