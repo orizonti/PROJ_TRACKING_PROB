@@ -7,7 +7,7 @@
 #include "interface_image_source.h"
 #include <QDebug>
 #include <QTimer>
-#include <QMutex>
+#include <mutex>
 #include "debug_output_filter.h"
 
 template<typename TYPE_CAMERA>
@@ -27,7 +27,8 @@ template<typename TYPE_CAMERA>
 
     static std::vector<cv::Mat> Buffers;
     static std::vector<cv::Mat>::iterator BufferToWrite;
-    static QMutex lockBuffer;
+    static std::mutex lockBuffer;
+    void reset() { lockBuffer.unlock(); } 
 
            std::vector<cv::Mat>::iterator BufferToRead;
            cv::Mat ImageToProcess;
@@ -53,14 +54,14 @@ template<typename TYPE_CAMERA>   std::pair<int,int> CameraImageStorage<TYPE_CAME
 template<typename TYPE_CAMERA>             QImage   CameraImageStorage<TYPE_CAMERA>::ImageToDisplay;
 template<typename TYPE_CAMERA> std::vector<cv::Mat> CameraImageStorage<TYPE_CAMERA>::Buffers;
 template<typename TYPE_CAMERA> std::vector<cv::Mat>::iterator CameraImageStorage<TYPE_CAMERA>::BufferToWrite;
-template<typename TYPE_CAMERA> QMutex CameraImageStorage<TYPE_CAMERA>::lockBuffer;
+template<typename TYPE_CAMERA> std::mutex CameraImageStorage<TYPE_CAMERA>::lockBuffer;
 
 template<typename TYPE_CAMERA>
 void CameraImageStorage<TYPE_CAMERA>::initStorage()
 {
   if(Buffers.empty()) 
   {
-    for (int i = 0; i < 100; i++) Buffers.push_back(cv::Mat(SizeImage.first,SizeImage.second,CV_8UC1)); 
+    for (int i = 0; i < 100; i++) Buffers.push_back(cv::Mat(SizeImage.second,SizeImage.first,CV_8UC1)); 
 
     ImageToDisplay = QImage(SizeImage.first,SizeImage.second,QImage::Format_Grayscale8);
   }
@@ -79,9 +80,10 @@ void CameraImageStorage<TYPE_CAMERA>::skipFrames()
 template<typename TYPE_CAMERA>
 bool CameraImageStorage<TYPE_CAMERA>::switchToNextFrame() 
 {
-   lockBuffer.lock(); if(BufferToRead == BufferToWrite) return false; 
-                      if(getAvailableFrames() > 3) skipFrames();
-   lockBuffer.unlock();
+   std::lock_guard<std::mutex> locker(lockBuffer);
+
+   if(BufferToRead == BufferToWrite) return false; 
+   if(getAvailableFrames() > 3) skipFrames();
    
    ImageToProcess = *BufferToRead; 
                      BufferToRead++; 
@@ -94,15 +96,15 @@ template<typename TYPE_CAMERA>
 void CameraImageStorage<TYPE_CAMERA>::putNewFrameToStorage(cv::Mat& Frame)
 {
 
-                           lockBuffer.lock();
+                           std::lock_guard<std::mutex> locker(lockBuffer);
 
                           *BufferToWrite = Frame.clone(); 
    ImageToDisplay = QImage(BufferToWrite->data,Frame.cols,Frame.rows,QImage::Format_Grayscale8);
+
    //qDebug() << OutputFilter::Filter(100) << "PUT FRAME: " << ImageToDisplay.width() << ImageToDisplay.height();
 
                            BufferToWrite++; 
                         if(BufferToWrite == Buffers.end()) BufferToWrite = Buffers.begin();
-                           lockBuffer.unlock();
 
   SizeImage.first  = Frame.cols; 
   SizeImage.second = Frame.rows;

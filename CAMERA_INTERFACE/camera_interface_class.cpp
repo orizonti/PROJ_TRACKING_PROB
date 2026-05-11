@@ -287,7 +287,7 @@ std::vector<QRect>& CameraInterfaceAravis::getRects()
      CameraRects[1] = CameraRects[0]; 
 	return CameraRects;
 }
-QString& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }
+std::string& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }
 
 			//if (arv_buffer_get_status(buffer) != ARV_BUFFER_STATUS_SUCCESS) 
 			//{

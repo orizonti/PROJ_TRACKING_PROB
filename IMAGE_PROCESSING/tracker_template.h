@@ -16,7 +16,7 @@ public:
     { 
       SetLowFrequencyProcessing();
       SizeROI = SettingsRegister::GetValue("PROCESSING_ROI1");
-      qDebug() << TAG_NAME << "[ ROI ]" << SizeROI; 
+      QObject::connect(this,&ModuleImageProcessing::signalCoord, this, &ImageTrackerTemplate::SlotSetInput, Qt::QueuedConnection);
     };
 
     explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): 
@@ -40,6 +40,7 @@ public:
    void setInput(const QPair<float,float>& Coord) override; 
 
 public  slots:
+   void SlotSetInput(const QPair<float,float>& Coord) override;
    void SlotProcessImage(const cv::Mat& Image) override;
    void SlotProcessImage()                     override;
    void SlotResetProcessing()                  override;

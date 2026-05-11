@@ -34,7 +34,7 @@ public:
 	void setParam (uint16_t CommandID, float    CommandParam) override { }
 
 
-  void startWork(bool OnOff) { FLAG_WORK = OnOff; qDebug() << TAG_NAME << "START WORK"; }  
+  void startWork(bool OnOff) { FLAG_WORK = OnOff; qDebug() << TAG_NAME.toStdString().c_str() << "[ START WORK ]"; }  
   CommandAiming<0> StateAiming;
 
   void init()

@@ -1035,7 +1035,7 @@ CameraInterfaceAravis	CAMERA_INTERFACE/camera_interface_class.cpp	/^CameraInterf
 CameraInterfaceAravis	CAMERA_INTERFACE/camera_interface_class.h	/^class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisplayInterface, public CameraControlInterface$/;"	c
 CameraInterfaceHIK	CAMERA_INTERFACE/interface_camera_hik.cpp	/^CameraInterfaceHIK::CameraInterfaceHIK(std::string name, uint32_t Device): DeviceNum(Device)$/;"	f	class:CameraInterfaceHIK
 CameraInterfaceHIK	CAMERA_INTERFACE/interface_camera_hik.h	/^class CameraInterfaceHIK :public QObject, $/;"	c
-CameraInterfaceUniversal	CAMERA_INTERFACE/interface_camera_rtsp.cpp	/^CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME)$/;"	f	class:CameraInterfaceUniversal
+CameraInterfaceUniversal	CAMERA_INTERFACE/interface_camera_rtsp.cpp	/^CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME.toStdString())$/;"	f	class:CameraInterfaceUniversal
 CameraInterfaceUniversal	CAMERA_INTERFACE/interface_camera_rtsp.h	/^class CameraInterfaceUniversal :public QObject, $/;"	c
 CameraSetCameraID	CAMERA_INTERFACE/interface_camera_hik.cpp	/^void CameraInterfaceHIK::CameraSetCameraID(QString str)$/;"	f	class:CameraInterfaceHIK
 CameraSetExposure	CAMERA_INTERFACE/interface_camera_hik.cpp	/^void CameraInterfaceHIK::CameraSetExposure(float Exposure)$/;"	f	class:CameraInterfaceHIK
@@ -1355,7 +1355,6 @@ FLAG_DISPLAY_TIME	gui_sources/widget_output_image_display.h	/^  bool FLAG_DISPLA
 FLAG_DISPLAY_TIME	gui_sources/widget_output_text_display.h	/^  bool FLAG_DISPLAY_TIME = false;$/;"	m	class:WidgetOutputTextDisplay
 FLAG_END	AIMING_MODULES/aiming_monitoring_module.h	/^  std::atomic_bool FLAG_END = false;$/;"	m	class:ModuleAimingMonitoring
 FLAG_INIT_DONE	stream_video_rtsp.h	/^                     bool FLAG_INIT_DONE = false;$/;"	m	class:VideoStreamRTSP
-FLAG_INIT_TRACK	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   std::atomic<bool> FLAG_INIT_TRACK = false;$/;"	m	class:TrackerFirst::StatesModule
 FLAG_OUTPUT_PIPE_WAIT_DATA	stream_video_rtsp.cpp	/^std::atomic_bool VideoStreamRTSP::FLAG_OUTPUT_PIPE_WAIT_DATA = false; $/;"	m	class:VideoStreamRTSP	file:
 FLAG_OUTPUT_PIPE_WAIT_DATA	stream_video_rtsp.h	/^  static std::atomic_bool FLAG_OUTPUT_PIPE_WAIT_DATA; $/;"	m	class:VideoStreamRTSP
 FLAG_PAINT_TRAJECTORY	gui_sources/widget_processing_image_generic.h	/^bool FLAG_PAINT_TRAJECTORY = false;$/;"	m	class:WidgetProcessingImage
@@ -1541,7 +1540,7 @@ IMAGE_ESTIMATORS_H	IMAGE_PROCESSING/image_estimations.h	2;"	d
 IMAGE_FINDER_H	IMAGE_PROCESSING/image_finder.h	2;"	d
 IMAGE_PROCESSING_WIDGET_H	gui_sources/widget_processing_image_control.h	2;"	d
 IMAGE_PROC_NODE_H	IMAGE_PROCESSING/image_processing_node.h	2;"	d
-INFO	IMAGE_PROCESSING/image_processing_node.h	/^    QString INFO     = "[ NO DATA ]";$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
+INFO	IMAGE_PROCESSING/image_processing_node.h	/^    std::string INFO     = "[ NO DATA ]";$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 INPUT_MODE	UTILITIES/thread_operation_nodes.h	/^  enum class INPUT_MODE { SINGLE_LOAD = 0, CONTINOUS_LOAD = 1, AUTO_SKIP_LOAD = 2};$/;"	c	class:NodeCoordStorage
 IPLocal	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	/^    QString IPLocal = "127.0.0.1";$/;"	m	class:TCPConnectionEngine
 IPRemote	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	/^    QString IPRemote = "127.0.0.1";$/;"	m	class:TCPConnectionEngine
@@ -1845,7 +1844,7 @@ ModuleImageProc2	controller_process_class.cpp	/^shared_ptr<ModuleImageProcessing
 ModuleImageProc2	controller_process_class.h	/^static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc2;$/;"	m	class:ProcessControllerClass
 ModuleImageProc3	controller_process_class.cpp	/^shared_ptr<ModuleImageProcessing>    ProcessControllerClass::ModuleImageProc3 = nullptr;$/;"	m	class:ProcessControllerClass	file:
 ModuleImageProc3	controller_process_class.h	/^static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc3;$/;"	m	class:ProcessControllerClass
-ModuleImageProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^ModuleImageProcessing::ModuleImageProcessing(QString name, QObject* parent) : QObject(parent), TAG_NAME(name)$/;"	f	class:ModuleImageProcessing
+ModuleImageProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^ModuleImageProcessing::ModuleImageProcessing(QString name, QObject* parent) : QObject(parent), TAG_NAME(name.toStdString())$/;"	f	class:ModuleImageProcessing
 ModuleImageProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^ModuleImageProcessing::ModuleImageProcessing(int width, int height, int size, QString name, QObject* parent) : QObject(parent), $/;"	f	class:ModuleImageProcessing
 ModuleImageProcessing	IMAGE_PROCESSING/image_processing_node.h	/^class ModuleImageProcessing : public QObject, $/;"	c
 ModulePID	AIMING_MODULES/aiming_class.h	/^  PIDClass ModulePID;$/;"	m	class:AimingClass
@@ -1861,7 +1860,7 @@ MutexImageAccess	IMAGE_PROCESSING/image_processing_node.h	/^    std::mutex Mutex
 MutexInput	IMAGE_PROCESSING/image_processing_node.h	/^    std::mutex MutexInput;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 NEURAL_TRACKER_H	IMAGE_PROCESSING/tracker_neural.h	2;"	d
 NODE_H	gui_sources/node.h	2;"	d
-NOMINMAX	main.cpp	4;"	d	file:
+NOMINMAX	main.cpp	5;"	d	file:
 NONE	DEVICES/BACKUP/device_rotary_interface.h	/^enum class CONTROL_PARAM { NONE = 0, POS = 1, VEL = 2, ACCEL = 3};$/;"	m	class:CONTROL_PARAM
 NONE	DEVICES/device_rotary_interface.h	/^enum class CONTROL_PARAM { NONE = 0, POS = 1, VEL = 2, ACCEL = 3};$/;"	m	class:CONTROL_PARAM
 NULL_SLOT	UTILITIES/COMMON/arduino_json.h	/^const SlotId NULL_SLOT = SlotId(-1);$/;"	v
@@ -2213,7 +2212,7 @@ POS	DEVICES/BACKUP/device_rotary_interface.h	/^enum class CONTROL_PARAM { NONE =
 POS	DEVICES/device_rotary_interface.h	/^enum class CONTROL_PARAM { NONE = 0, POS = 1, VEL = 2, ACCEL = 3};$/;"	m	class:CONTROL_PARAM
 PROCESS_CONTROLLER_H	controller_process_class.h	2;"	d
 PROCESS_METHOD	IMAGE_PROCESSING/optimization_threshold.h	/^enum class PROCESS_METHOD { PARALLEL_BY_DISPERSION, CALC_BY_LUMEN, RUNAWAY_FROM_DISPERSION};$/;"	c
-PROJECT_SIMPLE	main.cpp	29;"	d	file:
+PROJECT_SIMPLE	main.cpp	30;"	d	file:
 PainterMode	gui_sources/qcustomplot.h	/^  enum PainterMode { pmDefault       = 0x00   \/\/\/< <tt>0x00<\/tt> Default mode for painting on screen devices$/;"	g	class:QCPPainter
 Param	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures.h	/^  uint8_t Command  = 0xC5; uint8_t Param = 0; $/;"	m	struct:CommandCheckConnection
 Param	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures.h	/^  union Param$/;"	u	struct:CommandDevice
@@ -2854,7 +2853,7 @@ Q_DECL_OVERRIDE	gui_sources/qcustomplot.h	/^  void clear(const QColor &color) Q_
 Q_DECL_OVERRIDE	gui_sources/qcustomplot.h	/^  void clear(const QColor &color) Q_DECL_OVERRIDE;$/;"	m	class:QCPPaintBufferGlPbuffer
 Q_DECL_OVERRIDE	gui_sources/qcustomplot.h	/^  void clear(const QColor &color) Q_DECL_OVERRIDE;$/;"	m	class:QCPPaintBufferPixmap
 Q_DECL_OVERRIDE	gui_sources/qcustomplot.h	150;"	d
-RANGE_COORDS	AIMING_MODULES/aiming_class.h	/^  std::pair<int,int> RANGE_COORDS = SettingsRegister::GetPair("PROCESS_ROI_SIZE");$/;"	m	class:AimingClass
+RANGE_COORDS	AIMING_MODULES/aiming_class.h	/^  std::pair<int,int> RANGE_COORDS = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");$/;"	m	class:AimingClass
 REMOTE_DEVICE_WIDGET_h	gui_sources/widget_scanator_control.h	2;"	d
 REMOTE_DEVICE_WIDGET_h	gui_sources/widget_transmission_interface.h	2;"	d
 RESERVE	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^  uint16_t  RESERVE       = 0xCCCC;        $/;"	m	struct:DriveTX::MESSAGE_HEADER_ROTARY
@@ -3183,7 +3182,7 @@ SizeConstraintRect	gui_sources/qcustomplot.h	/^  enum SizeConstraintRect { scrIn
 SizeImage	CAMERA_INTERFACE/camera_image_storage.h	/^    static std::pair<int,int> SizeImage; $/;"	m	class:CameraImageStorage
 SizeImage	CAMERA_INTERFACE/camera_image_storage.h	/^template<typename TYPE_CAMERA>   std::pair<int,int> CameraImageStorage<TYPE_CAMERA>::SizeImage; $/;"	m	class:CameraImageStorage
 SizeLimit	UTILITIES/thread_operation_nodes.h	/^  int SizeLimit = 10;$/;"	m	class:NodeCoordStorage::NodeCoordVectorAdapter
-SizeROI	IMAGE_PROCESSING/image_processing_node.h	/^                                int SizeROI   = 120;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
+SizeROI	IMAGE_PROCESSING/image_processing_node.h	/^                                int SizeROI  = SettingsRegister::GetValue("PROCESSING_ROI1");$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 SizeStorage	UTILITIES/thread_operation_nodes.h	/^    int SizeStorage = 10;$/;"	m	class:NodeCoordStorage::IteratorWrite
 SizeStorage	UTILITIES/thread_operation_nodes.h	/^  int SizeStorage    = 10;$/;"	m	class:NodeCoordStorage::INPUT_MODE
 SizeWindow	AIMING_MODULES/nodes_track_approximation.h	/^  int   SizeWindow = 100;$/;"	m	class:GenericApproximation
@@ -3217,14 +3216,17 @@ SlotProcessImage	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentro
 SlotProcessImage	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:ImageTrackerCentroid
 SlotProcessImage	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotProcessImage()$/;"	f	class:ImageTrackerTemplate
 SlotProcessImage	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:ImageTrackerTemplate
+SlotReset	CAMERA_INTERFACE/interface_camera_hik.h	/^    void SlotReset() { for(auto& store: ImageChanneledStore) store.reset(); mutexGetImage.unlock(); } $/;"	f	class:CameraInterfaceHIK
 SlotResetProcessing	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotResetProcessing() { }$/;"	f	class:FinderObjectMoving
-SlotResetProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotResetProcessing() { StateProcessing = StatesModule::Idle; }$/;"	f	class:ModuleImageProcessing
+SlotResetProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotResetProcessing() $/;"	f	class:ModuleImageProcessing
 SlotResetProcessing	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::SlotResetProcessing() { ModuleImageProcessing::SlotResetProcessing(); }$/;"	f	class:ImageTrackerCentroid
-SlotResetProcessing	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotResetProcessing() { }$/;"	f	class:ImageTrackerTemplate
+SlotResetProcessing	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotResetProcessing() { ModuleImageProcessing::SlotResetProcessing(); }$/;"	f	class:ImageTrackerTemplate
 SlotSaveWidgetsPosition	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSaveWidgetsPosition()$/;"	f	class:WidgetMainWindow
 SlotSceneWidgetPressed	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSceneWidgetPressed(int NumberWidget)$/;"	f	class:WidgetMainWindow
 SlotSelectObject	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SlotSelectObject(std::pair<float,float> PointRelative) {};$/;"	f	class:ModuleImageProcessing::ModesModule::StatesModule
 SlotSelectObject	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotSelectObject(std::pair<float,float> PointRelative)$/;"	f	class:ImageTrackerTemplate
+SlotSetInput	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SlotSetInput(const QPair<float,float>& Coord) { setInput(Coord); };$/;"	f	class:ModuleImageProcessing::ModesModule::StatesModule
+SlotSetInput	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotSetInput(const QPair<float,float>& Coord)$/;"	f	class:ImageTrackerTemplate
 SlotStartProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotStartProcessing() $/;"	f	class:ModuleImageProcessing
 SlotStopProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotStopProcessing() $/;"	f	class:ModuleImageProcessing
 SlotUpdateScene	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotUpdateScene()$/;"	f	class:WidgetMainWindow
@@ -3352,10 +3354,10 @@ TAG	gui_sources/widget_main_window.cpp	8;"	d	file:
 TAG	gui_sources/widget_output_image_display.cpp	4;"	d	file:
 TAG	gui_sources/widget_output_text_display.cpp	4;"	d	file:
 TAG	gui_sources/widget_scene_node_interface.cpp	6;"	d	file:
-TAG_NAME	AIMING_MODULES/aiming_class.h	/^  std::string TAG_NAME = QString("[ %1 ] ").arg("AIMING").toStdString();$/;"	m	class:AimingClass
+TAG_NAME	AIMING_MODULES/aiming_class.h	/^             std::string TAG_NAME = QString("[%1] ").arg("AIMING",15).toStdString();$/;"	m	class:AimingClass
 TAG_NAME	DEVICES/device_generic_interface.h	/^	QString TAG_NAME;$/;"	m	class:DeviceGenericInterface
-TAG_NAME	IMAGE_PROCESSING/image_processing_node.h	/^    QString TAG_NAME = "[ TRACKER ]";$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
-TAG_NAME	controller_process_class.h	/^std::string TAG_NAME = QString("[ %1 ] ").arg("CONTROLLER").toStdString();$/;"	m	class:ProcessControllerClass
+TAG_NAME	IMAGE_PROCESSING/image_processing_node.h	/^    std::string TAG_NAME = "[ TRACKER ]";$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
+TAG_NAME	controller_process_class.h	/^std::string TAG_NAME = QString("[%1 ]").arg("CONTROLLER",15).toStdString();$/;"	m	class:ProcessControllerClass
 TCPConnectionEngine	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.cpp	/^TCPConnectionEngine::TCPConnectionEngine(QObject *parent)$/;"	f	class:TCPConnectionEngine
 TCPConnectionEngine	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	/^class TCPConnectionEngine : public ConnectionInterface$/;"	c
 TCP_ENGINE_INTERFACE_H	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	2;"	d
@@ -4844,8 +4846,8 @@ getImageToProcess	CAMERA_INTERFACE/interface_camera_rtsp.cpp	/^    void CameraIn
 getImageToProcess	CAMERA_INTERFACE/interface_camera_rtsp.cpp	/^cv::Mat& CameraInterfaceUniversal::getImageToProcess()                  { return ImageStore[0]->getImageToProcess(); };$/;"	f	class:CameraInterfaceUniversal
 getImageToProcess	IMAGE_PROCESSING/image_processing_node.cpp	/^cv::Mat& ModuleImageProcessing::getImageToProcess() { return ImageProcessing; }$/;"	f	class:ModuleImageProcessing
 getImageToProcess	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::getImageToProcess(cv::Mat& ImageDst)$/;"	f	class:ModuleImageProcessing
-getInfo	CAMERA_INTERFACE/camera_interface_class.cpp	/^QString& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }$/;"	f	class:CameraInterfaceAravis
-getInfo	IMAGE_PROCESSING/image_processing_node.cpp	/^const QString& ModuleImageProcessing::getInfo()  { return INFO; }$/;"	f	class:ModuleImageProcessing
+getInfo	CAMERA_INTERFACE/camera_interface_class.cpp	/^std::string& CameraInterfaceAravis::getInfo()  { return CAMERA_INFO; }$/;"	f	class:CameraInterfaceAravis
+getInfo	IMAGE_PROCESSING/image_processing_node.cpp	/^const std::string& ModuleImageProcessing::getInfo()  { return INFO; }$/;"	f	class:ModuleImageProcessing
 getKeyRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPBars::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain) const$/;"	f	class:QCPBars
 getKeyRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPColorMap::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain) const$/;"	f	class:QCPColorMap
 getKeyRange	gui_sources/qcustomplot.cpp	/^QCPRange QCPCurve::getKeyRange(bool &foundRange, QCP::SignDomain inSignDomain) const$/;"	f	class:QCPCurve
@@ -5166,6 +5168,7 @@ info_version_internal	build/CMakeFiles/3.22.1/CompilerIdCXX/CMakeCXXCompilerId.c
 init	AIMING_MODULES/aiming_monitoring_module.h	/^  void init()$/;"	f	class:ModuleAimingMonitoring
 init	stream_video_rtsp.cpp	/^void VideoStreamRTSP::init(int width, int height, int framerate)$/;"	f	class:VideoStreamRTSP
 initCamera	CAMERA_INTERFACE/interface_camera_rtsp.cpp	/^void CameraInterfaceUniversal::initCamera()       { }$/;"	f	class:CameraInterfaceUniversal
+initMessageDispatchers	controller_process_class.cpp	/^void ProcessControllerClass::initMessageDispatchers()$/;"	f	class:ProcessControllerClass
 initStorage	CAMERA_INTERFACE/camera_image_storage.h	/^void CameraImageStorage<TYPE_CAMERA>::initStorage()$/;"	f	class:CameraImageStorage
 initializeParentPlot	gui_sources/qcustomplot.cpp	/^void QCPLayerable::initializeParentPlot(QCustomPlot *parentPlot)$/;"	f	class:QCPLayerable
 initializer	build/ImageProcProject_autogen/TGLKY5MCHO/qrc_pictures.cpp	/^       initializer() { QT_RCC_MANGLE_NAMESPACE(qInitResources_pictures)(); }$/;"	f	struct:__anon4::initializer
@@ -5452,8 +5455,8 @@ loadPreset	gui_sources/qcustomplot.cpp	/^void QCPColorGradient::loadPreset(Gradi
 loadSettings	DEVICES/BACKUP/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()$/;"	f	class:CONTROL_PARAM::DeviceRotaryControl
 loadSettings	DEVICES/device_laser_interface.h	/^    void loadSettings(){};$/;"	f	class:DeviceLaserInterface
 loadSettings	DEVICES/device_rotary_interface.h	/^void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::loadSettings()$/;"	f	class:CONTROL_PARAM::DeviceRotaryControl
-lockBuffer	CAMERA_INTERFACE/camera_image_storage.h	/^    static QMutex lockBuffer;$/;"	m	class:CameraImageStorage
-lockBuffer	CAMERA_INTERFACE/camera_image_storage.h	/^template<typename TYPE_CAMERA> QMutex CameraImageStorage<TYPE_CAMERA>::lockBuffer;$/;"	m	class:CameraImageStorage
+lockBuffer	CAMERA_INTERFACE/camera_image_storage.h	/^    static std::mutex lockBuffer;$/;"	m	class:CameraImageStorage
+lockBuffer	CAMERA_INTERFACE/camera_image_storage.h	/^template<typename TYPE_CAMERA> std::mutex CameraImageStorage<TYPE_CAMERA>::lockBuffer;$/;"	m	class:CameraImageStorage
 logBase	gui_sources/qcustomplot.h	/^  double logBase() const { return mLogBase; }$/;"	f	class:QCPAxisTickerLog
 loop	stream_video_rtsp.h	/^            GMainLoop *loop   = nullptr;$/;"	m	class:VideoStreamRTSP
 low	gui_sources/qcustomplot.h	/^  double key, open, high, low, close;$/;"	m	class:QCPFinancialData
@@ -6227,8 +6230,8 @@ msRight	gui_sources/qcustomplot.h	/^                  ,msRight   = 0x02 \/\/\/< 
 msTop	gui_sources/qcustomplot.h	/^                  ,msTop     = 0x04 \/\/\/< <tt>0x04<\/tt> top margin$/;"	e	enum:QCP::MarginSide
 multiSelectModifier	gui_sources/qcustomplot.h	/^  Qt::KeyboardModifier multiSelectModifier() const { return mMultiSelectModifier; }$/;"	f	class:QCustomPlot
 multiplicationSymbol	gui_sources/qcustomplot.h	/^  QChar multiplicationSymbol() const { return mMultiplicationSymbol; }$/;"	f	class:QCPLabelPainterPrivate
-mutexGetImage	CAMERA_INTERFACE/interface_camera_hik.cpp	/^QMutex CameraInterfaceHIK::mutexGetImage;$/;"	m	class:CameraInterfaceHIK	file:
-mutexGetImage	CAMERA_INTERFACE/interface_camera_hik.h	/^  static  QMutex mutexGetImage;$/;"	m	class:CameraInterfaceHIK
+mutexGetImage	CAMERA_INTERFACE/interface_camera_hik.cpp	/^std::mutex CameraInterfaceHIK::mutexGetImage;$/;"	m	class:CameraInterfaceHIK	file:
+mutexGetImage	CAMERA_INTERFACE/interface_camera_hik.h	/^  static std::mutex mutexGetImage;$/;"	m	class:CameraInterfaceHIK
 mutexStorage	CAMERA_INTERFACE/interface_camera_rtsp.h	/^  QMutex mutexStorage;$/;"	m	class:CameraInterfaceUniversal
 n	UTILITIES/COMMON/arduino_json.h	/^    stringGetChars(str, node->data, n);$/;"	v
 name	gui_sources/qcustomplot.h	/^  QString name() const { return mName; }$/;"	f	class:QCPAbstractPlottable
@@ -6567,9 +6570,9 @@ override	AIMING_MODULES/rotate_vector_class.h	/^	const QPair<T,T>& getOutput() o
 override	AIMING_MODULES/rotate_vector_class.h	/^	void setInput(const QPair<T,T>& Coord) override;$/;"	m	class:RotateVectorClass
 override	CAMERA_INTERFACE/camera_image_storage.h	/^    bool switchToNextFrame()  override;$/;"	m	class:CameraImageStorage
 override	CAMERA_INTERFACE/camera_image_storage.h	/^    void skipFrames()         override;$/;"	m	class:CameraImageStorage
-override	CAMERA_INTERFACE/camera_interface_class.h	/^    QString& getInfo() override;  $/;"	m	class:CameraInterfaceAravis
 override	CAMERA_INTERFACE/camera_interface_class.h	/^    bool switchToNextFrame() override;$/;"	m	class:CameraInterfaceAravis
 override	CAMERA_INTERFACE/camera_interface_class.h	/^    cv::Mat& getImageToProcess() override ;$/;"	m	class:CameraInterfaceAravis
+override	CAMERA_INTERFACE/camera_interface_class.h	/^    std::string& getInfo() override;  $/;"	m	class:CameraInterfaceAravis
 override	CAMERA_INTERFACE/camera_interface_class.h	/^    std::vector<QPair<int,int>>& getPoints() override;  $/;"	m	class:CameraInterfaceAravis
 override	CAMERA_INTERFACE/camera_interface_class.h	/^    std::vector<QRect>& getRects() override;  $/;"	m	class:CameraInterfaceAravis
 override	CAMERA_INTERFACE/camera_interface_class.h	/^    void CameraSetRegion(int XOffset, int YOffset, int width, int height ) override;$/;"	m	class:CameraInterfaceAravis
@@ -6623,7 +6626,7 @@ override	IMAGE_PROCESSING/image_processing_node.h	/^                          vo
 override	IMAGE_PROCESSING/image_processing_node.h	/^            std::pair<float,float> getTickPeriod() override ;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 override	IMAGE_PROCESSING/image_processing_node.h	/^        void getImageToDisplay(QImage& ImageDst)   override;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 override	IMAGE_PROCESSING/image_processing_node.h	/^        void getImageToProcess(cv::Mat& ImageDst) override;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
-override	IMAGE_PROCESSING/image_processing_node.h	/^    const QString&                       getInfo() override;  $/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
+override	IMAGE_PROCESSING/image_processing_node.h	/^    const std::string&                  getInfo() override;  $/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 override	IMAGE_PROCESSING/image_processing_node.h	/^    const std::vector<QPair<int,int>>& getPoints() override;  $/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 override	IMAGE_PROCESSING/image_processing_node.h	/^    const std::vector<QRect>&           getRects() override;  $/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
 override	IMAGE_PROCESSING/image_processing_node.h	/^    cv::Mat& getImageToProcess()                  override;$/;"	m	class:ModuleImageProcessing::ModesModule::StatesModule
@@ -6639,6 +6642,7 @@ override	IMAGE_PROCESSING/tracker_template.h	/^   void SlotProcessImage()       
 override	IMAGE_PROCESSING/tracker_template.h	/^   void SlotProcessImage(const cv::Mat& Image) override;$/;"	m	class:ImageTrackerTemplate
 override	IMAGE_PROCESSING/tracker_template.h	/^   void SlotResetProcessing()                  override;$/;"	m	class:ImageTrackerTemplate
 override	IMAGE_PROCESSING/tracker_template.h	/^   void SlotSelectObject(std::pair<float,float> PointRelative) override;$/;"	m	class:ImageTrackerTemplate
+override	IMAGE_PROCESSING/tracker_template.h	/^   void SlotSetInput(const QPair<float,float>& Coord) override;$/;"	m	class:ImageTrackerTemplate
 override	IMAGE_PROCESSING/tracker_template.h	/^   void setInput(const QPair<float,float>& Coord) override; $/;"	m	class:ImageTrackerTemplate
 override	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	const QPair<float,float>& getOutput() override;$/;"	m	class:AccumulateDataFilter
 override	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^	const QPair<float,float>& getOutput() override;$/;"	m	class:RotateOperationContainer
@@ -6810,6 +6814,8 @@ printAvailableDevices	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_can_interfa
 printCommand	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^  void printCommand() { qDebug() << "[ COMMAND LID ] " << command_string.c_str(); }$/;"	f	class:DriveTX::CommandLidControlJson
 printDataType	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^  static QString printDataType() { return "CommandLidControlJson"; }$/;"	f	class:DriveTX::CommandLidControlJson
 printDataType	TRANSMISSION_MODULES/GENERIC_MESSAGES/message_struct_generic_ext.h	/^    static QString printDataType() { return TypeRegister<T>::GetTypeName(); };$/;"	f	class:MessageGenericExt
+printInfo	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::printInfo()$/;"	f	class:ModuleImageProcessing
+printInfo	controller_process_class.cpp	/^void ProcessControllerClass::printInfo()$/;"	f	class:ProcessControllerClass
 printMessage	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^        void printMessage() { serializeJson(command,command_string); qDebug() << "[ ROTARY STATE JSON ] " << command_string.c_str(); }$/;"	f	class:DriveTX::MessageRotaryStateJson
 printPeriod	UTILITIES/module_period_measure.h	/^    QString printPeriod()$/;"	f	class:MeasurePeriodNode
 printRegistered	TRANSMISSION_MODULES/DATA_STRUCTURES/engine_type_register.h	/^      static void printRegistered()    { for(auto it = TYPES.begin(); it != end; it++) std::cout << "[ TYPE ID ] " << *it <<  " [ REGISTERED ]" << std::endl; }$/;"	f	class:TypeRegisterID
@@ -7152,6 +7158,7 @@ reserve2	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.
 reset	AIMING_MODULES/nodes_track_approximation.cpp	/^void PolynomApproximation<2>::reset()$/;"	f	class:PolynomApproximation
 reset	AIMING_MODULES/nodes_track_approximation.cpp	/^void PolynomApproximation<3>::reset()$/;"	f	class:PolynomApproximation
 reset	AIMING_MODULES/nodes_track_approximation.h	/^    void reset() { trackApprox1.reset(); trackApprox2.reset(); }$/;"	f	class:ApproximationTwoAxis
+reset	CAMERA_INTERFACE/camera_image_storage.h	/^    void reset() { lockBuffer.unlock(); } $/;"	f	class:CameraImageStorage
 reset	DEVICES/BACKUP/device_rotary_interface.h	/^  void reset()$/;"	f	class:DynamicModule
 reset	DEVICES/device_rotary_interface.h	/^  void reset()$/;"	f	class:CONTROL_PARAM::DynamicModule
 reset	IMAGE_PROCESSING/engine_statistics_track.h	/^  void reset() { EstimatorVelocity.reset();}$/;"	f	class:EstimatorTrackHold
@@ -8135,6 +8142,8 @@ slotReadData	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.cpp	/^
 slotReadData	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_uart_interface.cpp	/^void UARTConnectionEngine::slotReadData()$/;"	f	class:UARTConnectionEngine
 slotReadData	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_udp_interface.cpp	/^void UDPConnectionEngine::slotReadData()$/;"	f	class:UDPConnectionEngine
 slotReset	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::slotReset()$/;"	f	class:AimingClass
+slotReset	CAMERA_INTERFACE/camera_interface_class.h	/^    void slotReset() {};$/;"	f	class:CameraInterfaceAravis
+slotReset	CAMERA_INTERFACE/interface_camera_rtsp.h	/^  void slotReset() {};$/;"	f	class:CameraInterfaceUniversal
 slotSendMessage	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_can_interface.cpp	/^void CANConnectionEngine::slotSendMessage(const QByteArray& message, uint16_t IDDevice)$/;"	f	class:CANConnectionEngine
 slotSendMessage	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_can_interface.cpp	/^void CANConnectionEngine::slotSendMessage(const char* DataCommand, int size, uint16_t IDDevice)$/;"	f	class:CANConnectionEngine
 slotSendMessage	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.cpp	/^void TCPConnectionEngine::slotSendMessage(const QByteArray& Command, uint16_t Param)$/;"	f	class:TCPConnectionEngine
@@ -8274,7 +8283,7 @@ startPainting	gui_sources/qcustomplot.cpp	/^QCPPainter *QCPPaintBufferGlPbuffer:
 startPainting	gui_sources/qcustomplot.cpp	/^QCPPainter *QCPPaintBufferPixmap::startPainting()$/;"	f	class:QCPPaintBufferPixmap
 startSelection	gui_sources/qcustomplot.cpp	/^void QCPSelectionRect::startSelection(QMouseEvent *event)$/;"	f	class:QCPSelectionRect
 startServerProcess	stream_video_rtsp.h	/^  void startServerProcess() { if(FLAG_INIT_DONE) threadServer.detach(); }$/;"	f	class:VideoStreamRTSP
-startWork	AIMING_MODULES/aiming_monitoring_module.h	/^  void startWork(bool OnOff) { FLAG_WORK = OnOff; qDebug() << TAG_NAME << "START WORK"; }  $/;"	f	class:ModuleAimingMonitoring
+startWork	AIMING_MODULES/aiming_monitoring_module.h	/^  void startWork(bool OnOff) { FLAG_WORK = OnOff; qDebug() << TAG_NAME.toStdString().c_str() << "[ START WORK ]"; }  $/;"	f	class:ModuleAimingMonitoring
 state	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^   uint8_t state;   \/\/ байт состояния системы$/;"	m	struct:SystemState
 staticMetaObject	build/ImageProcProject_autogen/32XWV2YE36/moc_sinus_generator_class.cpp	/^Q_CONSTINIT const QMetaObject SinusGeneratorClass::staticMetaObject = { {$/;"	m	class:SinusGeneratorClass	file:
 staticMetaObject	build/ImageProcProject_autogen/47QTUNBEOO/moc_engine_can_interface.cpp	/^Q_CONSTINIT const QMetaObject CANConnectionEngine::staticMetaObject = { {$/;"	m	class:CANConnectionEngine	file:

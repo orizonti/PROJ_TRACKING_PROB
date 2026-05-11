@@ -28,16 +28,16 @@ class CameraInterfaceHIK :public QObject,
   ~CameraInterfaceHIK();
 
   public:
-  QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
-  std::string TAG_NAME{"[ CAMERA ]"};
+  std::string CAMERA_INFO{"[ CAMERA NO DATA ]"};
+  std::string TAG_NAME{"[ CAMERA_HIK     ]"};
 
   MeasurePeriodNode FrameMeasureInput;
   MeasurePeriodNode FrameMeasureProcess;
 
-  QString getName() override { return "[CAMERA HIK]"; };
+  QString getName() override { return QString::fromStdString(TAG_NAME); };
   std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
   static cv::Mat inputImage;
-  static  QMutex mutexGetImage;
+  static std::mutex mutexGetImage;
 
   //======================================================
   //======================================================
@@ -60,7 +60,7 @@ class CameraInterfaceHIK :public QObject,
 
   cv::Mat& getImageToProcess() override {return (*CurrentStoreChannel)->getImageToProcess(); SwitchOutputChannel();};
 
-      void getImageToDisplay(QImage& ImageDst) override { mutexGetImage.lock(); ImageDst = CameraTypeStorage::ImageToDisplay.copy(); mutexGetImage.unlock(); };
+      void getImageToDisplay(QImage& ImageDst) override { std::lock_guard<std::mutex> locker(mutexGetImage); ImageDst = CameraTypeStorage::ImageToDisplay.copy(); };
       void getImageToProcess(cv::Mat& ImageDst)override { (*CurrentStoreChannel)->getImageToProcess(ImageDst); SwitchOutputChannel();};
       void SwitchOutputChannel() { CurrentStoreChannel++; if(CurrentStoreChannel == ImageChanneledStore.end()) CurrentStoreChannel = ImageChanneledStore.begin();}
 
@@ -71,7 +71,7 @@ class CameraInterfaceHIK :public QObject,
 
     const std::vector<QPair<int,int>>& getPoints() override { return CameraPoints;};  
     const std::vector<QRect>& getRects() override { return CameraRects;};  
-    const            QString& getInfo() override { return CAMERA_INFO;};  
+    const         std::string& getInfo() override { return CAMERA_INFO;};  
            std::pair<float,float> getTickPeriod() override ;
 
     std::pair<int,int> getSizeImage() override { return SizeImage;};
@@ -118,6 +118,8 @@ class CameraInterfaceHIK :public QObject,
   void EnumerateCameras();
   void CameraInit();
   void DeinitCamera();
+  public slots:
+    void SlotReset() { for(auto& store: ImageChanneledStore) store.reset(); mutexGetImage.unlock(); } 
 };
 
 #endif 

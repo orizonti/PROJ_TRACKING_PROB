@@ -1,7 +1,6 @@
 #ifndef IMAGE_PROC_NODE_H
 #define IMAGE_PROC_NODE_H
 
-//#include <chrono>
 #include <QObject>
 #include <QDebug>
 
@@ -11,23 +10,14 @@
 #include <memory>
 #include <opencv2/opencv.hpp>
 #include <QFile> 
-#include <chrono>
-#include <atomic>
-#include <algorithm>
-#include <chrono>
-#include <tuple>
 #include <mutex>
-#include "debug_output_filter.h"
 #include "interface_pass_coord.h"
 #include "interface_image_source.h"
-#include "engine_statistics.h"
-#include "optimization_threshold.h"
-#include "./TRACKER_ROBUST/Tracker.h"
-#include "state_block_enum.h"
 #include "interface_image_source.h"
 #include <debug_output_filter.h>
 #include "device_generic_interface.h"
 #include "interface_node_signal_adapter.h"
+#include "register_settings.h"
 
 
 class NodeRectToCoord: public PassCoordClass<float>
@@ -67,6 +57,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     //==================================================
                    QTimer timerProcessImage;
+                   void printInfo();
     public slots:
     virtual void SlotProcessImage(const cv::Mat& Image) = 0;
     virtual void SlotProcessImage() = 0;
@@ -93,7 +84,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     const std::vector<QPair<int,int>>& getPoints() override;  
     const std::vector<QRect>&           getRects() override;  
-    const QString&                       getInfo() override;  
+    const std::string&                  getInfo() override;  
                                  QString getName() override { return "[PROCESSING NODE]"; };
             std::pair<float,float> getTickPeriod() override ;
     //===================================================
@@ -130,6 +121,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     //===================================================================================
     
     public slots:
+    virtual void SlotSetInput(const QPair<float,float>& Coord) { setInput(Coord); };
     virtual void SlotResetProcessing();
     virtual void SlotStopProcessing ();
     virtual void SlotStartProcessing();
@@ -179,11 +171,12 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
              std::vector<cv::Rect > RectsObject  {2};
              std::vector<cv::Point> PointsProcess{2};
                                 int Threshold = 50;
-                                int SizeROI   = 120;
+                                int SizeROI  = SettingsRegister::GetValue("PROCESSING_ROI1");
+               QPair<float,float> SizeImage{SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE")};
 
     public:
-    QString TAG_NAME = "[ TRACKER ]";
-    QString INFO     = "[ NO DATA ]";
+    std::string TAG_NAME = "[ TRACKER ]";
+    std::string INFO     = "[ NO DATA ]";
 
     std::vector<QPair<int,int>> CoordsImage{2};
     std::vector<QRect>          RectsImage {2};

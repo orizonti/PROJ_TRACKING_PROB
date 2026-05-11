@@ -26,6 +26,8 @@ const QPair<float,float>& AimingClass::getOutput() { return this->VectorOutput; 
 AimingClass::AimingClass()
 {
   ModuleCounter++; NumberChannel = ModuleCounter;
+
+  TAG_NAME = QString("[%1_%2]").arg("AIMING",14).arg(NumberChannel).toStdString();
 	//======================================================================
   PortSetAiming   = std::make_shared<PortAdapter<AimingClass>>();
   PortMoveAiming  = std::make_shared<PortAdapter<AimingClass>>();
@@ -106,7 +108,7 @@ void AimingClass::SetRangeCoords(const QPair<float, float>& Range)
 void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       
 { 
   CoordAim = QPair<float,float>(RANGE_COORDS.first*Coord.first, RANGE_COORDS.second*Coord.second); 
-  qDebug() << TAG_NAME << "[ COORD AIM ]" << CoordAim.first << CoordAim.second;
+  qDebug() << TAG_NAME.c_str() << "[ COORD AIM ]" << CoordAim.first << CoordAim.second;
 }
 
 void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection    = Coord; }
@@ -285,7 +287,7 @@ void AimingClass::setEnable(bool OnOff, uint16_t Number)
 
 void AimingClass::moveToThread(QThread* thread)
 {
-  qDebug() << TAG_NAME << "[ MOVE TO THREAD ]" << QThread::currentThread();
+  qDebug() << TAG_NAME.c_str() << "[ MOVE TO THREAD ]" << thread;
 
            QObject::moveToThread(thread);
  timerProcessAiming.moveToThread(thread);

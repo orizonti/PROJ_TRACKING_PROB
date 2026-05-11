@@ -75,8 +75,10 @@ class ProcessControllerClass : public QObject
     Q_OBJECT
 public:
       ~ProcessControllerClass();
-std::string TAG_NAME = QString("[ %1 ] ").arg("CONTROLLER").toStdString();
+std::string TAG_NAME = QString("[%1 ]").arg("CONTROLLER",15).toStdString();
 static ProcessControllerClass* GetInstance(QObject* parent = nullptr);
+void printInfo();
+void initMessageDispatchers();
 
 
 //=============================================================

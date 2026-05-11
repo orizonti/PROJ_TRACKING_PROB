@@ -1,4 +1,5 @@
 #include "tracker_template.h"
+#include <qnamespace.h>
 
 
 
@@ -13,25 +14,23 @@ void ImageTrackerTemplate::SlotProcessImage()
                                if(SourceImage->getAvailableFrames() > 2) skipFrames();
                     *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return;  
 
-                                                                         MutexImageAccess.lock();
+                                          std::lock_guard<std::mutex> locker(MutexImageAccess);
   //==================================================================================
       ImageOutput = *ImageInput; 
   ImageProcessing = *ImageInput; ProcessInput(); 
                      ImageInput++; 
                   if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
-  //if( NodeTracker.isTrackHold()) emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
+
   if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); 
   //==================================================================================
-
-                                                 FrameMeasureProcess++; MutexImageAccess.unlock();
 	}
 	catch (const cv::Exception& cv_ec) 
 	{ 
 		if(cv_ec.code == cv::Error::StsAssert)  
-    { std::cout << TAG_NAME.toStdString() << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
+    { std::cout << TAG_NAME << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
 		if(cv_ec.code == cv::Error::BadROISize) 
-    { std::cout << TAG_NAME.toStdString() << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
-                                              std::cout << TAG_NAME.toStdString() << cv_ec.what() << cv_ec.code;	
+    { std::cout << TAG_NAME << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
+                                              std::cout << TAG_NAME << cv_ec.what() << cv_ec.code;	
 	}
 
 
@@ -42,16 +41,16 @@ void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image)
 {
 
                           if(Image.empty()) return;  FrameMeasureProcess++; FrameMeasureInput++;
-                                                     MutexImageAccess.lock();
-                    *ImageInput = Image.clone(); 
 
+                                          std::lock_guard<std::mutex> locker(MutexImageAccess);
+
+                    *ImageInput = Image.clone(); 
       ImageOutput = *ImageInput; 
   ImageProcessing = *ImageInput; ProcessInput();
                      ImageInput++; 
                   if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
 
   PassCoordClass<float>::passCoord(); 
-                                                     MutexImageAccess.unlock();
                                                      FrameMeasureProcess++;
 }
 
@@ -78,10 +77,32 @@ void ImageTrackerTemplate::SlotSelectObject(std::pair<float,float> PointRelative
   qDebug() << TAG_NAME << "[ SELECT AIMING OBJECT POINT ]" << CoordsObject[0].first << CoordsObject[0].second;
 }
 
-void ImageTrackerTemplate::SlotResetProcessing() { }
+void ImageTrackerTemplate::SlotResetProcessing() { ModuleImageProcessing::SlotResetProcessing(); }
 
 
 void ImageTrackerTemplate::setInput(const QPair<float,float>& Coord) 
+{
+  //emit ModuleImageProcessing::signalCoord(Coord);
+  
+  if( isTrackHold() && ModeProcessing == ModesModule::Master) return;
+
+  qDebug() << TAG_NAME << "[ INPUT COORD ]" << Coord.first << Coord.second << "[ ACTIVATE TRACK ]" << SizeROI;
+
+                if(SourceImage == nullptr)  return; 
+     *ImageInput = SourceImage->getImageToProcess().clone(); 
+   if(ImageInput->empty()) return;   
+
+  RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
+                            Coord.second - SizeROI/2 , SizeROI, SizeROI);
+
+  std::lock_guard<std::mutex> locker(MutexInput); 
+                       CheckCorrectROI(RectsObject[0]);
+  NodeTracker.setRectTrack(*ImageInput,RectsObject[0]);
+  StateProcessing = StatesModule::WorkTrack;  
+};
+
+
+void ImageTrackerTemplate::SlotSetInput(const QPair<float,float>& Coord)
 {
   if( isTrackHold() && ModeProcessing == ModesModule::Master) return;
 
@@ -91,17 +112,13 @@ void ImageTrackerTemplate::setInput(const QPair<float,float>& Coord)
      *ImageInput = SourceImage->getImageToProcess().clone(); 
    if(ImageInput->empty()) return;   
 
-                                                          MutexInput.lock();
-   RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
-                             Coord.second - SizeROI/2 , SizeROI, SizeROI);
+  RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
+                            Coord.second - SizeROI/2 , SizeROI, SizeROI);
 
                        CheckCorrectROI(RectsObject[0]);
   NodeTracker.setRectTrack(*ImageInput,RectsObject[0]);
   StateProcessing = StatesModule::WorkTrack;  
-                                                          MutexInput.unlock();
-
-
-};
+}
 
 
 
@@ -110,3 +127,5 @@ void ImageTrackerTemplate::setInput(const QPair<float,float>& Coord)
   //if( isLinkedSlave()) PassCoordClass::passCoord();
   //qDebug() << OutputFilter::Filter(10) << CoordsObject[0].first 
   //                                     << CoordsObject[0].second << FrameMeasureProcess.printPeriod();
+  //
+

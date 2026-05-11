@@ -20,7 +20,6 @@ public:
    enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};
 
    StatesModule State{StatesModule::Idle};
-   std::atomic<bool> FLAG_INIT_TRACK = false;
 
 	 void setRectTrack(const cv::Mat& image, cv::Rect rectAim);
 	 void resetRectTrack(const cv::Mat& image, cv::Rect rectAim);

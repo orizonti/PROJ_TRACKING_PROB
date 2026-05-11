@@ -32,14 +32,14 @@ class CameraInterfaceUniversal :public QObject,
   std::pair<int,int> OFFSET_ROI = SettingsRegister::GetPair("PROCESS_ROI_OFFSET");
   std::pair<int,int> SIZE_CAMERA = SettingsRegister::GetPair("CAMERA_RESOLUTION");
 
-  QString    TAG_NAME{"[ CAMERA_RTSP ]"};
-  QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
+  std::string    TAG_NAME{"[ CAMERA_RTSP ]"};
+  std::string CAMERA_INFO{"[ CAMERA NO DATA ]"};
   cv::Mat inputImage     {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
   cv::Mat inputImageCrop {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
   cv::Mat inputImageSmall{SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
   cv::Mat inputImageGray {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
   cv::Rect rectCrop{OFFSET_ROI.first,OFFSET_ROI.second,SIZE_ROI.first,SIZE_ROI.second};
-  QString getName() override { return TAG_NAME; };
+  QString getName() override { return QString::fromStdString(TAG_NAME); };
 
   std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
 
@@ -54,7 +54,7 @@ class CameraInterfaceUniversal :public QObject,
 
     const std::vector<QPair<int,int>>& getPoints() override { return CameraPoints;};  
               const std::vector<QRect>& getRects() override { return CameraRects;};  
-                          const QString& getInfo() override { return CAMERA_INFO;};  
+                      const std::string& getInfo() override { return CAMERA_INFO;};  
 
                  std::pair<int,int> getSizeImage() override;
 
@@ -96,6 +96,7 @@ class CameraInterfaceUniversal :public QObject,
   void slotStartStream();
   void slotStopStream();
   void slotEndWork();
+  void slotReset() {};
 
   private:
 

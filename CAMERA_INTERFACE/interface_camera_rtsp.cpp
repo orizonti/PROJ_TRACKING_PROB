@@ -21,7 +21,7 @@ std::shared_ptr<SourceImageInterface> CameraInterfaceUniversal::getImageSourceCh
 void CameraInterfaceUniversal::slotStartStream() { timerGetFrame.start(10); qDebug() << "[ START RTSP ]"; }
 void CameraInterfaceUniversal::slotStopStream()  { timerGetFrame.stop(); }
 
-CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME)
+CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, uint32_t Number, QString NAME) : TAG_NAME(NAME.toStdString())
 {
  
   qDebug() << TAG_NAME << "[CAMERA RESOLUTION]" << SIZE_CAMERA.first << SIZE_CAMERA.second;

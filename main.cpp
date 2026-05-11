@@ -1,5 +1,6 @@
 #include "interface_pass_coord.h"
 #include "thread_operation_nodes.h"
+#include <qnamespace.h>
 
 #define NOMINMAX
 
@@ -140,8 +141,9 @@ int main(int argc, char* argv[])
   //std::string info = cv::getBuildInformation();
   //std::cout << info << std::endl;
 
-  qDebug() << "";
 
+
+  qDebug() << "===========================================================";
 
   TypeRegister<CommandSetPosRotary  >    ::registerType("SET_POS_ROTARY"); 
   TypeRegister<CommandSetPosScanator>    ::registerType("SET_POS_SCANATOR");
@@ -161,8 +163,7 @@ int main(int argc, char* argv[])
                 TypeRegister<ControlRX  >::registerType("ControlRXRotary");
 
   TypeRegister<>::TYPES_INFO.printTypesSignature();
-  qDebug() << "[ MIN ] " << TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>() 
-           << "[ MAX ]"  << TypeRegister<>::GetMaxTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>() ;
+  qDebug() << "===========================================================";
 
               //====================================================
                 //TestMessageTransmission TestTransmission;
@@ -188,10 +189,6 @@ int main(int argc, char* argv[])
                 //TestTransmission.pushMessage(CommandAiming1(3,5,0,0));
                 //====================================================
 
-  qDebug() << "IS REGISTERED 1 : " << TypeRegisterID<>::isRegistered(1);
-  qDebug() << "IS REGISTERED 2 : " << TypeRegisterID<>::isRegistered(2);
-  qDebug() << "IS REGISTERED 5 : " << TypeRegisterID<>::isRegistered(3);
-  qDebug() << "IS REGISTERED 45 : " << TypeRegisterID<>::isRegistered(45);
 
 
   #ifdef PROJECT_SIMPLE
@@ -215,6 +212,7 @@ int main(int argc, char* argv[])
   WindowProc3Control->setButtonsName({"ПУСК", "СБРОС"});
   WindowAimingControl->setButtonsName({"ПУСК", "СБРОС"});
 
+
   WidgetTableGroup WindowTableGroup;
   WindowTableGroup.AddWidget(WindowImageProcessingDisplay);
   WindowTableGroup.AddWidget(WindowProc1Control);
@@ -230,7 +228,6 @@ int main(int argc, char* argv[])
   ProcessControllerClass*  ProcessController = ProcessControllerClass::GetInstance();
                            ProcessController->setParent(&WindowTableGroup);
 
-  ProcessControllerClass::DeviceCamera->CameraStartStream(true);
 
                            ProcessController->slotSetProcessAiming(true);
                            ProcessController->slotStartProcessRTSP(true);
@@ -241,6 +238,12 @@ int main(int argc, char* argv[])
 
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc );    
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
+
+  //QPushButton button("RESET");
+  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::ModuleImageProc.get() ,&ModuleImageProcessing::SlotResetProcessing, Qt::QueuedConnection);
+  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::ModuleImageProc2.get() ,&ModuleImageProcessing::SlotResetProcessing, Qt::QueuedConnection);
+  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::DeviceCamera.get() ,&TypeCamera::SlotReset, Qt::QueuedConnection);
+  //button.show();
 
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 

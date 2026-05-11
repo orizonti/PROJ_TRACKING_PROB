@@ -191,12 +191,10 @@ WidgetDeviceControl::WidgetDeviceControl(QString name, Qt::Orientation orientati
     this->setStyleSheet(styleBaseWidget2);
     orientationWidget = orientation;
 
-    qDebug() << "=====";
     QVector<QBoxLayout*> layouts;
     if(orientation == Qt::Horizontal) for(int n = 0; n < 5; n++) layouts.push_back(new QHBoxLayout());
     if(orientation == Qt::Vertical)   for(int n = 0; n < 5; n++) layouts.push_back(new QVBoxLayout());
                                                     mainLayout = layouts[0];
-    qDebug() << "=====";
 
     labelName  = new QLabel(name); 
     labelState = new QLabel("0000.00\n0000.00"); 
@@ -326,7 +324,7 @@ void WidgetDeviceControl::setScheme(int numberLevels, int numberDevice, int sche
 
     for(int n = 0; n < numberDevice; n++)
     {
-      buttonsOnOff.append(new QPushButton(QString("ПУСК").arg(n))); groupButtonsOnOff->layout()->addWidget(buttonsOnOff.last());
+      buttonsOnOff.append(new QPushButton(QString("ПУСК %1").arg(n))); groupButtonsOnOff->layout()->addWidget(buttonsOnOff.last());
       buttonsOnOff.last()->setMinimumSize(minButtonsSize); buttonsOnOff.last()->setMaximumSize(maxButtonsSize);
       buttonsOnOff.last()->setCheckable(true); 
     }
@@ -356,7 +354,6 @@ void WidgetDeviceControl::setButtonsName(QVector<QString> names)
 {
 
     auto name = names.begin();
-      qDebug( ) << "SET BUTTON NAME: " << *name << buttonsOnOff.size();
     for(auto button: buttonsOnOff)
     {
        button->setText(*name); name++; if(name == names.end()) break;  

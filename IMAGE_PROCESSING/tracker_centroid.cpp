@@ -118,11 +118,11 @@ void ImageTrackerCentroid::SlotProcessImage()
 	catch (const cv::Exception& cv_ec) 
 	{ 
 		if(cv_ec.code == cv::Error::StsAssert)  
-    { std::cout << TAG_NAME.toStdString() << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
+    { std::cout << TAG_NAME << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
 
 		if(cv_ec.code == cv::Error::BadROISize) 
-    { std::cout << TAG_NAME.toStdString() << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
-      std::cout << TAG_NAME.toStdString() << cv_ec.what() << cv_ec.code;	
+    { std::cout << TAG_NAME << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
+      std::cout << TAG_NAME << cv_ec.what() << cv_ec.code;	
 	}
 }
 
@@ -154,7 +154,7 @@ void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
     //FilterBlotch.FilterImage(ImageProcessingROI);
     //
          cv::minMaxLoc(ImageProcessingROI, &MinPixel, &MaxPixel);
-		 Threshold = MinPixel + (MaxPixel - MinPixel)*0.5;
+		 Threshold = MinPixel + (MaxPixel - MinPixel)*0.2;
 
   //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
   //cv::morphologyEx(ImageProcessingROI, ImageProcessingROI, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5))); 

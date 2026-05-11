@@ -203,7 +203,7 @@ public:
 
 	void setLimits(CONTROL_PARAM PARAM_TYPE, float Limit1, float Limit2) override
                                 { 
-                                 qDebug() << TAG_NAME << "[SET LIMITS] " << Limit1 << Limit2 << "[PARAM] " << (int)PARAM_TYPE;
+                                 qDebug() << TAG_NAME.toStdString().c_str() << "[SET LIMITS] " << Limit1 << Limit2 << "[PARAM] " << (int)PARAM_TYPE;
                                  ControlEngineTarget.Engine1.Limits[(int)PARAM_TYPE] = Limit1; 
                                  ControlEngineTarget.Engine2.Limits[(int)PARAM_TYPE] = Limit2; 
                                  Limits[0].first = Limit1;
@@ -311,9 +311,9 @@ void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull()
 { 
                     PositionTarget = QPair<float,float>(0,0);
                     PositionTargetDevice = PositionTarget + PositionNullDevice; 
-                    qDebug() << "DEVICE ROTARY MOVE TO NULL: " << PositionTargetDevice.first 
-                                                               << PositionTargetDevice.second;
-  this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
+                    qDebug() << TAG_NAME.toStdString().c_str()  << "[MOVE TO NULL] " << PositionTargetDevice.first 
+                                                                                     << PositionTargetDevice.second;
+this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
 
 }
 

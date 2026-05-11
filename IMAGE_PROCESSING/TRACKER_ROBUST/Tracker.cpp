@@ -5,11 +5,9 @@
 
 bool TrackerFirst::IsROIValid(cv::Rect& ROI, const cv::Mat& Image)
 {
-const int& ImageWidth  = (Image).cols;
-const int& ImageHeight = (Image).rows;
 
-  if((ROI.x + ROI.width  + 2) > ImageWidth  || 
-     (ROI.y + ROI.height + 2) > ImageHeight ||
+  if((ROI.x + ROI.width  + 2) > Image.cols  || 
+     (ROI.y + ROI.height + 2) > Image.rows  ||
                                  ROI.x <= 0 || 
                                  ROI.y <= 0) return false;
   return true ;
@@ -29,26 +27,22 @@ TrackerFirst::~TrackerFirst() { tracker.release(); }
 void TrackerFirst::resetRectTrack(const cv::Mat& image, cv::Rect rectAim)
 {
 
+   if(image.empty()) { qDebug() << "[TRACKER KCF] RESET INPUT EMPTY"; } 
    if(!IsROIValid(rectAim,image)) { rectAim = rect_template; qDebug() << TAG_NAME << "[ TRACK RECT IS NOT VALID ]"; };
 
-   if(State == StatesModule::WorkTrack  || State == StatesModule::WorkSearch) 
-   {
-     tracker.release();
-     tracker = TypeTracker::create(params); 
-   }
-
+                                                 qDebug() << "[TRACKER KCF] RELEASE RESET";
+   tracker.release();
+   tracker = TypeTracker::create(params);        qDebug() << "[TRACKER KCF] INIT AFTER RESET";
 	                      rect_template = rectAim;
    tracker->init(image, rect_template);
-   State = StatesModule::WorkTrack;
-
-   FLAG_INIT_TRACK = true;
-   qDebug () << "[ TRACKER KCF INIT DONE]"; 
+   State = StatesModule::WorkTrack;              qDebug () << "[TRACKER KCF] INIT DONE"; 
 }
 
 void TrackerFirst::setRectTrack(const cv::Mat& image, cv::Rect rectAim)
 {
-   if(FLAG_INIT_TRACK) return;
-   resetRectTrack(image,rectAim);
+	try                                { resetRectTrack(image,rectAim); }
+	catch (const cv::Exception& cv_ec) { std::cout << TAG_NAME.toStdString() << cv_ec.what() << cv_ec.code;	}
+	catch (const std::exception& e)    { std::cout << TAG_NAME.toStdString() << "[CAUGTH EXCEPTION]" << e.what();	}
 }
 
 void TrackerFirst::trackObject(cv::Mat& image, cv::Rect rect)
@@ -56,7 +50,10 @@ void TrackerFirst::trackObject(cv::Mat& image, cv::Rect rect)
                            if(image.empty()) return;
                                                 rect_template = rect;
         isTrackSuccess = tracker->update(image, rect_template); 
-        State = StatesModule::WorkTrack;
+
+                                  State = StatesModule::WorkTrack;
+        if(!isTrackSuccess    ) { State = StatesModule::WorkSearch; }; 
+        if(!isTrackRectValid()) { State = StatesModule::Idle;       }; printState();
 }
 
 void TrackerFirst::trackObject(cv::Mat& image)
@@ -64,10 +61,9 @@ void TrackerFirst::trackObject(cv::Mat& image)
                            if(image.empty()) return;
                            if(State == StatesModule::Idle) return;
         
-
         isTrackSuccess = tracker->update(image, rect_template); 
 
-    if(!isTrackSuccess    ) { State = StatesModule::WorkSearch; FLAG_INIT_TRACK = false;  }; 
+    if(!isTrackSuccess    ) { State = StatesModule::WorkSearch; }; 
     if(!isTrackRectValid()) { State = StatesModule::Idle;      tracker.release(); }; 
     
     printState();
@@ -77,7 +73,8 @@ void TrackerFirst::trackObject(cv::Mat& image)
 void TrackerFirst::printState()
 {
     if(State == StatesModule::WorkSearch) qDebug() << " [TEMPLATE TRACKER FAIL ] [ SEARCH STATE]" ;
-    if(State == StatesModule::Idle)       qDebug() << OutputFilter::Filter(20) << " [TEMPLATE TRACKER FAIL ] [ IDLE STATE]";
+    if(State == StatesModule::Idle)       qDebug() << " [TEMPLATE TRACKER FAIL ] [ IDLE STATE]";
+    //if(State == StatesModule::WorkTrack)  qDebug() << OutputFilter::Filter(50) << " [TEMPLATE TRACKER ] [ WORK STATE]";
 }
 
 

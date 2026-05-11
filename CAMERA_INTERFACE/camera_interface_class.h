@@ -39,7 +39,7 @@ class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisp
     ~CameraInterfaceAravis();
 	GError *error = NULL;
     std::string TAG_NAME{"[ ARAVIS ]"};
-    QString CAMERA_INFO{"[ CAMERA NO DATA ]"};
+    std::string CAMERA_INFO{"[ CAMERA NO DATA ]"};
     bool FLAG_CAMERA_CONNECTED = false;
     bool FLAG_CAMERA_WORK = false;
 
@@ -88,7 +88,7 @@ class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisp
 
     std::vector<QPair<int,int>>& getPoints() override;  
     std::vector<QRect>& getRects() override;  
-    QString& getInfo() override;  
+    std::string& getInfo() override;  
 
     std::vector<QPair<int,int>> CameraPoints{2};
     std::vector<QRect>          CameraRects{2};
@@ -113,4 +113,5 @@ class CameraInterfaceAravis: public SourceImageInterface, public SourceImageDisp
     void slotSetHighFrequency();
 
     void SlotDeinitCamera(); 
+    void slotReset() {};
 };

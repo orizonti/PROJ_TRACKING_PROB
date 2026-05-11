@@ -77,8 +77,8 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   AimingClass();
   ~AimingClass();
   
-  std::string TAG_NAME = QString("[ %1 ] ").arg("AIMING").toStdString();
-  std::pair<int,int> RANGE_COORDS = SettingsRegister::GetPair("PROCESS_ROI_SIZE");
+             std::string TAG_NAME = QString("[%1] ").arg("AIMING",15).toStdString();
+  std::pair<int,int> RANGE_COORDS = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
 
          int NumberChannel = 0;
   static int ModuleCounter;

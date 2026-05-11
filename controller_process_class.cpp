@@ -67,17 +67,19 @@ std::vector<std::string> cameras_links
 
 ProcessControllerClass::ProcessControllerClass(QObject* parrent): QObject(parrent)
 {
-qDebug() << Qt::endl;
+
+qDebug() << "======================================================" << Qt::endl;
 qDebug() << TAG_NAME.c_str() << "[ CREATE PROCESS CONTROLLER ]";
 
-if(TypeCameraUsed == CAMERA_TYPE_HIK)  qDebug() << TAG_NAME.c_str() << "[ USES CAMERA TYPE HIK ]";
-if(TypeCameraUsed == CAMERA_TYPE_RTSP) qDebug() << TAG_NAME.c_str() << "[ USES CAMERA TYPE RTSP]";
 
 ModuleImageProc    = make_shared<ImageTrackerTemplate>();
 ModuleImageProc2   = make_shared<ImageTrackerCentroid>();
 ModuleImageProc3   = make_shared<FinderObjectMoving>();
 
 //================================================================================================
+qDebug() << "======================================================" << Qt::endl;
+qDebug() << TAG_NAME.c_str() << "[ CONNECTIONS ]" ;
+
 auto SocketTerminal1 = SettingsRegister::GetString("TERMINAL_REMOTE").split(":");
 auto SocketTerminal2 = SettingsRegister::GetString("TERMINAL_LOCAL").split(":");
 
@@ -98,10 +100,12 @@ QString ip_platform2 = SocketPlatform2[0]; int port_platform2 = SocketPlatform2[
 
 ConnectionControlUDP   = make_shared<UDPConnectionEngine>(ip_terminal1,port_terminal1,ip_terminal2,port_terminal2);
 ConnectionProcessorUDP = make_shared<UDPConnectionEngine>(ip_control1 ,port_control1 ,ip_control2 ,port_control2);
-ConnectionCAN          = make_shared<CANConnectionEngine>("can0");
 
 if(TypeRotaryUsed == ROTARY_TYPE_PLATFORM)
 ConnectionRotaryUDP    = make_shared<UDPConnectionEngine>(ip_platform1,port_platform1,ip_platform2,port_platform2);
+                                                                              qDebug() << Qt::endl;
+
+ConnectionCAN          = make_shared<CANConnectionEngine>("can0");
 
                   RingBuffer = make_shared<BufferType    >();
                   Dispatcher = make_shared<DispatcherType>();
@@ -115,12 +119,14 @@ ConnectionRotaryUDP    = make_shared<UDPConnectionEngine>(ip_platform1,port_plat
  *ConnectionControlUDP   | RingBuffer  | Dispatcher;
  *ConnectionProcessorUDP | RingBuffer2 | Dispatcher2;
 
+  initMessageDispatchers();
+
 // if(TypeRotaryUsed == ROTARY_TYPE_PLATFORM) *ConnectionRotaryUDP | RingBuffer3 | Dispatcher3;
+qDebug() << "======================================================";
  //================================================================================================
 
 #if(USE_ROTARY_TYPE == ROTARY_TYPE_SCANATOR)
 {
-qDebug() << TAG_NAME.c_str() << "[ USED SCANATOR DEVICE ]";
 DeviceRotary = std::make_shared<TypeRotaryScanator>(ConnectionCAN, CONTROL_PARAM::POS, "[SCANATOR]");
 DeviceRotary->setLimits(CONTROL_PARAM::POS, 30000,30000);
 }
@@ -128,12 +134,12 @@ DeviceRotary->setLimits(CONTROL_PARAM::POS, 30000,30000);
 
 #if(USE_ROTARY_TYPE == ROTARY_TYPE_PLATFORM)
 {
-qDebug() << TAG_NAME.c_str() << "[ USED ROTARY_PLATFORM DEVICE ]";
 DeviceRotary = std::make_shared<TypeRotaryPlatform>(ConnectionRotaryUDP, CONTROL_PARAM::POS, "[PLATFORM]");
 DeviceRotary->setLimits(CONTROL_PARAM::POS, 360,20);
 DeviceRotary->setNull(QPair<float,float>(37.50,-6.3));
 }
 #endif
+
 
 DeviceLaserIllum  = make_shared<TypeDeviceLaserIllum>(ConnectionControlUDP);
 DeviceLaserPower  = make_shared<TypeDeviceLaserPower>(ConnectionControlUDP);
@@ -151,15 +157,130 @@ if(TypeCameraUsed == CAMERA_TYPE_RTSP) DeviceCamera  = make_shared<TypeCamera>(S
 
 ModuleVideoOutput   = make_shared<VideoStreamRTSP>();
 
-    //using MessageCall   = std::function<void (MessageGeneric<void*, H>&)>;
-    //template<typename T>
-    //void AppendCallback(const MessageCall& Call)
-    //{
-    //   CallList[TypeRegister<T>::TYPE_ID] = Call;
-    //   qDebug() << "APPEND CALLBACK TO : "<< typeid(T).name() << " ID:" << TypeRegister<T>::TYPE_ID << "[ MAP ]";
-    //}
 
 
+
+ //DeviceRotary->moveSinus(true);
+
+
+
+ //QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get()   , SLOT(SlotDeinitCamera())  , Qt::QueuedConnection);
+ QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc.get() , SLOT(SlotStopProcessing()), Qt::QueuedConnection);
+ QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc2.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
+ QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc3.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
+
+qDebug() << TAG_NAME.c_str() << "[ INIT END ]";
+qDebug() << "======================================================" << Qt::endl;
+
+}
+
+
+ProcessControllerClass::~ProcessControllerClass()
+{
+  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER" << QThread::currentThread();
+  emit SignalProcessEnd(); QThread::sleep(2);
+
+  ThreadProcess.quit(); ThreadProcess.deleteLater();
+   ThreadCamera.quit();  ThreadCamera.deleteLater();
+
+                           QThread::sleep(2);
+
+  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER END";
+  qDebug() << Qt::endl;
+}
+
+
+void ProcessControllerClass::StopAllProcess() { }
+void ProcessControllerClass::DeleteModulesLinks() { }
+void ProcessControllerClass::slotSetProcessAiming2(bool OnOff) { }
+void ProcessControllerClass::slotSetProcessCamera (bool OnOff) { DeviceCamera | ModuleImageProc;  }
+void ProcessControllerClass::slotStartProcessRTSP (bool OnOff) 
+{ 
+  //ModuleVideoOutput->linkToSource(DeviceCamera.get()); 
+}
+
+
+void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
+{
+ if(!OnOff) return; DeleteModulesLinks(); StopAllProcess(); 
+
+   qDebug() << Qt::endl << "======================================================" << Qt::endl;
+   qDebug() << TAG_NAME.c_str() << "[ PROCESS AIMING ]";
+
+
+    ModuleImageProc->moveToThread(&ThreadProcess);
+   ModuleImageProc2->moveToThread(&ThreadProcess2);
+   ModuleImageProc3->moveToThread(&ThreadProcess3);
+      ModuleAiming1->moveToThread(&ThreadProcessAiming);
+
+
+   ModuleAiming1->setAimingRegim(AimingLoop);
+   ModuleAiming2->setAimingRegim(AimingLoop);
+   ModuleAiming1->SetAimingPosition(std::pair<float,float>(0.5,0.5));
+
+   
+                                         auto RotaryControlPort = DeviceRotary->ControlRotaryPosRelative;
+   if(TypeRotaryUsed == ROTARY_TYPE_SCANATOR) RotaryControlPort = DeviceRotary->ControlRotaryPos;
+
+
+   DeviceCamera | ModuleImageProc3 | ModuleImageProc;
+                  ModuleImageProc3 | ModuleImageProc2;
+
+                                     ModuleImageProc2 | ModuleImageProc;
+   DeviceCamera | ModuleImageProc  | ModuleImageProc2; 
+   DeviceCamera | ModuleImageProc2 | ModuleAiming1 | RotaryControlPort;                     
+
+   //ModuleAiming1->NodeSignalFault |  ModuleImageProc->NodeSignalFault;
+   //ModuleAiming1->NodeSignalFault | ModuleImageProc2->NodeSignalFault;
+
+   ModuleImageProc2->SetHighFrequencyProcessing();
+
+    ModuleImageProc->SetLowFrequencyProcessing();
+   ModuleImageProc3->SetLowFrequencyProcessing();
+
+    ModuleImageProc2->SetSlaveMode();
+
+
+   ModuleAimingMonitor1->startWork(true);
+   
+    ThreadProcess.start();
+    ThreadProcess.setPriority(QThread::HighPriority);
+
+   ThreadProcess2.start();
+   ThreadProcess2.setPriority(QThread::HighPriority);
+
+   ThreadProcess3.start();
+   ThreadProcess3.setPriority(QThread::HighPriority);
+
+   ThreadProcessAiming.start();
+   ThreadProcessAiming.setPriority(QThread::HighPriority);
+
+     ModuleImageProc->SetStateActive();
+        DeviceCamera->CameraStartStream(true);
+    //ModuleImageProc2->SetStateActive();
+    //ModuleImageProc3->SetStateActive();
+    //ModuleAiming1->SetStateActive();
+    //
+    ModuleImageProc->printInfo();
+   ModuleImageProc2->printInfo();
+   ModuleImageProc3->printInfo();
+               this->printInfo();
+    
+   qDebug() << Qt::endl << "======================================================" << Qt::endl;
+}
+
+void ProcessControllerClass::printInfo()
+{
+  if(TypeCameraUsed == CAMERA_TYPE_HIK)      qDebug() << TAG_NAME.c_str() << "[ USES CAMERA TYPE HIK ]";
+  if(TypeCameraUsed == CAMERA_TYPE_RTSP)     qDebug() << TAG_NAME.c_str() << "[ USES CAMERA TYPE RTSP]";
+  if(TypeRotaryUsed == ROTARY_TYPE_PLATFORM) qDebug() << TAG_NAME.c_str() << "[ USES ROTARY TYPE PLATFORM]";
+  if(TypeRotaryUsed == ROTARY_TYPE_SCANATOR) qDebug() << TAG_NAME.c_str() << "[ USES ROTARY TYPE SCANATOR]";
+}
+
+
+void ProcessControllerClass::initMessageDispatchers()
+{
+qDebug() << "===============================================";
 Dispatcher->AppendCallback<CommandSetPosScanator>( [this](MessageType& message)
                   {
                      auto data = DispatcherType::ExtractData<CommandSetPosScanator>(&message);
@@ -217,99 +338,5 @@ Dispatcher->AppendCallback<CommandAiming2>( [this](MessageType& message)
                   }
                   );
 
- //DeviceRotary->moveSinus(true);
-
-  ModuleImageProc->moveToThread(&ThreadProcess);
- ModuleImageProc2->moveToThread(&ThreadProcess2);
- ModuleImageProc3->moveToThread(&ThreadProcess3);
-    ModuleAiming1->moveToThread(&ThreadProcessAiming);
-
-
- //QObject::connect(this, SIGNAL(SignalProcessEnd()), DeviceCamera.get()   , SLOT(SlotDeinitCamera())  , Qt::QueuedConnection);
- QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc.get() , SLOT(SlotStopProcessing()), Qt::QueuedConnection);
- QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc2.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
- QObject::connect(this, SIGNAL(SignalProcessEnd()), ModuleImageProc3.get(), SLOT(SlotStopProcessing()), Qt::QueuedConnection);
-
-qDebug() << TAG_NAME.c_str() << "[ CREATE PROCESS CONTROLLER END]";
-qDebug() << Qt::endl;
-
+qDebug() << "===============================================";
 }
-
-ProcessControllerClass::~ProcessControllerClass()
-{
-  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER" << QThread::currentThread();
-  emit SignalProcessEnd(); QThread::sleep(2);
-
-  ThreadProcess.quit(); ThreadProcess.deleteLater();
-   ThreadCamera.quit();  ThreadCamera.deleteLater();
-
-                           QThread::sleep(2);
-
-  qDebug() << TAG_NAME.c_str() << "DELETE PROCESS CONTROLLER END";
-  qDebug() << Qt::endl;
-}
-
-
-void ProcessControllerClass::StopAllProcess() { }
-void ProcessControllerClass::DeleteModulesLinks() { }
-void ProcessControllerClass::slotSetProcessAiming2(bool OnOff) { }
-void ProcessControllerClass::slotSetProcessCamera (bool OnOff) { DeviceCamera | ModuleImageProc;  }
-void ProcessControllerClass::slotStartProcessRTSP (bool OnOff) 
-{ 
-  //ModuleVideoOutput->linkToSource(DeviceCamera.get()); 
-}
-
-void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
-{
- if(!OnOff) return; DeleteModulesLinks(); StopAllProcess(); 
-
-   ModuleAiming1->setAimingRegim(AimingLoop);
-   ModuleAiming2->setAimingRegim(AimingLoop);
-   ModuleAiming1->SetAimingPosition(std::pair<float,float>(0.5,0.5));
-
-   
-                                         auto RotaryControlPort = DeviceRotary->ControlRotaryPosRelative;
-   if(TypeRotaryUsed == ROTARY_TYPE_SCANATOR) RotaryControlPort = DeviceRotary->ControlRotaryPos;
-
-   //DeviceCamera | ModuleImageProc ; 
-   //DeviceCamera | ModuleImageProc2;                     
-
-   DeviceCamera | ModuleImageProc3 | ModuleImageProc;
-                  ModuleImageProc3 | ModuleImageProc2;
-
-                                     ModuleImageProc2 | ModuleImageProc;
-   DeviceCamera | ModuleImageProc  | ModuleImageProc2; 
-   DeviceCamera | ModuleImageProc2 | ModuleAiming1 | RotaryControlPort;                     
-
-   ModuleAiming1->NodeSignalFault |  ModuleImageProc->NodeSignalFault;
-   ModuleAiming1->NodeSignalFault | ModuleImageProc2->NodeSignalFault;
-
-   ModuleImageProc2->SetHighFrequencyProcessing();
-
-    ModuleImageProc->SetLowFrequencyProcessing();
-   ModuleImageProc3->SetLowFrequencyProcessing();
-
-    ModuleImageProc2->SetSlaveMode();
-
-
-   ModuleAimingMonitor1->startWork(true);
-   
-    ThreadProcess.start();
-    ThreadProcess.setPriority(QThread::HighPriority);
-
-   ThreadProcess2.start();
-   ThreadProcess2.setPriority(QThread::HighPriority);
-
-   ThreadProcess3.start();
-   ThreadProcess3.setPriority(QThread::HighPriority);
-
-   ThreadProcessAiming.start();
-   ThreadProcessAiming.setPriority(QThread::HighPriority);
-
-     ModuleImageProc->SetStateActive();
-    //ModuleImageProc2->SetStateActive();
-    //ModuleImageProc3->SetStateActive();
-    //ModuleAiming1->SetStateActive();
-}
-
-

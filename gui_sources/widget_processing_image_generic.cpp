@@ -21,11 +21,13 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
 
    slotDisplayString(strDisplayData);
 
-                    auto ImageSize = SettingsRegister::GetPair("CAMERA_IMAGE_SIZE");
+                  auto ImageSize = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
    auto Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
         Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
 
         DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); 
+
+        LabelImageAiming->setFixedSize(ImageSize.first, ImageSize.second);
 
    auto Widget  = new WidgetMiniLabelsGroup;
         Widget->layout()->setSpacing(6);
@@ -94,7 +96,9 @@ void WidgetProcessingImage::slotDisplayImage()
 {
    if(!ImageSourceActive){ qDebug() << TAG_NAME << "SOURCE NOT LINKED";  return; };
 
-   ImageSourceActive->getImageToDisplay(DisplayImage); if(DisplayImage.isNull()) return;
+   ImageSourceActive->getImageToDisplay(DisplayImage); 
+
+   if(DisplayImage.isNull()) return;
 
       Thinning(30)++;
    if(Thinning.isOpen()) 
