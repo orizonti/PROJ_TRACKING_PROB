@@ -22,11 +22,11 @@ CoordsObject[1] = QPair<float,float>(SizeImage.first/2,SizeImage.first/2);
 ImageToDisplay = QImage(SizeImage.first,SizeImage.second,QImage::Format_RGB888); ImageToDisplay.fill(Qt::black);
 
 
-         timerProcessImage.setInterval(15);
+         timerProcessImage.setInterval(periodProcess);
 connect(&timerProcessImage   , SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
 
 QObject::connect(this,SIGNAL(signalStart()), this, SLOT(SlotStartProcessing()),Qt::QueuedConnection);
-QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(SlotStopProcessing()),Qt::QueuedConnection);
+QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(SlotStopProcessing()) ,Qt::QueuedConnection);
 QObject::connect(this,SIGNAL(signalReset()), this, SLOT(SlotResetProcessing()),Qt::QueuedConnection);
 
 };
@@ -49,7 +49,7 @@ CoordsObject[1] = QPair<float,float>(width/2, height/2);
 
 ImageToDisplay = QImage(width,height,QImage::Format_ARGB32); ImageToDisplay.fill(Qt::black);
 
-         timerProcessImage.setInterval(15);
+         timerProcessImage.setInterval(periodProcess);
 connect(&timerProcessImage   , SIGNAL(timeout()), this, SLOT(SlotProcessImage()));
 qDebug() << TAG_NAME << "[ IMAGE ] " << width << height << "[ ROI ]" << size;
 
@@ -88,7 +88,8 @@ void ModuleImageProcessing::getImageToProcess(cv::Mat& ImageDst)
 
 void ModuleImageProcessing::getImageToDisplay(QImage& ImageDst)
 {
-  std::lock_guard<std::mutex> locker(MutexImageAccess);
+  std::lock_guard<std::mutex> locker(MutexImageAccessDisplay);
+
   if(ImageOutput.empty())  return;  
 
   if(ImageDst.width() != ImageOutput.cols || ImageDst.height() != ImageOutput.rows) 
@@ -186,10 +187,15 @@ std::pair<float,float> ModuleImageProcessing::getTickPeriod() { return std::pair
 void ModuleImageProcessing::SlotResetProcessing() 
 { 
   qDebug() << TAG_NAME.c_str() << "[RESET PROCESSING]";
-  StateProcessing = StatesModule::Idle; 
+
   MutexImageAccess.unlock();
   MutexInput.unlock();
-  timerProcessImage.start(); 
+
+  timerProcessImage.stop(); 
+  timerProcessImage.setInterval(periodProcess);
+
+  if(StateProcessing == StatesModule::Idle) return; 
+  SlotStartProcessing();
 }
 
 void ModuleImageProcessing::SlotStopProcessing() 

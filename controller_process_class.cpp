@@ -212,6 +212,7 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
    ModuleImageProc2->moveToThread(&ThreadProcess2);
    ModuleImageProc3->moveToThread(&ThreadProcess3);
       ModuleAiming1->moveToThread(&ThreadProcessAiming);
+      DeviceCamera->moveToThread(&ThreadCamera);
 
 
    ModuleAiming1->setAimingRegim(AimingLoop);
@@ -233,10 +234,10 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
    //ModuleAiming1->NodeSignalFault |  ModuleImageProc->NodeSignalFault;
    //ModuleAiming1->NodeSignalFault | ModuleImageProc2->NodeSignalFault;
 
-   ModuleImageProc2->SetHighFrequencyProcessing();
+   ModuleImageProc2->SetPeriodProcess(1);
 
-    ModuleImageProc->SetLowFrequencyProcessing();
-   ModuleImageProc3->SetLowFrequencyProcessing();
+    ModuleImageProc->SetPeriodProcess(20);
+   ModuleImageProc3->SetPeriodProcess(20);
 
     ModuleImageProc2->SetSlaveMode();
 
@@ -244,22 +245,25 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
    ModuleAimingMonitor1->startWork(true);
    
     ThreadProcess.start();
-    ThreadProcess.setPriority(QThread::HighPriority);
+    ThreadProcess.setPriority(QThread::NormalPriority);
 
    ThreadProcess2.start();
    ThreadProcess2.setPriority(QThread::HighPriority);
 
    ThreadProcess3.start();
-   ThreadProcess3.setPriority(QThread::HighPriority);
+   ThreadProcess3.setPriority(QThread::NormalPriority);
 
    ThreadProcessAiming.start();
-   ThreadProcessAiming.setPriority(QThread::HighPriority);
+   ThreadProcessAiming.setPriority(QThread::NormalPriority);
+
+   ThreadCamera.start();
+   ThreadCamera.setPriority(QThread::NormalPriority);
 
      ModuleImageProc->SetStateActive();
         DeviceCamera->CameraStartStream(true);
     //ModuleImageProc2->SetStateActive();
     //ModuleImageProc3->SetStateActive();
-    //ModuleAiming1->SetStateActive();
+       ModuleAiming1->SetStateActive();
     //
     ModuleImageProc->printInfo();
    ModuleImageProc2->printInfo();

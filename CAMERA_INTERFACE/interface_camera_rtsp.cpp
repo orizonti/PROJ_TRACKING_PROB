@@ -35,6 +35,10 @@ CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, u
 
   QObject::connect(&timerGetFrame, SIGNAL(timeout()),this, SLOT(slotGetFrame()));
 
+  QObject::connect(this,SIGNAL(signalStart()), this, SLOT(slotStartStream()), Qt::QueuedConnection);
+  QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(slotStopStream()) , Qt::QueuedConnection);
+  QObject::connect(this,SIGNAL(signalReset()), this, SLOT(slotReset())      , Qt::QueuedConnection);
+
   ImageStore.push_back(std::make_shared<CameraStorageType>(this, SizeImage));
 }
 
@@ -63,24 +67,19 @@ void CameraInterfaceUniversal::slotGetFrame()
         if (!isFrameGrabbed) return; 
 
 
-        FrameMeasureInput.PushTick();
+          FrameMeasureInput.PushTick();
         FrameMeasureProcess.PushTick();
 
-         //QThread::msleep(100);
-                     inputImageCrop = inputImage(rectCrop);
-                     inputImageSmall = inputImageCrop;
+      //cv::resize  (inputImage ,inputImageResized,cv::Size(SizeImage.first,SizeImage.second));
+      //inputImageResized = inputImage(rectCrop);
+      
+                     inputImageResized = inputImage; 
+        cv::cvtColor(inputImageResized,inputImageProcessed,cv::COLOR_BGR2GRAY);
 
-        //qDebug() << OutputFilter::Filter(10) << "GOT IMAGE " << inputImageSmall.cols << inputImageSmall.rows;
-        //cv::resize  (inputImageCrop ,inputImageSmall,cv::Size(SizeImage.first,SizeImage.second));
-        cv::cvtColor(inputImageSmall,inputImageGray,cv::COLOR_BGR2GRAY);
-
-        mutexStorage.lock(); 
-        CameraStorageType::putNewFrameToStorage(inputImageGray); 
-        mutexStorage.unlock();
+        CameraStorageType::putNewFrameToStorage(inputImageProcessed); 
 
         FrameMeasureProcess.PushTick();
-        //qDebug() << OutputFilter::Filter(10) << "RTSP FRAME PERIOD: " << FrameMeasureInput.TickPeriod*1000 
-        //                                     << "PROCESS: " << FrameMeasureProcess.TickPeriod*1000;
+        //qDebug() << OutputFilter::Filter(10) << "[ RTSP FRAME PERIOD2 ]" << FrameMeasureInput.getMilliseconds();
 }
 
 void CameraInterfaceUniversal::slotEndWork() 
@@ -92,12 +91,6 @@ void CameraInterfaceUniversal::slotEndWork()
 
 
 std::pair<int,int> CameraInterfaceUniversal::getSizeImage() { return ImageStore[0]->getSizeImage(); };
-
-void CameraInterfaceUniversal::moveToThread(QThread* thread)
-{
-         QObject::moveToThread(thread);
-    timerGetFrame.moveToThread(thread);
-}
 
 void CameraInterfaceUniversal::enumerateCameras() { }
 void CameraInterfaceUniversal::initCamera()       { }
@@ -114,5 +107,11 @@ void CameraInterfaceUniversal::CameraSetGain    (float Gain) { } ;
 void CameraInterfaceUniversal::CameraSetExposure(float Exposure) { }
 void CameraInterfaceUniversal::CameraSetRegion  (int XOffset, int YOfffset, int width, int height ) {};
 
+void CameraInterfaceUniversal::moveToThread(QThread* thread)
+{
+       QObject::moveToThread(thread);
+  timerGetFrame.moveToThread(thread);
+  qDebug() << TAG_NAME.c_str() << "[ MOVE TO THREAD ]" << this->thread();
+}
 
 

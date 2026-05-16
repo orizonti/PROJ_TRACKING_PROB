@@ -127,11 +127,12 @@ void AimingClass::PrintpassCoords(QPair<float,float> Coord)
 
     FrameMeasureInput++;
     qDebug() << OutputFilter::Filter(200) << TAG_NAME.c_str() 
-                              << "OUTPUT" << VectorOutput.first          << VectorOutput.second
-                              << "INPUT " << CoordInput.first << CoordInput.second 
-                              << "ERROR " << CoordAimingError.first << CoordAimingError.second 
-                              << "GAIN: " << GainList[3]
-                              << "PERIOD: " << FrameMeasureInput.getMilliseconds();
+                              << "OUTPUT"   << VectorOutput.first          << VectorOutput.second
+                              << "PROLONG"  << VectorOutputProlong.first   << VectorOutputProlong.second
+                              << "ERROR "   << CoordAimingError.first << CoordAimingError.second 
+                              << "PERIOD: " << FrameMeasureInput.getMilliseconds()
+                              << "INPUT: " << IntegratorInput.StepPeriod*1000;
+                              //<< "GAIN: "   << GainList[3]
 }
 
 void AimingClass::BlockOutput(bool channelx, bool channely)
@@ -149,9 +150,10 @@ void AimingClass::BlockOutput(bool channelx, bool channely)
 
 void AimingClass::setInput(const QPair<float,float>& Coord) 
 { 
-  //qDebug() << TAG_NAME.c_str() << "INPUT" << Coord.first << Coord.second;
+  //FrameMeasureInput++;
+  //qDebug() << OutputFilter::Filter(50) << TAG_NAME.c_str() << "[ INPUT PERIOD ]" << FrameMeasureInput.getMilliseconds();
 
-  CoordsInput.push(Coord); IS_INPUT_AVAILABLE = true;
+  mutexInput.lock(); CoordsInput.push(Coord); mutexInput.unlock(); 
 }
 
 void AimingClass::slotProcessLoop1()
@@ -161,14 +163,15 @@ void AimingClass::slotProcessLoop1()
                                                          GainList[3] = 800; 
    if(StatisticCoord<float>::Norm(CoordAimingError) < 5) GainList[3] = 1000;
    if(StatisticCoord<float>::Norm(CoordAimingError) < 3) GainList[3] = 2500;
-
    GainList[3] = 0.01;
 
+   mutexInput.lock();         isInputAvailable=false;
+   if(!CoordsInput.empty()) { isInputAvailable=true;  CoordInput = CoordsInput.front(); CoordsInput.pop(); }
+   mutexInput.unlock();
+   
 
-   if(IS_INPUT_AVAILABLE)
+   if(isInputAvailable)
    {
-   CoordInput = CoordsInput.front(); CoordsInput.pop(); if(CoordsInput.empty()) IS_INPUT_AVAILABLE = false; 
-
    CoordInput >> Substract;
      CoordAim >> Substract >> CoordAimingError >> Gain(GainList[3]) >> IntegratorInput 
                                                                     >> AxisInversion(2) 
@@ -177,11 +180,13 @@ void AimingClass::slotProcessLoop1()
     VectorOutput >> SplitToTime1(0) >> trackApproximation1; 
                     SplitToTime1(1) >> trackApproximation2; 
    }
-   //     trackApproximation1.StepsForecasting = 1;
-   //     trackApproximation2.StepsForecasting = 1;
 
-   //     trackApproximation1 >> PickValue(1) >> JoinValue;
-   //     trackApproximation2 >> PickValue(1) >> JoinValue >> VectorOutputProlong;
+   
+        trackApproximation1.StepsForecasting = 1;
+        trackApproximation2.StepsForecasting = 1;
+
+        trackApproximation1 >> PickValue(1) >> JoinValue;
+        trackApproximation2 >> PickValue(1) >> JoinValue >> VectorOutputProlong;
    //  if(trackApproximation1.isLoaded()) VectorOutput = VectorOutputProlong;
 
 

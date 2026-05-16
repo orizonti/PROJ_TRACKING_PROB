@@ -24,7 +24,6 @@
 FinderObjectMoving::FinderObjectMoving(QObject* parent) : ModuleImageProcessing("[FINDER MOVING   ]",parent)
 {
   makeFilters();
-  SetLowFrequencyProcessing();
   for(int n = 0; n < 5; n++) 
   { 
            Trackers.push_back(std::make_shared<ImageTrackerCentroid>()); 
@@ -42,7 +41,6 @@ FinderObjectMoving::FinderObjectMoving(int width, int height, int size ,QObject*
                       ModuleImageProcessing(width, height, size, "[FINDER MOVING   ]") 
 { 
   makeFilters();
-  SetLowFrequencyProcessing();
 
   for(int n = 0; n < 5; n++) 
   { 

@@ -190,7 +190,6 @@ include_directories("/usr/include/c++/12")
 #include_directories("${PROJECT_SOURCE_DIR}/PYTORCH_PROCESSING") #SUBPROJECT PYTORCH_PROCESSING
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/Eigen")
 include_directories("${LIBRARY_DIR}/MATH_LIBRARY/")
-include_directories("/home/orangepi/SETTINGS/TrackingProject/")
 endfunction()
 
 

@@ -25,13 +25,13 @@
 
 #include <QWidget>
 #include "arduino_json.h"
+#include "SETTINGS_PATH.h"
 
 //#define PROJECT_COMPLEX 1
 #define PROJECT_SIMPLE 1 
 
 
 void OpenCL_Init();
-
 
 
 template<> constinit const int TypeRegister<CommandSetPosRotary>      ::TYPE_ID{0 };
@@ -81,58 +81,12 @@ template<> class TypeRegisterSizes<sizeof(MESSAGE_HEADER_GENERIC)>
 };
 
 
-class TestMessageTransmission
-{
-  using MessageType    = MessageGeneric<void*, MESSAGE_HEADER_GENERIC>;
-  using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>(), 20,IteratorMode::Continous>; 
-  using DispatcherType = MessageDispatcher<MESSAGE_HEADER_GENERIC     ,BufferType>;
-  public:
-  TestMessageTransmission()
-  {
-            Connection = std::make_shared<UDPConnectionEngine>();
-            RingBuffer = std::make_shared<BufferType>();
-            Dispatcher = std::make_shared<DispatcherType>();
-   *Connection | RingBuffer | Dispatcher;
-
-    qDebug() << "[ TEST CONNECTION ] 192.168.1.75 3333 REMOTE: 192.168.1.59 2525";  
-    Connection->listenTo("192.168.1.58",3333);
-    Connection->connectTo("192.168.1.121",4444);
-  }
-
-  std::shared_ptr<UDPConnectionEngine>     Connection ;
-  std::shared_ptr<MessageStorageInterface> RingBuffer ;
-  std::shared_ptr<DispatcherType>          Dispatcher ;
-
-  template<typename T> void addType() 
-  { 
-    Dispatcher->AppendCallback<T> ( [](MessageType& Message)
-    {
-     auto data = DispatcherType::ExtractData<T>(&Message); qDebug() << "GET REQUEST: " << TypeRegister<T>::GetTypeName() << data->print();
-    });
-  };
-
-  template<typename T> void pushMessage(const T& Data)
-  {
-     auto Message = new MessageGeneric<T,MESSAGE_HEADER_GENERIC>;   
-          Message->DATA = Data;
-
-    qDebug() << "PUT MESSAGE: " << TypeRegister<T>::GetTypeName() 
-             << " ID: "   << Message->HEADER.MESSAGE_IDENT 
-             << " SIZE: " << Message->HEADER.DATA_SIZE << " SIZE_MESSAGE: " << Message->GetSizeMessage();
-             
-    Connection->slotSendMessage((const char*)Message, Message->GetSizeMessage(),0);
-    delete Message;
-  }
-};
-
-
-
 
 int main(int argc, char* argv[])
 {
 
   QApplication app(argc,argv);
-  SettingsRegister::LoadSettings("/home/orangepi/SETTINGS");
+  SettingsRegister::LoadSettings(PATH_SETTINGS_INI);
 
   qRegisterMetaType<const QImage&>("QImage");
   qRegisterMetaType<std::pair<float,float>>("std::pair");
@@ -140,8 +94,6 @@ int main(int argc, char* argv[])
 
   //std::string info = cv::getBuildInformation();
   //std::cout << info << std::endl;
-
-
 
   qDebug() << "===========================================================";
 
@@ -165,32 +117,6 @@ int main(int argc, char* argv[])
   TypeRegister<>::TYPES_INFO.printTypesSignature();
   qDebug() << "===========================================================";
 
-              //====================================================
-                //TestMessageTransmission TestTransmission;
-                //TestTransmission.addType<CommandSetPosRotary>();
-                //TestTransmission.addType<CommandSetPosScanator>();
-                //TestTransmission.addType<RequestPosRotary>();
-                //TestTransmission.addType<RequestPosScanator>();
-                //TestTransmission.addType<CommandAiming1>();
-                //TestTransmission.addType<CommandAiming2>();
-                //TestTransmission.addType<CommandDeviceLaserPower>();
-                //TestTransmission.addType<CommandDeviceLaserPointer>();
-                //TestTransmission.addType<RequestDeviceLaserPower>();
-                //TestTransmission.addType<RequestDeviceLaserPointer>();
-
-                //TestTransmission.pushMessage(CommandSetPosScanator(20,33));
-                //TestTransmission.pushMessage(CommandSetPosScanator(20.2,11.2));
-                //TestTransmission.pushMessage(CommandSetPosScanator(2,3));
-                //TestTransmission.pushMessage(CommandSetPosScanator(3,5));
-
-                //TestTransmission.pushMessage(CommandAiming1(20,33,1,1));
-                //TestTransmission.pushMessage(CommandAiming1(20.2,11.2,2,2));
-                //TestTransmission.pushMessage(CommandAiming1(2,3,0,0));
-                //TestTransmission.pushMessage(CommandAiming1(3,5,0,0));
-                //====================================================
-
-
-
   #ifdef PROJECT_SIMPLE
   auto WindowImageProcessingDisplay = new WidgetProcessingImage("ОБРАБОТКА");
  
@@ -211,7 +137,6 @@ int main(int argc, char* argv[])
   WindowProc2Control->setButtonsName({"ПУСК", "СБРОС"});
   WindowProc3Control->setButtonsName({"ПУСК", "СБРОС"});
   WindowAimingControl->setButtonsName({"ПУСК", "СБРОС"});
-
 
   WidgetTableGroup WindowTableGroup;
   WindowTableGroup.AddWidget(WindowImageProcessingDisplay);
@@ -239,22 +164,16 @@ int main(int argc, char* argv[])
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc );    
   WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
 
-  //QPushButton button("RESET");
-  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::ModuleImageProc.get() ,&ModuleImageProcessing::SlotResetProcessing, Qt::QueuedConnection);
-  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::ModuleImageProc2.get() ,&ModuleImageProcessing::SlotResetProcessing, Qt::QueuedConnection);
-  //QObject::connect(&button, &QPushButton::clicked, ProcessControllerClass::DeviceCamera.get() ,&TypeCamera::SlotReset, Qt::QueuedConnection);
-  //button.show();
-
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
-  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed2(QPair<float,float>)), 
-                                                       AimingPort,SLOT  (slotSetCoord    (QPair<float,float>))) ;
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming, SIGNAL(signalPosPressed2(QPair<float,float>)), 
+                                                       AimingPort, SLOT  (slotSetCoord     (QPair<float,float>))) ;
 
-  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
-                                                       ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed (QPair<float,float>)), 
+                    ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
-  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed(QPair<float,float>)), 
-                                                       ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
+  QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed (QPair<float,float>)), 
+                   ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
   WindowTableGroup.show();
   #endif
@@ -267,4 +186,72 @@ int main(int argc, char* argv[])
   app.exec();
 }
 
+
+//class TestMessageTransmission
+//{
+//  using MessageType    = MessageGeneric<void*, MESSAGE_HEADER_GENERIC>;
+//  using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>(), 20,IteratorMode::Continous>; 
+//  using DispatcherType = MessageDispatcher<MESSAGE_HEADER_GENERIC     ,BufferType>;
+//  public:
+//  TestMessageTransmission()
+//  {
+//            Connection = std::make_shared<UDPConnectionEngine>();
+//            RingBuffer = std::make_shared<BufferType>();
+//            Dispatcher = std::make_shared<DispatcherType>();
+//   *Connection | RingBuffer | Dispatcher;
+//
+//    qDebug() << "[ TEST CONNECTION ] 192.168.1.75 3333 REMOTE: 192.168.1.59 2525";  
+//    Connection->listenTo("192.168.1.58",3333);
+//    Connection->connectTo("192.168.1.121",4444);
+//  }
+//
+//  std::shared_ptr<UDPConnectionEngine>     Connection ;
+//  std::shared_ptr<MessageStorageInterface> RingBuffer ;
+//  std::shared_ptr<DispatcherType>          Dispatcher ;
+//
+//  template<typename T> void addType() 
+//  { 
+//    Dispatcher->AppendCallback<T> ( [](MessageType& Message)
+//    {
+//     auto data = DispatcherType::ExtractData<T>(&Message); qDebug() << "GET REQUEST: " << TypeRegister<T>::GetTypeName() << data->print();
+//    });
+//  };
+//
+//  template<typename T> void pushMessage(const T& Data)
+//  {
+//     auto Message = new MessageGeneric<T,MESSAGE_HEADER_GENERIC>;   
+//          Message->DATA = Data;
+//
+//    qDebug() << "PUT MESSAGE: " << TypeRegister<T>::GetTypeName() 
+//             << " ID: "   << Message->HEADER.MESSAGE_IDENT 
+//             << " SIZE: " << Message->HEADER.DATA_SIZE << " SIZE_MESSAGE: " << Message->GetSizeMessage();
+//             
+//    Connection->slotSendMessage((const char*)Message, Message->GetSizeMessage(),0);
+//    delete Message;
+//  }
+//};
+
+              //====================================================
+                //TestMessageTransmission TestTransmission;
+                //TestTransmission.addType<CommandSetPosRotary>();
+                //TestTransmission.addType<CommandSetPosScanator>();
+                //TestTransmission.addType<RequestPosRotary>();
+                //TestTransmission.addType<RequestPosScanator>();
+                //TestTransmission.addType<CommandAiming1>();
+                //TestTransmission.addType<CommandAiming2>();
+                //TestTransmission.addType<CommandDeviceLaserPower>();
+                //TestTransmission.addType<CommandDeviceLaserPointer>();
+                //TestTransmission.addType<RequestDeviceLaserPower>();
+                //TestTransmission.addType<RequestDeviceLaserPointer>();
+
+                //TestTransmission.pushMessage(CommandSetPosScanator(20,33));
+                //TestTransmission.pushMessage(CommandSetPosScanator(20.2,11.2));
+                //TestTransmission.pushMessage(CommandSetPosScanator(2,3));
+                //TestTransmission.pushMessage(CommandSetPosScanator(3,5));
+
+                //TestTransmission.pushMessage(CommandAiming1(20,33,1,1));
+                //TestTransmission.pushMessage(CommandAiming1(20.2,11.2,2,2));
+                //TestTransmission.pushMessage(CommandAiming1(2,3,0,0));
+                //TestTransmission.pushMessage(CommandAiming1(3,5,0,0));
+                //====================================================
 

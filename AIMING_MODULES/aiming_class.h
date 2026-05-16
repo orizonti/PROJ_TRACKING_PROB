@@ -32,7 +32,7 @@ class TimeIntegratorClass : public PassCoordClass<T>
 	auto TimePoint = std::chrono::high_resolution_clock::now();
 	    StepPeriod = std::chrono::duration<float>((TimePoint - LastTimePoint)).count(); 
 
-	LastTimePoint = TimePoint; if(StepPeriod*1000 > 30) return;
+	LastTimePoint = TimePoint; if(StepPeriod*1000 > 100) return;
 
     PassCoordClass<float>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
 
@@ -120,7 +120,8 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   const QPair<float, float>& GetBeamPosition(); //BEAM POSITION IS SET FROM CAMERA 
   const QPair<float, float>& GetAimingError(); 
   
-  std::atomic<bool> IS_INPUT_AVAILABLE{false};
+  std::mutex mutexInput;
+  bool isInputAvailable=false;
 
   void setInput (const QPair<float,float>& Coord) override;
   public slots:

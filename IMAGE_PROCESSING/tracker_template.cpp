@@ -7,51 +7,40 @@
 void ImageTrackerTemplate::SlotProcessImage()
 {
   
-	try 
-	{ 
                                                 FrameMeasureProcess++; FrameMeasureInput++;
+  //==================================================================================
                                if(SourceImage->empty()) return; 
                                if(SourceImage->getAvailableFrames() > 2) skipFrames();
                     *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return;  
 
                                           std::lock_guard<std::mutex> locker(MutexImageAccess);
   //==================================================================================
-      ImageOutput = *ImageInput; 
   ImageProcessing = *ImageInput; ProcessInput(); 
                      ImageInput++; 
                   if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
 
   if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); 
   //==================================================================================
-	}
-	catch (const cv::Exception& cv_ec) 
-	{ 
-		if(cv_ec.code == cv::Error::StsAssert)  
-    { std::cout << TAG_NAME << "[ ASSERTION FAILED ] " << cv_ec.msg << std::endl; return;}
-		if(cv_ec.code == cv::Error::BadROISize) 
-    { std::cout << TAG_NAME << "[ BAD ROI ] " << cv_ec.msg << std::endl; return;}
-                                              std::cout << TAG_NAME << cv_ec.what() << cv_ec.code;	
-	}
-
-
-
+                                                  FrameMeasureProcess++;
+  
+  MutexImageAccessDisplay.lock(); ImageOutput = *ImageInput; MutexImageAccessDisplay.unlock();
 }
 
 void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image) 
 {
 
                           if(Image.empty()) return;  FrameMeasureProcess++; FrameMeasureInput++;
-
                                           std::lock_guard<std::mutex> locker(MutexImageAccess);
 
                     *ImageInput = Image.clone(); 
-      ImageOutput = *ImageInput; 
   ImageProcessing = *ImageInput; ProcessInput();
                      ImageInput++; 
                   if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
 
-  PassCoordClass<float>::passCoord(); 
+  if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); 
                                                      FrameMeasureProcess++;
+
+  MutexImageAccessDisplay.lock(); ImageOutput = *ImageInput; MutexImageAccessDisplay.unlock();
 }
 
 void ImageTrackerTemplate::ProcessInput()

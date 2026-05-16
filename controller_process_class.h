@@ -20,8 +20,8 @@
 #include "device_rotary_interface.h"
 #include "device_laser_interface.h"
 #include "aiming_monitoring_module.h"
-#include "/home/orangepi/SETTINGS/TrackingProject/SETTINGS_DEFINES.h"
-
+#include "SETTINGS_PATH.h"
+#include PATH_SETTINGS_DEFINES
 
 enum class ProcessStateList  { ProcessAiming, ProcessImitation, ProcessTestSignal, ProcessCalibration}; 
 //#define USE_HIK_CAMERA 1

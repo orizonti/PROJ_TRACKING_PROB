@@ -80,7 +80,7 @@ void CameraImageStorage<TYPE_CAMERA>::skipFrames()
 template<typename TYPE_CAMERA>
 bool CameraImageStorage<TYPE_CAMERA>::switchToNextFrame() 
 {
-   std::lock_guard<std::mutex> locker(lockBuffer);
+   //std::lock_guard<std::mutex> locker(lockBuffer);
 
    if(BufferToRead == BufferToWrite) return false; 
    if(getAvailableFrames() > 3) skipFrames();
@@ -96,7 +96,7 @@ template<typename TYPE_CAMERA>
 void CameraImageStorage<TYPE_CAMERA>::putNewFrameToStorage(cv::Mat& Frame)
 {
 
-                           std::lock_guard<std::mutex> locker(lockBuffer);
+                           //std::lock_guard<std::mutex> locker(lockBuffer);
 
                           *BufferToWrite = Frame.clone(); 
    ImageToDisplay = QImage(BufferToWrite->data,Frame.cols,Frame.rows,QImage::Format_Grayscale8);

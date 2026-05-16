@@ -56,6 +56,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 ~ModuleImageProcessing() { } 
 
     //==================================================
+                   int periodProcess = 20;
                    QTimer timerProcessImage;
                    void printInfo();
     public slots:
@@ -134,8 +135,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     public:
 
     void SetThreshold(int Value)      { qDebug() << TAG_NAME << "[THRESHOLD]" << Value; this->Threshold = Value; } ;
-    void SetHighFrequencyProcessing() { timerProcessImage.setInterval(1); };
-    void SetLowFrequencyProcessing()  { timerProcessImage.setInterval(20);};
+    void SetPeriodProcess(int period) { periodProcess = period; SetReset(); };
     //===================================================
     //DeviceGenericHandleControl
 	  void setParam (uint16_t CommandID, float    CommandParam) override {};
@@ -149,6 +149,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     protected:
     std::mutex MutexImageAccess;
+    std::mutex MutexImageAccessDisplay;
     std::mutex MutexInput;
 
     std::vector<cv::Mat> ImagesInput{10};

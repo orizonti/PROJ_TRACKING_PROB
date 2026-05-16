@@ -34,12 +34,16 @@ class CameraInterfaceUniversal :public QObject,
 
   std::string    TAG_NAME{"[ CAMERA_RTSP ]"};
   std::string CAMERA_INFO{"[ CAMERA NO DATA ]"};
-  cv::Mat inputImage     {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
-  cv::Mat inputImageCrop {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
-  cv::Mat inputImageSmall{SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
-  cv::Mat inputImageGray {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
+
+  cv::Mat inputImage          {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
+  cv::Mat inputImageResized   {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
+  cv::Mat inputImageProcessed {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
+
   cv::Rect rectCrop{OFFSET_ROI.first,OFFSET_ROI.second,SIZE_ROI.first,SIZE_ROI.second};
   QString getName() override { return QString::fromStdString(TAG_NAME); };
+
+  void moveToThread(QThread* thread);
+
 
   std::shared_ptr<SourceImageInterface> getImageSourceChannel() override;
 
@@ -57,8 +61,6 @@ class CameraInterfaceUniversal :public QObject,
                       const std::string& getInfo() override { return CAMERA_INFO;};  
 
                  std::pair<int,int> getSizeImage() override;
-
-    void moveToThread(QThread* thread);
   //=========================================
 
   void CameraSetRegion  (int XOffset, int YOfffset, int width, int height ) override;
@@ -70,7 +72,11 @@ class CameraInterfaceUniversal :public QObject,
 
   void CameraSetExposure(float Exposure) override;
   void CameraSetGain    (float Gain)     override;
-  void CameraStartStream(bool OnOff )    override { if(OnOff) slotStartStream(); else slotStopStream(); }
+  void CameraStartStream(bool OnOff )    override { if(OnOff) emit signalStart(); else emit signalStop(); }
+
+  void SetStateActive() { emit signalStart(); };
+  void SetStateIdle()   { emit signalStop(); }; 
+  void SetReset()       { emit signalReset(); }; 
 
 	void setParam (uint16_t CommandID, float    CommandParam) override {};
 
@@ -97,6 +103,11 @@ class CameraInterfaceUniversal :public QObject,
   void slotStopStream();
   void slotEndWork();
   void slotReset() {};
+
+  signals:
+  void signalStart(); 
+  void signalStop();  
+  void signalReset();  
 
   private:
 

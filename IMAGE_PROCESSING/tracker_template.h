@@ -14,7 +14,6 @@ class ImageTrackerTemplate : public ModuleImageProcessing
 public:
     explicit ImageTrackerTemplate(QObject* parent = 0): ModuleImageProcessing("[TRACKER TEMPLATE]") 
     { 
-      SetLowFrequencyProcessing();
       SizeROI = SettingsRegister::GetValue("PROCESSING_ROI1");
       QObject::connect(this,&ModuleImageProcessing::signalCoord, this, &ImageTrackerTemplate::SlotSetInput, Qt::QueuedConnection);
     };
@@ -22,7 +21,6 @@ public:
     explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): 
              ModuleImageProcessing(width, height, size, "[TRACKER TEMPLATE]") 
     { 
-      SetLowFrequencyProcessing();
     };
     ~ImageTrackerTemplate() {};
 
