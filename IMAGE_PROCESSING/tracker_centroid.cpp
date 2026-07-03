@@ -42,12 +42,16 @@ ImageTrackerCentroid::~ImageTrackerCentroid() { qDebug() << TAG_NAME << "[ DELET
 
 bool ImageTrackerCentroid::isIntersects(const QPair<float,float>& Coord)
 {
+  //if(Coord.first == CoordsObject[0].first &&
+  //   Coord.second == CoordsObject[0].second ) return true;
+
                auto Diff = Coord - CoordsObject[0];
   return std::hypot(Diff.first,Diff.second) < SizeROI*0.9;
 }
 
 bool ImageTrackerCentroid::isIntersects(ImageTrackerCentroid& Tracker)
 { return isIntersects(Tracker.getOutput());  }
+
 bool ImageTrackerCentroid::isIntersects(std::shared_ptr<ImageTrackerCentroid> Tracker)
 { return isIntersects(Tracker->getOutput()); }
 
@@ -71,83 +75,82 @@ QPair<float,float> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 }
 
 
-void ImageTrackerCentroid::setInput(const QPair<float,float>& Coord)
-{
-  if(StateProcessing == StatesModule::Idle) SetStateActive();
-  if(StateProcessing == StatesModule::WorkTrack && ModeProcessing == ModesModule::Master) return;
-
-  MutexInput.lock();
-  RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
-                            Coord.second - SizeROI/2 , SizeROI, SizeROI);
-  StateProcessing = StatesModule::WorkTrack;  
-  MutexInput.unlock();
-};
+void ImageTrackerCentroid::setInput(const QPair<float,float>& Coord) { ModuleImageProcessing::setInput(Coord); };
 
 void ImageTrackerCentroid::SlotProcessImage()
 {
-
+                             if(StateProcessing == StatesModule::Idle) return;
                              if(SourceImage->empty()) return;
                              if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
 
                                                      FrameMeasureInput++;   
                                                      FrameMeasureProcess++; 
        //====================================================================
-                  *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return; ;  
+                  *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty())  return;   
 
                                           std::lock_guard<std::mutex> locker1(MutexInput);
                                           std::lock_guard<std::mutex> locker2(MutexImageAccess);
        //====================================================================
-                      ImageProcessing = *ImageInput;
+                           ImageProcessing = *ImageInput;
        TrackObjectCentroid(ImageProcessing, RectsObject[0]); 
                             ImageInput++; if(ImageInput == ImagesInput.end()) 
                                              ImageInput = ImagesInput.begin();
        //====================================================================
-                                                     FrameMeasureProcess++;
 
        if(isTrackHold()) PassCoordClass<float>::passCoord(); 
 
-       MutexImageAccessDisplay.lock(); ImageOutput = *ImageInput; MutexImageAccessDisplay.unlock();
+       MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
+
+                                                     FrameMeasureProcess++;
+
+       //qDebug() << OutputFilter::Filter(20) << "[ PERIOD PROCESS ]" << FrameMeasureProcess.getMilliseconds();
        //if( isTrackHold()) emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
-       //qDebug() << OutputFilter::Filter(50) << "[PROCESS TIME]" << FrameMeasureProcess.getMilliseconds();
 }
 
 void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image) 
 {
-
                                             FrameMeasureInput++;
-                                            FrameMeasureProcess++; MutexImageAccess.lock();
-
+                                            FrameMeasureProcess++; 
                            if(Image.empty()) return;  
                 *ImageInput = Image.clone(); 
+
+  std::lock_guard<std::mutex> locker1(MutexInput);
+  std::lock_guard<std::mutex> locker2(MutexImageAccess);
 
   TrackObjectCentroid(*ImageInput, RectsObject[0]); 
                        ImageInput++; if(ImageInput == ImagesInput.end()) 
                                         ImageInput = ImagesInput.begin();
 
-                                            FrameMeasureProcess++; MutexImageAccess.unlock();
 
      if(isTrackHold()) PassCoordClass<float>::passCoord(); 
-     MutexImageAccessDisplay.lock(); ImageOutput = *ImageInput; MutexImageAccessDisplay.unlock();
+
+       MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
+
+                                            FrameMeasureProcess++; 
+
 }
 
 void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)
 {
-  if(StateProcessing == StatesModule::Idle) return;
              CheckCorrectROI(ROI);
 
                              ImageProcessingROI = Image(ROI); if(ImageProcessingROI.empty()) return;
-    //FilterBlotch.FilterImage(ImageProcessingROI);
-    //
+    
          cv::minMaxLoc(ImageProcessingROI, &MinPixel, &MaxPixel);
-		 Threshold = MinPixel + (MaxPixel - MinPixel)*0.2;
+		 Threshold = MinPixel + (MaxPixel - MinPixel)*ThresholdLevel;
 
-  //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
+      //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
+      cv::medianBlur(ImageProcessingROI, ImageProcessingROI,7);
+      FilterSharpen(ImageProcessingROI, ImageProcessingROI); 
+      //FilterErosion(ImageProcessingROI, ImageProcessingROI); 
+     //cv::medianBlur(ImageProcessingROI, ImageProcessingROI,3);
+     //FilterBlotch.FilterImage(ImageProcessingROI);
   //cv::morphologyEx(ImageProcessingROI, ImageProcessingROI, cv::MORPH_OPEN, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5))); 
   //====================================================
   bool isNoSignal =  ProcessImage(ImageProcessingROI); if(!isNoSignal) return;
 
   CoordsObject[0].first  += ROI.x; 
-  CoordsObject[0].second += ROI.y; if(ModeProcessing == ModesModule::Slave) return;
+  CoordsObject[0].second += ROI.y; if(ModeProcessing == ModesModule::SlaveActive) return;
   
   ROI = cv::Rect(CoordsObject[0].first  - SizeROI/2, 
                  CoordsObject[0].second - SizeROI/2 ,SizeROI,SizeROI);
@@ -170,6 +173,7 @@ bool ImageTrackerCentroid::ProcessImage(cv::Mat& Image)
 			for (int col = 0; col < Image.cols; col++)
 			{
 				  if (RowData[col] < Threshold) { RowData[col] = 0; continue; } RowData[col] = 255;
+				  //if (RowData[col] < Threshold) RowData[col] = 255; else RowData[col] = 0;
 
 					sum   += RowData[col];
 					sum_x += RowData[col] * col;
@@ -190,7 +194,6 @@ bool ImageTrackerCentroid::ProcessImage(cv::Mat& Image)
 }
 
 
-void ImageTrackerCentroid::SlotResetProcessing() { ModuleImageProcessing::SlotResetProcessing(); }
 
 void ImageTrackerCentroid::makeFilters()
 {

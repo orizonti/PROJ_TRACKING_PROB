@@ -13,6 +13,7 @@
 #include "device_generic_interface.h"
 #include "register_settings.h"
 
+std::string getDepthString(const cv::Mat& mat);
 
 class CameraInterfaceUniversal :public QObject, 
                                 public SourceImageInterface, 
@@ -28,18 +29,38 @@ class CameraInterfaceUniversal :public QObject,
            ~CameraInterfaceUniversal();
 
   public:
-  std::pair<int,int> SIZE_ROI = SettingsRegister::GetPair("PROCESS_ROI_SIZE");
-  std::pair<int,int> OFFSET_ROI = SettingsRegister::GetPair("PROCESS_ROI_OFFSET");
+  std::pair<int,int> SIZE_ROI = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
   std::pair<int,int> SIZE_CAMERA = SettingsRegister::GetPair("CAMERA_RESOLUTION");
+  std::pair<int,int> OFFSET_ROI = (SIZE_CAMERA - SIZE_ROI)*0.5;
 
   std::string    TAG_NAME{"[ CAMERA_RTSP ]"};
   std::string CAMERA_INFO{"[ CAMERA NO DATA ]"};
 
-  cv::Mat inputImage          {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
+  cv::Mat outputImage        {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
+  cv::Mat inputImage         {SIZE_CAMERA.first,SIZE_CAMERA.second,CV_8UC3};
+  cv::Mat inputImageProcess;
+
+  cv::Mat inputImageGray     {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
   cv::Mat inputImageResized   {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
-  cv::Mat inputImageProcessed {SIZE_ROI.first,SIZE_ROI.second,CV_8UC1};
+  cv::Mat inputImageRotated   {SIZE_ROI.first,SIZE_ROI.second,CV_8UC3};
 
   cv::Rect rectCrop{OFFSET_ROI.first,OFFSET_ROI.second,SIZE_ROI.first,SIZE_ROI.second};
+  //cv::Rect rectCrop2{1,1,640,480};
+
+  //=============================================
+  std::pair<int,int> ImagePos {20 ,20 }; 
+
+  std::vector<QPair<int,int>> CameraPoints{2};
+  std::vector<QRect>          CameraRects {2};
+
+  cv::VideoCapture capture;
+  QTimer timerGetFrame{this};
+
+  QMutex mutexStorage;
+  QMutex mutexDirectImage;
+  std::vector<std::shared_ptr<CameraImageStorage<CameraInterfaceUniversal>>> ImageStore;
+  //=============================================
+
   QString getName() override { return QString::fromStdString(TAG_NAME); };
 
   void moveToThread(QThread* thread);
@@ -83,19 +104,6 @@ class CameraInterfaceUniversal :public QObject,
   MeasurePeriodNode FrameMeasureInput;
   MeasurePeriodNode FrameMeasureProcess;
 
-  //=============================================
-  std::pair<int,int> ImagePos {20 ,20 }; 
-  std::pair<int,int> SizeImage{1440/2,1440/2}; 
-
-  std::vector<QPair<int,int>> CameraPoints{2};
-  std::vector<QRect>          CameraRects {2};
-
-  cv::VideoCapture capture;
-  QTimer timerGetFrame{this};
-
-  QMutex mutexStorage;
-  std::vector<std::shared_ptr<CameraImageStorage<CameraInterfaceUniversal>>> ImageStore;
-  //=============================================
 
   public slots:
   void slotGetFrame();

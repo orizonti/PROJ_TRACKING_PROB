@@ -20,7 +20,7 @@
 
 template<typename T_CONNECTION, int NUM_DEVICE>
 class DeviceLaserInterface : public DeviceGenericInterface<T_CONNECTION, 
-                                                           MessageGenericExt<CommandDeviceRedux<NUM_DEVICE>  ,MESSAGE_HEADER_EXT>, 
+                                                           MessageGenericExt<CommandDeviceRedux<NUM_DEVICE> ,MESSAGE_HEADER_EXT>, 
                                                            RequestDeviceRedux<NUM_DEVICE>>
 {
 public:

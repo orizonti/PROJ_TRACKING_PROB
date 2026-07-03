@@ -51,8 +51,14 @@ class VideoStreamRTSP
 
   cv::Mat frameOutput;
   cv::Mat frameOutputScaled;
-  SourceImageInterface* ImageSource = nullptr;
-  void linkToSource(SourceImageInterface* Source);
+  std::shared_ptr<SourceImageInterface> ImageSource = nullptr;
+  void linkToSource(std::shared_ptr<SourceImageInterface> Source);
+
+  friend void operator|(std::shared_ptr<SourceImageInterface> Source, 
+                        std::shared_ptr<VideoStreamRTSP> Rec)
+  {
+      Rec->linkToSource(Source->getImageSourceChannel());
+  }
 };
 
 #endif

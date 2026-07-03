@@ -18,6 +18,7 @@
 #include "device_generic_interface.h"
 #include "interface_node_signal_adapter.h"
 #include "register_settings.h"
+#include "thread_operation_nodes.h"
 
 
 class NodeRectToCoord: public PassCoordClass<float>
@@ -47,8 +48,8 @@ class ModuleImageProcessing : public QObject,
 
 Q_OBJECT
 public:
-          enum class ModesModule  { Master = 0, Slave = 1};
-          enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};
+          enum class ModesModule  { Master = 0, SlaveActive = 1, SlavePassive = 2};
+          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};
 
 ModuleImageProcessing(QString name = "[TRACKER]", QObject* parent = 0); 
 ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]" , QObject* parent = 0); 
@@ -66,6 +67,13 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     friend std::shared_ptr<ModuleImageProcessing> operator>>(const cv::Mat& Image, std::shared_ptr<ModuleImageProcessing> Module);
     
     public:
+
+    NodeCoordPassNop<float> NopNode;
+    PassCoordClass<float>& operator>>(PassCoordClass<float>& Receiver) override 
+    { 
+    if(PassCoordClass<float>::PassBlocked) return NopNode; 
+              CoordsObject[0] >> Receiver; return Receiver; }
+
 
     MeasurePeriodNode FrameMeasureInput;
     MeasurePeriodNode FrameMeasureProcess;
@@ -85,7 +93,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
 
     const std::vector<QPair<int,int>>& getPoints() override;  
     const std::vector<QRect>&           getRects() override;  
-    const std::string&                  getInfo() override;  
+    const std::string&                   getInfo() override;  
                                  QString getName() override { return "[PROCESSING NODE]"; };
             std::pair<float,float> getTickPeriod() override ;
     //===================================================
@@ -94,53 +102,58 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     void linkToModule(std::shared_ptr<SourceImageInterface > ImageSource);
     void linkToModule(std::shared_ptr<ModuleImageProcessing> ImageSource);
 
-    friend std::shared_ptr<ModuleImageProcessing> operator| (std::shared_ptr<SourceImageInterface > Source, 
-                                                             std::shared_ptr<ModuleImageProcessing> Rec);
+    friend std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<SourceImageInterface > Source, 
+                                                            std::shared_ptr<ModuleImageProcessing> Rec);
 
-    friend void operator | (std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst);
+    friend std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<ModuleImageProcessing> Source, 
+                                                            std::shared_ptr<ModuleImageProcessing> Dst);
 
     bool isLinkedSource() { return SourceImage != nullptr;}
 
     std::vector<std::shared_ptr<ModuleImageProcessing>> Links;
     //===================================================================================
-    
-               StatesModule StateProcessing { StatesModule::Idle }; 
-                ModesModule ModeProcessing  { ModesModule::Master}; 
-
-    void SetSlaveMode()   { ModeProcessing  = ModesModule::Slave; }
-
-    void SetStateActive() { emit signalStart(); };
-    void SetStateIdle()   { emit signalStop(); }; 
-    void SetReset()       { emit signalReset(); }; 
-
-    bool isIdle()   { return StateProcessing == StatesModule::Idle;  } 
-    bool isActive() { return StateProcessing != StatesModule::Idle;  } 
-    virtual bool isTrackHold() { return StateProcessing != StatesModule::Idle; }
-     
                           void setInput(const QPair<float,float>& Coord) override;
     const QPair<float,float>& getOutput()           override  { return CoordsObject[0]; }
-    //===================================================================================
     
+    void SetSlaveMode(ModesModule Mode)   { ModeProcessing  = Mode; StateProcessing = StatesModule::Idle; }
+
+    void SetStateActive() { if(isModulePassive()) return; emit signalStart(); };
+    void SetStateIdle()   { if(isModulePassive()) return; emit signalStop (); }; 
+    void SetReset()       {                               emit signalReset(); }; 
+
+            bool isDisabled()  { return StateProcessing == StatesModule::Disabled;     } 
+            bool isIdle()      { return StateProcessing == StatesModule::Idle;     } 
+            bool isActive()    { return StateProcessing != StatesModule::Idle || StateProcessing != StatesModule::Disabled;  } 
+    virtual bool isTrackHold() { return StateProcessing == StatesModule::WorkTrack;}
+
+
+    bool isModulePassive() { return ModeProcessing == ModesModule::SlavePassive;};
+    bool isModuleMaster()  { return ModeProcessing == ModesModule::Master;      };
+    bool isModuleSlave()   { return ModeProcessing == ModesModule::SlaveActive; };
+    //===================================================================================
     public slots:
     virtual void SlotSetInput(const QPair<float,float>& Coord) { setInput(Coord); };
+
     virtual void SlotResetProcessing();
     virtual void SlotStopProcessing ();
     virtual void SlotStartProcessing();
-
-            void SlotBlockOutput(bool OnOff) { this->PassBlocked = OnOff; } ;
-
     virtual void SlotSelectObject(std::pair<float,float> PointRelative) {};
-            void slotInputCoord  (std::pair<float,float> Coord) { setInput(Coord); };
+            void SlotBlockOutput(bool OnOff) { this->PassBlocked = OnOff; } ;
+    //===================================================================================
+
 
     public:
 
-    void SetThreshold(int Value)      { qDebug() << TAG_NAME << "[THRESHOLD]" << Value; this->Threshold = Value; } ;
-    void SetPeriodProcess(int period) { periodProcess = period; SetReset(); };
+    virtual void SetThreshold(float Value)    { this->Threshold = Value; } ;
+            void SetPeriodProcess(int period) { periodProcess = period; SetReset(); };
     //===================================================
     //DeviceGenericHandleControl
 	  void setParam (uint16_t CommandID, float    CommandParam) override {};
 	  void setValue (float Value) override { SetThreshold((int)Value); };
 	  void setEnable(bool OnOff, uint16_t Number = 0) override;
+    bool isEnabled()    override { return !isDisabled(); } 
+
+    bool isTypeActive() override { return true; } 
 
 
     NodeSignalAdapter NodeSignalEnable{this,0};
@@ -153,13 +166,16 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     std::mutex MutexInput;
 
     std::vector<cv::Mat> ImagesInput{10};
-    std::vector<cv::Mat>::iterator ImageInput{ImagesInput.begin()};
+    std::vector<cv::Mat> ImagesOutput{10};
+
+    std::vector<cv::Mat>::iterator ImageInput {ImagesInput.begin()};
+    std::vector<cv::Mat>::iterator ImageOutput{ImagesOutput.begin()};
 
     cv::Mat  ImageTemp1;
     cv::Mat  ImageTemp2;
+    cv::Mat  ImageTemp3;
     cv::Mat  ImageProcessing;
     cv::Mat  ImageProcessingROI;
-    cv::Mat  ImageOutput;
       QImage ImageToDisplay;
 
     //==================================================
@@ -168,24 +184,26 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     //===================================================
 
     public:
+    //PROCESSING DATA
     std::vector<QPair<float,float>> CoordsObject {3};
              std::vector<cv::Rect > RectsObject  {2};
              std::vector<cv::Point> PointsProcess{2};
                                 int Threshold = 50;
                                 int SizeROI  = SettingsRegister::GetValue("PROCESSING_ROI1");
-               QPair<float,float> SizeImage{SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE")};
+                 QPair<float,float> SizeImage{SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE")};
 
+               StatesModule StateProcessing { StatesModule::Disabled }; 
+                ModesModule ModeProcessing  { ModesModule::Master}; 
+    //=======================================================================================
     public:
+    //DISPLAY DATA
     std::string TAG_NAME = "[ TRACKER ]";
     std::string INFO     = "[ NO DATA ]";
-
     std::vector<QPair<int,int>> CoordsImage{2};
     std::vector<QRect>          RectsImage {2};
     std::vector<double>         ValuesImage{0,0,0,0,0,0,0,0,0,0,0};
-
-
+    //=======================================================================================
     signals:
-    void signalCoord(std::pair<float,float> Coord);
     void signalStart();
     void signalStop();
     void signalReset();

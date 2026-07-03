@@ -27,12 +27,15 @@ FinderObjectMoving::FinderObjectMoving(QObject* parent) : ModuleImageProcessing(
   for(int n = 0; n < 5; n++) 
   { 
            Trackers.push_back(std::make_shared<ImageTrackerCentroid>()); 
+           Trackers.back()->SetSlaveMode(ModuleImageProcessing::ModesModule::SlavePassive);
+           Trackers.back()->SlotResetProcessing();
+           Trackers.back()->TAG_NAME = QString("[TRACKER] %1").arg(n).toStdString();
+
     TrackEstimators.push_back(std::make_shared<EstimatorTrackHold<float>>());
   }
+  TrackersIdle = Trackers; //std::reverse(TrackersIdle.begin(), TrackersIdle.end());
+  for(auto& Tracker: TrackersIdle) qDebug() << "[IDLE]" << Tracker->TAG_NAME.c_str();
 
-  TrackerActive = Trackers.begin();
-    TrackerIdle = Trackers.begin();
-     TrackerEnd = Trackers.begin()+3;
 
   std::fill(TrackEstimations.begin(), TrackEstimations.end(),0);
 }
@@ -45,12 +48,14 @@ FinderObjectMoving::FinderObjectMoving(int width, int height, int size ,QObject*
   for(int n = 0; n < 5; n++) 
   { 
            Trackers.push_back(std::make_shared<ImageTrackerCentroid>()); 
+           Trackers.back()->SetSlaveMode(ModuleImageProcessing::ModesModule::SlavePassive);
     TrackEstimators.push_back(std::make_shared<EstimatorTrackHold<float>>());
+           Trackers.back()->SlotResetProcessing();
   }
 
-  TrackerActive = Trackers.begin();
-    TrackerIdle = Trackers.begin();
-     TrackerEnd = Trackers.begin()+3;
+  TrackersIdle = Trackers; //std::reverse(TrackersIdle.begin(), TrackersIdle.end());
+                           
+  for(auto& Tracker: TrackersIdle) qDebug() << "[IDLE]" << Tracker->TAG_NAME.c_str();
 };
 
 FinderObjectMoving::~FinderObjectMoving() { qDebug() << TAG_NAME << "[ DELETE ]"; }
@@ -65,31 +70,31 @@ bool FinderObjectMoving::isLinksHoldTrack()
 
 void FinderObjectMoving::SlotProcessImage()
 {
+  if( isLinksHoldTrack() ) 
+  { 
+    for(auto& link: Links) { qDebug() << link->TAG_NAME.c_str() << "[ HOLD ]" << link->isTrackHold(); };                                     
+    qDebug() << Qt::endl << TAG_NAME.c_str() << "[LINKED HOLD]";
+    SlotStopProcessing(); 
+  } 
+  std::lock_guard<std::mutex> locker(MutexImageAccess);
 
-  //if( isLinksHoldTrack() ) { StateProcessing = StatesModule::Idle; } 
-  if( isLinksHoldTrack() ) { SlotStopProcessing(); } 
-  if( SourceImage->empty() ) return;
-  if( StateProcessing == StatesModule::Idle) {timerProcessImage.stop(); return; }
-                                                       MutexImageAccess.lock();
+            if( SourceImage->empty() ) return;
                                                        FrameMeasureInput++;
                                                        FrameMeasureProcess++; 
-
   *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return;  
              if(SourceImage->getAvailableFrames() > 2) 
                 SourceImage->skipFrames();
 
-  ProcessImage(*ImageInput); ImageOutput = ImageProcessing;
+  ProcessImage(*ImageInput); 
                 ImageInput++; if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin();
 
                                                        FrameMeasureProcess++;
-                                                       MutexImageAccess.unlock();
 
-  qDebug() << OutputFilter::Filter(20)<< "[ FIND MOVING OBJECT ] PERIOD" << FrameMeasureProcess.printPeriod();
+  MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
 
 
   if( !isTrackHold() ) return;
-  qDebug() << "[ FIND MOVING OBJECT ] CATCH" << CoordsObject[0].first << CoordsObject[0].second;
-  emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
+  PassCoordClass<float>::passCoord();
 
 }
 //cv::cvtColor(Image, this->ImageInput, cv::COLOR_BGR2GRAY);
@@ -101,25 +106,34 @@ void FinderObjectMoving::SlotProcessImage(const cv::Mat& Image)
 
                           if(Image.empty()) return;  
                *ImageInput = Image.clone(); 
-  ProcessImage(*ImageInput); ImageOutput = ImageProcessing;
+  ProcessImage(*ImageInput); 
                 ImageInput++; if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin();
 
                                                  FrameMeasureProcess++; MutexImageAccess.unlock();
 
+  MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
   //qDebug() << OutputFilter::Filter(50)<< "[ FIND MOVING OBJECT ] PERIOD" << FrameMeasureProcess.printPeriod();
 
   if( !isTrackHold() ) return;
-  emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
-
-  if( isLinksHoldTrack() ) { StateProcessing = StatesModule::Idle; } 
-       //PassCoordClass<float>::passCoord(); 
+  PassCoordClass<float>::passCoord();
 }
 
 bool FinderObjectMoving::isTrackerHasDublicate(std::shared_ptr<ImageTrackerCentroid> TrackerCheck)
 {
-  for(auto& Tracker: Trackers) if(Tracker->isIntersects(TrackerCheck)) return true;
+  for(auto& Tracker: Trackers)
+  {
+    if(!Tracker->isTrackHold())  continue;
+    if( Tracker == TrackerCheck) continue;
+    if( Tracker->isIntersects(TrackerCheck)) return true;
+  }
+
   return false;
 }
+
+//bool FinderObjectMoving::isIntersects(std::shared_ptr<ImageTrackerCentroid> TrackerCheck)
+//{
+//  if(Tracker->isIntersects(TrackerCheck));
+//}
 
 bool FinderObjectMoving::isRectOnTrack(cv::Rect rect)
 {
@@ -129,57 +143,98 @@ bool FinderObjectMoving::isRectOnTrack(cv::Rect rect)
 
 void FinderObjectMoving::ProcessImage(cv::Mat& Image)
 {
-    if(StateProcessing == StatesModule::Idle) return;
+    if(StateProcessing == StatesModule::Disabled) return;
 
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
 
     backSubstractor->apply(Image, ImageTemp1);
                     //FilterErosion(ImageTemp1, ImageTemp2); 
-                 cv::morphologyEx(ImageTemp1, ImageProcessing, cv::MORPH_OPEN, kernel); // morphological operations to remove noise and fill holes
+   cv::morphologyEx(ImageTemp1, ImageProcessing, cv::MORPH_OPEN, kernel); 
+   // morphological operations to remove noise and fill holes
                                  FindContours(ImageProcessing);
 
 
         for(auto Rect: FindContours)
         {
-                                if(TrackerIdle == TrackerEnd) return; 
-                                if(isRectOnTrack(Rect)      ) continue;
-          Rect >> RectToCoord >> **TrackerIdle; 
-                   TrackerActive = TrackerIdle; //qDebug() << "[ INIT TRACKER ]" << TrackerEnd - TrackerActive << (*TrackerActive)->isActive();
-                                   TrackerIdle++; 
+                                if(TrackersIdle.empty()) break;; 
+                                if(isRectOnTrack(Rect) ) continue;
+
+          auto Tracker = TrackersIdle.back(); TrackersIdle.pop_back();
+          Rect >> RectToCoord >> *Tracker; 
+
+          qDebug() << Tracker->TAG_NAME << "[INIT TRACKER]" << Tracker->isTrackHold();
         }
 
         ImageProcessing >> *Trackers[0] >> *TrackEstimators[0] >> TrackEstimations[0];
         ImageProcessing >> *Trackers[1] >> *TrackEstimators[1] >> TrackEstimations[1];
         ImageProcessing >> *Trackers[2] >> *TrackEstimators[2] >> TrackEstimations[2];
 
-        if(Trackers[2]->isActive() && isTrackerHasDublicate(Trackers[2])) { Trackers[2]->SlotResetProcessing(); TrackerIdle--; 
-                                                                            TrackEstimators[2]->reset(); 
-                                                                            TrackEstimations[2] = 0; }
-
-        if(Trackers[1]->isActive() && isTrackerHasDublicate(Trackers[1])) { Trackers[1]->SlotResetProcessing(); TrackerIdle--; 
-                                                                            TrackEstimators[1]->reset(); 
-                                                                            TrackEstimations[1] = 0; }
+        if(Trackers[2]->isTrackHold() && isTrackerHasDublicate(Trackers[2])) resetTracker(2);
+        if(Trackers[1]->isTrackHold() && isTrackerHasDublicate(Trackers[1])) resetTracker(1);
 
         auto max = std::max_element(TrackEstimations.begin(), TrackEstimations.begin()+3);
         auto num = std::distance   (TrackEstimations.begin(), max);
 
+        if(*max > 80) 
+        {
          CoordsObject[0] = Trackers[num]->CoordsObject[0];
           RectsObject[0] = Trackers[num]->RectsObject[0];
+        }
+
 
         IS_MOVING = TrackEstimators[0]->EstimatorVelocity.isMoving() ||
                     TrackEstimators[1]->EstimatorVelocity.isMoving() ||
                     TrackEstimators[2]->EstimatorVelocity.isMoving();
 
-                                                                                 FindContours.PrintContoursRect(ImageProcessing);
+         FindContours.PrintContoursRect(ImageProcessing);
 
-    qDebug() << OutputFilter::Filter(4) << "[TRACK1 ]" << TrackEstimators[0]->EstimatorVelocity.isMoving() << (int)TrackEstimations[0] 
-                                        << "[TRACK2 ]" << TrackEstimators[1]->EstimatorVelocity.isMoving() << (int)TrackEstimations[1] 
-                                        << "[TRACK3 ]" << TrackEstimators[2]->EstimatorVelocity.isMoving() << (int)TrackEstimations[2] 
-                                        << "[MOVING]" << IS_MOVING;
+//   auto Diff = Trackers[1]->CoordsObject[0] - Trackers[0]->CoordsObject[0];
+//   auto dist = std::hypot(Diff.first,Diff.second);
+//
+//   auto Diff2 = Trackers[2]->CoordsObject[0] - Trackers[0]->CoordsObject[0];
+//   auto dist2 = std::hypot(Diff.first,Diff.second);
+//    qDebug() << OutputFilter::Filter(10) 
+//    << "[TRACK1 ]" << Trackers[0]->isTrackHold() << Trackers[0]->CoordsObject[0].first << Trackers[0]->CoordsObject[0].second
+//    << "[TRACK2 ]" << Trackers[1]->isTrackHold() << Trackers[1]->CoordsObject[0].first << Trackers[1]->CoordsObject[0].second
+//    << "[TRACK3 ]" << Trackers[2]->isTrackHold() << Trackers[2]->CoordsObject[0].first << Trackers[2]->CoordsObject[0].second
+//    << "[MOVING]" << IS_MOVING << dist << dist2;
+
+    qDebug() << OutputFilter::Filter(20) 
+    << Trackers[0]->TAG_NAME.c_str() << Trackers[0]->isTrackHold() << int(TrackEstimations[0])
+    << Trackers[1]->TAG_NAME.c_str() << Trackers[1]->isTrackHold() << int(TrackEstimations[1])
+    << Trackers[2]->TAG_NAME.c_str() << Trackers[2]->isTrackHold() << int(TrackEstimations[2]);
+}
+
+void FinderObjectMoving::resetTracker(int number)
+{
+   qDebug() << TAG_NAME.c_str() << "[RESET TRACKER]" << number;
+   Trackers[number]->SlotResetProcessing(); 
+   TrackerIdle--; 
+   TrackEstimators[number]->reset(); 
+   TrackEstimations[number] = 0; 
+   TrackersIdle.push_back(Trackers[number]);
 }
 
 
-void FinderObjectMoving::SlotResetProcessing() { }
+void FinderObjectMoving::SlotResetProcessing() 
+{ 
+  qDebug() << TAG_NAME.c_str() << "[RESET PROCESSING]";
+  ModuleImageProcessing::SlotResetProcessing();
+  IS_MOVING = false;
+
+  FindContours.reset();
+
+  TrackEstimations[0] = 0;
+  TrackEstimations[1] = 0;
+  TrackEstimations[2] = 0;
+
+  for(auto& Estimator: TrackEstimators) Estimator->reset(); 
+  for(auto& Tracker: Trackers) { Tracker->SlotResetProcessing(); }
+
+  TrackersIdle = Trackers; std::reverse(TrackersIdle.begin(), TrackersIdle.end());
+
+  for(auto& Tracker: TrackersIdle) qDebug() << "[IDLE]" << Tracker->TAG_NAME.c_str();
+}
 
 
 void FinderObjectMoving::makeFilters()

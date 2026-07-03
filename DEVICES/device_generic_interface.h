@@ -21,6 +21,9 @@ class DeviceGenericHandleControl
 
 	virtual void  setParam (uint16_t CommandID, float    CommandParam) {} ;
 	virtual float getParam (uint16_t CommandID) { return 0;} ;
+
+  virtual bool isEnabled()    { return false; } 
+  virtual bool isTypeActive() { return false; } 
 };
 
 

@@ -16,6 +16,8 @@ class ContoursProcessorClass
 
     void SetImage(const cv::Mat& Image);
     void operator()(const cv::Mat& Image){ SetImage(Image);}
+    void reset();
+
 
                       int ContoursCount = 0;
       std::vector<double> ContourAreas;
@@ -45,8 +47,8 @@ class ContoursProcessorClass
 
     private:
         cv::Mat InputImage;
-        int minLimit = 3*3;
-        int maxLimit = 60*60;
+        int minLimit = 20*20;
+        int maxLimit = 80*80;
 
     std::vector<cv::Rect>::iterator RectOutput;
     std::vector<cv::Rect>::iterator RectEnd;
@@ -56,6 +58,7 @@ class ContoursProcessorClass
 
     std::vector<std::vector<cv::Point>> Contours;
                 std::vector<cv::Vec4i>  Hierarchy;
+    using TypeContour = std::vector<cv::Point>;
 
 };
 

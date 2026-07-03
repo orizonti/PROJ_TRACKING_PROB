@@ -16,12 +16,18 @@ ContoursProcessorClass::ContoursProcessorClass()
     std::fill(ContourRects.begin(), ContourRects.end(), cv::Rect(0,0,0,0));
 }
 
+void ContoursProcessorClass::reset()
+{
+     ContoursCount = 0;
+}
+
 void ContoursProcessorClass::SetImage(const cv::Mat& Image)
 {
 	Contours.clear(); 
    rectImage.width = Image.cols;
    rectImage.height = Image.rows;
 
+  cv::medianBlur(Image, Image,7);
 	cv::findContours(Image,Contours,cv::RETR_EXTERNAL,cv::CHAIN_APPROX_SIMPLE);
 
 	  if(Contours.size() <= 0) return;
@@ -35,6 +41,12 @@ void ContoursProcessorClass::SetImage(const cv::Mat& Image)
              RectEnd = ContourRects.begin(); 
 
       int ContourMaxArea = 0;
+
+      std::sort(Contours.begin(), Contours.end(), [](TypeContour& cont1, TypeContour& cont2) -> bool
+      {
+        return cv::boundingRect(cont1).area() < cv::boundingRect(cont2).area();
+      });
+
       for(auto& contour: Contours)
       {
          ContourArea = cv::contourArea (contour);
@@ -50,7 +62,8 @@ void ContoursProcessorClass::SetImage(const cv::Mat& Image)
       }
       CheckCorrectROI(rectMax);
      
-             RectEnd = RectOutput; RectOutput = ContourRects.begin(); //if(countContoursFiltered() > 2) qDebug() << "COUNT: " << countContoursFiltered();
+             RectEnd = RectOutput; RectOutput = ContourRects.begin(); 
+     //if(countContoursFiltered() > 2) qDebug() << "COUNT: " << countContoursFiltered();
      RectEndFiltered = RectOutputFiltered;
 }
 
@@ -63,9 +76,13 @@ std::pair<float,float> ContoursProcessorClass::getPosMaxRect() { return std::mak
 
 void ContoursProcessorClass::PrintContoursRect(cv::Mat& OutputImage)
 {
-	if(ContourRects.empty()) return;
+	 if(ContourRects.empty()) return;
    int counter = 0;
-   for(auto Rect: ContourRects) {if(counter >= ContoursCount) return; cv::rectangle(OutputImage,Rect,cv::Scalar(600,600,600),1); counter++; }
+
+   for(auto Rect: ContourRects) 
+   { if(counter >= ContoursCount) return; cv::rectangle(OutputImage,Rect,cv::Scalar(600,600,600),1); counter++; }
+
+   //cv::imshow("TEST IMAGE", OutputImage);
 }
 
 cv::Rect& ContoursProcessorClass::getScaledMaxRect(float Scale)

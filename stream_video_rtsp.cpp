@@ -1,6 +1,7 @@
 #include "stream_video_rtsp.h"
 //#include <opencv4/opencv2/highgui.hpp>
 #include "debug_output_filter.h"
+#include <QThread>
 
 GstCaps* VideoStreamRTSP::videoParam;
 
@@ -81,7 +82,6 @@ void VideoStreamRTSP::writeFrame(cv::Mat& frame)
 
     GstFlowReturn ret = gst_app_src_push_buffer(GST_APP_SRC(appsrc_ptr), bufferOut);
 
-    //cv::imshow("test",frame);
 }
 
 //void ctx_free (ContextStructRTSP * ctx)
@@ -92,18 +92,18 @@ void VideoStreamRTSP::writeFrame(cv::Mat& frame)
 
 void VideoStreamRTSP::grabFramesProcess()
 {
-    std::cout << "[ RTSP STREAM ]" << "[ START GRAB FRAMES ]" << std::endl;
-    while(FLAG_RUN_STREAM)
-    {
-    //ImageSource->getImageToProcess(frameOutput);
-    frameOutput = ImageSource->getImageToProcess();
-                           writeFrame(frameOutput);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000/50));
-
-    }
+  std::cout << "[ RTSP STREAM ]" << "[ START GRAB FRAMES ]" << std::endl;
+  while(FLAG_RUN_STREAM)
+  {
+              frameOutput = ImageSource->getImageToProcess().clone(); 
+          if( frameOutput.empty())  { std::this_thread::sleep_for(std::chrono::milliseconds(1000/25)); continue; }
+   writeFrame(frameOutput);           std::this_thread::sleep_for(std::chrono::milliseconds(1000/25));
+  //cv::imshow("test",frameOutput);
+  }
+  std::cout << "[ RTSP STREAM ]" << "[ END ]" << std::endl;
 }
 
-void VideoStreamRTSP::linkToSource(SourceImageInterface* Source)
+void VideoStreamRTSP::linkToSource(std::shared_ptr<SourceImageInterface> Source)
 {
     auto [width, height] = Source->getSizeImage();
    std::cout << "[ RTSP STREAM ]" << "[ LINK TO IMAGE SOURCE ]" << width << height << std::endl;

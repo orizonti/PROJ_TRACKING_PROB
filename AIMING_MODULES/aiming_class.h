@@ -16,26 +16,33 @@
 #include "interface_node_signal_adapter.h"
 #include "nodes_track_approximation.h"
 #include <queue>
+#include "SETTINGS_PATH.h"
+#include PATH_SETTINGS_DEFINES
 
 template<typename T>
 class TimeIntegratorClass : public PassCoordClass<T>
 {
 	public:
-	QPair<T,T> CoordIntegral;
+  PassCoordClass<T>& operator()(float Value) {Saturation.setLimit(Value); return *this; };
+  PassCoordClass<T>& operator()(float Value, float Value2) {Saturation.setLimit(Value, Value2); return *this; };
+	QPair<T,T> CoordTemp{0,0};
+  NodeCoordSaturation<float> Saturation{30000};
+  
 
     std::chrono::time_point<std::chrono::high_resolution_clock> LastTimePoint;
-	float StepPeriod = 0;
-  void Reset() { CoordIntegral = QPair<float,float>(0,0); StepPeriod = 0;}
+	         float StepPeriod = 0;
+  void Reset() { StepPeriod = 0;}
 
 	void setInput(const QPair<T,T>& Coord) override
 	{
 	auto TimePoint = std::chrono::high_resolution_clock::now();
 	    StepPeriod = std::chrono::duration<float>((TimePoint - LastTimePoint)).count(); 
 
-	LastTimePoint = TimePoint; if(StepPeriod*1000 > 100) return;
+	LastTimePoint = TimePoint; if(StepPeriod*1000 > 50) return;
 
-    PassCoordClass<float>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
-
+    //PassCoordClass<float>::OutputCoord = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
+    CoordTemp = PassCoordClass<float>::OutputCoord + Coord*StepPeriod;
+    CoordTemp >> Saturation >> PassCoordClass<float>::OutputCoord;
 	}
 
 };
@@ -80,6 +87,7 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
              std::string TAG_NAME = QString("[%1] ").arg("AIMING",15).toStdString();
   std::pair<int,int> RANGE_COORDS = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
 
+
          int NumberChannel = 0;
   static int ModuleCounter;
   QTimer timerProcessAiming;
@@ -87,20 +95,33 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   TypeEnumBlock  TypeBlock   = TypeEnumBlock::AimingBlock;
   StateEnumBlock StateBlock  = StateEnumBlock::StateBlockDisabled;
   TypeEnumAiming AimingState = AimingDirect;
+  static constexpr int TypeAimingSchemeUsed = USE_AIMING_SCHEME;
 
-  PolynomApproximation<3> trackApproximation1{100,10};
-  PolynomApproximation<3> trackApproximation2{100,10};
+  float sizeWindowApprox = 20;
+  float sizeRollbackApprox = 10;
+  float sizeFutureStep = sizeRollbackApprox/sizeWindowApprox;
+  PolynomApproximation<3> trackApproximation1{(int)sizeWindowApprox,(int)sizeRollbackApprox};
+  PolynomApproximation<3> trackApproximation2{(int)sizeWindowApprox,(int)sizeRollbackApprox};
+
+         int periodProcessInput = 20;
+         int periodProcess = 2;
+         //int periodProcess = periodProcessInput/sizeRollbackApprox;
 
   NodeCoordPassValue<float> PickValue; NodeCoordJoinValue<float> JoinValue;
   NodeCoordSplitToTime<float> SplitToTime1; 
   NodeCoordSplitToTime<float> SplitToTime2; 
 
   
-  std::vector<float> GainList{0.2,
+  std::vector<float> GainList {0.1,
+                               0.0,
+                               0.0,
                                1.0,
-                               1.0,
-                               1000};
+                               1.0};
 
+  void setGain(float Gain, int Number); 
+  void setGainList(float Gain1, float Gain2, float Gain3, float Gain4);
+  void setCommand(CommandDevice<0> Command);
+  
 
   MeasurePeriodNode FrameMeasureInput;
   
@@ -113,6 +134,7 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
         NodeCoordGain<float> Gain{10};
   NodeCoordSaturation<float> Saturation{30000};
   NodeCoordPassFilter<float> PassFilter{30};
+        NodeCoordFlip<float> FlipCoord;
   
   float GetAbsError();
   const QPair<float, float>& getOutput() override;
@@ -129,6 +151,7 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   void slotProcessLoop1();
   void slotProcessLoop2();
   void slotProcessLoop3();
+  void slotProcessLoop4();
 
   void slotProcessLoopForCalibration();
   void slotProcessDirect1();
@@ -147,6 +170,7 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   void SetStateActive(); 
   void SetStateIdle  (); 
   void SetReset();
+  void setState(int state);
 
   void moveToThread(QThread* thread);
   //========================================================
@@ -157,9 +181,7 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
   void MoveAimingCorrection (const QPair<float, float>& Velocity);
   void SetOutputCorrection(const QPair<float, float>& Coord);
 
-  void setPIDParam(PIDParamStruct param);
   void setAimingRegim(TypeEnumAiming Aiming);
-  void SetGain(int Number, float Gain);
   //========================================================
   
   
@@ -188,11 +210,6 @@ class AimingClass : public QObject, public PassCoordClass<float>, public DeviceG
 
   
   SignalPortAdapter PortSignalSetAiming;
-  
-  PIDParamStruct AimingSlowParam;
-  PIDParamStruct AimingWorkSlowParam;
-  PIDParamStruct AimingFastParam;
-  std::vector<PIDParamStruct> PIDParamTable;
   
   PIDClass ModulePID;
   

@@ -29,6 +29,7 @@ QObject::connect(this,SIGNAL(signalStart()), this, SLOT(SlotStartProcessing()),Q
 QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(SlotStopProcessing()) ,Qt::QueuedConnection);
 QObject::connect(this,SIGNAL(signalReset()), this, SLOT(SlotResetProcessing()),Qt::QueuedConnection);
 
+  PassCoordClass<float>::PassBlocked = false; 
 };
 
 void ModuleImageProcessing::printInfo()
@@ -36,8 +37,9 @@ void ModuleImageProcessing::printInfo()
 qDebug() << TAG_NAME.c_str() << "[ WAIT IMAGE ]" << SizeImage.first << SizeImage.second << "[ ROI ]" << SizeROI;
 }
 
-ModuleImageProcessing::ModuleImageProcessing(int width, int height, int size, QString name, QObject* parent) : QObject(parent), 
-                                                                                                               TAG_NAME(name.toStdString())
+ModuleImageProcessing::ModuleImageProcessing(int width, int height, int size, QString name, QObject* parent) : 
+  QObject(parent), 
+  TAG_NAME(name.toStdString())
 {
          SizeROI = size;
 
@@ -88,21 +90,25 @@ void ModuleImageProcessing::getImageToProcess(cv::Mat& ImageDst)
 
 void ModuleImageProcessing::getImageToDisplay(QImage& ImageDst)
 {
-  std::lock_guard<std::mutex> locker(MutexImageAccessDisplay);
 
-  if(ImageOutput.empty())  return;  
+  MutexImageAccessDisplay.lock(); auto Image = *ImageOutput; 
+                                               ImageOutput++; if(ImageOutput == ImagesOutput.end()) 
+                                                                 ImageOutput = ImagesOutput.begin();
+  MutexImageAccessDisplay.unlock();
 
-  if(ImageDst.width() != ImageOutput.cols || ImageDst.height() != ImageOutput.rows) 
-       ImageDst = QImage(ImageOutput.cols,ImageOutput.rows,QImage::Format_RGB888);
+  if(Image.empty())  return;  
+
+  if(ImageDst.width() != Image.cols || ImageDst.height() != Image.rows) 
+       ImageDst = QImage(Image.cols, Image.rows,QImage::Format_RGB888);
 
 
-        for (int y = 0; y < this->ImageOutput.rows; ++y) 
+        for (int y = 0; y < Image.rows; ++y) 
         {
-            for (int x = 0; x < this->ImageOutput.cols; ++x) 
+            for (int x = 0; x < Image.cols; ++x) 
             {
-                ImageDst.setPixel(x, y, qRgb(this->ImageOutput.at<uchar>(y, x), 
-                                             this->ImageOutput.at<uchar>(y, x), 
-                                             this->ImageOutput.at<uchar>(y, x)));
+                ImageDst.setPixel(x, y, qRgb(Image.at<uchar>(y, x), 
+                                             Image.at<uchar>(y, x), 
+                                             Image.at<uchar>(y, x)));
             }
         }
 
@@ -129,9 +135,9 @@ void ModuleImageProcessing::linkToModule(std::shared_ptr<ModuleImageProcessing> 
    *this | *Dst; Links.push_back(Dst);
 }
 
-void operator|(std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst)
+std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst)
 {
-  Source->linkToModule(Dst); 
+  Source->linkToModule(Dst); return Dst; 
 }
 
 //=======================================================================================
@@ -183,48 +189,54 @@ if(ROI.y <= 0 ) ROI.y = 1;
 std::pair<float,float> ModuleImageProcessing::getTickPeriod() { return std::pair<float,float>(FrameMeasureInput.TickPeriod, 
                                                                                               FrameMeasureProcess.TickPeriod);};
 
-
 void ModuleImageProcessing::SlotResetProcessing() 
 { 
-  qDebug() << TAG_NAME.c_str() << "[RESET PROCESSING]";
+  StateProcessing = StatesModule::Idle; 
+  CoordsObject[0] = std::pair<float,float>(0,0);
+  PassCoordClass<float>::PassBlocked = true; 
 
-  MutexImageAccess.unlock();
-  MutexInput.unlock();
-
-  timerProcessImage.stop(); 
-  timerProcessImage.setInterval(periodProcess);
-
-  if(StateProcessing == StatesModule::Idle) return; 
-  SlotStartProcessing();
+  //qDebug() << TAG_NAME.c_str() << "[RESET STATE]" ; 
 }
 
 void ModuleImageProcessing::SlotStopProcessing() 
 { 
-  timerProcessImage.stop(); 
-  StateProcessing = StatesModule::Idle;
-  qDebug() << TAG_NAME.c_str() << "[ STOP PROCESSING ]" << QThread::currentThread(); 
+  qDebug() << Qt::endl; 
+  qDebug() << TAG_NAME.c_str() << "[STOP PROCESSING]"; 
+
+  SlotResetProcessing(); 
+  PassCoordClass<float>::PassBlocked = true; 
+
+  StateProcessing = StatesModule::Disabled; if(timerProcessImage.isActive()) timerProcessImage.stop(); 
+
 }
 
 void ModuleImageProcessing::SlotStartProcessing() 
 { 
+  qDebug() << TAG_NAME.c_str() << "[ START PROCESSING ]"; 
+  PassCoordClass<float>::PassBlocked = false; 
   StateProcessing = StatesModule::WorkTrack;
+  if(ModeProcessing == ModesModule::SlavePassive) return;
+
   timerProcessImage.start(); 
-  qDebug() << TAG_NAME.c_str() << "[ START PROCESSING ]" << QThread::currentThread(); 
 }
-
-
 
 void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
 {
-  if(StateProcessing == StatesModule::WorkTrack && ModeProcessing == ModesModule::Master) return;
+  if(StateProcessing == StatesModule::Disabled) return;
+  if(StateProcessing == StatesModule::WorkTrack) return;
 
   std::lock_guard<std::mutex> guard(MutexInput);
 
   CoordsObject[1] = Coord; 
-  RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
-                            CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
+   RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
+                             CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
 
-  StateProcessing = StatesModule::WorkTrack;
+  if(StateProcessing == StatesModule::Idle) SetStateActive(); 
+  if(isModulePassive()) StateProcessing = StatesModule::WorkTrack;
+  PassCoordClass<float>::PassBlocked = false; 
+
+  qDebug() << TAG_NAME.c_str() << "[SET INPUT]" << Coord.first << Coord.second
+                               << "[STATE]" << (int)StateProcessing;
 };
 
 ModuleImageProcessing& operator>>(const cv::Mat& Image, ModuleImageProcessing& Module)
@@ -241,12 +253,15 @@ std::shared_ptr<ModuleImageProcessing> operator>>(const cv::Mat& Image, std::sha
 
 void ModuleImageProcessing::setEnable(bool OnOff, uint16_t Number)
 {
+  qDebug() << TAG_NAME.c_str() << "[SET ENABLE]" << OnOff << Number;
   switch(Number)
   {
-    case 0: if(OnOff) emit signalStart(); else emit signalStop(); break; //ENABLE SIGNAL
-    case 1: emit signalStop(); break;                                       //FAULT SIGNAL
+    case 0: emit signalStop();  break;                                   //FAULT SIGNAL
+    case 1: if(OnOff) emit signalStart(); else emit signalStop(); break; //ENABLE SIGNAL
+    case 2: emit signalReset(); break;                                   
   }
 }
+
 
 void ModuleImageProcessing::moveToThread(QThread* thread)
 {

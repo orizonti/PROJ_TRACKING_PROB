@@ -27,16 +27,24 @@ TrackerFirst::~TrackerFirst() { tracker.release(); }
 void TrackerFirst::resetRectTrack(const cv::Mat& image, cv::Rect rectAim)
 {
 
-   if(image.empty()) { qDebug() << "[TRACKER KCF] RESET INPUT EMPTY"; } 
-   if(!IsROIValid(rectAim,image)) { rectAim = rect_template; qDebug() << TAG_NAME << "[ TRACK RECT IS NOT VALID ]"; };
+   //qDebug() << TAG_NAME.toStdString().c_str() << "[RESET INIT]" << "[IMAGE]" << image.cols << image.rows 
+   //                                                             << "[RECT ]" << rectAim.x << rectAim.y << rectAim.width << rectAim.height;
+                if(image.empty()) {  errorEmptyImage(false); return;}
+   if(!IsROIValid(rectAim,image)) { errorRectInvalid(false); return;}
 
-                                                 qDebug() << "[TRACKER KCF] RELEASE RESET";
+   rect_template = rectAim;
+   if(State == StatesModule::WorkTrack)
+   {
    tracker.release();
-   tracker = TypeTracker::create(params);        qDebug() << "[TRACKER KCF] INIT AFTER RESET";
-	                      rect_template = rectAim;
+   tracker = TypeTracker::create(params);        
+   }
+
    tracker->init(image, rect_template);
-   State = StatesModule::WorkTrack;              qDebug () << "[TRACKER KCF] INIT DONE"; 
+   State = StatesModule::WorkTrack;              
 }
+
+void TrackerFirst::errorEmptyImage(bool print)  { if(print) qDebug() << TAG_NAME.toStdString().c_str() << "[EMPTY IMAGE]"; }
+void TrackerFirst::errorRectInvalid(bool print) { if(print) qDebug() << TAG_NAME.toStdString().c_str() << "[RECT INVALID]"; }
 
 void TrackerFirst::setRectTrack(const cv::Mat& image, cv::Rect rectAim)
 {

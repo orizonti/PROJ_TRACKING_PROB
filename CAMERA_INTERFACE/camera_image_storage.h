@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <mutex>
 #include "debug_output_filter.h"
+#include <QThread>
 
 template<typename TYPE_CAMERA>
   class CameraImageStorage: public SourceImageInterface
@@ -46,8 +47,8 @@ template<typename TYPE_CAMERA>
 
     std::pair<int,int> getSizeImage() override { return SizeImage; };
 
-              cv::Mat& getImageToProcess() override { switchToNextFrame(); return ImageToProcess; }
-                void   getImageToProcess(cv::Mat& ImageDst) override  { switchToNextFrame(); ImageDst = ImageToProcess.clone(); };
+  cv::Mat& getImageToProcess()                  override { switchToNextFrame(); return ImageToProcess; }
+    void   getImageToProcess(cv::Mat& ImageDst) override { switchToNextFrame(); ImageDst = ImageToProcess.clone(); };
   };
 
 template<typename TYPE_CAMERA>   std::pair<int,int> CameraImageStorage<TYPE_CAMERA>::SizeImage; 
@@ -80,7 +81,7 @@ void CameraImageStorage<TYPE_CAMERA>::skipFrames()
 template<typename TYPE_CAMERA>
 bool CameraImageStorage<TYPE_CAMERA>::switchToNextFrame() 
 {
-   //std::lock_guard<std::mutex> locker(lockBuffer);
+   std::lock_guard<std::mutex> locker(lockBuffer);
 
    if(BufferToRead == BufferToWrite) return false; 
    if(getAvailableFrames() > 3) skipFrames();
@@ -96,12 +97,10 @@ template<typename TYPE_CAMERA>
 void CameraImageStorage<TYPE_CAMERA>::putNewFrameToStorage(cv::Mat& Frame)
 {
 
-                           //std::lock_guard<std::mutex> locker(lockBuffer);
+                           std::lock_guard<std::mutex> locker(lockBuffer);
 
                           *BufferToWrite = Frame.clone(); 
    ImageToDisplay = QImage(BufferToWrite->data,Frame.cols,Frame.rows,QImage::Format_Grayscale8);
-
-   //qDebug() << OutputFilter::Filter(100) << "PUT FRAME: " << ImageToDisplay.width() << ImageToDisplay.height();
 
                            BufferToWrite++; 
                         if(BufferToWrite == Buffers.end()) BufferToWrite = Buffers.begin();

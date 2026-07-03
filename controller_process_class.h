@@ -15,11 +15,17 @@
 
 #include "engine_udp_interface.h"
 #include "engine_can_interface.h"
+#include "engine_canopen_interface.h"
+#include "engine_uart_interface.h"
+
 #include "image_processing_node.h"
 #include "message_command_structures.h"
 #include "device_rotary_interface.h"
 #include "device_laser_interface.h"
 #include "aiming_monitoring_module.h"
+//#include "engine_uart_interface.h"
+#include "rotation_data_collector.h"
+
 #include "SETTINGS_PATH.h"
 #include PATH_SETTINGS_DEFINES
 
@@ -37,14 +43,21 @@ using TypeCamera = CameraInterfaceUniversal;
 #endif
 
 //=================================================================================================
-                             using CommandPlatform = MessageGenericExt<ControlTX, MESSAGE_HEADER_ROTARY>;
-                             using CommandScanator = CommandSetPosScanator;
+   using CommandPlatform = MessageGenericExt<ControlTX, MESSAGE_HEADER_ROTARY>;
+       using CommandScanator = CommandSetPosScanator;
 
-using TypeRotaryPlatform  = DeviceRotaryControl<UDPConnectionEngine, CommandPlatform, ControlRX>;
-using TypeRotaryScanator  = DeviceRotaryControl<CANConnectionEngine, CommandScanator, RequestPosScanator>;
+using TypeRotaryPlatform     = DeviceRotaryControl<UDPConnectionEngine    , CommandPlatform, ControlRX>;
+using TypeRotaryPlatform2    = DeviceRotaryControl<CANOpenConnectionEngine, CommandSetPosRotary, RequestPosRotary>;
+using TypeRotaryMirrorRemote = DeviceRotaryControl<EmptyConnectionEngine  , CommandSetPosRotary, RequestPosRotary>;
+
+using TypeRotaryScanator = DeviceRotaryControl<CANConnectionEngine  , CommandScanator, RequestPosScanator>;
 
 #if(USE_ROTARY_TYPE == ROTARY_TYPE_PLATFORM)
 using TypeDeviceRotary    = TypeRotaryPlatform;
+#endif
+
+#if(USE_ROTARY_TYPE == ROTARY_TYPE_PLATFORM_2)
+using TypeDeviceRotary    = TypeRotaryPlatform2;
 #endif
 
 #if(USE_ROTARY_TYPE == ROTARY_TYPE_SCANATOR)
@@ -88,21 +101,27 @@ static constexpr int TypeCameraUsed = USE_CAMERA_TYPE;
 static std::shared_ptr<TypeDeviceLaserPower> DeviceLaserPower;
 static std::shared_ptr<TypeDeviceLaserIllum> DeviceLaserIllum;
 //=============================================================
-static std::shared_ptr<TypeDeviceRotary>     DeviceRotary;
+static std::shared_ptr<TypeDeviceRotary>       DeviceRotary;
+static std::shared_ptr<TypeRotaryMirrorRemote> DeviceRotaryMirror;
 static constexpr int TypeRotaryUsed = USE_ROTARY_TYPE; 
+                 int TypeProcessingUsed = USE_PROCESSING_SCHEME; 
 //=============================================================
-static std::shared_ptr<ModuleImageProcessing > ModuleImageProc;
+static std::shared_ptr<ModuleImageProcessing > ModuleImageProc1;
 static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc2;
 static std::shared_ptr<ModuleImageProcessing>  ModuleImageProc3;
 
 static std::shared_ptr<AimingClass>            ModuleAiming1;
 static std::shared_ptr<AimingClass>            ModuleAiming2;
 //=============================================================
-static std::shared_ptr<UDPConnectionEngine> ConnectionControlUDP;
-static std::shared_ptr<UDPConnectionEngine> ConnectionRotaryUDP;
-static std::shared_ptr<UDPConnectionEngine> ConnectionProcessorUDP;
+static std::shared_ptr<UDPConnectionEngine    > ConnectionControlUDP;
+static std::shared_ptr<UDPConnectionEngine    > ConnectionRotaryUDP;
+static std::shared_ptr<UDPConnectionEngine    > ConnectionProcessorUDP;
 
-static std::shared_ptr<CANConnectionEngine> ConnectionCAN;
+static std::shared_ptr<CANConnectionEngine    > ConnectionCAN;
+static std::shared_ptr<CANOpenConnectionEngine> ConnectionCAN_OPEN;
+static std::shared_ptr<UARTConnectionEngine   > ConnectionUART;
+static std::shared_ptr<EmptyConnectionEngine   > ConnectionEmpty;
+
 static std::shared_ptr<MessageStorageInterface> RingBuffer ;
 static std::shared_ptr<DispatcherType>          Dispatcher ;
 
@@ -117,6 +136,9 @@ static std::shared_ptr<TypeAimingMonitoring> ModuleAimingMonitor1;
 static std::shared_ptr<TypeAimingMonitoring> ModuleAimingMonitor2;
 static std::shared_ptr<TypeAimingMonitoring> ModuleAimingMonitor3;
 
+static std::shared_ptr<RotationDataCollector> ModuleDataCollector;
+
+std::vector<std::shared_ptr<ModuleImageProcessing>> ModulesActive;
 
     ProcessControllerClass(QObject* parrent = 0);
     ProcessControllerClass(const ProcessControllerClass& Copy) = delete;
@@ -129,7 +151,7 @@ void DeleteModulesLinks();
 private:
     static ProcessControllerClass* ProcessControllerInstance;
 
-QThread ThreadProcess;
+QThread ThreadProcess1;
 QThread ThreadProcess2;
 QThread ThreadProcess3;
 QThread ThreadProcessAiming;
@@ -137,12 +159,20 @@ QThread ThreadProcessAiming;
 QThread ThreadCamera;
 QThread ThreadUtilite;
 
+void setScheme1(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme2(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme3(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme4(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme5(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme6(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+
 public slots:
 
 void slotSetProcessCamera(bool OnOff);
 void slotSetProcessAiming(bool OnOff);
 void slotSetProcessAiming2(bool OnOff);
 void slotStartProcessRTSP(bool OnOff);
+void slotStartProcessCalibration(bool OnOff);
 
 
 signals:

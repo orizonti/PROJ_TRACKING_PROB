@@ -24,10 +24,11 @@ class GenericApproximation: public PassCoordClass<float>
   }
   int   SizeWindow = 100;
   int   StepsRollback = SizeWindow/10;
-  float StepTimeScale = 0.5;
-  int   StepsForecasting = 4;
+  float StepTimeScale = 3; //MILLI
+  float StepsForecasting = 1.0*float(StepsRollback)/SizeWindow;
 
-  NodeValueAvarageStep<float> NodeAvarageStep{10};
+  NodeValueAvarageStep<float>    NodeAvarageStep{10};
+  NodeValueAvarageGliding<float> NodeAvarage{10};
   NodeCoordStorage<float> TrackInput;
   NodeCoordStorage<float> TrackFuture;
 
@@ -56,6 +57,7 @@ class GenericApproximation: public PassCoordClass<float>
     friend void operator>>(const std::vector<std::pair<float,float>>& coords, GenericApproximation& receiver) { for(auto& coord: coords) coord >> receiver;}
 
     virtual const std::pair<float,float>& getFutureStep() = 0;
+    virtual const std::pair<float,float>& getFutureStep(float Step) = 0;
     virtual NodeCoordStorage<float>& getFuture() = 0;
 
     virtual std::vector<float> getApproximation(std::vector<std::pair<float,float>>& track) = 0;  
@@ -100,6 +102,7 @@ class PolynomApproximation: public GenericApproximation
     std::tuple<float,float,float,float,bool> getResult() override { return { trackPolynom[3], trackPolynom[2], trackPolynom[1], trackPolynom[0],true};};
 
     const std::pair<float,float>& getFutureStep() override;
+    const std::pair<float,float>& getFutureStep(float Step) override;
     NodeCoordStorage<float>& getFuture() override;
 };
 
@@ -117,12 +120,26 @@ void PolynomApproximation<NUM_PARAM>::operator=(const PolynomApproximation<NUM_P
 template<int NUM_PARAM>
 const std::pair<float,float>& PolynomApproximation<NUM_PARAM>::getFutureStep()
 {
-    posFuture.first = posLast.first + StepsForecasting*StepTimeScale;  
+    posFuture.first += StepsForecasting*StepTimeScale;  
     posFuture.second = trackPolynom[2]*std::pow(posFuture.first,2) +
                        trackPolynom[1]*posFuture.first +
                        trackPolynom[0];
-    //qDebug() << "POS LAST: " << posLast.first << posLast.second << "FUTURE: " << posFuture.first << posFuture.second; 
+    //qDebug() << OutputFilter::Filter(20) << "[POS LAST]" << posLast.first 
+    //                                                     << posLast.second 
+    //                                                     << "[FUTURE]" << posFuture.first 
+    //                                                     << posFuture.second
+    //                                     << "[STEPS]" << StepsForecasting << "[PERIOD]" << StepTimeScale; 
     return posFuture;
+}
+
+template<int NUM_PARAM>
+const std::pair<float,float>& PolynomApproximation<NUM_PARAM>::getFutureStep(float Step) 
+{
+posFuture.first += Step*StepTimeScale;  
+posFuture.second = trackPolynom[2]*std::pow(posFuture.first,2) +
+                   trackPolynom[1]*posFuture.first +
+                   trackPolynom[0];
+return posFuture;
 }
 
 template<int NUM_PARAM>

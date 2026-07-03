@@ -178,7 +178,7 @@ public:
     QPair<float,float>{100 ,100 }
   };
 
-	QPair<float, float> PositionNullDevice   {72,0};
+	QPair<float, float> PositionOffset   {72,0};
 
 	QPair<float, float> PositionTarget {0,0};
 	QPair<float, float> PositionTargetDevice {0,0};
@@ -217,7 +217,7 @@ public:
       if(CommandID == 0) PositionTarget.first  = CommandParam;
       if(CommandID == 1) PositionTarget.second = CommandParam; checkPositionOffset();
 
-                    PositionTargetDevice = PositionTarget + PositionNullDevice; 
+                    PositionTargetDevice = PositionTarget + PositionOffset; 
   this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
     };
   //===============================================================================================
@@ -274,7 +274,7 @@ public:
   //===============================================================================================
 
 
-  void setNull(QPair<float,float> PosNull) { setMode(CONTROL_PARAM::POS); PositionNullDevice = PosNull; setToNull();  };
+  void setNull(QPair<float,float> PosNull) {  PositionOffset = PosNull; };
 	void setToNull();
   void loadSettings();
   std::shared_ptr<PortAdapter<DeviceRotaryInterface>> PortMoveRelative = nullptr;
@@ -364,7 +364,7 @@ template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
 void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::setToNull() 
 { 
                     PositionTarget = QPair<float,float>(0,0);
-                    PositionTargetDevice = PositionTarget + PositionNullDevice; 
+                    PositionTargetDevice = PositionTarget + PositionOffset; 
   this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
 
 }
@@ -381,7 +381,7 @@ template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
 void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveOnStep(const QPair<float, float>& Step)
 {
                           PositionTarget = PositionTarget + Step; checkPositionOffset();
-                    PositionTargetDevice = PositionTarget + PositionNullDevice; 
+                    PositionTargetDevice = PositionTarget + PositionOffset; 
   this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
   qDebug() << OutputFilter::Filter(5) << "MOVE STEP TO POS: " << PositionTargetDevice.first << PositionTargetDevice.second << "STEP: " << Step.first;
 }
@@ -390,7 +390,7 @@ template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
 void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPos(const QPair<float, float>& Pos)
 {
                     PositionTarget = Pos; checkPositionOffset();
-                    PositionTargetDevice = PositionTarget + PositionNullDevice; 
+                    PositionTargetDevice = PositionTarget + PositionOffset; 
   this->sendCommand(PositionTargetDevice);                  PositionRelativeAnchor = PositionTarget;
   //qDebug() << OutputFilter::Filter(100) << TAG_NAME << "MOVE TO POS: " << PositionTargetDevice.first << PositionTargetDevice.second;
 }
@@ -399,7 +399,7 @@ template<typename T_CONNECTION, typename T_COMMAND, typename T_MESSAGE>
 void DeviceRotaryControl<T_CONNECTION,T_COMMAND,T_MESSAGE>::moveToPosRelative(const QPair<float, float>& PosRelative) 
 {
                     PositionTarget = PositionRelativeAnchor + PosRelative; checkPositionOffset();
-                    PositionTargetDevice = PositionTarget + PositionNullDevice;
+                    PositionTargetDevice = PositionTarget + PositionOffset;
   this->sendCommand(PositionTargetDevice);
 }
 

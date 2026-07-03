@@ -57,6 +57,7 @@ function(LINK_QT_LIBS PROJECT_NAME)
         target_link_libraries(${PROJECT_NAME} Qt6::Core)
         target_link_libraries(${PROJECT_NAME} Qt6::PrintSupport)
         target_link_libraries(${PROJECT_NAME} Qt6::SerialBus)
+        target_link_libraries(${PROJECT_NAME} Qt6::SerialPort)
 
         if($ENV{USER} MATCHES "broms")
         target_link_libraries(${PROJECT_NAME} Qt6::Quick)
@@ -169,6 +170,7 @@ function(INCLUDE_PROJECT_DIRS)
         include_directories("${PROJECT_SOURCE_DIR}/UTILITIES/COMMON") 
         include_directories("${PROJECT_SOURCE_DIR}/AIMING_MODULES") 
         include_directories("${PROJECT_SOURCE_DIR}/DEVICES") 
+        include_directories("${PROJECT_SOURCE_DIR}/ROTATE_OPTIMIZATION") 
         include_directories("${PROJECT_SOURCE_DIR}/DEVICES/LaserIllumControlLib") 
         include_directories("${PROJECT_SOURCE_DIR}/DEVICES/MotorImitatorLib") 
         include_directories("${PROJECT_SOURCE_DIR}/CAMERA_INTERFACE") 
@@ -229,6 +231,8 @@ list(APPEND IMAGE_PROCESSING_SOURCES "./IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_udp_interface.cpp")
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.cpp")
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_can_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_canopen_interface.cpp")
+list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_uart_interface.cpp")
 list(APPEND TRANSMISSION_MODULE_SOURCES "./TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.cpp")
 
         set(UTILITIES_SOURCES "")
@@ -264,7 +268,7 @@ list(APPEND DEVICE_CONTROL_SOURCES "./CAMERA_INTERFACE/interface_camera_rtsp.cpp
         endif()
 
         if($ENV{USER} MATCHES "orangepi")
-        find_package(Qt6 COMPONENTS Widgets Network Core PrintSupport SerialBus REQUIRED)
+          find_package(Qt6 COMPONENTS Widgets Network Core PrintSupport SerialBus SerialPort REQUIRED)
         endif()
 
         find_package(OpenCV REQUIRED )
@@ -277,6 +281,8 @@ pkg_search_module(gstreamer-sdp REQUIRED IMPORTED_TARGET gstreamer-sdp-1.0>=1.4)
 pkg_search_module(gstreamer-app REQUIRED IMPORTED_TARGET gstreamer-app-1.0>=1.4)
 pkg_search_module(gstreamer-video REQUIRED IMPORTED_TARGET gstreamer-video-1.0>=1.4)
 pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-server-1.0>=1.4)
+
+pkg_check_modules(LELY REQUIRED IMPORTED_TARGET liblely-coapp)
 #=============================================================
         INCLUDE_PROJECT_DIRS()
         INCLUDE_STANDART_DIRS()
@@ -291,6 +297,7 @@ pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-
                 "./AIMING_MODULES/pid_class.cpp"
                 "./AIMING_MODULES/rotate_vector_class.cpp"
                 "./DEVICES/device_rotary_interface.cpp"
+                "./ROTATE_OPTIMIZATION/rotation_data_collector.cpp"
 
                 ${GUI_FILES_LIST}
                 ${GUI_SOURCES_LIST}
@@ -306,6 +313,7 @@ pkg_search_module(gstreamer-rtsp-server REQUIRED IMPORTED_TARGET gstreamer-rtsp-
                       PkgConfig::gstreamer-app
                       PkgConfig::gstreamer-rtsp-server
                       PkgConfig::gstreamer-video)
+        target_link_libraries(ImageProcProject PkgConfig::LELY)
 
         message("=============================================")
         LINK_QT_LIBS(ImageProcProject)

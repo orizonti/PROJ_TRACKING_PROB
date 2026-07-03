@@ -2,6 +2,7 @@
 #include "interface_image_source.h"
 #include <QDebug>
 #include <memory>
+#include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp>
 #include <debug_output_filter.h>
@@ -13,7 +14,7 @@ std::shared_ptr<SourceImageInterface> CameraInterfaceUniversal::getImageSourceCh
 { 
 
   auto ChannelStore = ImageStore.back(); 
-                      ImageStore.push_back(std::make_shared<CameraStorageType>(this, SizeImage));
+                      ImageStore.push_back(std::make_shared<CameraStorageType>(this, SIZE_CAMERA));
   qDebug() << "GET IMAGE SOURCE STORE" << ImageStore.size();
   return ChannelStore;
 }
@@ -39,7 +40,7 @@ CameraInterfaceUniversal::CameraInterfaceUniversal(std::string strVideoSource, u
   QObject::connect(this,SIGNAL(signalStop()) , this, SLOT(slotStopStream()) , Qt::QueuedConnection);
   QObject::connect(this,SIGNAL(signalReset()), this, SLOT(slotReset())      , Qt::QueuedConnection);
 
-  ImageStore.push_back(std::make_shared<CameraStorageType>(this, SizeImage));
+  ImageStore.push_back(std::make_shared<CameraStorageType>(this, SIZE_CAMERA));
 }
 
 CameraInterfaceUniversal::~CameraInterfaceUniversal() { qDebug() << "[ THERMAL CAMERA INTERFACE DEINIT]" << TAG_NAME; }
@@ -56,31 +57,50 @@ cv::Mat& CameraInterfaceUniversal::getImageToProcess()                  { return
 
 int CameraInterfaceUniversal::getAvailableFrames() { return ImageStore[0]->getAvailableFrames(); }
 
-
+std::string getDepthString(const cv::Mat& mat) 
+{
+    int depth = mat.depth();
+    switch (depth) {
+        case CV_8U:  return "8-bit Unsigned (CV_8U)";
+        case CV_8S:  return "8-bit Signed (CV_8S)";
+        case CV_16U: return "16-bit Unsigned (CV_16U)";
+        case CV_16S: return "16-bit Signed (CV_16S)";
+        case CV_32S: return "32-bit Signed (CV_32S)";
+        case CV_32F: return "32-bit Float (CV_32F)";
+        case CV_64F: return "64-bit Float (CV_64F)";
+        default:     return "Unknown depth";
+    }
+}
 
 void CameraInterfaceUniversal::slotGetFrame()
 {
-        bool isFrameGrabbed = capture.grab();
-        if (!isFrameGrabbed) return; 
+  bool isFrameGrabbed = capture.grab();
+  if (!isFrameGrabbed) return; 
 
-             isFrameGrabbed = capture.retrieve(inputImage);
-        if (!isFrameGrabbed) return; 
+       isFrameGrabbed = capture.retrieve(inputImage);
+  if (!isFrameGrabbed) return; 
 
 
-          FrameMeasureInput.PushTick();
-        FrameMeasureProcess.PushTick();
+    FrameMeasureInput.PushTick();
+  FrameMeasureProcess.PushTick();
 
-      //cv::resize  (inputImage ,inputImageResized,cv::Size(SizeImage.first,SizeImage.second));
-      //inputImageResized = inputImage(rectCrop);
       
-                     inputImageResized = inputImage; 
-        cv::cvtColor(inputImageResized,inputImageProcessed,cv::COLOR_BGR2GRAY);
+//                  cv::rotate(inputImage, inputImageRotated,cv::ROTATE_90_COUNTERCLOCKWISE);
+//                     inputImageResized = inputImageRotated(rectCrop); 
 
-        CameraStorageType::putNewFrameToStorage(inputImageProcessed); 
+               inputImageProcess = inputImage;
+  cv::cvtColor(inputImageProcess, inputImageGray,cv::COLOR_BGR2GRAY); inputImageProcess = inputImageGray;
 
-        FrameMeasureProcess.PushTick();
-        //qDebug() << OutputFilter::Filter(10) << "[ RTSP FRAME PERIOD2 ]" << FrameMeasureInput.getMilliseconds();
+  CameraStorageType::putNewFrameToStorage(inputImageProcess); 
+
+  FrameMeasureProcess.PushTick();
 }
+//cv::resize  (inputImage ,inputImageResized,cv::Size(SIZE_CAMERA.first,SIZE_CAMERA.second));
+//             inputImageResized = inputImage(rectCrop);
+//qDebug() << OutputFilter::Filter(20) 
+//         << "GET IMAGE: " << inputImageProcessed.cols << inputImageProcessed.rows  
+//                          << inputImageProcessed.depth() << inputImageProcessed.channels();
+//qDebug() << OutputFilter::Filter(10) << "[ RTSP FRAME PERIOD2 ]" << FrameMeasureInput.getMilliseconds();
 
 void CameraInterfaceUniversal::slotEndWork() 
 { 

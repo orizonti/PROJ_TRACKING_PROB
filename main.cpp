@@ -41,13 +41,20 @@ template<> constinit const int TypeRegister<RequestPosScanator>       ::TYPE_ID{
 template<> constinit const int TypeRegister<CommandAiming1>           ::TYPE_ID{4 };
 template<> constinit const int TypeRegister<CommandAiming2>           ::TYPE_ID{5 };
 template<> constinit const int TypeRegister<RequestAiming >           ::TYPE_ID{6 };
+template<> constinit const int TypeRegister<CommandCheckConnection   >::TYPE_ID{7 };
+
+template<> constinit const int TypeRegister<CommandSetTwoPair<0>>::TYPE_ID{8 };
+
+template<> constinit const int TypeRegister<CommandDevice<0>   >::TYPE_ID{20 };
+template<> constinit const int TypeRegister<CommandDevice<1>   >::TYPE_ID{21 };
+template<> constinit const int TypeRegister<CommandDevice<2>   >::TYPE_ID{22 };
+template<> constinit const int TypeRegister<CommandDevice<3>   >::TYPE_ID{23 };
 
 template<> constinit const int TypeRegister<CommandDeviceLaserPointer>::TYPE_ID{0x110};
 template<> constinit const int TypeRegister<CommandDeviceLaserPower  >::TYPE_ID{0x120};
 template<> constinit const int TypeRegister<CommandDeviceFocusator   >::TYPE_ID{0x130};
 template<> constinit const int TypeRegister<RequestDeviceLaserPointer>::TYPE_ID{0x210};
 template<> constinit const int TypeRegister<RequestDeviceLaserPower  >::TYPE_ID{0x220};
-template<> constinit const int TypeRegister<CommandCheckConnection   >::TYPE_ID{0x230};
 
 template<> constinit const int TypeRegister<SystemState>              ::TYPE_ID{0xA001}; 
 template<> constinit const int TypeRegister<ControlRX  >              ::TYPE_ID{0xA002};
@@ -60,6 +67,7 @@ template<> class TypeRegisterSizes<sizeof(MESSAGE_HEADER_GENERIC)>
   public:
       static constexpr std::array<int,100> SIZES
       {
+          sizeof(CommandDevice<0>         ),
           sizeof(CommandSetPosRotary      ),
           sizeof(CommandSetPosScanator    ),
           sizeof(RequestPosRotary         ),
@@ -73,6 +81,7 @@ template<> class TypeRegisterSizes<sizeof(MESSAGE_HEADER_GENERIC)>
           sizeof(RequestDeviceLaserPower  ),
           sizeof(RequestDeviceLaserPointer),
           sizeof(CommandCheckConnection   ),
+          sizeof(CommandSetTwoPair<0>   )
       };
 
       static constexpr int HEADER_SIZE = sizeof(MESSAGE_HEADER_GENERIC);
@@ -110,9 +119,14 @@ int main(int argc, char* argv[])
   TypeRegister<RequestDeviceLaserPower  >::registerType("REQUEST_LASER_POWER");
   TypeRegister<RequestDeviceLaserPointer>::registerType("REQUEST_LASER_POINTER");
    TypeRegister<CommandCheckConnection  >::registerType("CHECK_CONNECTION");
+   TypeRegister<CommandSetTwoPair<0>  >::registerType("COMMAND_ROTATE_CALIBRATION");
                 TypeRegister<SystemState>::registerType("SystemStateRotary"); 
                TypeRegister <ControlTX  >::registerType("ControlTXRotary");
                 TypeRegister<ControlRX  >::registerType("ControlRXRotary");
+                TypeRegister<CommandDevice<0>  >::registerType("CommandDevice0");
+                TypeRegister<CommandDevice<1>  >::registerType("CommandDevice1");
+                TypeRegister<CommandDevice<2>  >::registerType("CommandDevice2");
+                TypeRegister<CommandDevice<3>  >::registerType("CommandDevice3");
 
   TypeRegister<>::TYPES_INFO.printTypesSignature();
   qDebug() << "===========================================================";
@@ -155,22 +169,27 @@ int main(int argc, char* argv[])
 
 
                            ProcessController->slotSetProcessAiming(true);
-                           ProcessController->slotStartProcessRTSP(true);
+                           //ProcessController->slotSetProcessCamera(true);
 
-  WindowProc1Control->linkToDevice(ProcessControllerClass::ModuleImageProc );
-  WindowProc2Control->linkToDevice(ProcessControllerClass::ModuleImageProc2 );
+  WindowProc1Control->linkToDevice(ProcessControllerClass::ModuleImageProc1);
+  WindowProc2Control->linkToDevice(ProcessControllerClass::ModuleImageProc2);
+  WindowProc3Control->linkToDevice(ProcessControllerClass::ModuleImageProc3);
+
   WindowAimingControl->linkToDevice(ProcessControllerClass::ModuleAiming1 );
 
-  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc );    
-  WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);    
-
+  for(auto module: ProcessController->ModulesActive)
+  WindowImageProcessingDisplay->linkToModule(module);    
+  
+  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc2);
+  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::ModuleImageProc1);
+  //WindowImageProcessingDisplay->linkToModule(ProcessControllerClass::DeviceCamera);
 
   auto AimingPort = &ProcessController->ModuleAiming1->PortSignalSetAiming; 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming, SIGNAL(signalPosPressed2(QPair<float,float>)), 
                                                        AimingPort, SLOT  (slotSetCoord     (QPair<float,float>))) ;
 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed (QPair<float,float>)), 
-                    ProcessControllerClass::ModuleImageProc.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
+                    ProcessControllerClass::ModuleImageProc1.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
 
   QObject::connect(WindowImageProcessingDisplay->LabelImageAiming,SIGNAL(signalPosPressed (QPair<float,float>)), 
                    ProcessControllerClass::ModuleImageProc2.get(),SLOT  (SlotSelectObject (QPair<float,float>))) ;
@@ -186,72 +205,4 @@ int main(int argc, char* argv[])
   app.exec();
 }
 
-
-//class TestMessageTransmission
-//{
-//  using MessageType    = MessageGeneric<void*, MESSAGE_HEADER_GENERIC>;
-//  using BufferType     = RingBufferGeneric<MESSAGE_HEADER_GENERIC, TypeRegister<>::GetMinTypeSize<sizeof(MESSAGE_HEADER_GENERIC)>(), 20,IteratorMode::Continous>; 
-//  using DispatcherType = MessageDispatcher<MESSAGE_HEADER_GENERIC     ,BufferType>;
-//  public:
-//  TestMessageTransmission()
-//  {
-//            Connection = std::make_shared<UDPConnectionEngine>();
-//            RingBuffer = std::make_shared<BufferType>();
-//            Dispatcher = std::make_shared<DispatcherType>();
-//   *Connection | RingBuffer | Dispatcher;
-//
-//    qDebug() << "[ TEST CONNECTION ] 192.168.1.75 3333 REMOTE: 192.168.1.59 2525";  
-//    Connection->listenTo("192.168.1.58",3333);
-//    Connection->connectTo("192.168.1.121",4444);
-//  }
-//
-//  std::shared_ptr<UDPConnectionEngine>     Connection ;
-//  std::shared_ptr<MessageStorageInterface> RingBuffer ;
-//  std::shared_ptr<DispatcherType>          Dispatcher ;
-//
-//  template<typename T> void addType() 
-//  { 
-//    Dispatcher->AppendCallback<T> ( [](MessageType& Message)
-//    {
-//     auto data = DispatcherType::ExtractData<T>(&Message); qDebug() << "GET REQUEST: " << TypeRegister<T>::GetTypeName() << data->print();
-//    });
-//  };
-//
-//  template<typename T> void pushMessage(const T& Data)
-//  {
-//     auto Message = new MessageGeneric<T,MESSAGE_HEADER_GENERIC>;   
-//          Message->DATA = Data;
-//
-//    qDebug() << "PUT MESSAGE: " << TypeRegister<T>::GetTypeName() 
-//             << " ID: "   << Message->HEADER.MESSAGE_IDENT 
-//             << " SIZE: " << Message->HEADER.DATA_SIZE << " SIZE_MESSAGE: " << Message->GetSizeMessage();
-//             
-//    Connection->slotSendMessage((const char*)Message, Message->GetSizeMessage(),0);
-//    delete Message;
-//  }
-//};
-
-              //====================================================
-                //TestMessageTransmission TestTransmission;
-                //TestTransmission.addType<CommandSetPosRotary>();
-                //TestTransmission.addType<CommandSetPosScanator>();
-                //TestTransmission.addType<RequestPosRotary>();
-                //TestTransmission.addType<RequestPosScanator>();
-                //TestTransmission.addType<CommandAiming1>();
-                //TestTransmission.addType<CommandAiming2>();
-                //TestTransmission.addType<CommandDeviceLaserPower>();
-                //TestTransmission.addType<CommandDeviceLaserPointer>();
-                //TestTransmission.addType<RequestDeviceLaserPower>();
-                //TestTransmission.addType<RequestDeviceLaserPointer>();
-
-                //TestTransmission.pushMessage(CommandSetPosScanator(20,33));
-                //TestTransmission.pushMessage(CommandSetPosScanator(20.2,11.2));
-                //TestTransmission.pushMessage(CommandSetPosScanator(2,3));
-                //TestTransmission.pushMessage(CommandSetPosScanator(3,5));
-
-                //TestTransmission.pushMessage(CommandAiming1(20,33,1,1));
-                //TestTransmission.pushMessage(CommandAiming1(20.2,11.2,2,2));
-                //TestTransmission.pushMessage(CommandAiming1(2,3,0,0));
-                //TestTransmission.pushMessage(CommandAiming1(3,5,0,0));
-                //====================================================
 

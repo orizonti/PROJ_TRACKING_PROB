@@ -16,6 +16,7 @@ public:
 	~TrackerFirst();
 	cv::Ptr<cv::TrackerKCF> tracker;
    QString TAG_NAME{"TRACKER KCF"};
+   std::atomic<bool> isInitDone = false;
 
    enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};
 
@@ -27,8 +28,10 @@ public:
 	 void trackObject(cv::Mat& image);
 	 void trackObject(cv::Mat& image, cv::Rect rect);
 
-   bool isTrackHold() { return State == StatesModule::WorkTrack; };
+   bool isTrackHold()      { return State == StatesModule::WorkTrack; };
    bool isTrackRectValid() { return rect_template.width > 0 && rect_template.height > 0; }; 
+
+   void setStateIdle()   { State = StatesModule::Idle; } 
 
                  bool isTrackSuccess = false;
    QPair<float,float> ObjectPos {0.0,0.0};
@@ -49,6 +52,9 @@ public:
 private:
  	            cv::Rect rect_template{10,10,60,60};
    TypeTracker::Params params{ TypeTracker::Params() };
+
+   void errorEmptyImage(bool print); 
+   void errorRectInvalid(bool print);
 
 };
 

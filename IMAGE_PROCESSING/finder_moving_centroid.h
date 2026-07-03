@@ -48,6 +48,8 @@ public:
     TrackerIterator TrackerActive;
 
     std::vector<std::shared_ptr<ImageTrackerCentroid>      > Trackers;
+    std::vector<std::shared_ptr<ImageTrackerCentroid>      > TrackersIdle;
+
     std::vector<std::shared_ptr<EstimatorTrackHold<float>> > TrackEstimators;
 
     std::vector<NodeCoordPassThinning<float>> NodesThinning{10};
@@ -55,9 +57,9 @@ public:
 
     bool isTrackerHasDublicate(std::shared_ptr<ImageTrackerCentroid> TrackerCheck);
     bool isRectOnTrack(cv::Rect rect);
+    void resetTracker(int number);
 
     NodeRectToCoord RectToCoord;
-
 
     //=====================================================
     std::function<void (cv::Mat&, cv::Mat&)> FilterSharpen;

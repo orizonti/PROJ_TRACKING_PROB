@@ -1,66 +1,61 @@
 #include "pid_class.h"
 
-#define TAG "[ PID CONTROL ]" 
-
-PIDClass::PIDClass()
-{
-	this->CoordAimingError = QPair<float,float>(-10000, -10000);
-	this->StateBlock = StateBlockAtWork;
-	this->ErrorsSumm = QPair<float,float>(0, 0);
-
-	TimeFromLastCommand = std::chrono::high_resolution_clock::now();
-	PIDControlOutput = QPair<float,float>(0, 0);
-}
-PIDClass::~PIDClass() { }
+#define TAG "[PID_CONTROL]" 
 
 
 void PIDClass::Reset()
 {
-	  this->ErrorsSumm = QPair<float,float>(0, 0);
-    this->PIDControlOutput = QPair<float,float>(0, 0);
-    this->CoordAimingError = QPair<float,float>(0, 0);
+	  this->SummInput = QPair<float,float>(0, 0);
+    this->OutputCoord = QPair<float,float>(0, 0);
+    this->CoordInput = QPair<float,float>(0, 0);
 }
 
-QPair<float,float> PIDClass::CalcVelocityToengine(QPair<float,float> CoordError)
+void PIDClass::setGainList(std::vector<float> Gains)
 {
 
-	if(CoordError.first == CoordAimingError.first && CoordError.second == CoordAimingError.second) return  this->PIDControlOutput;
+      auto GainCommon = 1; if(Gains.size() >= 4) GainCommon = Gains[3];
+      auto GainSet = Gains.begin();
+  for(auto& Gain: GainList)
+  {
+   Gain = (*GainSet)*GainCommon; GainSet++; if(GainSet == Gains.end()) return; 
+  }
 
-	std::chrono::time_point<std::chrono::high_resolution_clock> TimePoint = std::chrono::high_resolution_clock::now();
-	double StepPeriod = std::chrono::duration<double>((TimePoint - TimeFromLastCommand)).count();
-    TimeFromLastCommand = TimePoint;
-
-	//if (StepPeriod > StepPeriodThreshold) return  this->PIDControlOutput;
-
-	double DerivateErrorXAxis = 0; double DerivateErrorYAxis = 0;
-
-	this->ErrorsSumm.first  = ErrorsSumm.first  + CoordError.first*StepPeriod;
-	this->ErrorsSumm.second = ErrorsSumm.second + CoordError.second*StepPeriod;
-
-	if (CoordAimingError.first != -10000 && CoordAimingError.second != -10000)
-	{
-		DerivateErrorXAxis = (CoordError.first - this->CoordAimingError.first) / StepPeriod;
-		DerivateErrorYAxis = (CoordError.second - this->CoordAimingError.second) / StepPeriod;
-	}
-	this->PIDControlOutput.second = CoordError.first*PIDParam.RateParam + ErrorsSumm.first*PIDParam.IntParam + DerivateErrorXAxis*PIDParam.DiffParam;
-	this->PIDControlOutput.first  = CoordError.second*PIDParam.RateParam + ErrorsSumm.second*PIDParam.IntParam + DerivateErrorYAxis*PIDParam.DiffParam;
-	
-	//--------------------------------------------------------->
-	this->CoordAimingError = CoordError;
-
-	return PIDControlOutput;
-
+  qDebug() << "[PID SET]" << GainList[0] << GainList[1] << GainList[2];
 }
+
+void PIDClass::setGainList(float gain1, float gain2, float gain3, float gain4)
+{
+  GainList[0] = gain1*gain4; 
+  GainList[1] = gain2*gain4;
+  GainList[2] = gain3*gain4; qDebug() << "[PID SET]" << GainList[0] << GainList[1] << GainList[2];
+}
+
 
 void PIDClass::setInput(const QPair<float,float>& Coord)
 {
-	auto CoordNew = Coord;
-	CoordNew.second = Coord.first; CoordNew.first = Coord.second; 
-	this->CalcVelocityToengine(CoordNew);
+
+                    MeasurePeriod++;
+      PeriodInput = MeasurePeriod.getSeconds();
+	if (PeriodInput > PeriodThreshold || PeriodInput == 0) return;
+
+	SummInput.first  = SummInput.first  + Coord.first *PeriodInput;
+	SummInput.second = SummInput.second + Coord.second*PeriodInput;
+
+  if(abs(SummInput.first) > LimitIntegrator) SummInput.first  = SummInputLast.first;
+  if(abs(SummInput.first) > LimitIntegrator) SummInput.second = SummInputLast.second;
+
+	VelocityInput.first  = (Coord.first  - LastCoord.first)  / PeriodInput;
+	VelocityInput.second = (Coord.second - LastCoord.second) / PeriodInput;
+
+  if(abs(VelocityInput.first ) > LimitVelocity) VelocityInput.first  = VelocityInputLast.first;
+  if(abs(VelocityInput.second) > LimitVelocity) VelocityInput.second = VelocityInputLast.second;
+
+	this->OutputCoord.second = Coord.first *GainList[0] + SummInput.first *GainList[1] + VelocityInput.first *GainList[2];
+	this->OutputCoord.first  = Coord.second*GainList[0] + SummInput.second*GainList[1] + VelocityInput.second*GainList[2];
+	
+	//--------------------------------------------------------->
+	this->LastCoord = Coord;
 }
 
-const QPair<float,float>& PIDClass::getOutput()                 { return PIDControlOutput; }
-                 void PIDClass::setPIDParam(PIDParamStruct Param) { this->PIDParam = Param; this->Reset(); }
-                 void PIDClass::SetFrameRate(double Rate)         { StepPeriodThreshold = 2.0/Rate; }
 
 

@@ -163,18 +163,31 @@ class EstimatorVelocityAvarageStep: public PassCoordClass<T>
 
     Coord >> Thinning1(2)  >> NodeAvarageStep1 >> Norm >> Velocity1 >> Categorizer1 >> Velocity1Level;
     Coord >> Thinning2(4)  >> NodeAvarageStep2 >> Norm >> Velocity2 >> Categorizer2 >> Velocity2Level;
-    Coord >> Thinning3(6) >> NodeAvarageStep3 >> Norm >> Velocity3 >> Categorizer3 >> Velocity3Level;
+    Coord >> Thinning3(10) >> NodeAvarageStep3 >> Norm >> Velocity3 >> Categorizer3 >> Velocity3Level;
 
     probabiltyMoving = 100*(Velocity1Level/10 + Velocity2Level/10 + Velocity3Level/10)/3;
-    //qDebug() << OutputFilter::Filter(20) << "[ VELOCITY ESTIMATOR ]" << Velocity1 << Velocity2 << Velocity3 
+    //qDebug() <<  "[ VELOCITY ESTIMATOR ]" << Velocity1 << Velocity2 << Velocity3 
     //                                     << "[CAT]" << Velocity1Level 
     //                                                << Velocity2Level
-    //                                                << Velocity3Level;
+    //                                                << Velocity3Level << "PROB: " << probabiltyMoving;
   }
-  void reset() { probabiltyMoving = 0; NodeAvarageStep1.reset(); NodeAvarageStep2.reset(); NodeAvarageStep3.reset(); }
+  void reset() 
+  { 
+    probabiltyMoving = 0; 
+    NodeAvarageStep1.reset(); 
+    NodeAvarageStep2.reset(); 
+    NodeAvarageStep3.reset(); 
+    probabiltyMoving = 0; 
+    Velocity1Level = 0;
+    Velocity2Level = 0;
+    Velocity3Level = 0;
+    Velocity1 = 0;
+    Velocity2 = 0;
+    Velocity3 = 0;
+  }
 
     float getMovingProbability() { return probabiltyMoving;        }
-                 bool isMoving() { return probabiltyMoving > 50;}
+                 bool isMoving() { return probabiltyMoving > 80;}
 
     T Velocity1{0};
     T Velocity2{0};
@@ -189,13 +202,13 @@ class EstimatorVelocityAvarageStep: public PassCoordClass<T>
           NodeCoordPassNorm<T> Norm;
     NodeValueAbsolutization<T> Abs;
 
-    NodeCoordPassThinning<T> Thinning1{2};
+    NodeCoordPassThinning<T> Thinning1{1};
     NodeCoordPassThinning<T> Thinning2{4};
     NodeCoordPassThinning<T> Thinning3{8};
 
-    NodeValueCategorizer<T> Categorizer1{5,10};
-    NodeValueCategorizer<T> Categorizer2{10,10};
-    NodeValueCategorizer<T> Categorizer3{10,10};
+    NodeValueCategorizer<T> Categorizer1{2,10};
+    NodeValueCategorizer<T> Categorizer2{4,10};
+    NodeValueCategorizer<T> Categorizer3{8,10};
 
     NodeCoordAvarageStep<T> NodeAvarageStep1{10};
     NodeCoordAvarageStep<T> NodeAvarageStep2{10};
@@ -307,7 +320,11 @@ class EstimatorTrackHold: public PassCoordClass<T>
                                         //<< "[ COMBINE ]" << (EstimatorVelocity.isMoving() && isDispersionLimit);
     PassCoordClass<T>::OutputCoord.first = EstimatorVelocity.getMovingProbability();
   }
-  void reset() { EstimatorVelocity.reset();}
+  void reset() 
+  { 
+    EstimatorVelocity.reset();
+    EstimatorStatParams.reset();
+  }
 
     EstimatorVelocityAvarageStep<float> EstimatorVelocity;
             EstimatorObjectMovingParams EstimatorStatParams;
