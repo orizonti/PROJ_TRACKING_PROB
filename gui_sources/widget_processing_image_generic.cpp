@@ -21,10 +21,8 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
 
    slotDisplayString(strDisplayData);
 
-                  auto ImageSize = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
-   auto Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
-        Image = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); DisplayImagesMini.append(Image);
 
+                  auto ImageSize = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
         DisplayImage = QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888); 
 
         LabelImageAiming->setFixedSize(ImageSize.first, ImageSize.second);
@@ -52,6 +50,9 @@ WidgetProcessingImage::WidgetProcessingImage(QString ModuleName, QWidget* parent
 
 void WidgetProcessingImage::AddMiniLabel()
 {
+                  auto ImageSize = SettingsRegister::GetPair("CAMERA_SIZE_ACTIVE");
+   DisplayImagesMini.append(QImage(ImageSize.first,ImageSize.second,QImage::Format_RGB888));
+
    auto Widget = reinterpret_cast<WidgetMiniLabelsGroup*>(LinkedWidget);
    auto Label = new LabelImage; Label->setFixedSize(100,100); Label->setStyleSheet(ui->labelImageDisplay->styleSheet()); Widget->AddLabel(Label);
 }
@@ -61,7 +62,6 @@ void WidgetProcessingImage::moveEvent(QMoveEvent* event)
   if(LinkedWidget != 0) LinkedWidget->move(LinkedWidget->pos() + event->pos() - event->oldPos());
   QWidget::moveEvent(event);
 }
-
 
 
 void WidgetProcessingImage::CopyImageToDisplayImage(const QImage& Image)
@@ -99,6 +99,9 @@ void WidgetProcessingImage::slotDisplayImage()
    ImageSourceActive->getImageToDisplay(DisplayImage); 
 
    if(DisplayImage.isNull()) return;
+
+   //if(LabelImageAiming->size() != DisplayImage.size())
+   //   LabelImageAiming->setFixedSize(LabelImageAiming->size());
 
       Thinning(30)++;
    if(Thinning.isOpen()) 
@@ -153,11 +156,9 @@ void WidgetProcessingImage::linkToModule(std::shared_ptr<SourceImageDisplayInter
    ImageSourceActive = Source;
    ImageSources.push_back(Source);
 
-   timerDisplay.start(20);
-   this->AddMiniLabel();
-   //if(ImageSourceActive) QObject::disconnect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(slotDisplayImage()));
-   //QObject::connect(ImageSourceActive.get(),SIGNAL(signalNewImage()), this,SLOT(slotDisplayImage()),Qt::QueuedConnection);
 
+   timerDisplay.start(1000/24);
+   this->AddMiniLabel();
 }
 
 void WidgetProcessingImage::SetName(QString name) {ui->labelName->setText(name);}; 
