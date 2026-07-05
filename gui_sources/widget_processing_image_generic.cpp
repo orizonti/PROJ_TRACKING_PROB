@@ -96,7 +96,8 @@ void WidgetProcessingImage::slotDisplayImage()
 {
    if(!ImageSourceActive){ qDebug() << TAG_NAME << "SOURCE NOT LINKED";  return; };
 
-   ImageSourceActive->getImageToDisplay(DisplayImage); 
+   if(ImageSourceActive->isSourceActive()) ImageSourceActive->getImageToDisplay(DisplayImage); 
+   //ImageSourceActive->getImageToDisplay(DisplayImage); 
 
    if(DisplayImage.isNull()) return;
 

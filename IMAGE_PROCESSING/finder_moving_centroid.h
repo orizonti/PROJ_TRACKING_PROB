@@ -34,8 +34,8 @@ public:
 
     cv::Ptr<cv::BackgroundSubtractor> backSubstractor;
 
-                                    bool IS_MOVING = false;
-    bool isTrackHold() override { return IS_MOVING; }
+                                    bool isMoving = false;
+    bool isTrackHold() override { return isMoving; }
     bool isLinksHoldTrack();
     bool CheckCentroid(); 
 
@@ -43,9 +43,6 @@ public:
 
     using TrackerIterator = std::vector<std::shared_ptr<ImageTrackerCentroid>>::iterator ;
 
-    TrackerIterator TrackerEnd;
-    TrackerIterator TrackerIdle;
-    TrackerIterator TrackerActive;
 
     std::vector<std::shared_ptr<ImageTrackerCentroid>      > Trackers;
     std::vector<std::shared_ptr<ImageTrackerCentroid>      > TrackersIdle;
@@ -71,10 +68,13 @@ public:
     void makeFilters();
     //=====================================================
 
+   void resetState() override;
 public  slots:
-   void SlotProcessImage(const cv::Mat& Image) override ;
-   void SlotProcessImage()    override;
    void SlotResetProcessing() override;
+   void SlotStartProcessing() override;
+   void SlotStopProcessing()  override;
+private  slots:
+   void SlotProcessImage()    override;
 };
 
 #endif 

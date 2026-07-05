@@ -165,6 +165,7 @@ void setScheme3(std::shared_ptr<PassCoordClass<float>> DeviceControl);
 void setScheme4(std::shared_ptr<PassCoordClass<float>> DeviceControl);
 void setScheme5(std::shared_ptr<PassCoordClass<float>> DeviceControl);
 void setScheme6(std::shared_ptr<PassCoordClass<float>> DeviceControl);
+void setScheme7(std::shared_ptr<PassCoordClass<float>> DeviceControl);
 
 public slots:
 

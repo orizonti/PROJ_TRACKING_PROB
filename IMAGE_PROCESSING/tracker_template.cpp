@@ -2,122 +2,101 @@
 #include <qnamespace.h>
 #include <QThread>
 
-
-
-
 void ImageTrackerTemplate::SlotProcessImage()
 {
-  
   //==================================================================================
-                           if(isIdle() || isDisabled()) return;
-                               if(SourceImage->empty()) return; 
+   //if(isIdle()) return;
+   if(SourceImage->empty()) return; 
+
                                                 FrameMeasureProcess++; FrameMeasureInput++;
 
                                if(SourceImage->getAvailableFrames() > 2) skipFrames();
                     *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty()) return;  
 
+  if(isTrackMiss()) 
+  { MutexImageAccessDisplay.lock(); *ImageOutput = *ImageInput; 
+    MutexImageAccessDisplay.unlock(); 
+    qDebug() << OutputFilter::Filter(20) << "[TRACK MISS]";
+    return; }
+
                                           std::lock_guard<std::mutex> locker1(MutexImageAccess);
                                           std::lock_guard<std::mutex> locker2(MutexInput); 
   //==================================================================================
   ImageProcessing = *ImageInput; 
-  ProcessInput(); 
+  //ProcessInput(); 
+
+	try                                { ProcessInput(); }
+	catch (const cv::Exception& cv_ec) { std::cout << TAG_NAME.c_str() << cv_ec.what() << cv_ec.code;	}
+	catch (const std::exception& e)    { std::cout << TAG_NAME.c_str() << "[CAUGTH EXCEPTION]" << e.what();	}
                      ImageInput++; 
                   if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
 
-  if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); 
+  if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); else StateProcessing=StatesModule::Idle;
   //==================================================================================
                                                  FrameMeasureProcess++;
   
   MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
 }
 
-void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image) 
-{
-
-                          if(Image.empty()) return;  FrameMeasureProcess++; FrameMeasureInput++;
-                                          std::lock_guard<std::mutex> locker(MutexImageAccess);
-
-                    *ImageInput = Image.clone(); 
-  ImageProcessing = *ImageInput; 
-  
-	try                                { ProcessInput();; }
-	catch (const cv::Exception& cv_ec) { std::cout << TAG_NAME.c_str() << cv_ec.what() << cv_ec.code;	}
-	catch (const std::exception& e)    { std::cout << TAG_NAME.c_str() << "[CAUGTH EXCEPTION]" << e.what();	}
-
-                     ImageInput++; 
-                  if(ImageInput == ImagesInput.end()) ImageInput = ImagesInput.begin(); 
-
-  if( NodeTracker.isTrackHold()) PassCoordClass<float>::passCoord(); 
-                                                     FrameMeasureProcess++;
-
-  MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
-}
 
 void ImageTrackerTemplate::ProcessInput()
 {
-  if(StateProcessing == StatesModule::Disabled) return;
-  TrackObject(); 
-
+                    NodeTracker.trackObject(ImageProcessing); 
   CoordsObject[0] = NodeTracker.GetObjectPos();
    RectsObject[0] = NodeTracker.GetObjectRect(); 
 }
 
-void ImageTrackerTemplate::TrackObject() { NodeTracker.trackObject(ImageProcessing); }
-
-
 void ImageTrackerTemplate::SlotSelectObject(std::pair<float,float> PointRelative)
 {
-  std::lock_guard<std::mutex> locker(MutexInput); 
-  CoordsObject[0] = std::make_pair(ImageProcessing.cols*PointRelative.first, ImageProcessing.rows*PointRelative.second);
+  if(SourceImage == nullptr) return; 
 
-  RectsObject[0] = cv::Rect(CoordsObject[0].first  - SizeROI/2, 
-                            CoordsObject[0].second - SizeROI/2, SizeROI, SizeROI);
+                              auto Size = SourceImage->getSizeImage();
+  CoordsObject[1] = std::make_pair(Size.first*PointRelative.first, Size.second*PointRelative.second);
 
-  NodeTracker.resetRectTrack(ImageProcessing,RectsObject[0]);
-  StateProcessing = StatesModule::WorkTrack;     
-  qDebug() << TAG_NAME << "[ SELECT AIMING OBJECT POINT ]" << CoordsObject[0].first << CoordsObject[0].second;
+  if(ImageInput->empty())
+  {
+     *ImageInput = SourceImage->getImageToProcess().clone(); 
+   if(ImageInput->empty()) return;   
+  }
+
+  std::lock_guard<std::mutex> guard(MutexInput);
+
+  RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
+                            CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
+
+                       CheckCorrectROI(RectsObject[0]);
+  NodeTracker.setRectTrack(*ImageInput,RectsObject[0]);
+
+  StateProcessing = StatesModule::WorkTrack; SetBlockOutput(false);
+  qDebug() << TAG_NAME << "[ SELECT OBJECT ]" << CoordsObject[0].first << CoordsObject[0].second;
 }
 
 
 void ImageTrackerTemplate::setInput(const QPair<float,float>& Coord) 
 {
-  if(StateProcessing == StatesModule::Disabled) return;
+                                   if(isDisabled()) return;   
+                                   if(isTrackHold() && isModuleMaster()) return;
+  if(SourceImage == nullptr) return; 
+     ImageTemp3 = SourceImage->getImageToProcess().clone(); 
 
-  if(ImageInput->empty())
-  {
-   if(SourceImage == nullptr) return; 
-     *ImageInput = SourceImage->getImageToProcess().clone(); 
-   if(ImageInput->empty()) return;   
-  }
+  std::lock_guard<std::mutex> guard(MutexInput);
+  CoordsObject[1] = Coord;                  
 
-
-  std::lock_guard<std::mutex> locker(MutexInput); 
-  if(isTrackHold()) return;
   RectsObject[0] = cv::Rect(Coord.first  - SizeROI/2, 
                             Coord.second - SizeROI/2 , SizeROI, SizeROI);
 
-                       CheckCorrectROI(RectsObject[0]);
-  NodeTracker.setRectTrack(*ImageInput,RectsObject[0]);
+                      CheckCorrectROI(RectsObject[0]);
+  NodeTracker.setRectTrack(ImageTemp3,RectsObject[0]);
 
-  if(StateProcessing == StatesModule::Idle) SetStateActive(); 
+  StateProcessing = StatesModule::WorkTrack; SetBlockOutput(false);
 
   qDebug() << TAG_NAME << "[ INPUT COORD ]" << Coord.first << Coord.second << "[ ACTIVATE TRACK ]" << SizeROI;
 };
 
-void ImageTrackerTemplate::SlotResetProcessing() 
-{ 
-  qDebug() << Qt::endl; 
-  StateProcessing = StatesModule::Idle; 
-
-  MutexInput.lock(); NodeTracker.setStateIdle(); MutexInput.unlock();
-
-  ModuleImageProcessing::SlotResetProcessing(); 
+void ImageTrackerTemplate::resetState() 
+{
+  NodeTracker.reset();
+  StateProcessing = StatesModule::Idle; SetBlockOutput(true);
 }
 
-//qDebug() << OutputFilter::Filter(10) << "[ TEMPLATE INPUT ]" << ImageOutput.empty();
-
-  //if( isLinkedSlave()) PassCoordClass::passCoord();
-  //qDebug() << OutputFilter::Filter(10) << CoordsObject[0].first 
-  //                                     << CoordsObject[0].second << FrameMeasureProcess.printPeriod();
-  //
 

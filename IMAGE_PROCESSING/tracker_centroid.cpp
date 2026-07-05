@@ -77,34 +77,51 @@ QPair<float,float> ImageTrackerCentroid::GetCentroid(cv::Mat& Image)
 
 void ImageTrackerCentroid::setInput(const QPair<float,float>& Coord) { ModuleImageProcessing::setInput(Coord); };
 
+void ImageTrackerCentroid::SlotSelectObject(std::pair<float,float> PointRelative)
+{
+  if(SourceImage == nullptr) return; 
+  std::lock_guard<std::mutex> guard(MutexInput);
+
+                                       auto Size = SourceImage->getSizeImage();
+           CoordsObject[1] = std::make_pair(Size.first *PointRelative.first, 
+                                            Size.second*PointRelative.second);
+
+  RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
+                            CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
+
+  StateProcessing = StatesModule::WorkTrack; SetBlockOutput(false);
+
+  qDebug() << TAG_NAME << "[ SELECT OBJECT ]" << CoordsObject[1].first << CoordsObject[1].second;
+}
+
 void ImageTrackerCentroid::SlotProcessImage()
 {
-                             if(StateProcessing == StatesModule::Idle) return;
-                             if(SourceImage->empty()) return;
-                             if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
+                        if(SourceImage->empty()) return;
+                        if(SourceImage->getAvailableFrames() > 2) SourceImage->skipFrames();
 
-                                                     FrameMeasureInput++;   
-                                                     FrameMeasureProcess++; 
-       //====================================================================
-                  *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty())  return;   
+                                                FrameMeasureInput++;   
+                                                FrameMeasureProcess++; 
+  //====================================================================
+             *ImageInput = SourceImage->getImageToProcess().clone(); if((*ImageInput).empty())  return;   
 
-                                          std::lock_guard<std::mutex> locker1(MutexInput);
-                                          std::lock_guard<std::mutex> locker2(MutexImageAccess);
-       //====================================================================
-                           ImageProcessing = *ImageInput;
-       TrackObjectCentroid(ImageProcessing, RectsObject[0]); 
-                            ImageInput++; if(ImageInput == ImagesInput.end()) 
-                                             ImageInput = ImagesInput.begin();
-       //====================================================================
+                                     std::lock_guard<std::mutex> locker1(MutexInput);
+                                     std::lock_guard<std::mutex> locker2(MutexImageAccess);
+  //====================================================================
+                                        ImageProcessing = *ImageInput;
+  if(isTrackHold()) TrackObjectCentroid(ImageProcessing, RectsObject[0]); 
 
-       if(isTrackHold()) PassCoordClass<float>::passCoord(); 
+                       ImageInput++; if(ImageInput == ImagesInput.end()) 
+                                        ImageInput = ImagesInput.begin();
+  //====================================================================
 
-       MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
+  if(isTrackHold()) PassCoordClass<float>::passCoord(); 
 
-                                                     FrameMeasureProcess++;
+  MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
 
-       //qDebug() << OutputFilter::Filter(20) << "[ PERIOD PROCESS ]" << FrameMeasureProcess.getMilliseconds();
-       //if( isTrackHold()) emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
+                                                FrameMeasureProcess++;
+
+  //qDebug() << OutputFilter::Filter(20) << "[ PERIOD PROCESS ]" << FrameMeasureProcess.getMilliseconds();
+  //if( isTrackHold()) emit ModuleImageProcessing::signalCoord(CoordsObject[0]); 
 }
 
 void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image) 
@@ -127,7 +144,6 @@ void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image)
        MutexImageAccessDisplay.lock(); *ImageOutput = ImageProcessing; MutexImageAccessDisplay.unlock();
 
                                             FrameMeasureProcess++; 
-
 }
 
 void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)

@@ -18,9 +18,9 @@ public:
    QString TAG_NAME{"TRACKER KCF"};
    std::atomic<bool> isInitDone = false;
 
-   enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};
+   enum class StatesModule { Disabled = 0, Active = 1, WorkTrack = 2};
 
-   StatesModule State{StatesModule::Idle};
+   StatesModule State{StatesModule::Disabled};
 
 	 void setRectTrack(const cv::Mat& image, cv::Rect rectAim);
 	 void resetRectTrack(const cv::Mat& image, cv::Rect rectAim);
@@ -28,10 +28,13 @@ public:
 	 void trackObject(cv::Mat& image);
 	 void trackObject(cv::Mat& image, cv::Rect rect);
 
+   bool isDisabled()       { return State == StatesModule::Disabled; };
    bool isTrackHold()      { return State == StatesModule::WorkTrack; };
    bool isTrackRectValid() { return rect_template.width > 0 && rect_template.height > 0; }; 
 
-   void setStateIdle()   { State = StatesModule::Idle; } 
+   void setStateDisabled() { State = StatesModule::Disabled; } 
+   void setStateActive  () { State = StatesModule::Active; } 
+   void reset(); 
 
                  bool isTrackSuccess = false;
    QPair<float,float> ObjectPos {0.0,0.0};

@@ -49,7 +49,6 @@ public:
     cv::Ptr<cv::BackgroundSubtractor> backSubstractor;
     bool FLAG_SUBSTRACT_BACKGROUND = false;
 
-    void FindObjectCentroid(cv::Mat& Image){};
     void TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI);
     bool ProcessImage(cv::Mat& Image);
 
@@ -60,13 +59,15 @@ public:
     bool isIntersects(ImageTrackerCentroid& Tracker);
     bool isIntersects(std::shared_ptr<ImageTrackerCentroid> Tracker);
     bool isIntersects(const QPair<float,float>& Coord);
-    bool isTrackHold() override { return StateProcessing == StatesModule::WorkTrack; }
+
+    void SlotSelectObject(std::pair<float,float> PointRelative);
 
     void SetThreshold(float Value) override  
     { 
       qDebug() << TAG_NAME.c_str() << "[THRESHOLD LEVEL]" << Value;
       if(Value > 100) Value = 100; this->ThresholdLevel = Value/100.0; 
-    } ;
+    };
+
 
     //====================================================
     std::function<void (cv::Mat&, cv::Mat&)> FilterSharpen;
@@ -83,12 +84,13 @@ public:
     //====================================================
     double MinPixel;
     double MaxPixel;
-    float ThresholdLevel = 0.5;
+     float ThresholdLevel = 0.5;
 
 
 public  slots:
-   void SlotProcessImage() override;
    void SlotProcessImage(const cv::Mat& Image) override;
+private slots:
+   void SlotProcessImage() override;
 };
 
 

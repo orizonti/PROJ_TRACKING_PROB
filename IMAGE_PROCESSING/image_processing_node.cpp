@@ -135,6 +135,14 @@ void ModuleImageProcessing::linkToModule(std::shared_ptr<ModuleImageProcessing> 
    *this | *Dst; Links.push_back(Dst);
 }
 
+void ModuleImageProcessing::printLinks()
+{
+  qDebug() << "===================================================";
+  for(auto Link: Links)
+  qDebug() << TAG_NAME.c_str() << "[CONNECTED TO]" << Link->TAG_NAME.c_str();
+  qDebug() << "===================================================";
+}
+
 std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<ModuleImageProcessing > Source, std::shared_ptr<ModuleImageProcessing> Dst)
 {
   Source->linkToModule(Dst); return Dst; 
@@ -189,55 +197,7 @@ if(ROI.y <= 0 ) ROI.y = 1;
 std::pair<float,float> ModuleImageProcessing::getTickPeriod() { return std::pair<float,float>(FrameMeasureInput.TickPeriod, 
                                                                                               FrameMeasureProcess.TickPeriod);};
 
-void ModuleImageProcessing::SlotResetProcessing() 
-{ 
-  StateProcessing = StatesModule::Idle; 
-  CoordsObject[0] = std::pair<float,float>(0,0);
-  PassCoordClass<float>::PassBlocked = true; 
 
-  //qDebug() << TAG_NAME.c_str() << "[RESET STATE]" ; 
-}
-
-void ModuleImageProcessing::SlotStopProcessing() 
-{ 
-  qDebug() << Qt::endl; 
-  qDebug() << TAG_NAME.c_str() << "[STOP PROCESSING]"; 
-
-  SlotResetProcessing(); 
-  PassCoordClass<float>::PassBlocked = true; 
-
-  StateProcessing = StatesModule::Disabled; if(timerProcessImage.isActive()) timerProcessImage.stop(); 
-
-}
-
-void ModuleImageProcessing::SlotStartProcessing() 
-{ 
-  qDebug() << TAG_NAME.c_str() << "[ START PROCESSING ]"; 
-  PassCoordClass<float>::PassBlocked = false; 
-  StateProcessing = StatesModule::WorkTrack;
-  if(ModeProcessing == ModesModule::SlavePassive) return;
-
-  timerProcessImage.start(); 
-}
-
-void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
-{
-  if(StateProcessing == StatesModule::Disabled) return;
-  if(StateProcessing == StatesModule::WorkTrack) return;
-
-  std::lock_guard<std::mutex> guard(MutexInput);
-
-  CoordsObject[1] = Coord; 
-   RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
-                             CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
-
-  if(StateProcessing == StatesModule::Idle) SetStateActive(); 
-  if(isModulePassive()) StateProcessing = StatesModule::WorkTrack;
-  PassCoordClass<float>::PassBlocked = false; 
-
-  qDebug() << TAG_NAME.c_str() << "[SET INPUT]" << Coord.first << Coord.second
-                               << "[STATE]" << (int)StateProcessing;
-};
 
 ModuleImageProcessing& operator>>(const cv::Mat& Image, ModuleImageProcessing& Module)
 {
@@ -274,6 +234,65 @@ void ModuleImageProcessing::moveToThread(QThread* thread)
   qDebug() << TAG_NAME.c_str() << "[ MOVE TO THREAD ]" << this->thread();
 }
 
-  //qDebug() << OutputFilter::Filter(20) << TAG_NAME << "[ SLAVE INPUT ]" << Coord.first << Coord.second;
+void ModuleImageProcessing::setInput(const QPair<float,float>& Coord)
+{
+                                            if(isDisabled()) return;   
+
+  std::lock_guard<std::mutex> guard(MutexInput);
+  CoordsObject[1] = Coord;                  if(isTrackHold() && isModuleMaster()) return;
+
+  RectsObject[0] = cv::Rect(CoordsObject[1].first  - SizeROI/2, 
+                            CoordsObject[1].second - SizeROI/2 , SizeROI, SizeROI);
+
+  StateProcessing = StatesModule::WorkTrack; SetBlockOutput(false);
+  //qDebug() << TAG_NAME.c_str() << "[SET INPUT]" << Coord.first << Coord.second << "[STATE]" << (int)StateProcessing;
+
+};
+
+
+
+void ModuleImageProcessing::SlotStartProcessing() 
+{ 
+   qDebug() << TAG_NAME.c_str() << "[START PROCESSING]" << "[IDLE]"; 
+  SourceImage->skipFrames();
+
+    StateProcessing = StatesModule::Idle; SetBlockOutput(true);
+  if(ModeProcessing == ModesModule::SlavePassive) return;
+  
+  if(!timerProcessImage.isActive()) timerProcessImage.start(); 
+
+}
+
+void ModuleImageProcessing::SlotResetProcessing() 
+{ 
+    qDebug() << TAG_NAME.c_str() << "[RESET PROCESSING]"; 
+    resetState();
+}
+
+void ModuleImageProcessing::resetState()
+{
+  StateProcessing = StatesModule::Idle; SetBlockOutput(true);
+}
+
+void ModuleImageProcessing::SlotStopProcessing() 
+{ 
+    qDebug() << TAG_NAME.c_str() << "[STOP PROCESSING]" << "[DISABLED]"; 
+
+    resetState(); StateProcessing = StatesModule::Disabled; 
+                  if(timerProcessImage.isActive()) timerProcessImage.stop(); 
+
+}
+
+
+void ModuleImageProcessing::resetOutput()
+{
+  for(int n = 0; n < CoordsObject.size(); n++) CoordsObject[n] = QPair<float,float>(0,0);
+}
+
+void ModuleImageProcessing::SetStateWork    (){ emit signalStart(); };
+void ModuleImageProcessing::SetStateDisabled(){ emit signalStop (); }; 
+void ModuleImageProcessing::SetStateIdle  ()  { emit signalReset();}
+
+void ModuleImageProcessing::SetBlockOutput  (bool OnOff) { PassCoordClass<float>::PassBlocked = OnOff;  }; 
 
 

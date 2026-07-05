@@ -1063,6 +1063,7 @@ Acceleration	IMAGE_PROCESSING/engine_statistics_track.h	/^    QPair<float,float>
 AccelerationNorm	IMAGE_PROCESSING/engine_statistics_track.h	/^                float  AccelerationNorm = 0; $/;"	m	class:EstimatorObjectMovingParams	typeref:typename:float
 AccumulateDataFilter	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^AccumulateDataFilter::AccumulateDataFilter() { }$/;"	f	class:AccumulateDataFilter
 AccumulateDataFilter	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.h	/^class AccumulateDataFilter : public PassCoordClass<float>$/;"	c
+Active	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Disabled = 0, Active = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
 AdaptedString	UTILITIES/COMMON/arduino_json.h	/^  using AdaptedString = FlashString;$/;"	t	struct:SizedStringAdapter	typeref:typename:FlashString
 AdaptedString	UTILITIES/COMMON/arduino_json.h	/^  using AdaptedString = FlashString;$/;"	t	struct:StringAdapter	typeref:typename:FlashString
 AdaptedString	UTILITIES/COMMON/arduino_json.h	/^  using AdaptedString = RamString;$/;"	t	struct:SizedStringAdapter	typeref:typename:RamString
@@ -1820,7 +1821,8 @@ DeviceTypeDataCollector	ROTATE_OPTIMIZATION/rotation_data_collector.h	/^using De
 DiffCoord	UTILITIES/thread_operation_nodes.h	/^   QPair<T,T> DiffCoord{0,0}; $/;"	m	class:NodeCoordPassWait	typeref:typename:QPair<T,T>
 DiffParam	AIMING_MODULES/pid_param_struct.h	/^	double DiffParam;$/;"	m	class:PIDParamStruct	typeref:typename:double
 Disable	IMAGE_PROCESSING/optimization_threshold.h	/^  void Disable(){ DISABLED = true;};$/;"	f	class:OptimizationThreshold	typeref:typename:void
-Disabled	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};$/;"	e	enum:ModuleImageProcessing::StatesModule
+Disabled	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Disabled = 0, Active = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
+Disabled	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Disabled = 0, Idle = 1, WorkTrack = 2};$/;"	e	enum:ModuleImageProcessing::StatesModule
 DispatchMessages	TRANSMISSION_MODULES/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^void DispatchMessages(                MessageStorageInterface& Storage)$/;"	f	class:MessageDispatcher	typeref:typename:void
 DispatchMessages	TRANSMISSION_MODULES/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^void DispatchMessages()$/;"	f	class:MessageDispatcher	typeref:typename:void
 DispatchMessages	TRANSMISSION_MODULES/RING_BUFFER_ADAPTERS/message_dispatcher_generic.h	/^void DispatchMessages(std::shared_ptr<MessageStorageInterface> Storage)$/;"	f	class:MessageDispatcher	typeref:typename:void
@@ -1956,7 +1958,6 @@ FindContours	IMAGE_PROCESSING/filter_blotch.h	/^    ContoursProcessorClass FindC
 FindContours	IMAGE_PROCESSING/finder_moving_centroid.h	/^    ContoursProcessorClass FindContours;$/;"	m	class:FinderObjectMoving	typeref:typename:ContoursProcessorClass
 FindHeader	TRANSMISSION_MODULES/RING_BUFFER/message_iterator_generic.h	/^	bool FindHeader(uint8_t* DataSourceEnd   , uint16_t SearchDepth)$/;"	f	class:MessageIteratorGeneric	typeref:typename:bool
 FindImageTemplate	IMAGE_PROCESSING/image_finder.cpp	/^void ImageTemplateFinder::FindImageTemplate(cv::Mat& Image)$/;"	f	class:ImageTemplateFinder	typeref:typename:void
-FindObjectCentroid	IMAGE_PROCESSING/tracker_centroid.h	/^    void FindObjectCentroid(cv::Mat& Image){};$/;"	f	class:ImageTrackerCentroid	typeref:typename:void
 FinderObjectMoving	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^FinderObjectMoving::FinderObjectMoving(QObject* parent) : ModuleImageProcessing("[FINDER MOVING /;"	f	class:FinderObjectMoving
 FinderObjectMoving	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^FinderObjectMoving::FinderObjectMoving(int width, int height, int size ,QObject* parent): $/;"	f	class:FinderObjectMoving
 FinderObjectMoving	IMAGE_PROCESSING/finder_moving_centroid.h	/^class FinderObjectMoving : public ModuleImageProcessing$/;"	c
@@ -2130,9 +2131,7 @@ IPRemote	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	/^    QS
 IPRemote	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_udp_interface.h	/^    QString IPRemote;$/;"	m	class:UDPConnectionEngine	typeref:typename:QString
 IP_DEVICE	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    QString IP_DEVICE = "172.16.16.16";$/;"	m	class:LaserControlClass	typeref:typename:QString
 IP_PORT	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    qint32 IP_PORT = 2325;$/;"	m	class:LaserControlClass	typeref:typename:qint32
-IS_MOVING	IMAGE_PROCESSING/finder_moving_centroid.h	/^                                    bool IS_MOVING = false;$/;"	m	class:FinderObjectMoving	typeref:typename:bool
-Idle	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
-Idle	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};$/;"	e	enum:ModuleImageProcessing::StatesModule
+Idle	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Disabled = 0, Idle = 1, WorkTrack = 2};$/;"	e	enum:ModuleImageProcessing::StatesModule
 ImageCallBackEx	CAMERA_INTERFACE/interface_camera_hik.cpp	/^void __stdcall CameraInterfaceHIK::ImageCallBackEx(unsigned char * pData, MV_FRAME_OUT_INFO_EX* /;"	f	class:CameraInterfaceHIK	typeref:typename:void __stdcall
 ImageChanneledStore	CAMERA_INTERFACE/interface_camera_hik.h	/^           std::vector<std::shared_ptr<CameraTypeStorage>> ImageChanneledStore;$/;"	m	class:CameraInterfaceHIK	typeref:typename:std::vector<std::shared_ptr<CameraTypeStorage>>
 ImageCounter	gui_sources/widget_processing_image_generic.h	/^int ImageCounter = 0;$/;"	m	class:WidgetProcessingImage	typeref:typename:int
@@ -2172,8 +2171,8 @@ ImageToProcess	CAMERA_INTERFACE/camera_interface_class.h	/^    cv::Mat ImageToPr
 ImageTrackerCentroid	IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroid::ImageTrackerCentroid(QObject* parent) : ModuleImageProcessing("[TRACKER_CE/;"	f	class:ImageTrackerCentroid
 ImageTrackerCentroid	IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroid::ImageTrackerCentroid(int width, int height, int size ,QObject* parent): $/;"	f	class:ImageTrackerCentroid
 ImageTrackerCentroid	IMAGE_PROCESSING/tracker_centroid.h	/^class ImageTrackerCentroid : public ModuleImageProcessing$/;"	c
-ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^    explicit ImageTrackerTemplate(QObject* parent = 0): ModuleImageProcessing("[TRACKER TEMPLATE/;"	f	class:ImageTrackerTemplate
-ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^    explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): $/;"	f	class:ImageTrackerTemplate
+ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^  explicit ImageTrackerTemplate(QObject* parent = 0): ModuleImageProcessing("[TRACKER TEMPLATE]"/;"	f	class:ImageTrackerTemplate
+ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^  explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): $/;"	f	class:ImageTrackerTemplate
 ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^class ImageTrackerTemplate : public ModuleImageProcessing$/;"	c
 ImageWidth	gui_sources/widget_output_image_display.h	/^  int ImageWidth = 712; $/;"	m	class:WidgetOutputImageDisplay	typeref:typename:int
 ImagesInput	IMAGE_PROCESSING/image_processing_node.h	/^    std::vector<cv::Mat> ImagesInput{10};$/;"	m	class:ModuleImageProcessing	typeref:typename:std::vector<cv::Mat>
@@ -2194,8 +2193,6 @@ InputFunction	UTILITIES/COMMON/interface_control_adapter.h	/^    std::function<v
 InputFunction	UTILITIES/COMMON/interface_pass_coord.h	/^    std::function<void(T&,QPair<float,float>)> InputFunction  = nullptr;$/;"	m	class:PortAdapter	typeref:typename:std::function<void (T &,QPair<float,float>)>
 InputImage	IMAGE_PROCESSING/contour_processing.h	/^        cv::Mat InputImage;$/;"	m	class:ContoursProcessorClass	typeref:typename:cv::Mat
 InputImage	IMAGE_PROCESSING/optimization_threshold.h	/^  cv::Mat InputImage;$/;"	m	class:ThresholdFindingParallelDispersion	typeref:typename:cv::Mat
-InputPeriod	IMAGE_PROCESSING/tracker_template.h	/^   int InputPeriod = 0;$/;"	m	class:ImageTrackerTemplate	typeref:typename:int
-InputPortPeriod	IMAGE_PROCESSING/tracker_template.h	/^   MeasurePeriodNode InputPortPeriod;$/;"	m	class:ImageTrackerTemplate	typeref:typename:MeasurePeriodNode
 InputSeries1	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^    QVector<double> InputSeries1;$/;"	m	class:PlotGraphicsInterface	typeref:typename:QVector<double>
 InputSeries2	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^    QVector<double> InputSeries2;$/;"	m	class:PlotGraphicsInterface	typeref:typename:QVector<double>
 InputSeries3	gui_sources/GRAPHICS_WINDOW/widget_graphics_plot.h	/^    QVector<double> InputSeries3;$/;"	m	class:PlotGraphicsInterface	typeref:typename:QVector<double>
@@ -3566,6 +3563,7 @@ Server	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_tcp_interface.h	/^  QTcpSe
 SetAimingCorrection	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetAimingCorrection(const QPair<float,float>& Coord)     { CoordAimCorrection /;"	f	class:AimingClass	typeref:typename:void
 SetAimingPosition	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetAimingPosition(const QPair<float,float>& Coord)       $/;"	f	class:AimingClass	typeref:typename:void
 SetAvaraging	ROTATE_OPTIMIZATION/rotation_data_collector.h	/^   void SetAvaraging(int avarage_window) { window_size = avarage_window; };$/;"	f	class:RotationDataCollector	typeref:typename:void
+SetBlockOutput	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SetBlockOutput  (bool OnOff) { PassCoordClass<float>::PassBlocked = /;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetCategoryLimit	UTILITIES/thread_operation_nodes.h	/^  void SetCategoryLimit(float Limit, int Count) {LimitValue = Limit; GroupCount = Count; GroupSp/;"	f	class:NodeValueCategorizer	typeref:typename:void
 SetColor	gui_sources/link_line.h	/^	void SetColor(QColor Color) { LinkLineColor = Color; };$/;"	f	class:LinkLine	typeref:typename:void
 SetContinousLoad	UTILITIES/thread_operation_nodes.h	/^  void SetContinousLoad(bool OnOff) { ContinousLoad = OnOff;};$/;"	f	class:NodeValueStorage	typeref:typename:void
@@ -3585,11 +3583,10 @@ SetOutputSize	gui_sources/widget_output_text_display.h	/^	void SetOutputSize(int
 SetParam	IMAGE_PROCESSING/optimization_threshold.cpp	/^void ThresholdFindingParallelDispersion::SetParam(int MinThreshold, int Step, int NumberGroup)$/;"	f	class:ThresholdFindingParallelDispersion	typeref:typename:void
 SetParam	IMAGE_PROCESSING/optimization_threshold.h	/^  void SetParam(int MinThreshold, int Step, int NumberGroup) {MinThreshold = MinThresholdFinding/;"	f	class:ThresholdOptimizatorEngine	typeref:typename:void
 SetPeak	UTILITIES/thread_operation_nodes.h	/^    void SetPeak(int PeakValue) { peak = PeakValue;}$/;"	f	class:NodeValueThinning	typeref:typename:void
-SetPeriodProcess	IMAGE_PROCESSING/image_processing_node.h	/^            void SetPeriodProcess(int period) { periodProcess = period; SetReset(); };$/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SetPeriodProcess	IMAGE_PROCESSING/image_processing_node.h	/^            void SetPeriodProcess(int period) { periodProcess = period; };$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetRangeCoords	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetRangeCoords(const QPair<float, float>& Range)$/;"	f	class:AimingClass	typeref:typename:void
 SetReset	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetReset()       { emit signalReset(); }$/;"	f	class:AimingClass	typeref:typename:void
 SetReset	CAMERA_INTERFACE/interface_camera_rtsp.h	/^  void SetReset()       { emit signalReset(); }; $/;"	f	class:CameraInterfaceUniversal	typeref:typename:void
-SetReset	IMAGE_PROCESSING/image_processing_node.h	/^    void SetReset()       {                               emit signalReset(); }; $/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetRotateMatrix	ROTATE_OPTIMIZATION/RotationContainerLib/RotateOperationContainer.cpp	/^void RotateOperationContainer::SetRotateMatrix(torch::Tensor RotateMatrix)$/;"	f	class:RotateOperationContainer	typeref:typename:void
 SetRotatedModules	ROTATE_OPTIMIZATION/rotation_data_collector.cpp	/^void RotationDataCollector::SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, std::/;"	f	class:RotationDataCollector	typeref:typename:void
 SetRotatedModules	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindProcessClass::SetRotatedModules(std::shared_ptr<PassCoordClass<float>> Base, st/;"	f	class:RotationFindProcessClass	typeref:typename:void
@@ -3602,10 +3599,11 @@ SetSize	UTILITIES/thread_operation_nodes.h	/^  void SetSize(int size) { Values.r
 SetSlaveMode	IMAGE_PROCESSING/image_processing_node.h	/^    void SetSlaveMode(ModesModule Mode)   { ModeProcessing  = Mode; StateProcessing = StatesModu/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetStateActive	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetStateActive() { emit signalStateActive(); }$/;"	f	class:AimingClass	typeref:typename:void
 SetStateActive	CAMERA_INTERFACE/interface_camera_rtsp.h	/^  void SetStateActive() { emit signalStart(); };$/;"	f	class:CameraInterfaceUniversal	typeref:typename:void
-SetStateActive	IMAGE_PROCESSING/image_processing_node.h	/^    void SetStateActive() { if(isModulePassive()) return; emit signalStart(); };$/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SetStateDisabled	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SetStateDisabled(){ emit signalStop (); }; $/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetStateIdle	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::SetStateIdle  () { emit signalStateIdle(); }$/;"	f	class:AimingClass	typeref:typename:void
 SetStateIdle	CAMERA_INTERFACE/interface_camera_rtsp.h	/^  void SetStateIdle()   { emit signalStop(); }; $/;"	f	class:CameraInterfaceUniversal	typeref:typename:void
-SetStateIdle	IMAGE_PROCESSING/image_processing_node.h	/^    void SetStateIdle()   { if(isModulePassive()) return; emit signalStop (); }; $/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SetStateIdle	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SetStateIdle  ()  { emit signalReset();}$/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SetStateWork	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SetStateWork    (){ emit signalStart(); };$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SetStaticSettings	UTILITIES/register_settings.cpp	/^void SettingsRegister::SetStaticSettings()$/;"	f	class:SettingsRegister	typeref:typename:void
 SetTestPoints	ROTATE_OPTIMIZATION/rotation_data_collector.h	/^   void SetTestPoints(std::vector<QPair<float,float>> points) { StorageInputPop.SetCoords(points/;"	f	class:RotationDataCollector	typeref:typename:void
 SetThreshold	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SetThreshold(float Value)    { this->Threshold = Value; } ;$/;"	f	class:ModuleImageProcessing	typeref:typename:void
@@ -3684,29 +3682,30 @@ SlotMakeStep	ROTATE_OPTIMIZATION/rotation_find_executor.cpp	/^void RotationFindP
 SlotPrintString	gui_sources/widget_output_image_display.cpp	/^void WidgetOutputImageDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputImageDisplay	typeref:typename:void
 SlotPrintString	gui_sources/widget_output_text_display.cpp	/^void WidgetOutputTextDisplay::SlotPrintString(QString Command)$/;"	f	class:WidgetOutputTextDisplay	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotProcessImage()$/;"	f	class:FinderObjectMoving	typeref:typename:void
-SlotProcessImage	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:FinderObjectMoving	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/image_finder.cpp	/^void ImageTemplateFinder::SlotProcessImage()$/;"	f	class:ImageTemplateFinder	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/image_finder.cpp	/^void ImageTemplateFinder::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:ImageTemplateFinder	typeref:typename:void
+SlotProcessImage	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SlotProcessImage(const cv::Mat& Image) {};$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::SlotProcessImage()$/;"	f	class:ImageTrackerCentroid	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:ImageTrackerCentroid	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/tracker_neural.h	/^   void SlotProcessImage() override {};$/;"	f	class:NeuralTracker	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/tracker_neural.h	/^   void SlotProcessImage(const cv::Mat& Image) override {};$/;"	f	class:NeuralTracker	typeref:typename:void
 SlotProcessImage	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotProcessImage()$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
-SlotProcessImage	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotProcessImage(const cv::Mat& Image) $/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SlotProcessStep	ROTATE_OPTIMIZATION/rotation_data_collector.cpp	/^void RotationDataCollector::SlotProcessStep()$/;"	f	class:RotationDataCollector	typeref:typename:void
 SlotReset	CAMERA_INTERFACE/interface_camera_hik.h	/^    void SlotReset() { for(auto& store: ImageChanneledStore) store.reset(); mutexGetImage.unlock/;"	f	class:CameraInterfaceHIK	typeref:typename:void
 SlotResetProcessing	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotResetProcessing() $/;"	f	class:FinderObjectMoving	typeref:typename:void
 SlotResetProcessing	IMAGE_PROCESSING/image_finder.h	/^   void SlotResetProcessing() override {};$/;"	f	class:ImageTemplateFinder	typeref:typename:void
 SlotResetProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotResetProcessing() $/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SlotResetProcessing	IMAGE_PROCESSING/tracker_neural.h	/^   void SlotResetProcessing() override {};$/;"	f	class:NeuralTracker	typeref:typename:void
-SlotResetProcessing	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotResetProcessing() $/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SlotSaveWidgetsPosition	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSaveWidgetsPosition()$/;"	f	class:WidgetMainWindow	typeref:typename:void
 SlotSceneWidgetPressed	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotSceneWidgetPressed(int NumberWidget)$/;"	f	class:WidgetMainWindow	typeref:typename:void
 SlotSelectObject	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SlotSelectObject(std::pair<float,float> PointRelative) {};$/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SlotSelectObject	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::SlotSelectObject(std::pair<float,float> PointRelative)$/;"	f	class:ImageTrackerCentroid	typeref:typename:void
 SlotSelectObject	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::SlotSelectObject(std::pair<float,float> PointRelative)$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 SlotSetInput	IMAGE_PROCESSING/image_processing_node.h	/^    virtual void SlotSetInput(const QPair<float,float>& Coord) { setInput(Coord); };$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SlotStartProcess	ROTATE_OPTIMIZATION/rotation_data_collector.cpp	/^void RotationDataCollector::SlotStartProcess(bool StartStop)$/;"	f	class:RotationDataCollector	typeref:typename:void
+SlotStartProcessing	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotStartProcessing() $/;"	f	class:FinderObjectMoving	typeref:typename:void
 SlotStartProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotStartProcessing() $/;"	f	class:ModuleImageProcessing	typeref:typename:void
+SlotStopProcessing	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::SlotStopProcessing() $/;"	f	class:FinderObjectMoving	typeref:typename:void
 SlotStopProcessing	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::SlotStopProcessing() $/;"	f	class:ModuleImageProcessing	typeref:typename:void
 SlotUpdateScene	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotUpdateScene()$/;"	f	class:WidgetMainWindow	typeref:typename:void
 SlotWindowDisplayThreadClosed	gui_sources/widget_main_window.cpp	/^void WidgetMainWindow::SlotWindowDisplayThreadClosed()$/;"	f	class:WidgetMainWindow	typeref:typename:void
@@ -3750,7 +3749,7 @@ StatTest	IMAGE_PROCESSING/engine_statistics_track.h	/^  StatisticValue<T> StatTe
 StatTest2	IMAGE_PROCESSING/engine_statistics_track.h	/^  StatisticCoord<T> StatTest2{20}; $/;"	m	class:EstimatorDispersionCoordSpan	typeref:typename:StatisticCoord<T>
 StatTest2	IMAGE_PROCESSING/engine_statistics_track.h	/^  StatisticValue<T> StatTest2{20}; $/;"	m	class:EstimatorDispersionCoordSpan	typeref:typename:StatisticValue<T>
 StatValue	AIMING_MODULES/aiming_class.h	/^          StatisticValue<float> StatValue{100};$/;"	m	class:AimingClass	typeref:typename:StatisticValue<float>
-State	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   StatesModule State{StatesModule::Idle};$/;"	m	class:TrackerFirst	typeref:typename:StatesModule
+State	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   StatesModule State{StatesModule::Disabled};$/;"	m	class:TrackerFirst	typeref:typename:StatesModule
 State	gui_sources/widget_device_control.h	/^    std::pair<float,float> State;$/;"	m	class:WidgetDeviceControl	typeref:typename:std::pair<float,float>
 State1	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures.h	/^    uint32_t State1; $/;"	m	struct:RequestStateExtended	typeref:typename:uint32_t
 State2	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures.h	/^    uint32_t State2; $/;"	m	struct:RequestStateExtended	typeref:typename:uint32_t
@@ -3787,8 +3786,8 @@ StateInitNotDone	UTILITIES/COMMON/state_block_enum.h	/^enum StateEnumInit { Stat
 StatePass	UTILITIES/COMMON/interface_node_signal_adapter.h	/^    std::pair<float,float> StatePass{0,0}; $/;"	m	class:NodeCoordSignalAdapter	typeref:typename:std::pair<float,float>
 StateProcessing	IMAGE_PROCESSING/image_processing_node.h	/^               StatesModule StateProcessing { StatesModule::Disabled }; $/;"	m	class:ModuleImageProcessing	typeref:typename:StatesModule
 StateRotaryControl	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_intermediate.h	/^struct StateRotaryControl$/;"	s
-StatesModule	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};$/;"	g	class:TrackerFirst
-StatesModule	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};$/;"	g	class:ModuleImageProcessing
+StatesModule	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Disabled = 0, Active = 1, WorkTrack = 2};$/;"	g	class:TrackerFirst
+StatesModule	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Disabled = 0, Idle = 1, WorkTrack = 2};$/;"	g	class:ModuleImageProcessing
 StaticJsonBuffer	UTILITIES/COMMON/arduino_json.h	/^#define StaticJsonBuffer /;"	d
 StaticJsonDocument	UTILITIES/COMMON/arduino_json.h	/^class ARDUINOJSON_DEPRECATED("use JsonDocument instead") StaticJsonDocument$/;"	c
 StaticStringWriter	UTILITIES/COMMON/arduino_json.h	/^  StaticStringWriter(char* buf, size_t size) : end(buf + size), p(buf) {}$/;"	f	class:StaticStringWriter
@@ -3972,7 +3971,7 @@ ThresholdAdjustionDispersion	IMAGE_PROCESSING/optimization_threshold.h	/^class T
 ThresholdCalculationLumen	IMAGE_PROCESSING/optimization_threshold.h	/^class ThresholdCalculationLumen : public OptimizationThreshold$/;"	c
 ThresholdFindingParallelDispersion	IMAGE_PROCESSING/optimization_threshold.cpp	/^ThresholdFindingParallelDispersion::ThresholdFindingParallelDispersion(int MinThreshold, int Ste/;"	f	class:ThresholdFindingParallelDispersion
 ThresholdFindingParallelDispersion	IMAGE_PROCESSING/optimization_threshold.h	/^class ThresholdFindingParallelDispersion : public OptimizationThreshold$/;"	c
-ThresholdLevel	IMAGE_PROCESSING/tracker_centroid.h	/^    float ThresholdLevel = 0.5;$/;"	m	class:ImageTrackerCentroid	typeref:typename:float
+ThresholdLevel	IMAGE_PROCESSING/tracker_centroid.h	/^     float ThresholdLevel = 0.5;$/;"	m	class:ImageTrackerCentroid	typeref:typename:float
 ThresholdOptimizatorEngine	IMAGE_PROCESSING/optimization_threshold.h	/^  ThresholdOptimizatorEngine(){CurrentProcess = &NodeDispersionRunaway;};$/;"	f	class:ThresholdOptimizatorEngine
 ThresholdOptimizatorEngine	IMAGE_PROCESSING/optimization_threshold.h	/^  ThresholdOptimizatorEngine(PROCESS_METHOD Method)$/;"	f	class:ThresholdOptimizatorEngine
 ThresholdOptimizatorEngine	IMAGE_PROCESSING/optimization_threshold.h	/^class ThresholdOptimizatorEngine : public OptimizationThreshold$/;"	c
@@ -4015,14 +4014,10 @@ TrackEstimations	IMAGE_PROCESSING/finder_moving_centroid.h	/^                   
 TrackEstimators	IMAGE_PROCESSING/finder_moving_centroid.h	/^    std::vector<std::shared_ptr<EstimatorTrackHold<float>> > TrackEstimators;$/;"	m	class:FinderObjectMoving	typeref:typename:std::vector<std::shared_ptr<EstimatorTrackHold<float>>>
 TrackFuture	AIMING_MODULES/nodes_track_approximation.h	/^  NodeCoordStorage<float> TrackFuture;$/;"	m	class:GenericApproximation	typeref:typename:NodeCoordStorage<float>
 TrackInput	AIMING_MODULES/nodes_track_approximation.h	/^  NodeCoordStorage<float> TrackInput;$/;"	m	class:GenericApproximation	typeref:typename:NodeCoordStorage<float>
-TrackObject	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::TrackObject() { NodeTracker.trackObject(ImageProcessing); }$/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 TrackObjectCentroid	IMAGE_PROCESSING/tracker_centroid.cpp	/^void ImageTrackerCentroid::TrackObjectCentroid(cv::Mat& Image, cv::Rect& ROI)$/;"	f	class:ImageTrackerCentroid	typeref:typename:void
-TrackerActive	IMAGE_PROCESSING/finder_moving_centroid.h	/^    TrackerIterator TrackerActive;$/;"	m	class:FinderObjectMoving	typeref:typename:TrackerIterator
 TrackerCSRT	IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^class CV_EXPORTS_W TrackerCSRT : public Tracker$/;"	c	namespace:cv::tracking
-TrackerEnd	IMAGE_PROCESSING/finder_moving_centroid.h	/^    TrackerIterator TrackerEnd;$/;"	m	class:FinderObjectMoving	typeref:typename:TrackerIterator
 TrackerFirst	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp	/^TrackerFirst::TrackerFirst()$/;"	f	class:TrackerFirst
 TrackerFirst	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^class TrackerFirst$/;"	c
-TrackerIdle	IMAGE_PROCESSING/finder_moving_centroid.h	/^    TrackerIterator TrackerIdle;$/;"	m	class:FinderObjectMoving	typeref:typename:TrackerIterator
 TrackerIterator	IMAGE_PROCESSING/finder_moving_centroid.h	/^    using TrackerIterator = std::vector<std::shared_ptr<ImageTrackerCentroid>>::iterator ;$/;"	t	class:FinderObjectMoving	typeref:typename:std::vector<std::shared_ptr<ImageTrackerCentroid>>::iterator
 TrackerKCF	IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^class CV_EXPORTS_W TrackerKCF : public Tracker$/;"	c	namespace:cv::tracking
 Trackers	IMAGE_PROCESSING/finder_moving_centroid.h	/^    std::vector<std::shared_ptr<ImageTrackerCentroid>      > Trackers;$/;"	m	class:FinderObjectMoving	typeref:typename:std::vector<std::shared_ptr<ImageTrackerCentroid>>
@@ -4226,10 +4221,8 @@ WidthType	gui_sources/qcustomplot.h	/^  enum WidthType { wtAbsolute       \/\/\/
 WindowControl	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^    WindowLaserControlClass* WindowControl = 0;$/;"	m	class:LaserControlClass	typeref:typename:WindowLaserControlClass *
 WindowLaserControlClass	DEVICES/LaserPointerControlLib/WindowLaserControl.h	/^class WindowLaserControlClass : public WidgetAdjustable$/;"	c
 WindowNode	gui_sources/widget_scene_node_interface.h	/^    QWidget* WindowNode = 0;$/;"	m	class:WidgetSceneNodeInterface	typeref:typename:QWidget *
-WorkSearch	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
-WorkSearch	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};$/;"	e	enum:ModuleImageProcessing::StatesModule
-WorkTrack	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Idle = 0, WorkSearch = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
-WorkTrack	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};$/;"	e	enum:ModuleImageProcessing::StatesModule
+WorkTrack	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   enum class StatesModule { Disabled = 0, Active = 1, WorkTrack = 2};$/;"	e	enum:TrackerFirst::StatesModule
+WorkTrack	IMAGE_PROCESSING/image_processing_node.h	/^          enum class StatesModule { Disabled = 0, Idle = 1, WorkTrack = 2};$/;"	e	enum:ModuleImageProcessing::StatesModule
 Writer	UTILITIES/COMMON/arduino_json.h	/^  Writer(TDestination& str) : str_(&str) {$/;"	f	class:Writer
 Writer	UTILITIES/COMMON/arduino_json.h	/^  explicit Writer(::Print& print) : print_(&print) {}$/;"	f	class:Writer
 Writer	UTILITIES/COMMON/arduino_json.h	/^  explicit Writer(::String& str) : destination_(&str), size_(0) {$/;"	f	class:Writer
@@ -4777,24 +4770,26 @@ __anondd4a98cb0102	gui_sources/widget_processing_image_generic.cpp	/^   connect(
 __anone7515a2d0102	controller_process_class.cpp	/^QTimer::singleShot(100,[this]() { DeviceRotary->moveToPos(QPair<float,float>(0,0)); });$/;"	f	function:ProcessControllerClass::ProcessControllerClass	file:
 __anone7515a2d0202	controller_process_class.cpp	/^QTimer::singleShot(200,[this]() { DeviceRotary->moveToPos(QPair<float,float>(0,0)); });$/;"	f	function:ProcessControllerClass::ProcessControllerClass	file:
 __anone7515a2d0302	controller_process_class.cpp	/^  {$/;"	f	function:ProcessControllerClass::slotStartProcessRTSP	file:
-__anone7515a2d0402	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateActive();}) ;$/;"	f	function:ProcessControllerClass::setScheme2	file:
-__anone7515a2d0502	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateActive();}) ;$/;"	f	function:ProcessControllerClass::setScheme3	file:
-__anone7515a2d0602	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateActive();}) ;$/;"	f	function:ProcessControllerClass::setScheme4	file:
-__anone7515a2d0702	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc2->SetStateActive();}) ;$/;"	f	function:ProcessControllerClass::setScheme5	file:
-__anone7515a2d0802	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateActive();}) ;$/;"	f	function:ProcessControllerClass::setScheme6	file:
-__anone7515a2d0902	controller_process_class.cpp	/^  QTimer::singleShot(100, [this]() { ThreadProcess1.start(QThread::NormalPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
-__anone7515a2d0a02	controller_process_class.cpp	/^  QTimer::singleShot(200, [this]() { ThreadProcess2.start(QThread::HighestPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
-__anone7515a2d0b02	controller_process_class.cpp	/^  QTimer::singleShot(300, [this]() { ThreadProcess3.start(QThread::LowPriority);     }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
-__anone7515a2d0c02	controller_process_class.cpp	/^  QTimer::singleShot(400, [this]() { ThreadCamera.start(QThread::LowPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
-__anone7515a2d0d02	controller_process_class.cpp	/^  QTimer::singleShot(500, [this]() { ThreadProcessAiming.start(QThread::NormalPriority);}) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
-__anone7515a2d0e02	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
-__anone7515a2d0f02	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
+__anone7515a2d0402	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme2	file:
+__anone7515a2d0502	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme3	file:
+__anone7515a2d0602	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme4	file:
+__anone7515a2d0702	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc2->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme5	file:
+__anone7515a2d0802	controller_process_class.cpp	/^   QTimer::singleShot(1000, [Processor]() { Processor->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme6	file:
+__anone7515a2d0902	controller_process_class.cpp	/^   QTimer::singleShot(200 , [this]() { ModuleImageProc1->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme7	file:
+__anone7515a2d0a02	controller_process_class.cpp	/^   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateWork();}) ;$/;"	f	function:ProcessControllerClass::setScheme7	file:
+__anone7515a2d0b02	controller_process_class.cpp	/^  QTimer::singleShot(100, [this]() { ThreadProcess1.start(QThread::NormalPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
+__anone7515a2d0c02	controller_process_class.cpp	/^  QTimer::singleShot(200, [this]() { ThreadProcess2.start(QThread::HighestPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
+__anone7515a2d0d02	controller_process_class.cpp	/^  QTimer::singleShot(300, [this]() { ThreadProcess3.start(QThread::LowPriority);     }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
+__anone7515a2d0e02	controller_process_class.cpp	/^  QTimer::singleShot(400, [this]() { ThreadCamera.start(QThread::LowPriority);       }) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
+__anone7515a2d0f02	controller_process_class.cpp	/^  QTimer::singleShot(500, [this]() { ThreadProcessAiming.start(QThread::NormalPriority);}) ;$/;"	f	function:ProcessControllerClass::slotSetProcessAiming	file:
 __anone7515a2d1002	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anone7515a2d1102	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anone7515a2d1202	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anone7515a2d1302	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anone7515a2d1402	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anone7515a2d1502	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
+__anone7515a2d1602	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
+__anone7515a2d1702	controller_process_class.cpp	/^                  {$/;"	f	function:ProcessControllerClass::initMessageDispatchers	file:
 __anonea7884bb0111	build/ImageProcProject_autogen/5KVH3X42GB/moc_tracker_neural.cpp	/^namespace {$/;"	n	file:
 __anonfa1e6c320111	build/ImageProcProject_autogen/EWIEGA46WW/moc_controller_process_class.cpp	/^namespace {$/;"	n	file:
 __anonfd74374b0102	gui_sources/widget_scanator_control.cpp	/^				[Timer,ButMoveLine]() { Timer->start(1); });$/;"	f	function:WidgetScanatorControl::linkToDevice	file:
@@ -6692,7 +6687,6 @@ is	UTILITIES/COMMON/arduino_json.h	/^  bool is() const {$/;"	f	class:JsonDocumen
 is	UTILITIES/COMMON/arduino_json.h	/^  bool is() const {$/;"	f	class:JsonVariantConst	typeref:typename:bool
 is	UTILITIES/COMMON/arduino_json.h	/^  bool is() {$/;"	f	class:JsonDocument	typeref:typename:bool
 is	UTILITIES/COMMON/arduino_json.h	/^inline bool VariantRefBase<TDerived>::is() const {$/;"	f	class:VariantRefBase	typeref:typename:bool
-isActive	IMAGE_PROCESSING/image_processing_node.h	/^            bool isActive()    { return StateProcessing != StatesModule::Idle || StateProcessing/;"	f	class:ModuleImageProcessing	typeref:typename:bool
 isActive	UTILITIES/sinus_generator_class.h	/^	bool isActive() { return TimerGenerateSinus->isActive(); }$/;"	f	class:SinusGeneratorClass	typeref:typename:bool
 isActive	gui_sources/qcustomplot.h	/^  bool isActive() const { return mActive; }$/;"	f	class:QCPSelectionRect	typeref:typename:bool
 isAimingFault	AIMING_MODULES/aiming_class.cpp	/^bool AimingClass::isAimingFault()$/;"	f	class:AimingClass	typeref:typename:bool
@@ -6717,7 +6711,8 @@ isConnected	TRANSMISSION_MODULES/NETWORK_INTERFACES/engine_udp_interface.cpp	/^b
 isControlPressed	UTILITIES/engine_keyfilter.h	/^  static bool isControlPressed() { return KeyControlPressed; }$/;"	f	class:KeyboardFilter	typeref:typename:bool
 isCoordDetected	UTILITIES/thread_operation_nodes.h	/^  bool isCoordDetected = false;$/;"	m	class:NodeCoordDetector	typeref:typename:bool
 isCoordLoaded	UTILITIES/engine_statistics.h	/^	 bool isCoordLoaded()   { return NodeCoord.isLoaded();}$/;"	f	class:StatisticNode	typeref:typename:bool
-isDisabled	IMAGE_PROCESSING/image_processing_node.h	/^            bool isDisabled()  { return StateProcessing == StatesModule::Disabled;     } $/;"	f	class:ModuleImageProcessing	typeref:typename:bool
+isDisabled	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   bool isDisabled()       { return State == StatesModule::Disabled; };$/;"	f	class:TrackerFirst	typeref:typename:bool
+isDisabled	IMAGE_PROCESSING/image_processing_node.h	/^    bool isDisabled()  { return StateProcessing == StatesModule::Disabled; } $/;"	f	class:ModuleImageProcessing	typeref:typename:bool
 isDispersionLimit	IMAGE_PROCESSING/engine_statistics_track.h	/^    bool isDispersionLimit{false};$/;"	m	class:EstimatorTrackHold	typeref:typename:bool
 isEmpty	gui_sources/qcustomplot.cpp	/^bool QCPMarginGroup::isEmpty() const$/;"	f	class:QCPMarginGroup	typeref:typename:bool
 isEmpty	gui_sources/qcustomplot.h	/^  bool isEmpty() const { return length() == 0; }$/;"	f	class:QCPDataRange	typeref:typename:bool
@@ -6734,7 +6729,7 @@ isFrameAvailable	CAMERA_INTERFACE/camera_image_storage.h	/^    bool isFrameAvail
 isFrameAvailable	CAMERA_INTERFACE/interface_camera_hik.h	/^      bool isFrameAvailable() override { return (*CurrentStoreChannel)->isFrameAvailable();};$/;"	f	class:CameraInterfaceHIK	typeref:typename:bool
 isFrameAvailable	UTILITIES/COMMON/interface_image_source.h	/^    virtual               bool isFrameAvailable()   { return getAvailableFrames() > 0;};$/;"	f	class:SourceImageInterface	typeref:typename:bool
 isHighSurrogate	UTILITIES/COMMON/arduino_json.h	/^inline bool isHighSurrogate(uint16_t codeunit) {$/;"	f	namespace:Utf16	typeref:typename:bool
-isIdle	IMAGE_PROCESSING/image_processing_node.h	/^            bool isIdle()      { return StateProcessing == StatesModule::Idle;     } $/;"	f	class:ModuleImageProcessing	typeref:typename:bool
+isIdle	IMAGE_PROCESSING/image_processing_node.h	/^    bool isIdle()      { return StateProcessing == StatesModule::Idle;     } $/;"	f	class:ModuleImageProcessing	typeref:typename:bool
 isInit	CAMERA_INTERFACE/camera_image_storage.h	/^    bool isInit()       { return !Buffers.empty(); };$/;"	f	class:CameraImageStorage	typeref:typename:bool
 isInitDone	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   std::atomic<bool> isInitDone = false;$/;"	m	class:TrackerFirst	typeref:typename:std::atomic<bool>
 isInputAvailable	AIMING_MODULES/aiming_class.h	/^  bool isInputAvailable=false;$/;"	m	class:AimingClass	typeref:typename:bool
@@ -6777,6 +6772,7 @@ isModulePassive	IMAGE_PROCESSING/image_processing_node.h	/^    bool isModulePass
 isModuleSlave	IMAGE_PROCESSING/image_processing_node.h	/^    bool isModuleSlave()   { return ModeProcessing == ModesModule::SlaveActive; };$/;"	f	class:ModuleImageProcessing	typeref:typename:bool
 isMoving	IMAGE_PROCESSING/engine_statistics_track.h	/^                 bool isMoving() { return probabiltyMoving > 80;}$/;"	f	class:EstimatorVelocityAvarageStep	typeref:typename:bool
 isMoving	IMAGE_PROCESSING/engine_statistics_track.h	/^           bool isMoving() { return EstimatorVelocity.isMoving(); } ;$/;"	f	class:EstimatorTrackHold	typeref:typename:bool
+isMoving	IMAGE_PROCESSING/finder_moving_centroid.h	/^                                    bool isMoving = false;$/;"	m	class:FinderObjectMoving	typeref:typename:bool
 isNodeSource	TRANSMISSION_MODULES/TEST_TRANSMISSION/test_transmission_message.h	/^  bool    isNodeSource = false;$/;"	m	class:TestMessageTransmission	typeref:typename:bool
 isNone	gui_sources/qcustomplot.h	/^  bool isNone() const { return mShape == ssNone; }$/;"	f	class:QCPScatterStyle	typeref:typename:bool
 isNull	UTILITIES/COMMON/arduino_json.h	/^  bool isNull() const {$/;"	f	class:FlashString	typeref:typename:bool
@@ -6805,6 +6801,8 @@ isResultAvailable	UTILITIES/engine_statistics.h	/^	bool isResultAvailable = fals
 isResultValid	AIMING_MODULES/nodes_track_approximation.h	/^  bool isResultValid = false;$/;"	m	class:GenericApproximation	typeref:typename:bool
 isReverseHorizontal	CAMERA_INTERFACE/interface_camera_hik.cpp	/^bool CameraInterfaceHIK::isReverseHorizontal()$/;"	f	class:CameraInterfaceHIK	typeref:typename:bool
 isSignal	UTILITIES/thread_operation_nodes.h	/^  bool isSignal() $/;"	f	class:NodeValueDetector	typeref:typename:bool
+isSourceActive	IMAGE_PROCESSING/image_processing_node.h	/^        bool isSourceActive() override { return isEnabled(); }$/;"	f	class:ModuleImageProcessing	typeref:typename:bool
+isSourceActive	UTILITIES/COMMON/interface_image_source.h	/^    virtual bool isSourceActive() { return true; }$/;"	f	class:SourceImageDisplayInterface	typeref:typename:bool
 isStatLoaded	UTILITIES/engine_statistics.h	/^	bool isStatLoaded = false;$/;"	m	class:StatisticCoord	typeref:typename:bool
 isStatLoaded	UTILITIES/engine_statistics.h	/^	bool isStatLoaded = false;$/;"	m	class:StatisticValue	typeref:typename:bool
 isStatic	UTILITIES/COMMON/arduino_json.h	/^  bool isStatic() const {$/;"	f	class:FlashString	typeref:typename:bool
@@ -6813,10 +6811,11 @@ isStatic	UTILITIES/COMMON/arduino_json.h	/^  bool isStatic() const {$/;"	f	class
 isString	UTILITIES/COMMON/arduino_json.h	/^  bool isString() const {$/;"	f	class:VariantData	typeref:typename:bool
 isTinyString	UTILITIES/COMMON/arduino_json.h	/^static bool isTinyString(const T& s, size_t n) {$/;"	f	typeref:typename:bool
 isTrackHold	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   bool isTrackHold()      { return State == StatesModule::WorkTrack; };$/;"	f	class:TrackerFirst	typeref:typename:bool
-isTrackHold	IMAGE_PROCESSING/finder_moving_centroid.h	/^    bool isTrackHold() override { return IS_MOVING; }$/;"	f	class:FinderObjectMoving	typeref:typename:bool
+isTrackHold	IMAGE_PROCESSING/finder_moving_centroid.h	/^    bool isTrackHold() override { return isMoving; }$/;"	f	class:FinderObjectMoving	typeref:typename:bool
 isTrackHold	IMAGE_PROCESSING/image_processing_node.h	/^    virtual bool isTrackHold() { return StateProcessing == StatesModule::WorkTrack;}$/;"	f	class:ModuleImageProcessing	typeref:typename:bool
-isTrackHold	IMAGE_PROCESSING/tracker_centroid.h	/^    bool isTrackHold() override { return StateProcessing == StatesModule::WorkTrack; }$/;"	f	class:ImageTrackerCentroid	typeref:typename:bool
-isTrackHold	IMAGE_PROCESSING/tracker_template.h	/^   bool isTrackHold() override { return NodeTracker.isTrackHold(); }$/;"	f	class:ImageTrackerTemplate	typeref:typename:bool
+isTrackHold	IMAGE_PROCESSING/tracker_template.h	/^   bool isTrackHold() override {return  NodeTracker.isTrackHold(); } $/;"	f	class:ImageTrackerTemplate	typeref:typename:bool
+isTrackMiss	IMAGE_PROCESSING/image_processing_node.h	/^    virtual bool isTrackMiss() { return StateProcessing != StatesModule::WorkTrack;}$/;"	f	class:ModuleImageProcessing	typeref:typename:bool
+isTrackMiss	IMAGE_PROCESSING/tracker_template.h	/^   bool isTrackMiss() override {return !NodeTracker.isTrackHold(); } $/;"	f	class:ImageTrackerTemplate	typeref:typename:bool
 isTrackRectValid	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   bool isTrackRectValid() { return rect_template.width > 0 && rect_template.height > 0; }; $/;"	f	class:TrackerFirst	typeref:typename:bool
 isTrackSuccess	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^                 bool isTrackSuccess = false;$/;"	m	class:TrackerFirst	typeref:typename:bool
 isTrackerHasDublicate	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^bool FinderObjectMoving::isTrackerHasDublicate(std::shared_ptr<ImageTrackerCentroid> TrackerChec/;"	f	class:FinderObjectMoving	typeref:typename:bool
@@ -8570,6 +8569,7 @@ printDataType	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_ro
 printDataType	TRANSMISSION_MODULES/GENERIC_MESSAGES/message_struct_generic_ext.h	/^    static QString printDataType() { return TypeRegister<T>::GetTypeName(); };$/;"	f	class:MessageGenericExt	typeref:typename:QString
 printInfo	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::printInfo()$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 printInfo	controller_process_class.cpp	/^void ProcessControllerClass::printInfo()$/;"	f	class:ProcessControllerClass	typeref:typename:void
+printLinks	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::printLinks()$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 printMessage	TRANSMISSION_MODULES/DATA_STRUCTURES/message_command_structures_rotary.h	/^        void printMessage() { serializeJson(command,command_string); qDebug() << "[ ROTARY STATE/;"	f	class:MessageRotaryStateJson	typeref:typename:void
 printPeriod	UTILITIES/module_period_measure.h	/^    QString printPeriod()$/;"	f	class:MeasurePeriodNode	typeref:typename:QString
 printRegistered	TRANSMISSION_MODULES/DATA_STRUCTURES/engine_type_register.h	/^      static void printRegistered()    { for(auto it = TYPES.begin(); it != end; it++) std::cout/;"	f	class:TypeRegisterID	typeref:typename:void
@@ -9011,6 +9011,7 @@ reset	AIMING_MODULES/nodes_track_approximation.h	/^    void reset() { trackAppro
 reset	CAMERA_INTERFACE/camera_image_storage.h	/^    void reset() { lockBuffer.unlock(); } $/;"	f	class:CameraImageStorage	typeref:typename:void
 reset	DEVICES/BACKUP/device_rotary_interface.h	/^  void reset()$/;"	f	class:DynamicModule	typeref:typename:void
 reset	DEVICES/device_rotary_interface.h	/^  void reset() { }$/;"	f	class:DynamicModule	typeref:typename:void
+reset	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp	/^void TrackerFirst::reset() $/;"	f	class:TrackerFirst	typeref:typename:void
 reset	IMAGE_PROCESSING/contour_processing.cpp	/^void ContoursProcessorClass::reset()$/;"	f	class:ContoursProcessorClass	typeref:typename:void
 reset	IMAGE_PROCESSING/engine_statistics_track.h	/^  void reset() $/;"	f	class:EstimatorTrackHold	typeref:typename:void
 reset	IMAGE_PROCESSING/engine_statistics_track.h	/^  void reset() $/;"	f	class:EstimatorVelocityAvarageStep	typeref:typename:void
@@ -9037,7 +9038,11 @@ reset	UTILITIES/thread_operation_nodes.h	/^  void reset() { PassValueClass<T>::V
 reset	UTILITIES/thread_operation_nodes.h	/^  void reset() { isCoordDetected = false;}$/;"	f	class:NodeCoordDetector	typeref:typename:void
 resetOnLoaded	UTILITIES/engine_statistics.h	/^	void resetOnLoaded() { if(isLoaded()) reset(); }$/;"	f	class:StatisticCoord	typeref:typename:void
 resetOnLoaded	UTILITIES/engine_statistics.h	/^	void resetOnLoaded() { if(isLoaded()) reset(); }$/;"	f	class:StatisticValue	typeref:typename:void
+resetOutput	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::resetOutput()$/;"	f	class:ModuleImageProcessing	typeref:typename:void
 resetRectTrack	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.cpp	/^void TrackerFirst::resetRectTrack(const cv::Mat& image, cv::Rect rectAim)$/;"	f	class:TrackerFirst	typeref:typename:void
+resetState	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::resetState()$/;"	f	class:FinderObjectMoving	typeref:typename:void
+resetState	IMAGE_PROCESSING/image_processing_node.cpp	/^void ModuleImageProcessing::resetState()$/;"	f	class:ModuleImageProcessing	typeref:typename:void
+resetState	IMAGE_PROCESSING/tracker_template.cpp	/^void ImageTrackerTemplate::resetState() $/;"	f	class:ImageTrackerTemplate	typeref:typename:void
 resetTracker	IMAGE_PROCESSING/finder_moving_centroid.cpp	/^void FinderObjectMoving::resetTracker(int number)$/;"	f	class:FinderObjectMoving	typeref:typename:void
 resize	IMAGE_PROCESSING/TRACKER_ROBUST/tracking.hpp	/^        CV_PROP_RW bool resize;                  \/\/!<  activate the resize feature to improve /;"	m	struct:cv::tracking::TrackerKCF::Params	typeref:typename:CV_PROP_RW bool
 resize	UTILITIES/COMMON/arduino_json.h	/^  static StringNode* resize(StringNode* node, size_t length,$/;"	f	struct:StringNode	typeref:typename:StringNode *
@@ -9850,6 +9855,7 @@ setScheme3	controller_process_class.cpp	/^void ProcessControllerClass::setScheme
 setScheme4	controller_process_class.cpp	/^void ProcessControllerClass::setScheme4(std::shared_ptr<PassCoordClass<float>> DeviceControl)$/;"	f	class:ProcessControllerClass	typeref:typename:void
 setScheme5	controller_process_class.cpp	/^void ProcessControllerClass::setScheme5(std::shared_ptr<PassCoordClass<float>> DeviceControl)$/;"	f	class:ProcessControllerClass	typeref:typename:void
 setScheme6	controller_process_class.cpp	/^void ProcessControllerClass::setScheme6(std::shared_ptr<PassCoordClass<float>> DeviceControl)$/;"	f	class:ProcessControllerClass	typeref:typename:void
+setScheme7	controller_process_class.cpp	/^void ProcessControllerClass::setScheme7(std::shared_ptr<PassCoordClass<float>> DeviceControl)$/;"	f	class:ProcessControllerClass	typeref:typename:void
 setSelectable	gui_sources/qcustomplot.cpp	/^void QCPAbstractItem::setSelectable(bool selectable)$/;"	f	class:QCPAbstractItem	typeref:typename:void
 setSelectable	gui_sources/qcustomplot.cpp	/^void QCPAbstractLegendItem::setSelectable(bool selectable)$/;"	f	class:QCPAbstractLegendItem	typeref:typename:void
 setSelectable	gui_sources/qcustomplot.cpp	/^void QCPAbstractPlottable::setSelectable(QCP::SelectionType selectable)$/;"	f	class:QCPAbstractPlottable	typeref:typename:void
@@ -9929,7 +9935,8 @@ setSpacing	gui_sources/qcustomplot.cpp	/^void QCPBarsGroup::setSpacing(double sp
 setSpacingType	gui_sources/qcustomplot.cpp	/^void QCPBarsGroup::setSpacingType(SpacingType spacingType)$/;"	f	class:QCPBarsGroup	typeref:typename:void
 setStackingGap	gui_sources/qcustomplot.cpp	/^void QCPBars::setStackingGap(double pixels)$/;"	f	class:QCPBars	typeref:typename:void
 setState	AIMING_MODULES/aiming_class.cpp	/^void AimingClass::setState(int state)$/;"	f	class:AimingClass	typeref:typename:void
-setStateIdle	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   void setStateIdle()   { State = StatesModule::Idle; } $/;"	f	class:TrackerFirst	typeref:typename:void
+setStateActive	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   void setStateActive  () { State = StatesModule::Active; } $/;"	f	class:TrackerFirst	typeref:typename:void
+setStateDisabled	IMAGE_PROCESSING/TRACKER_ROBUST/Tracker.h	/^   void setStateDisabled() { State = StatesModule::Disabled; } $/;"	f	class:TrackerFirst	typeref:typename:void
 setString	UTILITIES/COMMON/arduino_json.h	/^  static void setString(VariantData* var, TAdaptedString value,$/;"	f	class:VariantData	typeref:typename:void
 setString	UTILITIES/COMMON/arduino_json.h	/^inline bool VariantData::setString(TAdaptedString value,$/;"	f	class:VariantData	typeref:typename:bool
 setStyle	gui_sources/qcustomplot.cpp	/^void QCPItemBracket::setStyle(QCPItemBracket::BracketStyle style)$/;"	f	class:QCPItemBracket	typeref:typename:void
@@ -11129,7 +11136,7 @@ zoom	gui_sources/qcustomplot.cpp	/^void QCPAxisRect::zoom(const QRectF &pixelRec
 ~GraphPointsLineInterface	gui_sources/GRAPHICS_WINDOW_GRAPH/linegraph.cpp	/^GraphPointsLineInterface::~GraphPointsLineInterface()$/;"	f	class:GraphPointsLineInterface
 ~ImageTemplateFinder	IMAGE_PROCESSING/image_finder.cpp	/^ImageTemplateFinder::~ImageTemplateFinder() { }$/;"	f	class:ImageTemplateFinder
 ~ImageTrackerCentroid	IMAGE_PROCESSING/tracker_centroid.cpp	/^ImageTrackerCentroid::~ImageTrackerCentroid() { qDebug() << TAG_NAME << "[ DELETE ]"; }$/;"	f	class:ImageTrackerCentroid
-~ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^    ~ImageTrackerTemplate() {};$/;"	f	class:ImageTrackerTemplate
+~ImageTrackerTemplate	IMAGE_PROCESSING/tracker_template.h	/^  ~ImageTrackerTemplate() {};$/;"	f	class:ImageTrackerTemplate
 ~LabelImage	gui_sources/labelimage.cpp	/^     LabelImage::~LabelImage() { }$/;"	f	class:LabelImage
 ~MemoryPoolList	UTILITIES/COMMON/arduino_json.h	/^  ~MemoryPoolList() {$/;"	f	class:MemoryPoolList
 ~ModuleAimingMonitoring	AIMING_MODULES/aiming_monitoring_module.h	/^	~ModuleAimingMonitoring() { FLAG_END = true; };$/;"	f	class:ModuleAimingMonitoring

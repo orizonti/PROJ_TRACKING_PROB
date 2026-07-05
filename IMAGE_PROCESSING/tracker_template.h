@@ -12,35 +12,31 @@ class ImageTrackerTemplate : public ModuleImageProcessing
 {
     Q_OBJECT
 public:
-    explicit ImageTrackerTemplate(QObject* parent = 0): ModuleImageProcessing("[TRACKER TEMPLATE]") 
-    { 
-      SizeROI = SettingsRegister::GetValue("PROCESSING_ROI1");
-    };
+  explicit ImageTrackerTemplate(QObject* parent = 0): ModuleImageProcessing("[TRACKER TEMPLATE]") 
+  { 
+    SizeROI = SettingsRegister::GetValue("PROCESSING_ROI1");
+  };
 
-    explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): 
-             ModuleImageProcessing(width, height, size, "[TRACKER TEMPLATE]") 
-    { 
-    };
-    ~ImageTrackerTemplate() {};
+  explicit ImageTrackerTemplate(int width, int height, int size ,QObject* parent = 0): 
+           ModuleImageProcessing(width, height, size, "[TRACKER TEMPLATE]") { };
+  ~ImageTrackerTemplate() {};
 
    MeasurePeriodNode FrameMeasureInput;
    MeasurePeriodNode FrameMeasureProcess;
-   MeasurePeriodNode InputPortPeriod;
-   int InputPeriod = 0;
         TrackerFirst NodeTracker;
 
-
-   bool isTrackHold() override { return NodeTracker.isTrackHold(); }
-   void TrackObject();
-   void ProcessInput();
+   bool isTrackHold() override {return  NodeTracker.isTrackHold(); } 
+   bool isTrackMiss() override {return !NodeTracker.isTrackHold(); } 
 
    void setInput(const QPair<float,float>& Coord) override; 
-
+   void resetState() override;
 public  slots:
-   void SlotProcessImage(const cv::Mat& Image) override;
-   void SlotProcessImage()                     override;
    void SlotSelectObject(std::pair<float,float> PointRelative) override;
-   void SlotResetProcessing() override;
-  
+
+private:
+   void ProcessInput();
+
+private  slots:
+   void SlotProcessImage() override;
 };
 #endif 

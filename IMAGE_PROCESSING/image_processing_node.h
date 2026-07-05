@@ -49,7 +49,7 @@ class ModuleImageProcessing : public QObject,
 Q_OBJECT
 public:
           enum class ModesModule  { Master = 0, SlaveActive = 1, SlavePassive = 2};
-          enum class StatesModule { Idle = 0  , WorkSearch = 1, WorkTrack = 2, Disabled = 3};
+          enum class StatesModule { Disabled = 0, Idle = 1, WorkTrack = 2};
 
 ModuleImageProcessing(QString name = "[TRACKER]", QObject* parent = 0); 
 ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]" , QObject* parent = 0); 
@@ -61,7 +61,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
                    QTimer timerProcessImage;
                    void printInfo();
     public slots:
-    virtual void SlotProcessImage(const cv::Mat& Image) = 0;
+    virtual void SlotProcessImage(const cv::Mat& Image) {};
     virtual void SlotProcessImage() = 0;
     friend ModuleImageProcessing& operator>>(const cv::Mat& Image, ModuleImageProcessing& Module);
     friend std::shared_ptr<ModuleImageProcessing> operator>>(const cv::Mat& Image, std::shared_ptr<ModuleImageProcessing> Module);
@@ -89,6 +89,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
                                                                                    ImageProcessing.rows); }
     //===================================================
     //SourceImageDisplayInterface
+        bool isSourceActive() override { return isEnabled(); }
         void getImageToDisplay(QImage& ImageDst)   override;
 
     const std::vector<QPair<int,int>>& getPoints() override;  
@@ -101,6 +102,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     
     void linkToModule(std::shared_ptr<SourceImageInterface > ImageSource);
     void linkToModule(std::shared_ptr<ModuleImageProcessing> ImageSource);
+    void printLinks();
 
     friend std::shared_ptr<ModuleImageProcessing> operator|(std::shared_ptr<SourceImageInterface > Source, 
                                                             std::shared_ptr<ModuleImageProcessing> Rec);
@@ -117,35 +119,36 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     
     void SetSlaveMode(ModesModule Mode)   { ModeProcessing  = Mode; StateProcessing = StatesModule::Idle; }
 
-    void SetStateActive() { if(isModulePassive()) return; emit signalStart(); };
-    void SetStateIdle()   { if(isModulePassive()) return; emit signalStop (); }; 
-    void SetReset()       {                               emit signalReset(); }; 
+    void SetStateWork    ();
+    void SetStateIdle    ();
+    void SetStateDisabled(); 
+    void SetBlockOutput  (bool OnOff);
 
-            bool isDisabled()  { return StateProcessing == StatesModule::Disabled;     } 
-            bool isIdle()      { return StateProcessing == StatesModule::Idle;     } 
-            bool isActive()    { return StateProcessing != StatesModule::Idle || StateProcessing != StatesModule::Disabled;  } 
+    bool isDisabled()  { return StateProcessing == StatesModule::Disabled; } 
+    bool isIdle()      { return StateProcessing == StatesModule::Idle;     } 
+    virtual bool isTrackMiss() { return StateProcessing != StatesModule::WorkTrack;}
     virtual bool isTrackHold() { return StateProcessing == StatesModule::WorkTrack;}
 
-
-    bool isModulePassive() { return ModeProcessing == ModesModule::SlavePassive;};
     bool isModuleMaster()  { return ModeProcessing == ModesModule::Master;      };
     bool isModuleSlave()   { return ModeProcessing == ModesModule::SlaveActive; };
+    bool isModulePassive() { return ModeProcessing == ModesModule::SlavePassive;};
     //===================================================================================
+    virtual void resetState();
     public slots:
     virtual void SlotSetInput(const QPair<float,float>& Coord) { setInput(Coord); };
 
     virtual void SlotResetProcessing();
     virtual void SlotStopProcessing ();
     virtual void SlotStartProcessing();
+
     virtual void SlotSelectObject(std::pair<float,float> PointRelative) {};
             void SlotBlockOutput(bool OnOff) { this->PassBlocked = OnOff; } ;
     //===================================================================================
-
-
     public:
+    void resetOutput();
 
     virtual void SetThreshold(float Value)    { this->Threshold = Value; } ;
-            void SetPeriodProcess(int period) { periodProcess = period; SetReset(); };
+            void SetPeriodProcess(int period) { periodProcess = period; };
     //===================================================
     //DeviceGenericHandleControl
 	  void setParam (uint16_t CommandID, float    CommandParam) override {};
@@ -154,6 +157,7 @@ ModuleImageProcessing(int width, int height, int size,QString name = "[TRACKER]"
     bool isEnabled()    override { return !isDisabled(); } 
 
     bool isTypeActive() override { return true; } 
+
 
 
     NodeSignalAdapter NodeSignalEnable{this,0};

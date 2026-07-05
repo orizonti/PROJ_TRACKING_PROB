@@ -291,7 +291,7 @@ void ProcessControllerClass::setScheme1(std::shared_ptr<PassCoordClass<float>> D
    ModulesActive.push_back(ModuleImageProc2);
    ModulesActive.push_back(ModuleImageProc3);
 
-   //QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateActive();}) ;
+   //QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateWork();}) ;
 }
 
 void ProcessControllerClass::setScheme2(std::shared_ptr<PassCoordClass<float>> DeviceControl)
@@ -306,7 +306,7 @@ void ProcessControllerClass::setScheme2(std::shared_ptr<PassCoordClass<float>> D
    ModulesActive.push_back(ModuleImageProc1);
    ModulesActive.push_back(ModuleImageProc2);
     
-   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateActive();}) ;
+   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateWork();}) ;
 }
 
 void ProcessControllerClass::setScheme3(std::shared_ptr<PassCoordClass<float>> DeviceControl)
@@ -314,7 +314,7 @@ void ProcessControllerClass::setScheme3(std::shared_ptr<PassCoordClass<float>> D
    qDebug() << TAG_NAME.c_str() << "[ PROCESSING SCHEME]"  << "[PROC3 | PROC2 | CONTROL]" ;
    DeviceCamera | ModuleImageProc2; 
    DeviceCamera | ModuleImageProc3 | ModuleImageProc2 | DeviceControl;
-   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateActive();}) ;
+   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateWork();}) ;
 
    ModulesActive.push_back(ModuleImageProc2);
    ModulesActive.push_back(ModuleImageProc3);
@@ -328,7 +328,7 @@ void ProcessControllerClass::setScheme4(std::shared_ptr<PassCoordClass<float>> D
    DeviceCamera | ModuleImageProc1 | ModuleAiming1 | DeviceControl;                     
    ModulesActive.push_back(ModuleImageProc1);
     
-   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateActive();}) ;
+   QTimer::singleShot(1000, [this]() { ModuleImageProc1->SetStateWork();}) ;
 }
 
 void ProcessControllerClass::setScheme5(std::shared_ptr<PassCoordClass<float>> DeviceControl)
@@ -337,17 +337,41 @@ void ProcessControllerClass::setScheme5(std::shared_ptr<PassCoordClass<float>> D
    DeviceCamera | ModuleImageProc2 | ModuleAiming2 | DeviceControl;                     
    ModulesActive.push_back(ModuleImageProc2);
     
-   QTimer::singleShot(1000, [this]() { ModuleImageProc2->SetStateActive();}) ;
+   QTimer::singleShot(1000, [this]() { ModuleImageProc2->SetStateWork();}) ;
 }
 
 void ProcessControllerClass::setScheme6(std::shared_ptr<PassCoordClass<float>> DeviceControl)
 {
-   qDebug() << TAG_NAME.c_str() << "[ PROCESSING SCHEME]"  << "[PROC3 | CONTROL]" ;
-   DeviceCamera | ModuleImageProc3;                     
-   ModulesActive.push_back(ModuleImageProc3);
-    
-   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateActive();}) ;
+   qDebug() << TAG_NAME.c_str() << "[ PROCESSING SCHEME]"  << "[PROC_TEST]" ;
+
+                      auto Processor = ModuleImageProc1;
+            DeviceCamera | Processor;                     
+
+   ModulesActive.push_back(Processor);
+                           Processor->printLinks();
+
+   QTimer::singleShot(1000, [Processor]() { Processor->SetStateWork();}) ;
 }
+
+void ProcessControllerClass::setScheme7(std::shared_ptr<PassCoordClass<float>> DeviceControl)
+{
+   qDebug() << TAG_NAME.c_str() << "[ PROCESSING SCHEME]"  << "[PROC3 | PROC2; PROC2 | PROC1; PROC1 | PROC2 | CONTROL]" ;
+   DeviceCamera | ModuleImageProc1; 
+   //DeviceCamera | ModuleImageProc2; 
+   DeviceCamera | ModuleImageProc3 | ModuleImageProc1;// | ModuleImageProc2;
+                                     //ModuleImageProc2 | ModuleImageProc1;
+
+                  //ModuleImageProc2->SetSlaveMode(ModuleImageProcessing::ModesModule::SlaveActive);
+
+   ModulesActive.push_back(ModuleImageProc1);
+   //ModulesActive.push_back(ModuleImageProc2);
+   ModulesActive.push_back(ModuleImageProc3);
+
+   QTimer::singleShot(200 , [this]() { ModuleImageProc1->SetStateWork();}) ;
+   //QTimer::singleShot(500 , [this]() { ModuleImageProc2->SetStateWork();}) ;
+   QTimer::singleShot(1000, [this]() { ModuleImageProc3->SetStateWork();}) ;
+}
+
 
 
 
@@ -381,7 +405,7 @@ void ProcessControllerClass::slotSetProcessAiming(bool OnOff)
 //  if(TypeProcessingUsed == PROCESSING_SCHEME_4) setScheme4(RotaryControlPort);
 //  if(TypeProcessingUsed == PROCESSING_SCHEME_5) setScheme5(RotaryControlPort);
   qDebug() << TAG_NAME.c_str() << "[PROCESSING SCHEME ]" << TypeProcessingUsed;
-  setScheme6(RotaryControlPort);
+  setScheme7(RotaryControlPort);
 
   //=====================================================
 
